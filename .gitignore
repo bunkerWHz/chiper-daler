@@ -1,0 +1,26 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Imported translations (automatically generated; see project.gd/import)
+*.translation
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash_*.json
+
+# Imported assets
+Assets/.import/
+Scenes/.import/
+Sounds/.import/
+*.import
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
