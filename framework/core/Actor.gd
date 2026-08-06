@@ -4,11 +4,8 @@ class_name Actor
 const COMPONENTS_NODE := "_Components"
 var _components : Array = []
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	_collect_components()
-	
-	for component in _components:
-		component.initialize(self)
 
 func _collect_components() -> void:
 
@@ -34,5 +31,4 @@ func get_component(type) -> Component:
 	return null
 
 func has_component(type) -> bool:
-
 	return get_component(type) != null
