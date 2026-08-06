@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://b48nrgcygf2cm"]
+
+[ext_resource type="Script" uid="uid://oxt258x2k4xp" path="res://game/player/player.gd" id="1_wv0h6"]
+
+[node name="Player" type="Node2D" unique_id=1125850162]
+script = ExtResource("1_wv0h6")
+
+[node name="_Components" type="Node" parent="." unique_id=1441279225]
+
+[node name="_Visual" type="Node2D" parent="." unique_id=1683290114]
+
+[node name="_Sockets" type="Node2D" parent="." unique_id=1704093712]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1497282781]

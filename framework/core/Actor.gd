@@ -32,3 +32,6 @@ func get_component(type) -> Component:
 
 func has_component(type) -> bool:
 	return get_component(type) != null
+
+func get_components():
+	return _components
