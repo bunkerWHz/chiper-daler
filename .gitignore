@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+.godot/addons/*
 
 # Imported translations (automatically generated; see project.gd/import)
 *.translation
