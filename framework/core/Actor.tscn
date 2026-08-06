@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://48xbh1l84dgb"]
+
+[ext_resource type="Script" uid="uid://bqbthnigaenlf" path="res://framework/core/Actor.gd" id="1_1m4o3"]
+[ext_resource type="PackedScene" uid="uid://b237frdo0xm8h" path="res://tests/TestComponent.tscn" id="2_hgstg"]
+
+[node name="Actor" type="Node2D" unique_id=852808356]
+script = ExtResource("1_1m4o3")
+
+[node name="_Components" type="Node" parent="." unique_id=18161870]
+
+[node name="TestComponent" parent="_Components" unique_id=1804158117 instance=ExtResource("2_hgstg")]
+
+[node name="_Visual" type="Node2D" parent="." unique_id=1928550805]
+
+[node name="_Sockets" type="Node2D" parent="." unique_id=807608432]
