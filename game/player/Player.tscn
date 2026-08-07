@@ -2,8 +2,13 @@
 
 [ext_resource type="Script" uid="uid://oxt258x2k4xp" path="res://game/player/player.gd" id="1_wv0h6"]
 [ext_resource type="PackedScene" uid="uid://b7twfe0a5fcbt" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
+[ext_resource type="Script" uid="uid://b8d0ic1ruenbv" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
 [ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 [ext_resource type="PackedScene" uid="uid://dw0034q76e7uc" path="res://framework/components/InputComponent.tscn" id="4_o4naa"]
+
+[sub_resource type="Resource" id="Resource_lg056"]
+script = ExtResource("3_38lxl")
+metadata/_custom_type_script = "uid://b8d0ic1ruenbv"
 
 [node name="Player" type="Node2D" unique_id=1125850162]
 script = ExtResource("1_wv0h6")
@@ -11,6 +16,7 @@ script = ExtResource("1_wv0h6")
 [node name="_Components" type="Node2D" parent="." unique_id=713938611]
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
+config = SubResource("Resource_lg056")
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=1342299954 instance=ExtResource("3_e8u23")]
 

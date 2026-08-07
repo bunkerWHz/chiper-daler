@@ -7,14 +7,22 @@ var body_component: CharacterBodyComponent
 var coyote_timer: float = 0.0
 var jump_buffer_timer: float = 0.0
 var move_input: float = 0.0
-var jump_requested: bool = false
 
 var body: CharacterBody2D
 
 func _ready() -> void:
+	if config == null:
+		push_error("MovementComponent requires MovementConfig")
+		return
 	body_component = actor.get_component(CharacterBodyComponent)
+	if body_component == null:
+		push_error("MovementComponent requires CharacterBodyComponent")
+		return
 	body = body_component.get_body()
 	input_component = actor.get_component(InputComponent)
+	if input_component == null:
+		push_error("MovementComponent requires InputComponent")
+		return
 
 
 func _physics_process(delta: float) -> void:
@@ -27,7 +35,6 @@ func _physics_process(delta: float) -> void:
 
 	body.move_and_slide()
 	
-	print(jump_requested)
 
 func _update_gravity(delta):
 	if not body.is_on_floor():
@@ -58,7 +65,7 @@ func _update_horizontal_velocity(delta: float) -> void:
 func _update_jump_buffer(delta):
 	if input_component.consume_jump_request():
 		jump_buffer_timer = config.jump_buffer_time
-		jump_requested = false
+
 	elif jump_buffer_timer > 0.0:
 		jump_buffer_timer = max(jump_buffer_timer - delta, 0.0)
 
