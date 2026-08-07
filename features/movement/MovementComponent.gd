@@ -1,6 +1,7 @@
 extends Component
 class_name MovementComponent
 
+var body
+
 func _ready() -> void:
-	var body_component := actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
-	print(body_component.get_body())
+	body = actor.get_component(CharacterBodyComponent).get_body()
