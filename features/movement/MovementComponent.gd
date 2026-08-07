@@ -49,10 +49,12 @@ func _physics_process(delta: float) -> void:
 	
 	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 		body.velocity.y = -config.jump_velocity
-
 		jump_buffer_timer = 0.0
 		coyote_timer = 0.0
-
+	if Input.is_action_just_released("jump") and body.velocity.y < 0.0:
+		body.velocity.y *= config.jump_cut_multiplier
+		
+		
 	if not body.is_on_floor():
 		body.velocity.y += config.gravity * delta
 

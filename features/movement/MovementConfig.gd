@@ -5,6 +5,7 @@ class_name MovementConfig
 @export var gravity: float = 1200.0
 
 @export var jump_velocity: float = 450.0
+@export var jump_cut_multiplier: float = 0.5
 @export var jump_buffer_time: float = 0.2
 @export var coyote_time: float = 0.2
 
