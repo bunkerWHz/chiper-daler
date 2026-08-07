@@ -21,13 +21,10 @@ func _collect_components() -> void:
 
 			_components.append(component)
 
-func get_component(type) -> Component:
-
+func get_component(component_type: Variant) -> Component:
 	for component in _components:
-
-		if is_instance_of(component, type):
+		if is_instance_of(component, component_type):
 			return component
-
 	return null
 
 func has_component(type) -> bool:

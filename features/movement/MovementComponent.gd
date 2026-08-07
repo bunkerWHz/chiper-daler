@@ -1,6 +1,7 @@
 extends Component
 class_name MovementComponent
 @export var config: MovementConfig
+
 var input_component: InputComponent
 var body_component: CharacterBodyComponent
 
