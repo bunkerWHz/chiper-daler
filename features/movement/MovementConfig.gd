@@ -1,3 +1,4 @@
-extends Node
+extends Resource
 class_name MovementConfig
-@export var config: MovementConfig
+
+@export var move_speed: float = 200.0
