@@ -1,6 +1,8 @@
 extends Component
 class_name MovementComponent
 @export var config: MovementConfig
+var input_component: InputComponent
+var body_component: CharacterBodyComponent
 
 var coyote_timer: float = 0.0
 var jump_buffer_timer: float = 0.0
@@ -10,15 +12,12 @@ var jump_requested: bool = false
 var body: CharacterBody2D
 
 func _ready() -> void:
-	var body_component := actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+	body_component = actor.get_component(CharacterBodyComponent)
 	body = body_component.get_body()
+	input_component = actor.get_component(InputComponent)
 
 
 func _physics_process(delta: float) -> void:
-	move_input = Input.get_axis("move_left", "move_right")
-	if Input.is_action_just_pressed("jump"):
-		jump_requested = true
-		
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
 	_update_horizontal_velocity(delta)
@@ -28,15 +27,14 @@ func _physics_process(delta: float) -> void:
 
 	body.move_and_slide()
 	
-	print(body.velocity.y)
-	print(body.velocity.x)
+	print(jump_requested)
 
 func _update_gravity(delta):
 	if not body.is_on_floor():
 		body.velocity.y += config.gravity * delta
 
 func _update_horizontal_velocity(delta: float) -> void:
-	var direction := move_input
+	var direction := input_component.get_move_input()
 	var target_speed := direction * config.move_speed
 
 	match config.acceleration_mode:
@@ -58,7 +56,7 @@ func _update_horizontal_velocity(delta: float) -> void:
 				)
 
 func _update_jump_buffer(delta):
-	if jump_requested:
+	if input_component.consume_jump_request():
 		jump_buffer_timer = config.jump_buffer_time
 		jump_requested = false
 	elif jump_buffer_timer > 0.0:
@@ -77,5 +75,5 @@ func _update_jump():
 			coyote_timer = 0.0
 
 func _update_jump_cut():
-	if Input.is_action_just_released("jump") and body.velocity.y < 0.0:
+	if input_component.is_jump_released() and body.velocity.y < 0.0:
 		body.velocity.y *= config.jump_cut_multiplier
