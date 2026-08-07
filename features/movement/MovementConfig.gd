@@ -3,7 +3,10 @@ class_name MovementConfig
 
 @export var move_speed: float = 200.0
 @export var gravity: float = 1200.0
+
 @export var jump_velocity: float = 450.0
+@export var jump_buffer_time: float = 0.2
+@export var coyote_time: float = 0.2
 
 @export var acceleration_mode: AccelerationMode = AccelerationMode.SMOOTH
 @export var acceleration: float = 1200.0

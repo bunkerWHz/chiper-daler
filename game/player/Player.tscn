@@ -7,7 +7,7 @@
 [node name="Player" type="Node2D" unique_id=1125850162]
 script = ExtResource("1_wv0h6")
 
-[node name="_Components" type="Node" parent="." unique_id=1441279225]
+[node name="_Components" type="Node2D" parent="." unique_id=713938611]
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 

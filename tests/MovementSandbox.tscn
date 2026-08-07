@@ -6,11 +6,18 @@
 size = Vector2(400, 10)
 
 [node name="MovementSandbox" type="Node2D" unique_id=373401185]
+position = Vector2(457, 341)
 
 [node name="Player" parent="." unique_id=1125850162 instance=ExtResource("1_ff7wc")]
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1257601977]
-position = Vector2(3, 29)
+position = Vector2(-155, 31)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=77689138]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Floor2" type="StaticBody2D" parent="." unique_id=1450572539]
+position = Vector2(264, 58)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor2" unique_id=59729505]
 shape = SubResource("RectangleShape2D_floor")
