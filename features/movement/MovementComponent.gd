@@ -8,7 +8,10 @@ func _ready() -> void:
 	var body_component := actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	body = body_component.get_body()
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	var direction = Input.get_axis("move_left", "move_right")
 	body.velocity.x = direction * config.move_speed
+	if not body.is_on_floor():
+		body.velocity.y += config.gravity * delta
 	body.move_and_slide()
+	print(body.velocity.y)
