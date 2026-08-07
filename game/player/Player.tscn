@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://oxt258x2k4xp" path="res://game/player/player.gd" id="1_wv0h6"]
 [ext_resource type="PackedScene" uid="uid://b7twfe0a5fcbt" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
+[ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 
 [node name="Player" type="Node2D" unique_id=1125850162]
 script = ExtResource("1_wv0h6")
@@ -9,6 +10,8 @@ script = ExtResource("1_wv0h6")
 [node name="_Components" type="Node" parent="." unique_id=1441279225]
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
+
+[node name="CharacterBodyComponent" parent="_Components" unique_id=1342299954 instance=ExtResource("3_e8u23")]
 
 [node name="_Visual" type="Node2D" parent="." unique_id=1683290114]
 
