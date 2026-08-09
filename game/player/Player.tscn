@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dw0034q76e7uc" path="res://framework/components/InputComponent.tscn" id="4_o4naa"]
 [ext_resource type="PackedScene" uid="uid://42qrwi3e4pef" path="res://framework/components/AnimationComponent.tscn" id="6_lg056"]
 [ext_resource type="PackedScene" uid="uid://bw1a5wx3lqx60" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
-[ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/Interactioncomponent.gd" id="8_wcm5h"]
+[ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")

@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bk0qtgskbli0b"]
+
+[ext_resource type="Script" uid="uid://dmocwq41j53e4" path="res://tests/TestInteractable.gd" id="1_v8ngk"]
+[ext_resource type="Script" uid="uid://msb0mnd7fg37" path="res://framework/components/InteractableComponent.gd" id="2_04w8e"]
+[ext_resource type="Texture2D" uid="uid://dat7jeh5favtx" path="res://assets/Mechanics_Header.png" id="3_04w8e"]
+
+[node name="TestInteractable" type="Node2D" unique_id=1068066335]
+script = ExtResource("1_v8ngk")
+
+[node name="_Components" type="Node2D" parent="." unique_id=827353654]
+
+[node name="InteractableComponent" type="Node2D" parent="_Components" unique_id=825343434]
+script = ExtResource("2_04w8e")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=255051455]
+texture = ExtResource("3_04w8e")
