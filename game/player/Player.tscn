@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://42qrwi3e4pef" path="res://framework/components/AnimationComponent.tscn" id="6_lg056"]
 [ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="7_8cf8e"]
 [ext_resource type="Texture2D" uid="uid://cdnbnpoxjui65" path="res://assets/Warrior_Idle.png" id="7_wcm5h"]
+[ext_resource type="Texture2D" uid="uid://dowiloriqwj2m" path="res://assets/Warrior_Guard.png" id="8_b51sn"]
+[ext_resource type="Texture2D" uid="uid://danne1jtbnxso" path="res://assets/Warrior_Attack2.png" id="9_o7uqf"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -36,6 +38,10 @@ region = Rect2(768, 0, 192, 192)
 [sub_resource type="AtlasTexture" id="AtlasTexture_3q1ya"]
 atlas = ExtResource("7_8cf8e")
 region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0eanl"]
+atlas = ExtResource("9_o7uqf")
+region = Rect2(0, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ohvm5"]
 atlas = ExtResource("7_wcm5h")
@@ -68,6 +74,10 @@ region = Rect2(1152, 0, 192, 192)
 [sub_resource type="AtlasTexture" id="AtlasTexture_qa6a8"]
 atlas = ExtResource("7_wcm5h")
 region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hqrom"]
+atlas = ExtResource("8_b51sn")
+region = Rect2(0, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_82tp1"]
 atlas = ExtResource("7_8cf8e")
@@ -120,6 +130,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_0eanl")
+}],
+"loop": false,
+"name": &"fall",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ohvm5")
 }, {
 "duration": 1.0,
@@ -146,6 +164,14 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hqrom")
+}],
+"loop": false,
+"name": &"jump",
+"speed": 1.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -190,7 +216,7 @@ sprite = NodePath("../../_Visual/AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=223390280]
 sprite_frames = SubResource("SpriteFrames_wcm5h")
-animation = &"run"
+animation = &"jump"
 autoplay = "idle"
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1704093712]

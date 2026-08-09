@@ -105,3 +105,7 @@ func _update_state() -> void:
 
 func get_state() -> MovementState.Type:
 	return state
+
+
+func get_move_direction() -> float:
+	return input_component.get_move_input()
