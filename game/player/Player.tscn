@@ -5,10 +5,62 @@
 [ext_resource type="Script" uid="uid://b8d0ic1ruenbv" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
 [ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 [ext_resource type="PackedScene" uid="uid://dw0034q76e7uc" path="res://framework/components/InputComponent.tscn" id="4_o4naa"]
+[ext_resource type="PackedScene" uid="uid://42qrwi3e4pef" path="res://framework/components/AnimationComponent.tscn" id="6_lg056"]
+[ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="7_8cf8e"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
 metadata/_custom_type_script = "uid://b8d0ic1ruenbv"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8cf8e"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcm5h"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7uqf"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b51sn"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b72hb"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3q1ya"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wcm5h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8cf8e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wcm5h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7uqf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b51sn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b72hb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3q1ya")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
 
 [node name="Player" type="Node2D" unique_id=1125850162]
 script = ExtResource("1_wv0h6")
@@ -22,6 +74,12 @@ config = SubResource("Resource_lg056")
 
 [node name="InputComponent" parent="_Components" unique_id=1425814966 instance=ExtResource("4_o4naa")]
 
+[node name="AnimationComponent" parent="_Components" unique_id=876596304 node_paths=PackedStringArray("sprite") instance=ExtResource("6_lg056")]
+sprite = NodePath("../../_Visual/AnimatedSprite2D")
+
 [node name="_Visual" type="Node2D" parent="." unique_id=1683290114]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=223390280]
+sprite_frames = SubResource("SpriteFrames_wcm5h")
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1704093712]

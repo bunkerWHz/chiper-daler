@@ -10,6 +10,7 @@ var jump_buffer_timer: float = 0.0
 var move_input: float = 0.0
 
 var body: CharacterBody2D
+var state: MovementState.Type = MovementState.Type.IDLE
 
 func _ready() -> void:
 	if config == null:
@@ -33,8 +34,9 @@ func _physics_process(delta: float) -> void:
 	_update_jump()
 	_update_gravity(delta)
 	_update_jump_cut()
-
+	
 	body.move_and_slide()
+	_update_state()
 	
 
 func _update_gravity(delta):
@@ -85,3 +87,21 @@ func _update_jump():
 func _update_jump_cut():
 	if input_component.is_jump_released() and body.velocity.y < 0.0:
 		body.velocity.y *= config.jump_cut_multiplier
+
+
+
+func _update_state() -> void:
+	if not body.is_on_floor():
+		if body.velocity.y < 0.0:
+			state = MovementState.Type.JUMP
+		else:
+			state = MovementState.Type.FALL
+		return
+
+	if abs(body.velocity.x) > 0.0:
+		state = MovementState.Type.RUN
+	else:
+		state = MovementState.Type.IDLE
+
+func get_state() -> MovementState.Type:
+	return state
