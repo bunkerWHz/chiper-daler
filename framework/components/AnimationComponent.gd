@@ -1,14 +1,30 @@
 extends Component
 class_name AnimationComponent
 
-@export var sprite: AnimatedSprite2D
+var sprite: AnimatedSprite2D
 var movement_component: MovementComponent
+var current_state: AnimationState.Type = AnimationState.Type.IDLE
 
 func _ready() -> void:
 	movement_component = actor.get_component(MovementComponent)
+
 	if movement_component == null:
 		push_error("AnimationComponent requires MovementComponent")
-		
+		return
+
+	var body_component: CharacterBodyComponent = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+
+	if body_component == null:
+		push_error("AnimationComponent requires CharacterBodyComponent")
+		return
+
+	var body := body_component.get_body()
+
+	if body == null:
+		push_error("AnimationComponent requires CharacterBody2D")
+		return
+
+	sprite = body.get_node("_Visual/AnimatedSprite2D")	
 		
 func _update_facing() -> void:
 	var direction := movement_component.get_move_direction()
@@ -17,26 +33,58 @@ func _update_facing() -> void:
 		sprite.flip_h = false
 	elif direction < 0.0:
 		sprite.flip_h = true
+		
+func _change_state(new_state: AnimationState.Type) -> void:
+	if current_state == new_state:
+		return
+
+	current_state = new_state
+
+	match current_state:
+		AnimationState.Type.IDLE:
+			_play_animation("idle")
+
+		AnimationState.Type.RUN:
+			_play_animation("run")
+
+		AnimationState.Type.JUMP:
+			_play_animation("jump")
+
+		AnimationState.Type.FALL:
+			_play_animation("fall")
+	
+func _play_animation(animation_name: StringName) -> void:
+	if sprite.animation != animation_name:
+		sprite.play(animation_name)
+
+func _get_animation_state(
+	movement_state: MovementState.Type
+) -> AnimationState.Type:
+
+	match movement_state:
+		MovementState.Type.IDLE:
+			return AnimationState.Type.IDLE
+
+		MovementState.Type.RUN:
+			return AnimationState.Type.RUN
+
+		MovementState.Type.JUMP:
+			return AnimationState.Type.JUMP
+
+		MovementState.Type.FALL:
+			return AnimationState.Type.FALL
+
+	return AnimationState.Type.IDLE
 
 func _process(_delta: float) -> void:
 	if movement_component == null:
 		return
 	_update_facing()
 	
-	var state := movement_component.get_state()
+	var movement_state := movement_component.get_state()
+	var animation_state := _get_animation_state(movement_state)
 
-	match state:
-		MovementState.Type.IDLE:
-			_update_idle()
-
-		MovementState.Type.RUN:
-			_update_run()
-
-		MovementState.Type.JUMP:
-			_update_jump()
-
-		MovementState.Type.FALL:
-			_update_fall()
+	_change_state(animation_state)
 
 func _update_idle() -> void:
 	if sprite.animation != "idle":
