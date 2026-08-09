@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dw0034q76e7uc" path="res://framework/components/InputComponent.tscn" id="4_o4naa"]
 [ext_resource type="PackedScene" uid="uid://42qrwi3e4pef" path="res://framework/components/AnimationComponent.tscn" id="6_lg056"]
 [ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="7_8cf8e"]
+[ext_resource type="Texture2D" uid="uid://cdnbnpoxjui65" path="res://assets/Warrior_Idle.png" id="7_wcm5h"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -36,6 +37,62 @@ region = Rect2(768, 0, 192, 192)
 atlas = ExtResource("7_8cf8e")
 region = Rect2(960, 0, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ohvm5"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_txqmf"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bp8ig"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptk05"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fuwly"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0khln"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8oup8"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qa6a8"]
+atlas = ExtResource("7_wcm5h")
+region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_82tp1"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cev7"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xvu62"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t8syf"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bc0o5"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wejqe"]
+atlas = ExtResource("7_8cf8e")
+region = Rect2(960, 0, 192, 192)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_wcm5h"]
 animations = [{
 "frames": [{
@@ -60,6 +117,58 @@ animations = [{
 "loop": true,
 "name": &"default",
 "speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ohvm5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_txqmf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bp8ig")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ptk05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fuwly")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0khln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8oup8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qa6a8")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_82tp1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5cev7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xvu62")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t8syf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bc0o5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wejqe")
+}],
+"loop": true,
+"name": &"run",
+"speed": 6.0
 }]
 
 [node name="Player" type="Node2D" unique_id=1125850162]
@@ -81,5 +190,7 @@ sprite = NodePath("../../_Visual/AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=223390280]
 sprite_frames = SubResource("SpriteFrames_wcm5h")
+animation = &"run"
+autoplay = "idle"
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1704093712]
