@@ -7,6 +7,5 @@ class_name InteractableComponent
 func _ready() -> void:
 	add_to_group("interactable")
 
-
 func interact() -> void:
 	print(interaction_name)

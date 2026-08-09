@@ -9,7 +9,7 @@ size = Vector2(400, 10)
 [node name="MovementSandbox" type="Node2D" unique_id=373401185]
 
 [node name="Player" parent="." unique_id=1125850162 instance=ExtResource("1_ff7wc")]
-position = Vector2(331, 371)
+position = Vector2(36, 303)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1257601977]
 position = Vector2(384, 388)
