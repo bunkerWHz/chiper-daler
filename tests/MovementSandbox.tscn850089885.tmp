@@ -9,7 +9,7 @@ size = Vector2(400, 10)
 [node name="MovementSandbox" type="Node2D" unique_id=373401185]
 
 [node name="Player" parent="." unique_id=1125850162 instance=ExtResource("1_ff7wc")]
-position = Vector2(331, 371)
+position = Vector2(246, 357)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1257601977]
 position = Vector2(384, 388)
@@ -30,7 +30,7 @@ position = Vector2(828, 459)
 shape = SubResource("RectangleShape2D_floor")
 
 [node name="TestInteractable" parent="." unique_id=1068066335 instance=ExtResource("2_2noc4")]
-position = Vector2(322, 373)
+position = Vector2(383, 320)
 
 [node name="TestInteractable2" parent="." unique_id=1678913942 instance=ExtResource("2_2noc4")]
-position = Vector2(765, 388)
+position = Vector2(538, 319)

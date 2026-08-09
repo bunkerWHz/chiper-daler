@@ -13,8 +13,7 @@ func _ready() -> void:
 func can_interact() -> bool:
 	return false
 
-func interact() -> void:
-	pass
+
 
 func _process(_delta: float) -> void:
 	if input_component == null:
@@ -22,3 +21,33 @@ func _process(_delta: float) -> void:
 
 	if input_component.is_interact_pressed():
 		interact()
+
+
+
+func find_nearest_interactable() -> InteractableComponent:
+	var nearest: InteractableComponent = null
+	var nearest_distance: float = interaction_distance
+
+	for node in get_tree().get_nodes_in_group("interactable"):
+		if not node is InteractableComponent:
+			continue
+
+		var interactable: InteractableComponent = node as InteractableComponent
+
+		var distance: float = actor.global_position.distance_to(
+			interactable.actor.global_position
+		)
+
+		if distance <= nearest_distance:
+			nearest = interactable
+			nearest_distance = distance
+
+	return nearest
+
+func interact() -> void:
+	var interactable: InteractableComponent = find_nearest_interactable()
+
+	if interactable == null:
+		return
+
+	interactable.interact()
