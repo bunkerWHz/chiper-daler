@@ -3,7 +3,7 @@ class_name InputComponent
 
 var move_input: float = 0.0
 var jump_requested: bool = false
-
+var interact_pressed: bool = false
 var provider: InputProvider
 
 func get_move_input() -> float:
@@ -19,9 +19,13 @@ func consume_jump_request() -> bool:
 func is_jump_released() -> bool:
 	return Input.is_action_just_released("jump")
 	
+func is_interact_pressed() -> bool:
+	return interact_pressed
+	
 func _physics_process(_delta: float) -> void:
 	move_input = Input.get_axis("move_left", "move_right")
-
+	interact_pressed = Input.is_action_just_pressed("interact")
+	
 	if Input.is_action_just_pressed("jump"):
 		jump_requested = true
 	
