@@ -4,6 +4,8 @@ class_name InputComponent
 var move_input: float = 0.0
 var jump_requested: bool = false
 
+var provider: InputProvider
+
 func get_move_input() -> float:
 	return move_input
 	
