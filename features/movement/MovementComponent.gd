@@ -4,12 +4,13 @@ class_name MovementComponent
 
 var input_component: InputComponent
 var body_component: CharacterBodyComponent
-
 var coyote_timer: float = 0.0
 var jump_buffer_timer: float = 0.0
 var move_input: float = 0.0
 
-var body: CharacterBody2D
+var body: CharacterBody2D:
+	get:
+		return body_component.get_body()
 var state: MovementState.Type = MovementState.Type.IDLE
 
 func _ready() -> void:
@@ -20,7 +21,6 @@ func _ready() -> void:
 	if body_component == null:
 		push_error("MovementComponent requires CharacterBodyComponent")
 		return
-	body = body_component.get_body()
 	input_component = actor.get_component(InputComponent)
 	if input_component == null:
 		push_error("MovementComponent requires InputComponent")
@@ -28,6 +28,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
 	_update_horizontal_velocity(delta)
@@ -35,7 +36,7 @@ func _physics_process(delta: float) -> void:
 	_update_gravity(delta)
 	_update_jump_cut()
 	
-	body.move_and_slide()
+	body_component.move()
 	_update_state()
 	
 
@@ -91,7 +92,7 @@ func _update_jump_cut():
 
 
 func _update_state() -> void:
-	if not body.is_on_floor():
+	if not body_component.is_on_floor():
 		if body.velocity.y < 0.0:
 			state = MovementState.Type.JUMP
 		else:

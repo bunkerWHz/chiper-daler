@@ -12,19 +12,10 @@ func _ready() -> void:
 		push_error("AnimationComponent requires MovementComponent")
 		return
 
-	var body_component: CharacterBodyComponent = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+	sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
 
-	if body_component == null:
-		push_error("AnimationComponent requires CharacterBodyComponent")
-		return
-
-	var body := body_component.get_body()
-
-	if body == null:
-		push_error("AnimationComponent requires CharacterBody2D")
-		return
-
-	sprite = body.get_node("_Visual/AnimatedSprite2D")	
+	if sprite == null:
+		push_error("AnimationComponent requires AnimatedSprite2D")
 		
 func _update_facing() -> void:
 	var direction := movement_component.get_move_direction()
