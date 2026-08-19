@@ -200,25 +200,10 @@ animations = [{
 "speed": 6.0
 }]
 
-[node name="Player" type="Node2D" unique_id=1125850162]
+[node name="Player" type="Node2D" unique_id=2130954343]
 script = ExtResource("1_wv0h6")
 
-[node name="_UI" type="Control" parent="." unique_id=951059748]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="InteractionPrompt" type="Label" parent="_UI" unique_id=2006287519]
-visible = false
-layout_mode = 0
-offset_left = -37.0
-offset_top = -104.0
-offset_right = 25.0
-offset_bottom = -81.0
-text = "Interact"
-
-[node name="_Components" type="Node2D" parent="." unique_id=713938611]
+[node name="_Components" type="Node2D" parent="." unique_id=939943652]
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")
@@ -231,21 +216,20 @@ config = SubResource("Resource_lg056")
 
 [node name="CameraComponent" parent="_Components" unique_id=1289643820 instance=ExtResource("7_b72hb")]
 
-[node name="InteractionComponent" type="Node" parent="_Components" unique_id=1412652068]
+[node name="InteractionComponent" type="Node" parent="_Components" unique_id=723174944]
 script = ExtResource("8_wcm5h")
 metadata/_custom_type_script = "uid://dp21630edm43i"
 
-[node name="InteractionPromptComponent" type="Node" parent="_Components" unique_id=705743299 node_paths=PackedStringArray("prompt")]
+[node name="InteractionPromptComponent" type="Node" parent="_Components" unique_id=672854637]
 script = ExtResource("9_o7uqf")
-prompt = NodePath("../../_UI/InteractionPrompt")
 metadata/_custom_type_script = "uid://bcwnhbaqj47sg"
 
-[node name="_Sockets" type="Node2D" parent="." unique_id=1704093712]
+[node name="_Sockets" type="Node2D" parent="." unique_id=2023322398]
 
-[node name="_Visual" type="Node2D" parent="." unique_id=1017942151]
+[node name="_Visual" type="Node2D" parent="." unique_id=1989155464]
 position = Vector2(3, -22)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=1680344997]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=1165928745]
 sprite_frames = SubResource("SpriteFrames_wcm5h")
 animation = &"jump"
 autoplay = "idle"
