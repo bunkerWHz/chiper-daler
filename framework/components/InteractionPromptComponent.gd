@@ -46,8 +46,9 @@ func _process(_delta: float) -> void:
 
 	prompt.visible = true
 	prompt.text = target.interaction_name
+	
 	var world_position := target.actor.global_position
-	prompt.position = camera.get_screen_center_position() + (
+	prompt.position = camera.get_screen_center_position() - (
 		world_position - camera.global_position )
 
 

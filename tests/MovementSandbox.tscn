@@ -24,7 +24,7 @@ position = Vector2(-23, 346)
 shape = SubResource("RectangleShape2D_floor")
 
 [node name="Floor2" type="StaticBody2D" parent="." unique_id=1450572539]
-position = Vector2(828, 459)
+position = Vector2(798, 450)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor2" unique_id=59729505]
 shape = SubResource("RectangleShape2D_floor")
@@ -33,7 +33,7 @@ shape = SubResource("RectangleShape2D_floor")
 position = Vector2(322, 373)
 
 [node name="TestInteractable2" parent="." unique_id=1678913942 instance=ExtResource("2_2noc4")]
-position = Vector2(765, 388)
+position = Vector2(778, 403)
 
 [node name="UI" type="Control" parent="." unique_id=1822815638]
 layout_mode = 3
@@ -43,8 +43,7 @@ offset_bottom = 40.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=1008580189]
 
-[node name="InteractionPrompt" type="Label" parent="UI/CanvasLayer" unique_id=2006287519]
-visible = false
+[node name="InteractionPrompt" type="Label" parent="UI/CanvasLayer" unique_id=2006287519 groups=["interaction_prompt"]]
 offset_left = -1.0
 offset_top = 199.0
 offset_right = 61.0
