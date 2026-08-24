@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cawh0yi71n2l"]
+
+[ext_resource type="Script" uid="uid://dlnsttnujkvn8" path="res://Tests/testChest.gd" id="1_1th8g"]
+[ext_resource type="Script" uid="uid://msb0mnd7fg37" path="res://framework/components/InteractableComponent.gd" id="2_100jw"]
+
+[node name="TestChest" type="Node2D" unique_id=322226709]
+script = ExtResource("1_1th8g")
+
+[node name="_Components" type="Node2D" parent="." unique_id=2033154497]
+
+[node name="InteractableComponent" type="Node" parent="_Components" unique_id=1432427161]
+script = ExtResource("2_100jw")
+interaction_name = "Open Chest"
+metadata/_custom_type_script = "uid://msb0mnd7fg37"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=829561380]

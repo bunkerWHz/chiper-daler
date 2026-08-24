@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://b48nrgcygf2cm" path="res://game/player/Player.tscn" id="1_ff7wc"]
 [ext_resource type="PackedScene" uid="uid://bk0qtgskbli0b" path="res://tests/TestInteractable.tscn" id="2_2noc4"]
+[ext_resource type="PackedScene" uid="uid://cawh0yi71n2l" path="res://tests/TestChest.tscn" id="3_v0veu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 10)
@@ -50,3 +51,6 @@ offset_right = 61.0
 offset_bottom = 222.0
 size_flags_horizontal = 4
 text = "Interact"
+
+[node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
+position = Vector2(471, 370)
