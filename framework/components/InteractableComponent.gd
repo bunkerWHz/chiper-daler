@@ -9,3 +9,6 @@ func _ready() -> void:
 
 func interact() -> void:
 	print(interaction_name)
+
+func can_interact() -> bool:
+	return true
