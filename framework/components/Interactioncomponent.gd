@@ -54,6 +54,9 @@ func interact() -> void:
 	if current_target == null:
 		return
 
+	if not current_target.can_interact():
+		return
+
 	current_target.interact()
 
 
