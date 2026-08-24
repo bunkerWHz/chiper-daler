@@ -1,7 +1,7 @@
 extends Component
 class_name InteractionPromptComponent
 
-@export var offset: Vector2 = Vector2(0.0, -32.0)
+@export var offset: Vector2 = Vector2(0.0, -48.0)
 
 var prompt: Label
 var camera: Camera2D
