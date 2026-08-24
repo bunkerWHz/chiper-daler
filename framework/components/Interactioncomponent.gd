@@ -36,8 +36,9 @@ func find_nearest_interactable() -> InteractableComponent:
 	for node in get_tree().get_nodes_in_group("interactable"):
 		if not node is InteractableComponent:
 			continue
-
 		var interactable: InteractableComponent = node as InteractableComponent
+		if not interactable.can_interact():
+			continue
 
 		var distance: float = actor.global_position.distance_to(
 			interactable.actor.global_position
@@ -46,7 +47,7 @@ func find_nearest_interactable() -> InteractableComponent:
 		if distance <= nearest_distance:
 			nearest = interactable
 			nearest_distance = distance
-
+	
 	return nearest
 
 

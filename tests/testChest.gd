@@ -6,6 +6,13 @@ class_name TestChest
 	as InteractableComponent
 )
 
+enum State {
+	CLOSED,
+	OPEN
+}
+
+var state: State = State.CLOSED
+
 func _ready() -> void:
 	if interactable == null:
 		push_error("TestChest requires InteractableComponent")
@@ -14,4 +21,10 @@ func _ready() -> void:
 	interactable.interacted.connect(_on_interacted)
 
 func _on_interacted() -> void:
+	print("Interaction. Current state: ", State.keys()[state])
+	if state == State.OPEN:
+		return
+
+	state = State.OPEN
+	interactable.disable_interaction()
 	print("Chest opened")
