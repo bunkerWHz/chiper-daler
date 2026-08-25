@@ -450,6 +450,12 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	var visual := Node2D.new()
 	visual.name = "_Visual"
 	actor.add_child(visual)
+	var telegraph_visual := Node2D.new()
+	telegraph_visual.name = "Body"
+	visual.add_child(telegraph_visual)
+	var health_bar := Node2D.new()
+	health_bar.name = "HealthBar"
+	visual.add_child(health_bar)
 
 	var hitbox := HitboxComponent.new()
 	var hitbox_area := Area2D.new()
@@ -468,6 +474,7 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	var enemy_config := EnemyAttackConfig.new()
 	enemy_config.windup_duration = 0.2
 	enemy_attack.config = enemy_config
+	enemy_attack.visual_path = ^"_Visual/Body"
 	var detection_area := Area2D.new()
 	detection_area.name = "DetectionArea2D"
 	var detection_shape := CollisionShape2D.new()
@@ -497,13 +504,15 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	enemy_attack._process(0.1)
 	assert_false(attack.is_attacking())
 	assert_true(enemy_attack.is_winding_up())
-	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
+	assert_eq(telegraph_visual.modulate, enemy_config.telegraph_modulate)
+	assert_eq(health_bar.modulate, Color.WHITE)
 
 	enemy_attack._on_area_exited(target_area)
 	assert_false(enemy_attack.has_target())
 	assert_false(enemy_attack.is_winding_up())
 	assert_false(attack.is_attacking())
-	assert_eq(visual.modulate, Color.WHITE)
+	assert_eq(telegraph_visual.modulate, Color.WHITE)
+	assert_eq(health_bar.modulate, Color.WHITE)
 
 	enemy_attack._on_area_entered(target_area)
 	enemy_attack._process(0.1)
@@ -514,7 +523,7 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	assert_false(enemy_attack.is_enabled)
 	assert_false(enemy_attack.is_winding_up())
 	assert_false(attack.is_attacking())
-	assert_eq(visual.modulate, Color.WHITE)
+	assert_eq(telegraph_visual.modulate, Color.WHITE)
 	assert_eq(enemy_attack.process_mode, Node.PROCESS_MODE_INHERIT)
 
 	hit_stun._process(hit_stun_config.duration)
@@ -524,16 +533,17 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 
 	enemy_attack._process(0.1)
 	assert_false(attack.is_attacking())
-	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
+	assert_eq(telegraph_visual.modulate, enemy_config.telegraph_modulate)
+	assert_eq(health_bar.modulate, Color.WHITE)
 
 	enemy_attack._process(0.1)
 	assert_true(attack.is_attacking())
-	assert_eq(visual.modulate, Color.WHITE)
+	assert_eq(telegraph_visual.modulate, Color.WHITE)
 
 	attack._process(attack_config.active_duration)
 	enemy_attack._process(0.1)
 	assert_eq(enemy_attack._windup_target, null)
-	assert_eq(visual.modulate, Color.WHITE)
+	assert_eq(telegraph_visual.modulate, Color.WHITE)
 
 
 func test_hit_stun_interrupts_and_restores_attack() -> void:

@@ -60,6 +60,7 @@ config = SubResource("EnemyMovementConfig_default")
 [node name="EnemyGroundSensorComponent" parent="_Components" instance=ExtResource("19_ground_sensor")]
 
 [node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("11_enemy_attack")]
+visual_path = NodePath("_Visual/Placeholder")
 
 [node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("17_chase")]
 
