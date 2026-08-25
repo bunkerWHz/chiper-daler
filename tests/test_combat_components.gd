@@ -827,6 +827,14 @@ func test_enemy_jump_uses_configured_trajectory_reach() -> void:
 	assert_false(jump.can_reach_offset(Vector2(10.0, -100.0)))
 
 
+func test_enemy_jump_requires_a_landing_surface_by_default() -> void:
+	var config := EnemyJumpConfig.new()
+
+	assert_true(config.require_landing_surface)
+	assert_true(config.landing_probe_up >= 0.0)
+	assert_true(config.landing_probe_depth >= 64.0)
+
+
 func test_enemy_patrol_reverses_movement_direction() -> void:
 	var enemy := track(Actor.new()) as Actor
 	var container := Node2D.new()

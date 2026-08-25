@@ -22,7 +22,11 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	if config.jump_velocity <= 0.0 or config.cooldown < 0.0:
+	if (
+		config.jump_velocity <= 0.0
+		or config.cooldown < 0.0
+		or config.landing_probe_depth <= 0.0
+	):
 		push_error("EnemyJumpComponent has an invalid config")
 		disable()
 		return
@@ -88,6 +92,12 @@ func _physics_process(delta: float) -> void:
 	if not target_is_above and not ground_is_unsafe:
 		return
 
+	if (
+		config.require_landing_surface
+		and not _has_landing_surface(target)
+	):
+		return
+
 	_movement_component.set_move_direction(direction)
 
 	if _movement_component.jump(config.jump_velocity):
@@ -119,3 +129,21 @@ func can_reach_offset(offset: Vector2) -> bool:
 
 func is_on_cooldown() -> bool:
 	return _cooldown_timer > 0.0
+
+
+func _has_landing_surface(target: HurtboxComponent) -> bool:
+	var excluded_body := RID()
+	var target_body_component := (
+		target.actor.get_component(CharacterBodyComponent)
+		as CharacterBodyComponent
+	)
+
+	if target_body_component != null and target_body_component.is_enabled:
+		excluded_body = target_body_component.get_body().get_rid()
+
+	return _ground_sensor.has_floor_at(
+		target.actor.global_position,
+		config.landing_probe_up,
+		config.landing_probe_depth,
+		excluded_body
+	)

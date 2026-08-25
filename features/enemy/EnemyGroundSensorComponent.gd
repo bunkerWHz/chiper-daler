@@ -73,6 +73,33 @@ func is_direction_safe(direction: float) -> bool:
 	return not has_wall(direction) and has_floor_ahead(direction)
 
 
+func has_floor_at(
+	world_position: Vector2,
+	check_up: float,
+	check_depth: float,
+	excluded_body: RID = RID()
+) -> bool:
+	if not is_enabled or _floor_ray == null or check_depth <= 0.0:
+		return false
+
+	var exclusions: Array[RID] = [_body_component.get_body().get_rid()]
+
+	if excluded_body.is_valid() and not exclusions.has(excluded_body):
+		exclusions.append(excluded_body)
+
+	var query := PhysicsRayQueryParameters2D.create(
+		world_position + Vector2.UP * maxf(check_up, 0.0),
+		world_position + Vector2.DOWN * check_depth,
+		_floor_ray.collision_mask,
+		exclusions
+	)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+
+	var world := _body_component.get_body().get_world_2d()
+	return not world.direct_space_state.intersect_ray(query).is_empty()
+
+
 func _update_floor_ray(direction: float) -> void:
 	_floor_ray.position.x = signf(direction) * config.ledge_check_distance
 	_floor_ray.target_position = Vector2(0.0, config.floor_check_depth)
