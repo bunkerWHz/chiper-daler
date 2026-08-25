@@ -341,6 +341,44 @@ func test_enemy_attack_restores_movement_after_knockback() -> void:
 	assert_eq(movement.get_move_direction(), -1.0)
 
 
+func test_hit_stun_interrupts_and_restores_attack() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	container.add_child(hitbox)
+
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	container.add_child(attack)
+
+	var hit_stun := HitStunComponent.new()
+	var stun_config := HitStunConfig.new()
+	stun_config.duration = 0.2
+	hit_stun.config = stun_config
+	container.add_child(hit_stun)
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	assert_true(attack.attack())
+	assert_true(area.monitoring)
+	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
+	assert_true(hit_stun.is_stunned())
+	assert_false(attack.is_enabled)
+	assert_false(area.monitoring)
+
+	hit_stun._process(stun_config.duration)
+
+	assert_false(hit_stun.is_stunned())
+	assert_true(attack.is_enabled)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

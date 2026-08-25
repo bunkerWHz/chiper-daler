@@ -79,6 +79,19 @@ func is_attacking() -> bool:
 	return _active_timer > 0.0
 
 
+func disable() -> void:
+	var was_attacking := is_attacking()
+	_active_timer = 0.0
+
+	if _hitbox_component != null:
+		_hitbox_component.deactivate()
+
+	if was_attacking:
+		attack_finished.emit()
+
+	super.disable()
+
+
 func _finish_attack() -> void:
 	_hitbox_component.deactivate()
 	attack_finished.emit()

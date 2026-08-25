@@ -9,10 +9,14 @@ const INVULNERABILITY_COMPONENT_SCRIPT := preload(
 const KNOCKBACK_COMPONENT_SCRIPT := preload(
 	"res://features/combat/KnockbackComponent.gd"
 )
+const HIT_STUN_COMPONENT_SCRIPT := preload(
+	"res://features/combat/HitStunComponent.gd"
+)
 
 var _health_component: HealthComponent
 var _invulnerability_component: Component
 var _knockback_component: Component
+var _hit_stun_component: Component
 
 
 func on_initialize() -> void:
@@ -42,6 +46,14 @@ func on_initialize() -> void:
 	if _knockback_component != null and not _knockback_component.is_enabled:
 		_knockback_component = null
 
+	_hit_stun_component = (
+		actor.get_component(HIT_STUN_COMPONENT_SCRIPT)
+		as Component
+	)
+
+	if _hit_stun_component != null and not _hit_stun_component.is_enabled:
+		_hit_stun_component = null
+
 
 func receive_hit(hit: HitData) -> float:
 	if not is_enabled or _health_component == null:
@@ -67,6 +79,9 @@ func receive_hit(hit: HitData) -> float:
 
 		if _knockback_component != null and _knockback_component.is_enabled:
 			_knockback_component.call("apply_hit", hit)
+
+		if _hit_stun_component != null and _hit_stun_component.is_enabled:
+			_hit_stun_component.call("apply_hit", hit)
 
 		hit_received.emit(hit, applied_damage)
 

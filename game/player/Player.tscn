@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="21_knockback"]
 [ext_resource type="PackedScene" path="res://features/combat/HitStopComponent.tscn" id="22_hit_stop"]
 [ext_resource type="PackedScene" path="res://features/combat/CameraShakeComponent.tscn" id="23_camera_shake"]
+[ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="24_hit_stun"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -259,6 +260,8 @@ script = ExtResource("1_wv0h6")
 config = SubResource("Resource_lg056")
 
 [node name="KnockbackComponent" parent="_Components" instance=ExtResource("21_knockback")]
+
+[node name="HitStunComponent" parent="_Components" instance=ExtResource("24_hit_stun")]
 
 [node name="HealthComponent" parent="_Components" unique_id=1127726964 instance=ExtResource("11_health")]
 

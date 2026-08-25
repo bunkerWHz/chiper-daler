@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/HitStunComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/combat/HitStunConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="HitStunConfig_default"]
+script = ExtResource("2_config")
+
+[node name="HitStunComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("HitStunConfig_default")
