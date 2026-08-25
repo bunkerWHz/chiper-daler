@@ -13,7 +13,7 @@ var body: CharacterBody2D:
 		return body_component.get_body()
 var state: MovementState.Type = MovementState.Type.IDLE
 
-func _ready() -> void:
+func on_initialize() -> void:
 	if config == null:
 		push_error("MovementComponent requires MovementConfig")
 		return

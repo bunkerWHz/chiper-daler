@@ -5,13 +5,14 @@ var sprite: AnimatedSprite2D
 var movement_component: MovementComponent
 var current_state: AnimationState.Type = AnimationState.Type.IDLE
 
-func _ready() -> void:
-	movement_component = actor.get_component(MovementComponent)
+
+func on_initialize() -> void:
+	movement_component = actor.get_component(MovementComponent) as MovementComponent
 
 	if movement_component == null:
 		push_error("AnimationComponent requires MovementComponent")
-		return
-
+		
+func _ready() -> void:
 	sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
 
 	if sprite == null:

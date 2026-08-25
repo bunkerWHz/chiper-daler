@@ -11,7 +11,7 @@ var current_target: InteractableComponent = null
 
 
 
-func _ready() -> void:
+func on_initialize() -> void:
 	input_component = actor.get_component(InputComponent) as InputComponent
 
 	if input_component == null:

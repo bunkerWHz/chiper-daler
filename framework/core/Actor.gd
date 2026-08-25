@@ -12,14 +12,11 @@ func _collect_components() -> void:
 	var container := get_node(COMPONENTS_NODE)
 
 	for child in container.get_children():
-
 		if child is Component:
+			_components.append(child)
 
-			var component := child as Component
-
-			component.initialize(self)
-
-			_components.append(component)
+	for component in _components:
+		component.initialize(self)
 
 func get_component(component_type: Variant) -> Component:
 	for component in _components:
