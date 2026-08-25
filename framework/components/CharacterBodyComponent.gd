@@ -21,6 +21,14 @@ func get_body() -> CharacterBody2D:
 	return body
 
 
+func get_velocity() -> Vector2:
+	return body.velocity
+
+
+func set_velocity(value: Vector2) -> void:
+	body.velocity = value
+
+
 func is_on_floor() -> bool:
 	return body.is_on_floor()
 
