@@ -20,3 +20,7 @@ func consume_interact_pressed() -> bool:
 
 func consume_attack_pressed() -> bool:
 	return false
+
+
+func is_guard_pressed() -> bool:
+	return false

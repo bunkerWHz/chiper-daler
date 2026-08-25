@@ -6,5 +6,6 @@ enum Type {
 	RUN,
 	JUMP,
 	FALL,
-	ATTACK
+	ATTACK,
+	GUARD,
 }

@@ -570,6 +570,36 @@ func test_enemy_patrol_reverses_movement_direction() -> void:
 	assert_eq(movement.get_move_direction(), 1.0)
 
 
+func test_guard_reduces_only_frontal_damage() -> void:
+	var target := _create_target(100.0)
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var guard := GuardComponent.new()
+	var guard_config := GuardConfig.new()
+	guard_config.damage_multiplier = 0.25
+	guard.config = guard_config
+	target.actor.get_node("_Components").add_child(input)
+	target.actor.get_node("_Components").add_child(facing)
+	target.actor.get_node("_Components").add_child(guard)
+	target.actor._collect_components()
+
+	var source := track(Actor.new()) as Actor
+	source.global_position.x = 100.0
+
+	assert_true(guard.start_guard())
+	assert_eq(
+		target.hurtbox.receive_hit(HitData.new(40.0, source)),
+		10.0
+	)
+
+	source.global_position.x = -100.0
+	assert_eq(
+		target.hurtbox.receive_hit(HitData.new(40.0, source)),
+		40.0
+	)
+	assert_eq(target.health.get_current_health(), 50.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

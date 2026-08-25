@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/GuardComponent.gd" id="1_guard"]
+[ext_resource type="Script" path="res://features/combat/GuardConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="GuardConfig_default"]
+script = ExtResource("2_config")
+
+[node name="GuardComponent" type="Node"]
+script = ExtResource("1_guard")
+config = SubResource("GuardConfig_default")

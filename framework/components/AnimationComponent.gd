@@ -5,6 +5,7 @@ var _sprite: AnimatedSprite2D
 var _movement_component: MovementComponent
 var _facing_component: FacingComponent
 var _attack_component: AttackComponent
+var _guard_component: GuardComponent
 var _current_state: AnimationState.Type = AnimationState.Type.IDLE
 var _is_attack_animation_playing: bool = false
 
@@ -40,6 +41,15 @@ func on_initialize() -> void:
 		and not _attack_component.attack_started.is_connected(_on_attack_started)
 	):
 		_attack_component.attack_started.connect(_on_attack_started)
+
+	_guard_component = actor.get_component(GuardComponent) as GuardComponent
+
+	if _guard_component != null and _guard_component.is_enabled:
+		if not _guard_component.guard_started.is_connected(_on_guard_started):
+			_guard_component.guard_started.connect(_on_guard_started)
+
+		if not _guard_component.guard_finished.is_connected(_on_guard_finished):
+			_guard_component.guard_finished.connect(_on_guard_finished)
 		
 func _ready() -> void:
 	_sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
@@ -55,6 +65,15 @@ func _ready() -> void:
 		and not _sprite.sprite_frames.has_animation(&"attack")
 	):
 		push_error("AnimationComponent requires an attack animation")
+		disable()
+		return
+
+	if (
+		_guard_component != null
+		and _guard_component.is_enabled
+		and not _sprite.sprite_frames.has_animation(&"guard")
+	):
+		push_error("AnimationComponent requires a guard animation")
 		disable()
 		return
 
@@ -91,6 +110,9 @@ func _change_state(
 
 		AnimationState.Type.ATTACK:
 			_play_animation("attack")
+
+		AnimationState.Type.GUARD:
+			_play_animation("guard")
 	
 func _play_animation(animation_name: StringName) -> void:
 	if _sprite.animation != animation_name or not _sprite.is_playing():
@@ -124,6 +146,9 @@ func _on_movement_state_changed(
 		return
 
 	if _is_attack_animation_playing:
+		return
+
+	if _guard_component != null and _guard_component.is_guarding():
 		return
 
 	_apply_movement_state(current_movement_state)
@@ -168,4 +193,18 @@ func _on_animation_finished() -> void:
 		return
 
 	_is_attack_animation_playing = false
+	_apply_movement_state(_movement_component.get_state(), true)
+
+
+func _on_guard_started() -> void:
+	if not is_enabled or _is_attack_animation_playing:
+		return
+
+	_change_state(AnimationState.Type.GUARD, true)
+
+
+func _on_guard_finished() -> void:
+	if not is_enabled or _is_attack_animation_playing:
+		return
+
 	_apply_movement_state(_movement_component.get_state(), true)

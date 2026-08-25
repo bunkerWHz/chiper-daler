@@ -68,7 +68,12 @@ func receive_hit(hit: HitData) -> float:
 	):
 		return 0.0
 
-	var applied_damage := _health_component.take_damage(hit.damage)
+	var modified_damage := _apply_damage_modifiers(hit)
+
+	if modified_damage <= 0.0:
+		return 0.0
+
+	var applied_damage := _health_component.take_damage(modified_damage)
 
 	if applied_damage > 0.0:
 		if (
@@ -86,3 +91,19 @@ func receive_hit(hit: HitData) -> float:
 		hit_received.emit(hit, applied_damage)
 
 	return applied_damage
+
+
+func _apply_damage_modifiers(hit: HitData) -> float:
+	var damage := hit.damage
+
+	for component: Component in actor.get_components():
+		if component is DamageModifierComponent and component.is_enabled:
+			damage = (component as DamageModifierComponent).modify_damage(
+				hit,
+				damage
+			)
+
+			if damage <= 0.0:
+				return 0.0
+
+	return damage
