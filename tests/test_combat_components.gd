@@ -152,6 +152,27 @@ func test_damage_number_view_rises_and_fades() -> void:
 	assert_true(absf(view.modulate.a - 0.5) < 0.001)
 
 
+func test_invulnerability_blocks_repeated_damage() -> void:
+	var target := _create_target(100.0)
+	var invulnerability := InvulnerabilityComponent.new()
+	var config := InvulnerabilityConfig.new()
+	config.duration = 0.5
+	invulnerability.config = config
+	target.actor.get_node("_Components").add_child(invulnerability)
+	target.actor._collect_components()
+
+	assert_eq(target.hurtbox.receive_hit(HitData.new(25.0, null)), 25.0)
+	assert_true(invulnerability.is_invulnerable())
+	assert_eq(target.hurtbox.receive_hit(HitData.new(25.0, null)), 0.0)
+	assert_eq(target.health.get_current_health(), 75.0)
+
+	invulnerability._process(config.duration)
+
+	assert_false(invulnerability.is_invulnerable())
+	assert_eq(target.hurtbox.receive_hit(HitData.new(25.0, null)), 25.0)
+	assert_eq(target.health.get_current_health(), 50.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
