@@ -140,6 +140,45 @@ func test_attack_can_be_driven_without_input_or_facing() -> void:
 	assert_true(attack.attack())
 
 
+func test_attack_interrupts_guard_and_guard_resumes_after_attack() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+
+	var attack := AttackComponent.new()
+	var attack_config := AttackConfig.new()
+	attack_config.active_duration = 0.1
+	attack_config.cooldown = 0.1
+	attack.config = attack_config
+
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [input, facing, hitbox, attack, guard]:
+		container.add_child(component)
+
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	assert_true(guard.start_guard())
+	assert_true(attack.attack())
+	assert_false(guard.is_guarding())
+	assert_false(guard.start_guard())
+
+	attack._process(attack_config.active_duration)
+
+	assert_true(guard.start_guard())
+
+
 func test_damage_number_view_rises_and_fades() -> void:
 	var view := track(DamageNumberView.new()) as DamageNumberView
 	var config := DamageNumberConfig.new()
