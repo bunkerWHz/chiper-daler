@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="16_faction"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyChaseComponent.tscn" id="17_chase"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyPatrolComponent.tscn" id="18_patrol"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyGroundSensorComponent.tscn" id="19_ground_sensor"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -55,6 +56,8 @@ position = Vector2(-20, 0)
 [node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
 script = ExtResource("3_movement")
 config = SubResource("EnemyMovementConfig_default")
+
+[node name="EnemyGroundSensorComponent" parent="_Components" instance=ExtResource("19_ground_sensor")]
 
 [node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("11_enemy_attack")]
 

@@ -510,7 +510,9 @@ func test_enemy_chase_moves_toward_hostile_target() -> void:
 	container.add_child(movement)
 
 	var chase := EnemyChaseComponent.new()
-	chase.config = EnemyChaseConfig.new()
+	var chase_config := EnemyChaseConfig.new()
+	chase_config.avoid_unsafe_ground = false
+	chase.config = chase_config
 	container.add_child(chase)
 	enemy._collect_components()
 
@@ -554,6 +556,10 @@ func test_enemy_patrol_reverses_movement_direction() -> void:
 	movement_config.initial_direction = -1.0
 	movement.config = movement_config
 	container.add_child(movement)
+
+	var ground_sensor := EnemyGroundSensorComponent.new()
+	ground_sensor.config = EnemyGroundSensorConfig.new()
+	container.add_child(ground_sensor)
 
 	var patrol := EnemyPatrolComponent.new()
 	patrol.config = EnemyPatrolConfig.new()

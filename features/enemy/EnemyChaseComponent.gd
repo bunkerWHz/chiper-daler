@@ -7,6 +7,7 @@ const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
 
 var _movement_component: EnemyMovementComponent
 var _attack_component: EnemyAttackComponent
+var _ground_sensor: EnemyGroundSensorComponent
 var _detection_area: Area2D
 var _targets: Array[HurtboxComponent] = []
 var _stored_move_direction: float = 0.0
@@ -41,6 +42,16 @@ func on_initialize() -> void:
 
 	if _attack_component != null and not _attack_component.is_enabled:
 		_attack_component = null
+
+	if config.avoid_unsafe_ground:
+		_ground_sensor = (
+			actor.get_component(EnemyGroundSensorComponent)
+			as EnemyGroundSensorComponent
+		)
+
+		if _ground_sensor == null or not _ground_sensor.is_enabled:
+			push_error("EnemyChaseComponent requires EnemyGroundSensorComponent")
+			disable()
 
 
 func _ready() -> void:
@@ -106,8 +117,17 @@ func _process(_delta: float) -> void:
 		target.actor.global_position.x - actor.global_position.x
 	)
 
-	if not is_zero_approx(direction):
-		_movement_component.set_move_direction(direction)
+	if is_zero_approx(direction):
+		return
+
+	if (
+		_ground_sensor != null
+		and not _ground_sensor.is_direction_safe(direction)
+	):
+		_movement_component.stop()
+		return
+
+	_movement_component.set_move_direction(direction)
 
 
 func has_target() -> bool:

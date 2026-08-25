@@ -9,11 +9,3 @@ script = ExtResource("2_config")
 [node name="EnemyPatrolComponent" type="Node2D"]
 script = ExtResource("1_patrol")
 config = SubResource("EnemyPatrolConfig_default")
-
-[node name="FloorRayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(0, 24)
-collision_mask = 1
-
-[node name="WallRayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(16, 0)
-collision_mask = 1
