@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bc62xyppv6kt0"]
+
+[ext_resource type="Script" uid="uid://cfnlpe1yfiptu" path="res://tests/TestLever.gd" id="1_yqn7l"]
+[ext_resource type="Script" uid="uid://msb0mnd7fg37" path="res://framework/components/InteractableComponent.gd" id="2_ca0o5"]
+
+[node name="TestLever" type="Node2D" unique_id=288603096]
+script = ExtResource("1_yqn7l")
+
+[node name="_Components" type="Node2D" parent="." unique_id=1871998155]
+
+[node name="InteractableComponent" type="Node" parent="_Components" unique_id=2143315765]
+script = ExtResource("2_ca0o5")
+interaction_name = "Pull Lever"
+metadata/_custom_type_script = "uid://msb0mnd7fg37"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1775825811]
