@@ -477,6 +477,12 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	enemy_attack.add_child(detection_area)
 	container.add_child(enemy_attack)
 
+	var hit_stun := HitStunComponent.new()
+	var hit_stun_config := HitStunConfig.new()
+	hit_stun_config.duration = 0.2
+	hit_stun.config = hit_stun_config
+	container.add_child(hit_stun)
+
 	actor._collect_components()
 	hitbox._ready()
 	attack._ready()
@@ -490,13 +496,19 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 
 	enemy_attack._process(0.1)
 	assert_false(attack.is_attacking())
+	assert_true(enemy_attack.is_winding_up())
 	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
 
-	enemy_attack.disable()
-	assert_eq(enemy_attack._windup_target, null)
+	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
+	assert_false(enemy_attack.is_enabled)
+	assert_false(enemy_attack.is_winding_up())
+	assert_false(attack.is_attacking())
 	assert_eq(visual.modulate, Color.WHITE)
 	assert_eq(enemy_attack.process_mode, Node.PROCESS_MODE_INHERIT)
-	enemy_attack.enable()
+
+	hit_stun._process(hit_stun_config.duration)
+	assert_true(enemy_attack.is_enabled)
+	assert_true(attack.is_enabled)
 	enemy_attack._on_area_entered(target_area)
 
 	enemy_attack._process(0.1)

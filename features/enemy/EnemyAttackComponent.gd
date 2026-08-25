@@ -118,6 +118,10 @@ func has_target() -> bool:
 	return not _targets.is_empty()
 
 
+func is_winding_up() -> bool:
+	return _windup_target != null
+
+
 func enable() -> void:
 	super.enable()
 	_refresh_targets()
