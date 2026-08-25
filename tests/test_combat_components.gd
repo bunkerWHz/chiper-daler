@@ -578,9 +578,14 @@ func test_guard_reduces_only_frontal_damage() -> void:
 	var guard_config := GuardConfig.new()
 	guard_config.damage_multiplier = 0.25
 	guard.config = guard_config
+	var hit_stun := HitStunComponent.new()
+	var hit_stun_config := HitStunConfig.new()
+	hit_stun_config.duration = 0.2
+	hit_stun.config = hit_stun_config
 	target.actor.get_node("_Components").add_child(input)
 	target.actor.get_node("_Components").add_child(facing)
 	target.actor.get_node("_Components").add_child(guard)
+	target.actor.get_node("_Components").add_child(hit_stun)
 	target.actor._collect_components()
 
 	var source := track(Actor.new()) as Actor
@@ -593,6 +598,8 @@ func test_guard_reduces_only_frontal_damage() -> void:
 		target.hurtbox.receive_hit(front_hit),
 		10.0
 	)
+	assert_true(guard.is_guarding())
+	assert_false(hit_stun.is_stunned())
 
 	source.global_position.x = -100.0
 	assert_true(guard.allows_hit_reactions(HitData.new(40.0, source)))
@@ -600,6 +607,12 @@ func test_guard_reduces_only_frontal_damage() -> void:
 		target.hurtbox.receive_hit(HitData.new(40.0, source)),
 		40.0
 	)
+	assert_true(hit_stun.is_stunned())
+	assert_false(guard.is_enabled)
+	assert_false(guard.is_guarding())
+
+	hit_stun._process(hit_stun_config.duration)
+	assert_true(guard.is_enabled)
 	assert_eq(target.health.get_current_health(), 50.0)
 
 

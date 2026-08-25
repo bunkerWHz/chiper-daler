@@ -57,8 +57,9 @@ func _suspend_combat_components() -> void:
 
 	var attack := actor.get_component(AttackComponent)
 	var enemy_attack := actor.get_component(EnemyAttackComponent)
+	var guard := actor.get_component(GuardComponent)
 
-	for component: Component in [attack, enemy_attack]:
+	for component: Component in [attack, enemy_attack, guard]:
 		if component != null and component.is_enabled:
 			component.disable()
 			_suspended_components.append(component)
