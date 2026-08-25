@@ -7,6 +7,7 @@ var camera: Camera2D
 func _ready() -> void:
 	if config == null:
 		push_error("CameraComponent requires CameraConfig")
+		disable()
 		return
 	
 	var body_component: CharacterBodyComponent = (
@@ -16,18 +17,21 @@ func _ready() -> void:
 
 	if body_component == null:
 		push_error("CameraComponent requires CharacterBodyComponent")
+		disable()
 		return
 
 	var body := body_component.get_body()
 
 	if body == null:
 		push_error("CameraComponent requires CharacterBody2D")
+		disable()
 		return
 
 	camera = body.get_node("Camera2D") as Camera2D
 
 	if camera == null:
 		push_error("CameraComponent requires Camera2D")
+		disable()
 		return
 	
 	camera.enabled = true

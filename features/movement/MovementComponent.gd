@@ -16,14 +16,17 @@ var state: MovementState.Type = MovementState.Type.IDLE
 func on_initialize() -> void:
 	if config == null:
 		push_error("MovementComponent requires MovementConfig")
+		disable()
 		return
 	body_component = actor.get_component(CharacterBodyComponent)
 	if body_component == null:
 		push_error("MovementComponent requires CharacterBodyComponent")
+		disable()
 		return
 	input_component = actor.get_component(InputComponent)
 	if input_component == null:
 		push_error("MovementComponent requires InputComponent")
+		disable()
 		return
 
 

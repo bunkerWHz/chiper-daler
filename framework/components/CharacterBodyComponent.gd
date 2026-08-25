@@ -11,6 +11,7 @@ func _ready() -> void:
 
 	if body == null:
 		push_error("CharacterBodyComponent requires CharacterBody2D")
+		disable()
 
 
 func get_body() -> CharacterBody2D:

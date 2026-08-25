@@ -16,12 +16,14 @@ func _ready() -> void:
 
 	if camera_component == null:
 		push_error("InteractionPromptComponent requires CameraComponent")
+		disable()
 		return
 
 	camera = camera_component.camera
 
 	if camera == null:
 		push_error("InteractionPromptComponent requires Camera2D")
+		disable()
 		return
 
 	interaction_component = (
@@ -31,12 +33,11 @@ func _ready() -> void:
 
 	if interaction_component == null:
 		push_error("InteractionPromptComponent requires InteractionComponent")
+		disable()
 		return
 
 
 func _process(_delta: float) -> void:
-	if interaction_component == null:
-		return
 	if not _find_prompt():
 		return
 

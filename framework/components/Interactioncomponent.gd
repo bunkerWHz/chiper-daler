@@ -16,6 +16,7 @@ func on_initialize() -> void:
 
 	if input_component == null:
 		push_error("InteractionComponent requires InputComponent")
+		disable()
 		return
 
 
@@ -23,9 +24,6 @@ func _process(delta: float) -> void:
 	if cooldown_timer > 0.0:
 		cooldown_timer = max(cooldown_timer - delta, 0.0)
 		
-	if input_component == null:
-		return
-
 	_update_target()
 
 	if input_component.is_interact_pressed():
