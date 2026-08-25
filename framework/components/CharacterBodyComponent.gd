@@ -6,19 +6,12 @@ const BODY_NODE: String = "CharacterBody2D"
 var _body: CharacterBody2D
 
 
-func _ready() -> void:
+func on_initialize() -> void:
 	_body = find_child(BODY_NODE) as CharacterBody2D
 
 	if _body == null:
 		push_error("CharacterBodyComponent requires CharacterBody2D")
 		disable()
-
-
-func get_body() -> CharacterBody2D:
-	if _body == null:
-		_body = find_child(BODY_NODE) as CharacterBody2D
-
-	return _body
 
 
 func get_velocity() -> Vector2:

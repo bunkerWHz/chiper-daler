@@ -11,3 +11,5 @@ metadata/_custom_type_script = "uid://k8gi8p2l8mqi"
 [node name="CameraComponent" type="Node2D" unique_id=1289643820]
 script = ExtResource("1_j1vmb")
 config = SubResource("Resource_q8sf2")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=13171590]

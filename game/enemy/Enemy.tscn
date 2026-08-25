@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://ccakle0tc4uyd"]
+
+[ext_resource type="Script" uid="uid://s10rbldex2dp" path="res://game/enemy/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="2_body"]
+[ext_resource type="Script" uid="uid://03gndoxwykfv" path="res://features/enemy/EnemyMovementComponent.gd" id="3_movement"]
+[ext_resource type="Script" uid="uid://bnlrohpseuej8" path="res://features/enemy/EnemyMovementConfig.gd" id="4_config"]
+[ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="5_health"]
+[ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="6_hurtbox"]
+
+[sub_resource type="Resource" id="EnemyMovementConfig_default"]
+script = ExtResource("4_config")
+initial_direction = -1.0
+
+[node name="Enemy" type="Node2D" unique_id=492946956]
+script = ExtResource("1_enemy")
+
+[node name="_Components" type="Node2D" parent="." unique_id=1342791048]
+
+[node name="CharacterBodyComponent" parent="_Components" unique_id=1881215311 instance=ExtResource("2_body")]
+
+[node name="HealthComponent" parent="_Components" instance=ExtResource("5_health")]
+
+[node name="HurtboxComponent" parent="_Components" instance=ExtResource("6_hurtbox")]
+
+[node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
+script = ExtResource("3_movement")
+config = SubResource("EnemyMovementConfig_default")
+
+[node name="_Visual" type="Node2D" parent="." unique_id=479603879]
+
+[node name="Placeholder" type="Polygon2D" parent="_Visual" unique_id=629312966]
+color = Color(0.8, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]

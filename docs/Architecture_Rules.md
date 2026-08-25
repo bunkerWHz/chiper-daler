@@ -4,7 +4,7 @@ Core Principles
 
 1.  Composition over inheritance.
 2.  Single Responsibility: one component = one responsibility.
-3.  Components must not directly depend on other components.
+3.  Component dependencies are resolved explicitly through the owning Actor.
 4.  Prefer events over direct calls.
 5.  Keep global managers to an absolute minimum.
 6.  New mechanics should be added by composing components, not modifying
@@ -27,7 +27,9 @@ something happened. Data: Tunable configuration without gameplay logic.
 Component Rules
 
 -   One responsibility only.
--   No hard references to sibling components.
+-   Resolve sibling dependencies through `actor.get_component(Type)`.
+-   Validate required dependencies once during initialization.
+-   Avoid circular component dependencies.
 -   Communicate through events or the owning Actor.
 -   No gameplay constants embedded in code.
 -   Components must be optional and removable.
@@ -46,6 +48,23 @@ Actor Signals
     and already has a real consumer.
 -   Do not add generic `changed`, `event`, or message-bus signals.
 -   Signal names describe facts in the past tense.
+
+Camera Follow
+
+-   CameraComponent owns its Camera2D node.
+-   CameraComponent is a child of Actor and follows through scene hierarchy.
+-   CharacterBodyComponent synchronizes the Actor position after movement.
+-   Camera follow does not poll a target and does not depend on movement logic.
+
+Actor Scene Structure
+
+-   `_Components` is Node2D when it contains spatial components that must
+    inherit the Actor transform.
+-   Components use Node unless they own spatial children or transforms.
+-   `_Visual` and `_Sockets` are Node2D branches owned by the Actor scene.
+-   Gameplay behavior stays in components; the Player script stays minimal.
+-   New world actors start from `framework/core/Actor.tscn`.
+-   The Actor template contains no gameplay or test components by default.
 
 Systems
 

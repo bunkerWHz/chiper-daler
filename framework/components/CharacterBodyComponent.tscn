@@ -11,5 +11,3 @@ script = ExtResource("1_wm2ld")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=850418791]
 shape = SubResource("RectangleShape2D_wm2ld")
-
-[node name="Camera2D" type="Camera2D" parent="CharacterBody2D" unique_id=618320332]

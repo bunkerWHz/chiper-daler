@@ -12,8 +12,12 @@
 [ext_resource type="Script" uid="uid://df5k1rqt7k0ak" path="res://framework/components/FacingComponent.gd" id="10_facing"]
 [ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="10_txqmf"]
 [ext_resource type="Texture2D" uid="uid://danne1jtbnxso" path="res://assets/Warrior_Attack2.png" id="11_bp8ig"]
+[ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="11_health"]
+[ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="12_hurtbox"]
 [ext_resource type="Texture2D" uid="uid://cdnbnpoxjui65" path="res://assets/Warrior_Idle.png" id="12_ptk05"]
 [ext_resource type="Texture2D" uid="uid://dowiloriqwj2m" path="res://assets/Warrior_Guard.png" id="13_fuwly"]
+[ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="13_hitbox"]
+[ext_resource type="PackedScene" path="res://framework/debug/DebugOverlayComponent.tscn" id="14_debug"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -206,10 +210,17 @@ script = ExtResource("1_wv0h6")
 
 [node name="_Components" type="Node2D" parent="." unique_id=939943652]
 
+[node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
+
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")
 
-[node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
+[node name="HealthComponent" parent="_Components" unique_id=1127726964 instance=ExtResource("11_health")]
+
+[node name="HurtboxComponent" parent="_Components" unique_id=390170658 instance=ExtResource("12_hurtbox")]
+
+[node name="HitboxComponent" parent="_Components" unique_id=2003695411 instance=ExtResource("13_hitbox")]
+position = Vector2(20, 0)
 
 [node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
 script = ExtResource("10_facing")
@@ -229,6 +240,8 @@ metadata/_custom_type_script = "uid://bcwnhbaqj47sg"
 [node name="InputComponent" type="Node" parent="_Components" unique_id=779958527]
 script = ExtResource("9_ohvm5")
 metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
+
+[node name="DebugOverlayComponent" parent="_Components" unique_id=13741111 instance=ExtResource("14_debug")]
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=2023322398]
 

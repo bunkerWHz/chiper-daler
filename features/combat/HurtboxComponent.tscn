@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/HurtboxComponent.gd" id="1_hurtbox"]
+
+[sub_resource type="RectangleShape2D" id="HurtboxShape"]
+
+[node name="HurtboxComponent" type="Node2D"]
+script = ExtResource("1_hurtbox")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("HurtboxShape")

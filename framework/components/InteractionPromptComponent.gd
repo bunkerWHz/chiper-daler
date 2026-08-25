@@ -19,7 +19,7 @@ func _ready() -> void:
 		disable()
 		return
 
-	camera = camera_component.camera
+	camera = camera_component.get_camera()
 
 	if camera == null:
 		push_error("InteractionPromptComponent requires Camera2D")
@@ -88,7 +88,7 @@ func _get_camera() -> Camera2D:
 		as CameraComponent
 	)
 	if camera_component != null:
-		camera = camera_component.camera
+		camera = camera_component.get_camera()
 
 	return camera
 
