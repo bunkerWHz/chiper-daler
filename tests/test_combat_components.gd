@@ -692,6 +692,35 @@ func test_block_reaction_pulses_and_restores_visual() -> void:
 	assert_true(visual.scale.is_equal_approx(Vector2(1.5, 1.5)))
 
 
+func test_debug_overlay_reports_guard_state() -> void:
+	var target := _create_target(100.0)
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [input, facing, guard]:
+		target.actor.get_node("_Components").add_child(component)
+
+	target.actor._collect_components()
+
+	var overlay := DebugOverlayComponent.new()
+	overlay.actor = target.actor
+	var lines := PackedStringArray()
+	overlay._append_guard_info(lines)
+	assert_true(lines.has("Guard: READY"))
+
+	guard.start_guard()
+	lines.clear()
+	overlay._append_guard_info(lines)
+	assert_true(lines.has("Guard: GUARDING"))
+
+	guard.disable()
+	lines.clear()
+	overlay._append_guard_info(lines)
+	assert_true(lines.has("Guard: DISABLED"))
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

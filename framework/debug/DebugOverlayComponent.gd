@@ -64,6 +64,7 @@ func _update_overlay() -> void:
 	_append_movement_info(lines)
 	_append_interaction_info(lines)
 	_append_health_info(lines)
+	_append_guard_info(lines)
 	_label.text = "\n".join(lines)
 
 
@@ -109,3 +110,17 @@ func _append_health_info(lines: PackedStringArray) -> void:
 			health.get_max_health()
 		]
 	)
+
+
+func _append_guard_info(lines: PackedStringArray) -> void:
+	var guard := actor.get_component(GuardComponent) as GuardComponent
+
+	if guard == null:
+		return
+
+	var status := "DISABLED"
+
+	if guard.is_enabled:
+		status = "GUARDING" if guard.is_guarding() else "READY"
+
+	lines.append("Guard: %s" % status)
