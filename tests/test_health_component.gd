@@ -108,6 +108,34 @@ func test_player_respawn_is_scheduled_once() -> void:
 	assert_eq(_respawn_schedule_count, 1)
 
 
+func test_health_bar_tracks_health_changes() -> void:
+	var health := _create_health(100.0)
+	var view := track(HealthBarView.new()) as HealthBarView
+	view.bind_health(health)
+
+	assert_eq(view.get_displayed_health(), 100.0)
+	assert_eq(view.get_displayed_max_health(), 100.0)
+
+	health.take_damage(25.0)
+
+	assert_eq(view.get_displayed_health(), 75.0)
+	assert_eq(view.get_displayed_max_health(), 100.0)
+
+
+func test_world_health_bar_tracks_health_changes() -> void:
+	var health := _create_health(80.0)
+	var view := track(WorldHealthBarView.new()) as WorldHealthBarView
+	view.bind_health(health)
+
+	assert_eq(view.get_displayed_health(), 80.0)
+	assert_eq(view.get_displayed_max_health(), 80.0)
+
+	health.take_damage(30.0)
+
+	assert_eq(view.get_displayed_health(), 50.0)
+	assert_eq(view.get_displayed_max_health(), 80.0)
+
+
 func _create_health(max_health: float) -> HealthComponent:
 	var actor := track(Actor.new()) as Actor
 	var health := HealthComponent.new()

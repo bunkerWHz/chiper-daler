@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="9_hitbox"]
 [ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="10_attack"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="11_enemy_attack"]
+[ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="12_health_bar"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -46,5 +47,7 @@ config = SubResource("EnemyMovementConfig_default")
 [node name="Placeholder" type="Polygon2D" parent="_Visual" unique_id=629312966]
 color = Color(0.8, 0.2, 0.2, 1)
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]

@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cawh0yi71n2l" path="res://tests/TestChest.tscn" id="3_v0veu"]
 [ext_resource type="PackedScene" uid="uid://bc62xyppv6kt0" path="res://tests/TestLever.tscn" id="4_1ymdb"]
 [ext_resource type="PackedScene" uid="uid://ccakle0tc4uyd" path="res://game/enemy/Enemy.tscn" id="5_6luox"]
+[ext_resource type="PackedScene" path="res://features/health/ui/HealthBarView.tscn" id="6_health_bar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 10)
@@ -53,6 +54,9 @@ offset_right = 61.0
 offset_bottom = 222.0
 size_flags_horizontal = 4
 text = "Interact"
+
+[node name="HealthBarView" parent="UI/CanvasLayer" instance=ExtResource("6_health_bar")]
+actor_path = NodePath("../../../Player")
 
 [node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
 position = Vector2(471, 370)
