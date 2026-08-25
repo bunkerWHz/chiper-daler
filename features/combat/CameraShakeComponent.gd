@@ -7,6 +7,7 @@ signal shake_finished
 @export var config: CameraShakeConfig
 
 var _hitbox_component: HitboxComponent
+var _hurtbox_component: HurtboxComponent
 var _camera_component: CameraComponent
 var _camera: Camera2D
 var _original_offset: Vector2 = Vector2.ZERO
@@ -19,26 +20,50 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	if config.duration <= 0.0 or config.strength <= 0.0:
+	if (
+		config.duration <= 0.0
+		or config.strength <= 0.0
+		or not (config.on_hit_landed or config.on_hit_received)
+	):
 		push_error("CameraShakeComponent has an invalid config")
 		disable()
 		return
 
-	_hitbox_component = actor.get_component(HitboxComponent) as HitboxComponent
 	_camera_component = actor.get_component(CameraComponent) as CameraComponent
-
-	if _hitbox_component == null or not _hitbox_component.is_enabled:
-		push_error("CameraShakeComponent requires an enabled HitboxComponent")
-		disable()
-		return
 
 	if _camera_component == null or not _camera_component.is_enabled:
 		push_error("CameraShakeComponent requires an enabled CameraComponent")
 		disable()
 		return
 
-	if not _hitbox_component.hit_landed.is_connected(_on_hit_landed):
-		_hitbox_component.hit_landed.connect(_on_hit_landed)
+	if config.on_hit_landed:
+		_hitbox_component = actor.get_component(HitboxComponent) as HitboxComponent
+
+		if _hitbox_component == null or not _hitbox_component.is_enabled:
+			push_error(
+				"CameraShakeComponent requires an enabled HitboxComponent"
+			)
+			disable()
+			return
+
+		if not _hitbox_component.hit_landed.is_connected(_on_hit_landed):
+			_hitbox_component.hit_landed.connect(_on_hit_landed)
+
+	if config.on_hit_received:
+		_hurtbox_component = (
+			actor.get_component(HurtboxComponent)
+			as HurtboxComponent
+		)
+
+		if _hurtbox_component == null or not _hurtbox_component.is_enabled:
+			push_error(
+				"CameraShakeComponent requires an enabled HurtboxComponent"
+			)
+			disable()
+			return
+
+		if not _hurtbox_component.hit_received.is_connected(_on_hit_received):
+			_hurtbox_component.hit_received.connect(_on_hit_received)
 
 
 func _process(delta: float) -> void:
@@ -103,6 +128,13 @@ func _exit_tree() -> void:
 
 func _on_hit_landed(
 	_hurtbox: HurtboxComponent,
+	_applied_damage: float
+) -> void:
+	trigger()
+
+
+func _on_hit_received(
+	_hit: HitData,
 	_applied_damage: float
 ) -> void:
 	trigger()

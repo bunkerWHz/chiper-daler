@@ -287,6 +287,7 @@ func test_camera_shake_restores_camera_offset() -> void:
 	var shake_config := CameraShakeConfig.new()
 	shake_config.duration = 0.1
 	shake_config.strength = 3.0
+	shake_config.on_hit_received = false
 	camera_shake.config = shake_config
 	container.add_child(camera_shake)
 	actor._collect_components()
@@ -301,6 +302,40 @@ func test_camera_shake_restores_camera_offset() -> void:
 
 	assert_false(camera_shake.is_shaking())
 	assert_eq(camera.offset, original_offset)
+
+
+func test_camera_shake_triggers_when_owner_is_hit() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	container.add_child(health)
+
+	var hurtbox := HurtboxComponent.new()
+	container.add_child(hurtbox)
+
+	var camera_component := CameraComponent.new()
+	camera_component.config = CameraConfig.new()
+	var camera := Camera2D.new()
+	camera.name = "Camera2D"
+	camera_component.add_child(camera)
+	container.add_child(camera_component)
+
+	var camera_shake := CameraShakeComponent.new()
+	var shake_config := CameraShakeConfig.new()
+	shake_config.on_hit_landed = false
+	shake_config.on_hit_received = true
+	camera_shake.config = shake_config
+	container.add_child(camera_shake)
+	actor._collect_components()
+
+	hurtbox.receive_hit(HitData.new(10.0, null))
+
+	assert_true(camera_shake.is_shaking())
+	camera_shake.stop()
 
 
 func test_enemy_attack_restores_movement_after_knockback() -> void:
