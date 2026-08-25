@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/HitStopComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/combat/HitStopConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="HitStopConfig_default"]
+script = ExtResource("2_config")
+
+[node name="HitStopComponent" type="Node"]
+process_mode = 3
+script = ExtResource("1_component")
+config = SubResource("HitStopConfig_default")

@@ -232,6 +232,35 @@ func test_knockback_applies_hit_velocity() -> void:
 	assert_eq(hit.knockback_velocity, velocity)
 
 
+func test_hit_stop_changes_and_restores_time_scale() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var hitbox := HitboxComponent.new()
+	container.add_child(hitbox)
+
+	var hit_stop := HitStopComponent.new()
+	var config := HitStopConfig.new()
+	config.duration = 0.05
+	config.time_scale = 0.1
+	hit_stop.config = config
+	container.add_child(hit_stop)
+	actor._collect_components()
+
+	var previous_time_scale := Engine.time_scale
+
+	assert_true(hit_stop.trigger())
+	assert_true(hit_stop.is_active())
+	assert_eq(Engine.time_scale, config.time_scale)
+
+	hit_stop.stop()
+
+	assert_false(hit_stop.is_active())
+	assert_eq(Engine.time_scale, previous_time_scale)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
