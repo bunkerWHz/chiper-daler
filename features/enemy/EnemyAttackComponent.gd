@@ -78,6 +78,12 @@ func has_target() -> bool:
 	return not _targets.is_empty()
 
 
+func disable() -> void:
+	_targets.clear()
+	_resume_movement()
+	super.disable()
+
+
 func _on_area_entered(other_area: Area2D) -> void:
 	if not is_enabled:
 		return
@@ -138,7 +144,12 @@ func _resume_movement() -> void:
 	if not _movement_stopped:
 		return
 
-	if _movement_component != null and _movement_component.is_enabled:
-		_movement_component.set_move_direction(_stored_move_direction)
+	if _movement_component == null or not is_instance_valid(_movement_component):
+		_movement_stopped = false
+		return
 
+	if not _movement_component.is_enabled:
+		return
+
+	_movement_component.set_move_direction(_stored_move_direction)
 	_movement_stopped = false

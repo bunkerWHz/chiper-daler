@@ -298,6 +298,49 @@ func test_camera_shake_restores_camera_offset() -> void:
 	assert_eq(camera.offset, original_offset)
 
 
+func test_enemy_attack_restores_movement_after_knockback() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	body.owner = body_component
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	var movement_config := EnemyMovementConfig.new()
+	movement_config.initial_direction = -1.0
+	movement.config = movement_config
+	container.add_child(movement)
+
+	var hitbox := HitboxComponent.new()
+	container.add_child(hitbox)
+
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	container.add_child(attack)
+
+	var enemy_attack := EnemyAttackComponent.new()
+	enemy_attack.config = EnemyAttackConfig.new()
+	container.add_child(enemy_attack)
+	actor._collect_components()
+
+	enemy_attack._stop_movement()
+	assert_eq(movement.get_move_direction(), 0.0)
+
+	movement.disable()
+	enemy_attack._resume_movement()
+	assert_eq(movement.get_move_direction(), 0.0)
+
+	movement.enable()
+	enemy_attack._resume_movement()
+	assert_eq(movement.get_move_direction(), -1.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
