@@ -69,9 +69,15 @@ func test_invalid_hits_are_ignored() -> void:
 
 func test_hit_reaction_changes_and_restores_visual() -> void:
 	var target := _create_target(100.0)
-	var visual := Node2D.new()
-	visual.name = "_Visual"
-	target.actor.add_child(visual)
+	var visual_root := Node2D.new()
+	visual_root.name = "_Visual"
+	target.actor.add_child(visual_root)
+	var body_visual := Node2D.new()
+	body_visual.name = "Body"
+	visual_root.add_child(body_visual)
+	var health_bar := Node2D.new()
+	health_bar.name = "HealthBar"
+	visual_root.add_child(health_bar)
 
 	var reaction := HitReactionComponent.new()
 	var config := HitReactionConfig.new()
@@ -79,6 +85,7 @@ func test_hit_reaction_changes_and_restores_visual() -> void:
 	config.flash_modulate = Color(1.0, 1.0, 1.0, 0.35)
 	config.scale_multiplier = 1.15
 	reaction.config = config
+	reaction.visual_path = ^"_Visual/Body"
 	target.actor.get_node("_Components").add_child(reaction)
 	target.actor._collect_components()
 	reaction._ready()
@@ -86,14 +93,18 @@ func test_hit_reaction_changes_and_restores_visual() -> void:
 	target.hurtbox.receive_hit(HitData.new(10.0, null))
 
 	assert_true(reaction.is_reacting())
-	assert_eq(visual.modulate, config.flash_modulate)
-	assert_eq(visual.scale, Vector2.ONE * config.scale_multiplier)
+	assert_eq(body_visual.modulate, config.flash_modulate)
+	assert_eq(body_visual.scale, Vector2.ONE * config.scale_multiplier)
+	assert_eq(health_bar.modulate, Color.WHITE)
+	assert_eq(health_bar.scale, Vector2.ONE)
 
 	reaction._process(config.duration)
 
 	assert_false(reaction.is_reacting())
-	assert_eq(visual.modulate, Color.WHITE)
-	assert_eq(visual.scale, Vector2.ONE)
+	assert_eq(body_visual.modulate, Color.WHITE)
+	assert_eq(body_visual.scale, Vector2.ONE)
+	assert_eq(health_bar.modulate, Color.WHITE)
+	assert_eq(health_bar.scale, Vector2.ONE)
 
 
 func test_attack_can_be_driven_without_input_or_facing() -> void:

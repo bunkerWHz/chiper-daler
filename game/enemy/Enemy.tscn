@@ -45,6 +45,7 @@ faction = 2
 [node name="DamageNumberComponent" parent="_Components" instance=ExtResource("13_damage_number")]
 
 [node name="HitReactionComponent" parent="_Components" instance=ExtResource("7_reaction")]
+visual_path = NodePath("_Visual/Placeholder")
 
 [node name="DeathComponent" parent="_Components" instance=ExtResource("8_death")]
 
