@@ -56,7 +56,7 @@ func _on_area_entered(other_area: Area2D) -> void:
 
 	var hurtbox := other_area.get_parent() as HurtboxComponent
 
-	if hurtbox == null or hurtbox.actor == actor:
+	if hurtbox == null or hurtbox.actor == actor or not _can_hit(hurtbox):
 		return
 
 	var direction := signf(hurtbox.actor.global_position.x - actor.global_position.x)
@@ -73,3 +73,19 @@ func _on_area_entered(other_area: Area2D) -> void:
 
 	if applied_damage > 0.0:
 		hit_landed.emit(hurtbox, applied_damage)
+
+
+func _can_hit(hurtbox: HurtboxComponent) -> bool:
+	var source_faction := (
+		actor.get_component(CombatFactionComponent)
+		as CombatFactionComponent
+	)
+	var target_faction := (
+		hurtbox.actor.get_component(CombatFactionComponent)
+		as CombatFactionComponent
+	)
+
+	if source_faction == null or target_faction == null:
+		return true
+
+	return source_faction.is_hostile_to(target_faction.faction)

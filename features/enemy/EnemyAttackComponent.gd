@@ -123,7 +123,23 @@ func _is_valid_target(hurtbox: HurtboxComponent) -> bool:
 		return false
 
 	var health := hurtbox.actor.get_component(HealthComponent) as HealthComponent
-	return health != null and health.is_enabled and health.is_alive()
+
+	if health == null or not health.is_enabled or not health.is_alive():
+		return false
+
+	var source_faction := (
+		actor.get_component(CombatFactionComponent)
+		as CombatFactionComponent
+	)
+	var target_faction := (
+		hurtbox.actor.get_component(CombatFactionComponent)
+		as CombatFactionComponent
+	)
+
+	if source_faction == null or target_faction == null:
+		return true
+
+	return source_faction.is_hostile_to(target_faction.faction)
 
 
 func _stop_movement() -> void:

@@ -379,6 +379,51 @@ func test_hit_stun_interrupts_and_restores_attack() -> void:
 	assert_true(attack.is_enabled)
 
 
+func test_hitbox_ignores_allies_and_damages_hostiles() -> void:
+	var attacker := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	attacker.add_child(container)
+
+	var attacker_faction := CombatFactionComponent.new()
+	attacker_faction.faction = CombatFactionComponent.Faction.ENEMY
+	container.add_child(attacker_faction)
+
+	var hitbox := HitboxComponent.new()
+	var hitbox_area := Area2D.new()
+	hitbox_area.name = "Area2D"
+	hitbox.add_child(hitbox_area)
+	container.add_child(hitbox)
+	attacker._collect_components()
+	hitbox._ready()
+
+	var target := _create_target(100.0)
+	var target_faction := CombatFactionComponent.new()
+	target_faction.faction = CombatFactionComponent.Faction.ENEMY
+	target.actor.get_node("_Components").add_child(target_faction)
+	var hurtbox_area := Area2D.new()
+	target.hurtbox.add_child(hurtbox_area)
+	target.actor._collect_components()
+
+	assert_eq(
+		attacker.get_component(CombatFactionComponent),
+		attacker_faction
+	)
+	assert_eq(
+		target.actor.get_component(CombatFactionComponent),
+		target_faction
+	)
+	assert_false(attacker_faction.is_hostile_to(target_faction.faction))
+	assert_false(hitbox._can_hit(target.hurtbox))
+
+	hitbox._on_area_entered(hurtbox_area)
+	assert_eq(target.health.get_current_health(), 100.0)
+
+	target_faction.faction = CombatFactionComponent.Faction.PLAYER
+	hitbox._on_area_entered(hurtbox_area)
+	assert_eq(target.health.get_current_health(), 90.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/HitStopComponent.tscn" id="22_hit_stop"]
 [ext_resource type="PackedScene" path="res://features/combat/CameraShakeComponent.tscn" id="23_camera_shake"]
 [ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="24_hit_stun"]
+[ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="25_faction"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -253,6 +254,9 @@ animations = [{
 script = ExtResource("1_wv0h6")
 
 [node name="_Components" type="Node2D" parent="." unique_id=939943652]
+
+[node name="CombatFactionComponent" parent="_Components" instance=ExtResource("25_faction")]
+faction = 1
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
 

@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="13_damage_number"]
 [ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="14_knockback"]
 [ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="15_hit_stun"]
+[ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="16_faction"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -24,6 +25,9 @@ initial_direction = -1.0
 script = ExtResource("1_enemy")
 
 [node name="_Components" type="Node2D" parent="." unique_id=1342791048]
+
+[node name="CombatFactionComponent" parent="_Components" instance=ExtResource("16_faction")]
+faction = 2
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=1881215311 instance=ExtResource("2_body")]
 
