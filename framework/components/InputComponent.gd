@@ -1,31 +1,54 @@
 extends Component
 class_name InputComponent
 
-var move_input: float = 0.0
-var jump_requested: bool = false
-var interact_pressed: bool = false
-var provider: InputProvider
+const INPUT_PROCESS_PRIORITY := -100
+const MOVE_LEFT_ACTION: StringName = &"move_left"
+const MOVE_RIGHT_ACTION: StringName = &"move_right"
+const JUMP_ACTION: StringName = &"jump"
+const INTERACT_ACTION: StringName = &"interact"
 
-func get_move_input() -> float:
-	return move_input
-	
-func consume_jump_request() -> bool:
-	if not jump_requested:
+var _move_axis: float = 0.0
+var _jump_pressed: bool = false
+var _jump_released: bool = false
+var _interact_pressed: bool = false
+
+
+func _ready() -> void:
+	process_priority = INPUT_PROCESS_PRIORITY
+	process_physics_priority = INPUT_PROCESS_PRIORITY
+
+
+func get_move_axis() -> float:
+	return _move_axis
+
+
+func consume_jump_pressed() -> bool:
+	if not _jump_pressed:
 		return false
 
-	jump_requested = false
+	_jump_pressed = false
 	return true
-	
+
+
 func is_jump_released() -> bool:
-	return Input.is_action_just_released("jump")
-	
-func is_interact_pressed() -> bool:
-	return interact_pressed
-	
+	return _jump_released
+
+
+func consume_interact_pressed() -> bool:
+	if not _interact_pressed:
+		return false
+
+	_interact_pressed = false
+	return true
+
+
+func _process(_delta: float) -> void:
+	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
+
+
 func _physics_process(_delta: float) -> void:
-	move_input = Input.get_axis("move_left", "move_right")
-	interact_pressed = Input.is_action_just_pressed("interact")
-	
-	if Input.is_action_just_pressed("jump"):
-		jump_requested = true
-	
+	_move_axis = Input.get_axis(MOVE_LEFT_ACTION, MOVE_RIGHT_ACTION)
+	_jump_released = Input.is_action_just_released(JUMP_ACTION)
+
+	if Input.is_action_just_pressed(JUMP_ACTION):
+		_jump_pressed = true

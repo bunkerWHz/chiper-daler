@@ -48,7 +48,7 @@ func _update_gravity(delta):
 		body.velocity.y += config.gravity * delta
 
 func _update_horizontal_velocity(delta: float) -> void:
-	var direction := input_component.get_move_input()
+	var direction := input_component.get_move_axis()
 	var target_speed := direction * config.move_speed
 
 	match config.acceleration_mode:
@@ -70,7 +70,7 @@ func _update_horizontal_velocity(delta: float) -> void:
 				)
 
 func _update_jump_buffer(delta):
-	if input_component.consume_jump_request():
+	if input_component.consume_jump_pressed():
 		jump_buffer_timer = config.jump_buffer_time
 
 	elif jump_buffer_timer > 0.0:
@@ -112,4 +112,4 @@ func get_state() -> MovementState.Type:
 
 
 func get_move_direction() -> float:
-	return input_component.get_move_input()
+	return input_component.get_move_axis()

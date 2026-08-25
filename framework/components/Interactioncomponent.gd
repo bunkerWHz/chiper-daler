@@ -26,7 +26,7 @@ func _process(delta: float) -> void:
 		
 	_update_target()
 
-	if input_component.is_interact_pressed():
+	if input_component.consume_interact_pressed():
 		interact()
 
 

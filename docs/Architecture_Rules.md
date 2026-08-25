@@ -38,6 +38,15 @@ Actor Rules
 -   Actor owns lifecycle.
 -   Actor contains almost no gameplay logic.
 
+Actor Signals
+
+-   A signal is owned by the object that produces the event.
+-   Component events stay on their component; Actor does not relay them.
+-   Add an Actor signal only for an event that belongs to the whole Actor
+    and already has a real consumer.
+-   Do not add generic `changed`, `event`, or message-bus signals.
+-   Signal names describe facts in the past tense.
+
 Systems
 
 -   Systems coordinate gameplay across Actors.

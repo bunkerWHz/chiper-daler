@@ -9,8 +9,8 @@ var current_state: AnimationState.Type = AnimationState.Type.IDLE
 func on_initialize() -> void:
 	movement_component = actor.get_component(MovementComponent) as MovementComponent
 
-	if movement_component == null:
-		push_error("AnimationComponent requires MovementComponent")
+	if movement_component == null or not movement_component.is_enabled:
+		push_error("AnimationComponent requires an enabled MovementComponent")
 		disable()
 		
 func _ready() -> void:

@@ -31,8 +31,10 @@ func _ready() -> void:
 		as InteractionComponent
 	)
 
-	if interaction_component == null:
-		push_error("InteractionPromptComponent requires InteractionComponent")
+	if interaction_component == null or not interaction_component.is_enabled:
+		push_error(
+			"InteractionPromptComponent requires an enabled InteractionComponent"
+		)
 		disable()
 		return
 
