@@ -7,7 +7,7 @@ var _body: CharacterBody2D
 
 
 func on_initialize() -> void:
-	_body = find_child(BODY_NODE) as CharacterBody2D
+	_body = get_node_or_null(BODY_NODE) as CharacterBody2D
 
 	if _body == null:
 		push_error("CharacterBodyComponent requires CharacterBody2D")

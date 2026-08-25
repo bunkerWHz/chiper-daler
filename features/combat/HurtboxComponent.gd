@@ -6,9 +6,13 @@ signal hit_received(hit: HitData, applied_damage: float)
 const INVULNERABILITY_COMPONENT_SCRIPT := preload(
 	"res://features/combat/InvulnerabilityComponent.gd"
 )
+const KNOCKBACK_COMPONENT_SCRIPT := preload(
+	"res://features/combat/KnockbackComponent.gd"
+)
 
 var _health_component: HealthComponent
 var _invulnerability_component: Component
+var _knockback_component: Component
 
 
 func on_initialize() -> void:
@@ -29,6 +33,14 @@ func on_initialize() -> void:
 		and not _invulnerability_component.is_enabled
 	):
 		_invulnerability_component = null
+
+	_knockback_component = (
+		actor.get_component(KNOCKBACK_COMPONENT_SCRIPT)
+		as Component
+	)
+
+	if _knockback_component != null and not _knockback_component.is_enabled:
+		_knockback_component = null
 
 
 func receive_hit(hit: HitData) -> float:
@@ -52,6 +64,9 @@ func receive_hit(hit: HitData) -> float:
 			and _invulnerability_component.is_enabled
 		):
 			_invulnerability_component.call("activate")
+
+		if _knockback_component != null and _knockback_component.is_enabled:
+			_knockback_component.call("apply_hit", hit)
 
 		hit_received.emit(hit, applied_damage)
 

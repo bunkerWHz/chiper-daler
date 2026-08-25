@@ -203,6 +203,35 @@ func test_invulnerability_blink_restores_visual() -> void:
 	assert_eq(visual.modulate, Color.WHITE)
 
 
+func test_knockback_applies_hit_velocity() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	body.owner = body_component
+	container.add_child(body_component)
+
+	var knockback := KnockbackComponent.new()
+	var config := KnockbackConfig.new()
+	config.duration = 0.2
+	knockback.config = config
+	container.add_child(knockback)
+	actor._collect_components()
+
+	var velocity := Vector2(180.0, -100.0)
+	var hit := HitData.new(10.0, null, velocity)
+
+	assert_true(knockback.apply_hit(hit))
+	assert_true(knockback.is_knocked_back())
+	assert_eq(body.velocity, velocity)
+	assert_eq(hit.knockback_velocity, velocity)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

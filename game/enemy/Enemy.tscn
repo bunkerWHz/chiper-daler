@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="11_enemy_attack"]
 [ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="12_health_bar"]
 [ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="13_damage_number"]
+[ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="14_knockback"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -24,6 +25,8 @@ script = ExtResource("1_enemy")
 [node name="_Components" type="Node2D" parent="." unique_id=1342791048]
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=1881215311 instance=ExtResource("2_body")]
+
+[node name="KnockbackComponent" parent="_Components" instance=ExtResource("14_knockback")]
 
 [node name="HealthComponent" parent="_Components" instance=ExtResource("5_health")]
 
