@@ -442,6 +442,66 @@ func test_enemy_attack_restores_movement_after_knockback() -> void:
 	assert_eq(movement.get_move_direction(), -1.0)
 
 
+func test_enemy_attack_telegraphs_before_attacking() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+	var visual := Node2D.new()
+	visual.name = "_Visual"
+	actor.add_child(visual)
+
+	var hitbox := HitboxComponent.new()
+	var hitbox_area := Area2D.new()
+	hitbox_area.name = "Area2D"
+	hitbox.add_child(hitbox_area)
+	container.add_child(hitbox)
+
+	var attack := AttackComponent.new()
+	var attack_config := AttackConfig.new()
+	attack_config.active_duration = 0.1
+	attack_config.cooldown = 0.3
+	attack.config = attack_config
+	container.add_child(attack)
+
+	var enemy_attack := EnemyAttackComponent.new()
+	var enemy_config := EnemyAttackConfig.new()
+	enemy_config.windup_duration = 0.2
+	enemy_attack.config = enemy_config
+	var detection_area := Area2D.new()
+	detection_area.name = "DetectionArea2D"
+	var detection_shape := CollisionShape2D.new()
+	detection_shape.name = "CollisionShape2D"
+	detection_shape.shape = RectangleShape2D.new()
+	detection_area.add_child(detection_shape)
+	enemy_attack.add_child(detection_area)
+	container.add_child(enemy_attack)
+
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+	enemy_attack._ready()
+
+	var target := _create_target(100.0)
+	target.actor.global_position.x = 10.0
+	var target_area := Area2D.new()
+	target.hurtbox.add_child(target_area)
+	enemy_attack._on_area_entered(target_area)
+
+	enemy_attack._process(0.1)
+	assert_false(attack.is_attacking())
+	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
+
+	enemy_attack._process(0.1)
+	assert_true(attack.is_attacking())
+	assert_eq(visual.modulate, Color.WHITE)
+
+	attack._process(attack_config.active_duration)
+	enemy_attack._process(0.1)
+	assert_eq(enemy_attack._windup_target, null)
+	assert_eq(visual.modulate, Color.WHITE)
+
+
 func test_hit_stun_interrupts_and_restores_attack() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

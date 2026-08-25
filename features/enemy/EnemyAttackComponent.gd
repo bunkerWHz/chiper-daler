@@ -1,9 +1,14 @@
 extends Component
 class_name EnemyAttackComponent
 
+signal windup_started(target: Actor)
+signal windup_cancelled
+signal windup_finished
+
 const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
 
 @export var config: EnemyAttackConfig
+@export var visual_path: NodePath = ^"_Visual"
 
 var _attack_component: AttackComponent
 var _movement_component: EnemyMovementComponent
@@ -11,6 +16,10 @@ var _detection_area: Area2D
 var _targets: Array[HurtboxComponent] = []
 var _stored_move_direction: float = 0.0
 var _movement_stopped: bool = false
+var _visual: CanvasItem
+var _original_modulate: Color = Color.WHITE
+var _windup_target: HurtboxComponent
+var _windup_timer: float = 0.0
 
 
 func on_initialize() -> void:
@@ -19,8 +28,8 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	if config.attack_range <= 0.0:
-		push_error("EnemyAttackConfig attack_range must be greater than zero")
+	if config.attack_range <= 0.0 or config.windup_duration < 0.0:
+		push_error("EnemyAttackComponent has an invalid config")
 		disable()
 		return
 
@@ -55,6 +64,15 @@ func _ready() -> void:
 		disable()
 		return
 
+	_visual = actor.get_node_or_null(visual_path) as CanvasItem
+
+	if _visual == null:
+		push_error("EnemyAttackComponent requires a CanvasItem visual")
+		disable()
+		return
+
+	_original_modulate = _visual.modulate
+
 	var rectangle := collision_shape.shape as RectangleShape2D
 	rectangle.size = Vector2.ONE * config.attack_range * 2.0
 
@@ -65,22 +83,35 @@ func _ready() -> void:
 		_detection_area.area_exited.connect(_on_area_exited)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_remove_invalid_targets()
 
 	if _targets.is_empty():
+		_cancel_windup()
 		_resume_movement()
 		return
 
 	var target := COMBAT_TARGETING.get_closest_hostile(actor, _targets)
 
 	if target == null:
+		_cancel_windup()
 		_resume_movement()
 		return
 
 	_stop_movement()
 	_face_target(target)
-	_attack_component.attack()
+
+	if _attack_component.is_attacking() or not _attack_component.can_attack():
+		_cancel_windup()
+		return
+
+	if _windup_target != target:
+		_start_windup(target)
+
+	_windup_timer = maxf(_windup_timer - delta, 0.0)
+
+	if _windup_timer == 0.0:
+		_finish_windup()
 
 
 func has_target() -> bool:
@@ -89,6 +120,7 @@ func has_target() -> bool:
 
 func disable() -> void:
 	_targets.clear()
+	_cancel_windup()
 	_resume_movement()
 	super.disable()
 
@@ -112,6 +144,7 @@ func _on_area_exited(other_area: Area2D) -> void:
 		_targets.erase(hurtbox)
 
 	if _targets.is_empty():
+		_cancel_windup()
 		_resume_movement()
 
 
@@ -128,6 +161,42 @@ func _face_target(target: HurtboxComponent) -> void:
 
 	if not is_zero_approx(direction):
 		_attack_component.set_horizontal_direction(direction)
+
+
+func _start_windup(target: HurtboxComponent) -> void:
+	_cancel_windup()
+	_windup_target = target
+	_windup_timer = config.windup_duration
+
+	if _visual != null:
+		_visual.modulate = config.telegraph_modulate
+
+	windup_started.emit(target.actor)
+
+
+func _cancel_windup() -> void:
+	if _windup_target == null:
+		return
+
+	_windup_target = null
+	_windup_timer = 0.0
+
+	if _visual != null:
+		_visual.modulate = _original_modulate
+
+	windup_cancelled.emit()
+
+
+func _finish_windup() -> void:
+	var target := _windup_target
+	_windup_target = null
+	_windup_timer = 0.0
+
+	if _visual != null:
+		_visual.modulate = _original_modulate
+
+	if _is_valid_target(target) and _attack_component.attack():
+		windup_finished.emit()
 
 
 func _is_valid_target(hurtbox: HurtboxComponent) -> bool:

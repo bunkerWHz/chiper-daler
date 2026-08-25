@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 
 
 func attack() -> bool:
-	if not is_enabled or _cooldown_timer > 0.0 or _active_timer > 0.0:
+	if not can_attack():
 		return false
 
 	_active_timer = config.active_duration
@@ -73,6 +73,10 @@ func attack() -> bool:
 	_hitbox_component.activate()
 	attack_started.emit()
 	return true
+
+
+func can_attack() -> bool:
+	return is_enabled and _cooldown_timer <= 0.0 and _active_timer <= 0.0
 
 
 func is_attacking() -> bool:
