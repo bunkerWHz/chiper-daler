@@ -18,10 +18,19 @@
 [ext_resource type="Texture2D" uid="uid://dowiloriqwj2m" path="res://assets/Warrior_Guard.png" id="13_fuwly"]
 [ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="13_hitbox"]
 [ext_resource type="PackedScene" path="res://framework/debug/DebugOverlayComponent.tscn" id="14_debug"]
+[ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="15_attack"]
+[ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="16_death"]
+[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="17_death_config"]
+[ext_resource type="PackedScene" path="res://features/player/PlayerRespawnComponent.tscn" id="18_respawn"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
 metadata/_custom_type_script = "uid://b8d0ic1ruenbv"
+
+[sub_resource type="Resource" id="DeathConfig_player"]
+script = ExtResource("17_death_config")
+duration = 0.4
+remove_actor_on_finish = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8cf8e"]
 atlas = ExtResource("10_txqmf")
@@ -50,6 +59,18 @@ region = Rect2(960, 0, 192, 192)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0eanl"]
 atlas = ExtResource("11_bp8ig")
 region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_2"]
+atlas = ExtResource("11_bp8ig")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_3"]
+atlas = ExtResource("11_bp8ig")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_4"]
+atlas = ExtResource("11_bp8ig")
+region = Rect2(576, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ohvm5"]
 atlas = ExtResource("12_ptk05")
@@ -139,6 +160,23 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0eanl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_4")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0eanl")
 }],
 "loop": false,
 "name": &"fall",
@@ -217,6 +255,11 @@ config = SubResource("Resource_lg056")
 
 [node name="HealthComponent" parent="_Components" unique_id=1127726964 instance=ExtResource("11_health")]
 
+[node name="PlayerRespawnComponent" parent="_Components" instance=ExtResource("18_respawn")]
+
+[node name="DeathComponent" parent="_Components" instance=ExtResource("16_death")]
+config = SubResource("DeathConfig_player")
+
 [node name="HurtboxComponent" parent="_Components" unique_id=390170658 instance=ExtResource("12_hurtbox")]
 
 [node name="HitboxComponent" parent="_Components" unique_id=2003695411 instance=ExtResource("13_hitbox")]
@@ -224,6 +267,8 @@ position = Vector2(20, 0)
 
 [node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
 script = ExtResource("10_facing")
+
+[node name="AttackComponent" parent="_Components" instance=ExtResource("15_attack")]
 
 [node name="AnimationComponent" parent="_Components" unique_id=876596304 instance=ExtResource("6_lg056")]
 

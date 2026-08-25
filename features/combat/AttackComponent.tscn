@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/AttackComponent.gd" id="1_attack"]
+[ext_resource type="Script" path="res://features/combat/AttackConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="AttackConfig_default"]
+script = ExtResource("2_config")
+
+[node name="AttackComponent" type="Node"]
+script = ExtResource("1_attack")
+config = SubResource("AttackConfig_default")

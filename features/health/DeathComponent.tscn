@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/health/DeathComponent.gd" id="1_death"]
+[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="DeathConfig_default"]
+script = ExtResource("2_config")
+
+[node name="DeathComponent" type="Node"]
+script = ExtResource("1_death")
+config = SubResource("DeathConfig_default")

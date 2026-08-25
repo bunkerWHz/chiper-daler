@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/player/PlayerRespawnComponent.gd" id="1_respawn"]
+[ext_resource type="Script" path="res://features/player/PlayerRespawnConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="PlayerRespawnConfig_default"]
+script = ExtResource("2_config")
+
+[node name="PlayerRespawnComponent" type="Node"]
+script = ExtResource("1_respawn")
+config = SubResource("PlayerRespawnConfig_default")

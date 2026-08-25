@@ -30,6 +30,24 @@ func deactivate() -> void:
 		_area.monitoring = false
 
 
+func disable() -> void:
+	deactivate()
+	super.disable()
+
+
+func set_horizontal_direction(direction: float) -> void:
+	if is_zero_approx(direction):
+		return
+
+	var spatial_root := get_node(".") as Node2D
+
+	if spatial_root == null:
+		return
+
+	var offset_x := absf(spatial_root.position.x)
+	spatial_root.position.x = offset_x if direction > 0.0 else -offset_x
+
+
 func _on_area_entered(other_area: Area2D) -> void:
 	if not is_enabled:
 		return

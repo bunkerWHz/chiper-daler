@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/HitReactionComponent.gd" id="1_reaction"]
+[ext_resource type="Script" path="res://features/combat/HitReactionConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="HitReactionConfig_default"]
+script = ExtResource("2_config")
+
+[node name="HitReactionComponent" type="Node"]
+script = ExtResource("1_reaction")
+config = SubResource("HitReactionConfig_default")

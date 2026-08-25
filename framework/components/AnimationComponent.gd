@@ -4,7 +4,9 @@ class_name AnimationComponent
 var _sprite: AnimatedSprite2D
 var _movement_component: MovementComponent
 var _facing_component: FacingComponent
+var _attack_component: AttackComponent
 var _current_state: AnimationState.Type = AnimationState.Type.IDLE
+var _is_attack_animation_playing: bool = false
 
 
 func on_initialize() -> void:
@@ -29,6 +31,15 @@ func on_initialize() -> void:
 
 	if not _facing_component.facing_changed.is_connected(_on_facing_changed):
 		_facing_component.facing_changed.connect(_on_facing_changed)
+
+	_attack_component = actor.get_component(AttackComponent) as AttackComponent
+
+	if (
+		_attack_component != null
+		and _attack_component.is_enabled
+		and not _attack_component.attack_started.is_connected(_on_attack_started)
+	):
+		_attack_component.attack_started.connect(_on_attack_started)
 		
 func _ready() -> void:
 	_sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
@@ -37,6 +48,18 @@ func _ready() -> void:
 		push_error("AnimationComponent requires AnimatedSprite2D")
 		disable()
 		return
+
+	if (
+		_attack_component != null
+		and _attack_component.is_enabled
+		and not _sprite.sprite_frames.has_animation(&"attack")
+	):
+		push_error("AnimationComponent requires an attack animation")
+		disable()
+		return
+
+	if not _sprite.animation_finished.is_connected(_on_animation_finished):
+		_sprite.animation_finished.connect(_on_animation_finished)
 
 	if not is_enabled:
 		return
@@ -65,6 +88,9 @@ func _change_state(
 
 		AnimationState.Type.FALL:
 			_play_animation("fall")
+
+		AnimationState.Type.ATTACK:
+			_play_animation("attack")
 	
 func _play_animation(animation_name: StringName) -> void:
 	if _sprite.animation != animation_name or not _sprite.is_playing():
@@ -97,6 +123,9 @@ func _on_movement_state_changed(
 	if not is_enabled:
 		return
 
+	if _is_attack_animation_playing:
+		return
+
 	_apply_movement_state(current_movement_state)
 
 
@@ -120,3 +149,23 @@ func _apply_movement_state(
 ) -> void:
 	var animation_state := _get_animation_state(movement_state)
 	_change_state(animation_state, force)
+
+
+func get_state() -> AnimationState.Type:
+	return _current_state
+
+
+func _on_attack_started() -> void:
+	if not is_enabled:
+		return
+
+	_is_attack_animation_playing = true
+	_change_state(AnimationState.Type.ATTACK, true)
+
+
+func _on_animation_finished() -> void:
+	if _current_state != AnimationState.Type.ATTACK:
+		return
+
+	_is_attack_animation_playing = false
+	_apply_movement_state(_movement_component.get_state(), true)

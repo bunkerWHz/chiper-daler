@@ -6,6 +6,11 @@
 [ext_resource type="Script" uid="uid://bnlrohpseuej8" path="res://features/enemy/EnemyMovementConfig.gd" id="4_config"]
 [ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="5_health"]
 [ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="6_hurtbox"]
+[ext_resource type="PackedScene" path="res://features/combat/HitReactionComponent.tscn" id="7_reaction"]
+[ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="8_death"]
+[ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="9_hitbox"]
+[ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="10_attack"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="11_enemy_attack"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -22,9 +27,19 @@ script = ExtResource("1_enemy")
 
 [node name="HurtboxComponent" parent="_Components" instance=ExtResource("6_hurtbox")]
 
+[node name="HitReactionComponent" parent="_Components" instance=ExtResource("7_reaction")]
+
+[node name="DeathComponent" parent="_Components" instance=ExtResource("8_death")]
+
+[node name="HitboxComponent" parent="_Components" instance=ExtResource("9_hitbox")]
+
+[node name="AttackComponent" parent="_Components" instance=ExtResource("10_attack")]
+
 [node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
 script = ExtResource("3_movement")
 config = SubResource("EnemyMovementConfig_default")
+
+[node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("11_enemy_attack")]
 
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 
