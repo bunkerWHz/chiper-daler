@@ -250,6 +250,7 @@ func test_hit_stop_changes_and_restores_time_scale() -> void:
 	var config := HitStopConfig.new()
 	config.duration = 0.05
 	config.time_scale = 0.1
+	config.on_hit_received = false
 	hit_stop.config = config
 	container.add_child(hit_stop)
 	actor._collect_components()
@@ -263,6 +264,27 @@ func test_hit_stop_changes_and_restores_time_scale() -> void:
 	hit_stop.stop()
 
 	assert_false(hit_stop.is_active())
+	assert_eq(Engine.time_scale, previous_time_scale)
+
+
+func test_hit_stop_triggers_when_owner_is_hit() -> void:
+	var target := _create_target(100.0)
+	var hit_stop := HitStopComponent.new()
+	var config := HitStopConfig.new()
+	config.on_hit_landed = false
+	config.on_hit_received = true
+	config.time_scale = 0.1
+	hit_stop.config = config
+	target.actor.get_node("_Components").add_child(hit_stop)
+	target.actor._collect_components()
+
+	var previous_time_scale := Engine.time_scale
+	target.hurtbox.receive_hit(HitData.new(10.0, null))
+
+	assert_true(hit_stop.is_active())
+	assert_eq(Engine.time_scale, config.time_scale)
+
+	hit_stop.stop()
 	assert_eq(Engine.time_scale, previous_time_scale)
 
 
