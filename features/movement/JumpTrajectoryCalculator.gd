@@ -69,6 +69,41 @@ static func get_landing_point(points: PackedVector2Array) -> Vector2:
 	return points[-1] if not points.is_empty() else Vector2.ZERO
 
 
+static func get_horizontal_reach_at_height(
+	move_speed: float,
+	gravity: float,
+	jump_velocity: float,
+	vertical_offset: float
+) -> float:
+	if move_speed < 0.0 or gravity <= 0.0 or jump_velocity <= 0.0:
+		return 0.0
+
+	var discriminant := (
+		jump_velocity * jump_velocity
+		+ 2.0 * gravity * vertical_offset
+	)
+
+	if discriminant < 0.0:
+		return 0.0
+
+	var descending_time := (
+		jump_velocity + sqrt(discriminant)
+	) / gravity
+	return move_speed * descending_time
+
+
+static func can_reach_height(
+	gravity: float,
+	jump_velocity: float,
+	vertical_offset: float
+) -> bool:
+	if gravity <= 0.0 or jump_velocity <= 0.0:
+		return false
+
+	var max_jump_height := jump_velocity * jump_velocity / (2.0 * gravity)
+	return vertical_offset >= -max_jump_height
+
+
 static func _update_horizontal_velocity(
 	config: MovementConfig,
 	current_speed: float,

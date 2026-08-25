@@ -138,6 +138,10 @@ func is_chasing() -> bool:
 	return _is_chasing
 
 
+func get_target() -> HurtboxComponent:
+	return COMBAT_TARGETING.get_closest_hostile(actor, _targets)
+
+
 func disable() -> void:
 	_targets.clear()
 	_restore_patrol()

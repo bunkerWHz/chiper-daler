@@ -785,6 +785,48 @@ func test_enemy_chase_moves_toward_hostile_target() -> void:
 	assert_eq(movement.get_move_direction(), -1.0)
 
 
+func test_enemy_jump_uses_configured_trajectory_reach() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	var movement_config := EnemyMovementConfig.new()
+	movement_config.move_speed = 100.0
+	movement_config.gravity = 1200.0
+	movement.config = movement_config
+	container.add_child(movement)
+
+	var ground_sensor := EnemyGroundSensorComponent.new()
+	ground_sensor.config = EnemyGroundSensorConfig.new()
+	container.add_child(ground_sensor)
+
+	var chase := EnemyChaseComponent.new()
+	chase.config = EnemyChaseConfig.new()
+	container.add_child(chase)
+
+	var jump := EnemyJumpComponent.new()
+	var jump_config := EnemyJumpConfig.new()
+	jump_config.jump_velocity = 450.0
+	jump_config.landing_tolerance = 0.0
+	jump.config = jump_config
+	container.add_child(jump)
+	actor._collect_components()
+
+	assert_true(jump.is_enabled)
+	assert_true(jump.can_reach_offset(Vector2(70.0, 0.0)))
+	assert_false(jump.can_reach_offset(Vector2(80.0, 0.0)))
+	assert_true(jump.can_reach_offset(Vector2(80.0, 50.0)))
+	assert_false(jump.can_reach_offset(Vector2(10.0, -100.0)))
+
+
 func test_enemy_patrol_reverses_movement_direction() -> void:
 	var enemy := track(Actor.new()) as Actor
 	var container := Node2D.new()

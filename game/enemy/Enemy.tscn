@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyChaseComponent.tscn" id="17_chase"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyPatrolComponent.tscn" id="18_patrol"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyGroundSensorComponent.tscn" id="19_ground_sensor"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyJumpComponent.tscn" id="20_enemy_jump"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -64,6 +65,8 @@ config = SubResource("EnemyMovementConfig_default")
 visual_path = NodePath("_Visual/Placeholder")
 
 [node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("17_chase")]
+
+[node name="EnemyJumpComponent" parent="_Components" instance=ExtResource("20_enemy_jump")]
 
 [node name="EnemyPatrolComponent" parent="_Components" instance=ExtResource("18_patrol")]
 

@@ -47,5 +47,19 @@ func stop() -> void:
 	_move_direction = 0.0
 
 
+func jump(jump_velocity: float) -> bool:
+	if (
+		not is_enabled
+		or jump_velocity <= 0.0
+		or not _body_component.is_on_floor()
+	):
+		return false
+
+	var velocity := _body_component.get_velocity()
+	velocity.y = -jump_velocity
+	_body_component.set_velocity(velocity)
+	return true
+
+
 func get_move_direction() -> float:
 	return _move_direction

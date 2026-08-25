@@ -39,3 +39,38 @@ func test_jump_trajectory_is_symmetric() -> void:
 
 	assert_true(absf(right_landing.x + left_landing.x) < 0.001)
 	assert_true(absf(right_landing.y - left_landing.y) < 0.001)
+
+
+func test_horizontal_reach_supports_different_platform_heights() -> void:
+	var same_height := JumpTrajectoryCalculator.get_horizontal_reach_at_height(
+		100.0,
+		1200.0,
+		450.0,
+		0.0
+	)
+	var lower_platform := (
+		JumpTrajectoryCalculator.get_horizontal_reach_at_height(
+			100.0,
+			1200.0,
+			450.0,
+			50.0
+		)
+	)
+	var unreachable_height := (
+		JumpTrajectoryCalculator.get_horizontal_reach_at_height(
+			100.0,
+			1200.0,
+			450.0,
+			-100.0
+		)
+	)
+
+	assert_true(absf(same_height - 75.0) < 0.001)
+	assert_true(lower_platform > same_height)
+	assert_eq(unreachable_height, 0.0)
+	assert_false(
+		JumpTrajectoryCalculator.can_reach_height(1200.0, 450.0, -100.0)
+	)
+	assert_true(
+		JumpTrajectoryCalculator.can_reach_height(1200.0, 450.0, -80.0)
+	)
