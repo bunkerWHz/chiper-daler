@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyPatrolComponent.tscn" id="18_patrol"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyGroundSensorComponent.tscn" id="19_ground_sensor"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyJumpComponent.tscn" id="20_enemy_jump"]
+[ext_resource type="Script" path="res://features/enemy/EnemyJumpReachPreview.gd" id="21_jump_preview"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -79,3 +80,11 @@ polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 [node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]
+
+[node name="EnemyJumpReachPreview" type="Node2D" parent="."]
+position = Vector2(0, 10)
+show_behind_parent = true
+z_index = -10
+script = ExtResource("21_jump_preview")
+show_standing_jump = false
+running_jump_color = Color(1, 0.45, 0.1, 0.9)

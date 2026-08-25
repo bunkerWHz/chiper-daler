@@ -7,6 +7,7 @@ const TRAJECTORY_CALCULATOR := preload(
 )
 
 @export var show_preview: bool = true
+@export var show_standing_jump: bool = true
 @export var movement_component_path: NodePath = (
 	^"../_Components/MovementComponent"
 )
@@ -57,7 +58,10 @@ func _draw() -> void:
 	)
 
 	_draw_symmetric_trajectory(running_right, running_jump_color, false)
-	_draw_symmetric_trajectory(standing_right, standing_jump_color, true)
+
+	if show_standing_jump:
+		_draw_symmetric_trajectory(standing_right, standing_jump_color, true)
+
 	_draw_measurements(running_right, standing_right)
 
 
@@ -129,15 +133,24 @@ func _draw_measurements(
 	)
 	draw_circle(running_landing, 4.0, running_jump_color)
 	draw_circle(Vector2(-running_landing.x, 0.0), 4.0, running_jump_color)
-	draw_circle(standing_landing, 3.0, standing_jump_color)
-	draw_circle(Vector2(-standing_landing.x, 0.0), 3.0, standing_jump_color)
+
+	if show_standing_jump:
+		draw_circle(standing_landing, 3.0, standing_jump_color)
+		draw_circle(Vector2(-standing_landing.x, 0.0), 3.0, standing_jump_color)
 
 	var font := ThemeDB.fallback_font
-	var label := "H %.0f | RUN %.0f | STAND %.0f px" % [
+	var label := "H %.0f | REACH %.0f px" % [
 		absf(apex.y),
 		absf(running_landing.x),
-		absf(standing_landing.x),
 	]
+
+	if show_standing_jump:
+		label = "H %.0f | RUN %.0f | STAND %.0f px" % [
+			absf(apex.y),
+			absf(running_landing.x),
+			absf(standing_landing.x),
+		]
+
 	draw_string(
 		font,
 		Vector2(8.0, apex.y - 8.0),
