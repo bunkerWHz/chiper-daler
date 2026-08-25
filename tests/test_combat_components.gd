@@ -135,6 +135,23 @@ func test_attack_can_be_driven_without_input_or_facing() -> void:
 	assert_true(attack.attack())
 
 
+func test_damage_number_view_rises_and_fades() -> void:
+	var view := track(DamageNumberView.new()) as DamageNumberView
+	var config := DamageNumberConfig.new()
+	config.duration = 1.0
+	config.rise_distance = 20.0
+	var start_position := Vector2(10.0, 30.0)
+	view.setup(25.0, start_position, config)
+
+	assert_eq(view.get_damage(), 25.0)
+	assert_eq(view.position, start_position)
+
+	view._process(0.5)
+
+	assert_eq(view.position, start_position + Vector2(0.0, -10.0))
+	assert_true(absf(view.modulate.a - 0.5) < 0.001)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="10_attack"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="11_enemy_attack"]
 [ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="12_health_bar"]
+[ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="13_damage_number"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -27,6 +28,8 @@ script = ExtResource("1_enemy")
 [node name="HealthComponent" parent="_Components" instance=ExtResource("5_health")]
 
 [node name="HurtboxComponent" parent="_Components" instance=ExtResource("6_hurtbox")]
+
+[node name="DamageNumberComponent" parent="_Components" instance=ExtResource("13_damage_number")]
 
 [node name="HitReactionComponent" parent="_Components" instance=ExtResource("7_reaction")]
 
