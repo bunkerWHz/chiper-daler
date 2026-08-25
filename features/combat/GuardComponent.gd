@@ -69,6 +69,14 @@ func modify_damage(hit: HitData, damage: float) -> float:
 	return modified_damage
 
 
+func allows_hit_reactions(hit: HitData) -> bool:
+	return not (
+		config.block_hit_reactions
+		and _is_guarding
+		and _is_hit_from_front(hit)
+	)
+
+
 func start_guard() -> bool:
 	if not is_enabled or _is_guarding:
 		return false

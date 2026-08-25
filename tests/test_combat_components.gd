@@ -585,14 +585,17 @@ func test_guard_reduces_only_frontal_damage() -> void:
 
 	var source := track(Actor.new()) as Actor
 	source.global_position.x = 100.0
+	var front_hit := HitData.new(40.0, source)
 
 	assert_true(guard.start_guard())
+	assert_false(guard.allows_hit_reactions(front_hit))
 	assert_eq(
-		target.hurtbox.receive_hit(HitData.new(40.0, source)),
+		target.hurtbox.receive_hit(front_hit),
 		10.0
 	)
 
 	source.global_position.x = -100.0
+	assert_true(guard.allows_hit_reactions(HitData.new(40.0, source)))
 	assert_eq(
 		target.hurtbox.receive_hit(HitData.new(40.0, source)),
 		40.0

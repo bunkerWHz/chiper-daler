@@ -69,6 +69,7 @@ func receive_hit(hit: HitData) -> float:
 		return 0.0
 
 	var modified_damage := _apply_damage_modifiers(hit)
+	var apply_hit_reactions := _allow_hit_reactions(hit)
 
 	if modified_damage <= 0.0:
 		return 0.0
@@ -82,11 +83,12 @@ func receive_hit(hit: HitData) -> float:
 		):
 			_invulnerability_component.call("activate")
 
-		if _knockback_component != null and _knockback_component.is_enabled:
-			_knockback_component.call("apply_hit", hit)
+		if apply_hit_reactions:
+			if _knockback_component != null and _knockback_component.is_enabled:
+				_knockback_component.call("apply_hit", hit)
 
-		if _hit_stun_component != null and _hit_stun_component.is_enabled:
-			_hit_stun_component.call("apply_hit", hit)
+			if _hit_stun_component != null and _hit_stun_component.is_enabled:
+				_hit_stun_component.call("apply_hit", hit)
 
 		hit_received.emit(hit, applied_damage)
 
@@ -107,3 +109,14 @@ func _apply_damage_modifiers(hit: HitData) -> float:
 				return 0.0
 
 	return damage
+
+
+func _allow_hit_reactions(hit: HitData) -> bool:
+	for component: Component in actor.get_components():
+		if component is DamageModifierComponent and component.is_enabled:
+			var modifier := component as DamageModifierComponent
+
+			if not modifier.allows_hit_reactions(hit):
+				return false
+
+	return true
