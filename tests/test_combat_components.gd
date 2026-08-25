@@ -492,6 +492,17 @@ func test_enemy_attack_telegraphs_before_attacking() -> void:
 	assert_false(attack.is_attacking())
 	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
 
+	enemy_attack.disable()
+	assert_eq(enemy_attack._windup_target, null)
+	assert_eq(visual.modulate, Color.WHITE)
+	assert_eq(enemy_attack.process_mode, Node.PROCESS_MODE_INHERIT)
+	enemy_attack.enable()
+	enemy_attack._on_area_entered(target_area)
+
+	enemy_attack._process(0.1)
+	assert_false(attack.is_attacking())
+	assert_eq(visual.modulate, enemy_config.telegraph_modulate)
+
 	enemy_attack._process(0.1)
 	assert_true(attack.is_attacking())
 	assert_eq(visual.modulate, Color.WHITE)

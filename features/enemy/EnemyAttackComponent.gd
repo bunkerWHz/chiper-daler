@@ -118,11 +118,20 @@ func has_target() -> bool:
 	return not _targets.is_empty()
 
 
+func enable() -> void:
+	super.enable()
+	_refresh_targets()
+
+
 func disable() -> void:
 	_targets.clear()
 	_cancel_windup()
 	_resume_movement()
-	super.disable()
+	# Keep the sensor active so overlapping targets can be reacquired on enable.
+	is_enabled = false
+	set_process(false)
+	set_physics_process(false)
+	process_mode = Node.PROCESS_MODE_INHERIT
 
 
 func _on_area_entered(other_area: Area2D) -> void:
@@ -152,6 +161,16 @@ func _remove_invalid_targets() -> void:
 	for index in range(_targets.size() - 1, -1, -1):
 		if not _is_valid_target(_targets[index]):
 			_targets.remove_at(index)
+
+
+func _refresh_targets() -> void:
+	_targets.clear()
+
+	if _detection_area == null or not is_instance_valid(_detection_area):
+		return
+
+	for area: Area2D in _detection_area.get_overlapping_areas():
+		_on_area_entered(area)
 
 
 func _face_target(target: HurtboxComponent) -> void:
