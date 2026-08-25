@@ -30,6 +30,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="24_hit_stun"]
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="25_faction"]
 [ext_resource type="PackedScene" path="res://features/combat/GuardComponent.tscn" id="26_guard"]
+[ext_resource type="PackedScene" path="res://features/combat/BlockReactionComponent.tscn" id="27_block_reaction"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -298,6 +299,8 @@ script = ExtResource("10_facing")
 [node name="AttackComponent" parent="_Components" instance=ExtResource("15_attack")]
 
 [node name="GuardComponent" parent="_Components" instance=ExtResource("26_guard")]
+
+[node name="BlockReactionComponent" parent="_Components" instance=ExtResource("27_block_reaction")]
 
 [node name="HitStopComponent" parent="_Components" instance=ExtResource("22_hit_stop")]
 

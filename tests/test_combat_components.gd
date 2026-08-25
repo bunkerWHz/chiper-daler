@@ -655,6 +655,43 @@ func test_guard_reduces_only_frontal_damage() -> void:
 	assert_eq(target.health.get_current_health(), 50.0)
 
 
+func test_block_reaction_pulses_and_restores_visual() -> void:
+	var target := _create_target(100.0)
+	var visual := Node2D.new()
+	visual.name = "_Visual"
+	visual.scale = Vector2(1.5, 1.5)
+	target.actor.add_child(visual)
+
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+	var reaction := BlockReactionComponent.new()
+	var reaction_config := BlockReactionConfig.new()
+	reaction_config.duration = 0.1
+	reaction_config.scale_multiplier = Vector2(0.9, 1.1)
+	reaction.config = reaction_config
+
+	for component: Component in [input, facing, guard, reaction]:
+		target.actor.get_node("_Components").add_child(component)
+
+	target.actor._collect_components()
+	reaction._ready()
+	assert_true(guard.start_guard())
+
+	var source := track(Actor.new()) as Actor
+	source.global_position.x = 100.0
+	target.hurtbox.receive_hit(HitData.new(20.0, source))
+
+	assert_true(reaction.is_reacting())
+	assert_true(visual.scale.is_equal_approx(Vector2(1.35, 1.65)))
+
+	reaction._process(reaction_config.duration)
+
+	assert_false(reaction.is_reacting())
+	assert_true(visual.scale.is_equal_approx(Vector2(1.5, 1.5)))
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
