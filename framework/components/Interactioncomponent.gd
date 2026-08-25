@@ -2,9 +2,13 @@ extends Component
 class_name InteractionComponent
 
 @export var interaction_distance: float = 48.0
+@export var interaction_cooldown: float = 0.15
+
+var cooldown_timer: float = 0.0
 
 var input_component: InputComponent
 var current_target: InteractableComponent = null
+
 
 
 func _ready() -> void:
@@ -15,7 +19,10 @@ func _ready() -> void:
 		return
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if cooldown_timer > 0.0:
+		cooldown_timer = max(cooldown_timer - delta, 0.0)
+		
 	if input_component == null:
 		return
 
@@ -52,6 +59,9 @@ func find_nearest_interactable() -> InteractableComponent:
 
 
 func interact() -> void:
+	if cooldown_timer > 0.0:
+		return
+
 	if current_target == null:
 		return
 
@@ -59,6 +69,7 @@ func interact() -> void:
 		return
 
 	current_target.interact()
+	cooldown_timer = interaction_cooldown
 
 
 func has_target() -> bool:
