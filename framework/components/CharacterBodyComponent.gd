@@ -18,6 +18,10 @@ func get_velocity() -> Vector2:
 	return _body.velocity
 
 
+func get_body() -> CharacterBody2D:
+	return _body
+
+
 func set_velocity(value: Vector2) -> void:
 	_body.velocity = value
 

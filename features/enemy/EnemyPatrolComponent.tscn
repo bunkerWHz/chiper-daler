@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/enemy/EnemyPatrolComponent.gd" id="1_patrol"]
+[ext_resource type="Script" path="res://features/enemy/EnemyPatrolConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="EnemyPatrolConfig_default"]
+script = ExtResource("2_config")
+
+[node name="EnemyPatrolComponent" type="Node2D"]
+script = ExtResource("1_patrol")
+config = SubResource("EnemyPatrolConfig_default")
+
+[node name="FloorRayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 24)
+collision_mask = 1
+
+[node name="WallRayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(16, 0)
+collision_mask = 1

@@ -536,6 +536,34 @@ func test_enemy_chase_moves_toward_hostile_target() -> void:
 	assert_eq(movement.get_move_direction(), -1.0)
 
 
+func test_enemy_patrol_reverses_movement_direction() -> void:
+	var enemy := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	enemy.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	body.owner = body_component
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	var movement_config := EnemyMovementConfig.new()
+	movement_config.initial_direction = -1.0
+	movement.config = movement_config
+	container.add_child(movement)
+
+	var patrol := EnemyPatrolComponent.new()
+	patrol.config = EnemyPatrolConfig.new()
+	container.add_child(patrol)
+	enemy._collect_components()
+
+	assert_true(patrol.reverse_direction())
+	assert_eq(movement.get_move_direction(), 1.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
