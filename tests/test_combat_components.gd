@@ -486,6 +486,56 @@ func test_hitbox_ignores_allies_and_damages_hostiles() -> void:
 	assert_eq(target.health.get_current_health(), 90.0)
 
 
+func test_enemy_chase_moves_toward_hostile_target() -> void:
+	var enemy := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	enemy.add_child(container)
+
+	var faction := CombatFactionComponent.new()
+	faction.faction = CombatFactionComponent.Faction.ENEMY
+	container.add_child(faction)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	body.owner = body_component
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	var movement_config := EnemyMovementConfig.new()
+	movement_config.initial_direction = -1.0
+	movement.config = movement_config
+	container.add_child(movement)
+
+	var chase := EnemyChaseComponent.new()
+	chase.config = EnemyChaseConfig.new()
+	container.add_child(chase)
+	enemy._collect_components()
+
+	var target := _create_target(100.0)
+	var target_faction := CombatFactionComponent.new()
+	target_faction.faction = CombatFactionComponent.Faction.PLAYER
+	target.actor.get_node("_Components").add_child(target_faction)
+	var hurtbox_area := Area2D.new()
+	target.hurtbox.add_child(hurtbox_area)
+	target.actor.position.x = 100.0
+	target.actor._collect_components()
+
+	chase._on_area_entered(hurtbox_area)
+	chase._process(0.0)
+
+	assert_true(chase.is_chasing())
+	assert_eq(movement.get_move_direction(), 1.0)
+
+	target_faction.faction = CombatFactionComponent.Faction.ENEMY
+	chase._process(0.0)
+
+	assert_false(chase.is_chasing())
+	assert_eq(movement.get_move_direction(), -1.0)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

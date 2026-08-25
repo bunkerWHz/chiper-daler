@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/enemy/EnemyChaseComponent.gd" id="1_chase"]
+[ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="EnemyChaseConfig_default"]
+script = ExtResource("2_config")
+
+[sub_resource type="RectangleShape2D" id="DetectionShape"]
+size = Vector2(360, 160)
+
+[node name="EnemyChaseComponent" type="Node2D"]
+script = ExtResource("1_chase")
+config = SubResource("EnemyChaseConfig_default")
+
+[node name="DetectionArea2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea2D"]
+shape = SubResource("DetectionShape")

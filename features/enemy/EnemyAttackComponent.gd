@@ -1,6 +1,8 @@
 extends Component
 class_name EnemyAttackComponent
 
+const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
+
 @export var config: EnemyAttackConfig
 
 var _attack_component: AttackComponent
@@ -70,7 +72,7 @@ func _process(_delta: float) -> void:
 		_resume_movement()
 		return
 
-	var target := _get_closest_target()
+	var target := COMBAT_TARGETING.get_closest_hostile(actor, _targets)
 
 	if target == null:
 		_resume_movement()
@@ -119,22 +121,6 @@ func _remove_invalid_targets() -> void:
 			_targets.remove_at(index)
 
 
-func _get_closest_target() -> HurtboxComponent:
-	var closest_target: HurtboxComponent
-	var closest_distance_squared := INF
-
-	for target: HurtboxComponent in _targets:
-		var distance_squared := actor.global_position.distance_squared_to(
-			target.actor.global_position
-		)
-
-		if distance_squared < closest_distance_squared:
-			closest_distance_squared = distance_squared
-			closest_target = target
-
-	return closest_target
-
-
 func _face_target(target: HurtboxComponent) -> void:
 	var direction := signf(
 		target.actor.global_position.x - actor.global_position.x
@@ -145,33 +131,7 @@ func _face_target(target: HurtboxComponent) -> void:
 
 
 func _is_valid_target(hurtbox: HurtboxComponent) -> bool:
-	if (
-		hurtbox == null
-		or not is_instance_valid(hurtbox)
-		or not hurtbox.is_enabled
-		or hurtbox.actor == actor
-		or not is_instance_valid(hurtbox.actor)
-	):
-		return false
-
-	var health := hurtbox.actor.get_component(HealthComponent) as HealthComponent
-
-	if health == null or not health.is_enabled or not health.is_alive():
-		return false
-
-	var source_faction := (
-		actor.get_component(CombatFactionComponent)
-		as CombatFactionComponent
-	)
-	var target_faction := (
-		hurtbox.actor.get_component(CombatFactionComponent)
-		as CombatFactionComponent
-	)
-
-	if source_faction == null or target_faction == null:
-		return true
-
-	return source_faction.is_hostile_to(target_faction.faction)
+	return COMBAT_TARGETING.is_valid_hostile(actor, hurtbox)
 
 
 func _stop_movement() -> void:

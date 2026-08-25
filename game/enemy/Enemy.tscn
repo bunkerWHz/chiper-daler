@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="14_knockback"]
 [ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="15_hit_stun"]
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="16_faction"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyChaseComponent.tscn" id="17_chase"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -55,6 +56,8 @@ script = ExtResource("3_movement")
 config = SubResource("EnemyMovementConfig_default")
 
 [node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("11_enemy_attack")]
+
+[node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("17_chase")]
 
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 
