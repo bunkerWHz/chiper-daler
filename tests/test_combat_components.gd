@@ -261,6 +261,43 @@ func test_hit_stop_changes_and_restores_time_scale() -> void:
 	assert_eq(Engine.time_scale, previous_time_scale)
 
 
+func test_camera_shake_restores_camera_offset() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var hitbox := HitboxComponent.new()
+	container.add_child(hitbox)
+
+	var camera_component := CameraComponent.new()
+	var camera_config := CameraConfig.new()
+	var camera := Camera2D.new()
+	camera.name = "Camera2D"
+	camera_component.config = camera_config
+	camera_component.add_child(camera)
+	container.add_child(camera_component)
+
+	var camera_shake := CameraShakeComponent.new()
+	var shake_config := CameraShakeConfig.new()
+	shake_config.duration = 0.1
+	shake_config.strength = 3.0
+	camera_shake.config = shake_config
+	container.add_child(camera_shake)
+	actor._collect_components()
+
+	var original_offset := Vector2(4.0, 2.0)
+	camera.offset = original_offset
+
+	assert_true(camera_shake.trigger())
+	assert_true(camera_shake.is_shaking())
+
+	camera_shake._process(shake_config.duration)
+
+	assert_false(camera_shake.is_shaking())
+	assert_eq(camera.offset, original_offset)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

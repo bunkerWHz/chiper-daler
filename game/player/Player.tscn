@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/InvulnerabilityComponent.tscn" id="20_invulnerability"]
 [ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="21_knockback"]
 [ext_resource type="PackedScene" path="res://features/combat/HitStopComponent.tscn" id="22_hit_stop"]
+[ext_resource type="PackedScene" path="res://features/combat/CameraShakeComponent.tscn" id="23_camera_shake"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -285,6 +286,8 @@ script = ExtResource("10_facing")
 [node name="AnimationComponent" parent="_Components" unique_id=876596304 instance=ExtResource("6_lg056")]
 
 [node name="CameraComponent" parent="_Components" unique_id=1289643820 instance=ExtResource("7_b72hb")]
+
+[node name="CameraShakeComponent" parent="_Components" instance=ExtResource("23_camera_shake")]
 
 [node name="InteractionComponent" type="Node" parent="_Components" unique_id=723174944]
 script = ExtResource("8_wcm5h")
