@@ -83,13 +83,16 @@ func _physics_process(delta: float) -> void:
 	if is_zero_approx(direction) or not can_reach_offset(offset):
 		return
 
-	var target_is_above := offset.y <= -config.min_upward_offset
 	var ground_is_unsafe := (
 		config.jump_at_unsafe_ground
 		and not _ground_sensor.is_direction_safe(direction)
 	)
 
-	if not target_is_above and not ground_is_unsafe:
+	if not should_attempt_jump(
+		offset,
+		_is_target_grounded(target),
+		ground_is_unsafe
+	):
 		return
 
 	if (
@@ -129,6 +132,33 @@ func can_reach_offset(offset: Vector2) -> bool:
 
 func is_on_cooldown() -> bool:
 	return _cooldown_timer > 0.0
+
+
+func should_attempt_jump(
+	offset: Vector2,
+	target_is_grounded: bool,
+	ground_is_unsafe: bool
+) -> bool:
+	if not target_is_grounded:
+		return false
+
+	var target_is_above := offset.y <= -config.min_upward_offset
+	return target_is_above or (
+		config.jump_at_unsafe_ground and ground_is_unsafe
+	)
+
+
+func _is_target_grounded(target: HurtboxComponent) -> bool:
+	var target_body_component := (
+		target.actor.get_component(CharacterBodyComponent)
+		as CharacterBodyComponent
+	)
+
+	return (
+		target_body_component != null
+		and target_body_component.is_enabled
+		and target_body_component.is_on_floor()
+	)
 
 
 func _has_landing_surface(target: HurtboxComponent) -> bool:

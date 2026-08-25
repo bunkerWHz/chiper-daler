@@ -835,6 +835,22 @@ func test_enemy_jump_requires_a_landing_surface_by_default() -> void:
 	assert_true(config.landing_probe_depth >= 64.0)
 
 
+func test_enemy_jump_ignores_an_airborne_target() -> void:
+	var jump := EnemyJumpComponent.new()
+	jump.config = EnemyJumpConfig.new()
+
+	assert_false(
+		jump.should_attempt_jump(Vector2(40.0, -30.0), false, false)
+	)
+	assert_false(
+		jump.should_attempt_jump(Vector2(40.0, 0.0), false, true)
+	)
+	assert_true(
+		jump.should_attempt_jump(Vector2(40.0, -30.0), true, false)
+	)
+	jump.free()
+
+
 func test_enemy_patrol_reverses_movement_direction() -> void:
 	var enemy := track(Actor.new()) as Actor
 	var container := Node2D.new()
