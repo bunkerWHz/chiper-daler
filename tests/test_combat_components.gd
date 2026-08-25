@@ -487,7 +487,7 @@ func test_hit_stun_suspends_and_restores_enemy_movement() -> void:
 	assert_true(movement.is_enabled)
 
 
-func test_knockback_transfers_movement_ownership_to_longer_hit_stun() -> void:
+func test_knockback_and_hit_stun_share_movement_ownership() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
 	container.name = "_Components"
@@ -529,6 +529,20 @@ func test_knockback_transfers_movement_ownership_to_longer_hit_stun() -> void:
 	hit_stun._process(hit_stun_config.duration)
 
 	assert_false(hit_stun.is_stunned())
+	assert_true(movement.is_enabled)
+
+	knockback_config.duration = 0.2
+	hit_stun_config.duration = 0.1
+	assert_true(knockback.apply_hit(hit))
+	assert_true(hit_stun.apply_hit(hit))
+
+	hit_stun._process(hit_stun_config.duration)
+
+	assert_false(hit_stun.is_stunned())
+	assert_false(movement.is_enabled)
+
+	knockback._finish_knockback()
+
 	assert_true(movement.is_enabled)
 
 
