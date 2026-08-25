@@ -173,6 +173,36 @@ func test_invulnerability_blocks_repeated_damage() -> void:
 	assert_eq(target.health.get_current_health(), 50.0)
 
 
+func test_invulnerability_blink_restores_visual() -> void:
+	var target := _create_target(100.0)
+	var visual := Node2D.new()
+	visual.name = "_Visual"
+	target.actor.add_child(visual)
+
+	var invulnerability := InvulnerabilityComponent.new()
+	var config := InvulnerabilityConfig.new()
+	config.duration = 0.2
+	config.blink_interval = 0.05
+	config.blink_alpha = 0.35
+	invulnerability.config = config
+	target.actor.get_node("_Components").add_child(invulnerability)
+	target.actor._collect_components()
+	invulnerability._ready()
+
+	invulnerability.activate()
+
+	assert_true(absf(visual.modulate.a - 0.35) < 0.001)
+
+	invulnerability._process(config.blink_interval)
+
+	assert_eq(visual.modulate, Color.WHITE)
+
+	invulnerability._process(config.duration)
+
+	assert_false(invulnerability.is_invulnerable())
+	assert_eq(visual.modulate, Color.WHITE)
+
+
 func _create_target(max_health: float) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
