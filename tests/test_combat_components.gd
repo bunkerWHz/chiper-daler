@@ -453,6 +453,85 @@ func test_enemy_attack_restores_movement_after_knockback() -> void:
 	assert_eq(movement.get_move_direction(), -1.0)
 
 
+func test_hit_stun_suspends_and_restores_enemy_movement() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	movement.config = EnemyMovementConfig.new()
+	container.add_child(movement)
+
+	var hit_stun := HitStunComponent.new()
+	var hit_stun_config := HitStunConfig.new()
+	hit_stun_config.duration = 0.2
+	hit_stun.config = hit_stun_config
+	container.add_child(hit_stun)
+	actor._collect_components()
+
+	assert_true(movement.is_enabled)
+	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
+	assert_true(hit_stun.is_stunned())
+	assert_false(movement.is_enabled)
+
+	hit_stun._process(hit_stun_config.duration)
+
+	assert_false(hit_stun.is_stunned())
+	assert_true(movement.is_enabled)
+
+
+func test_knockback_transfers_movement_ownership_to_longer_hit_stun() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	movement.config = EnemyMovementConfig.new()
+	container.add_child(movement)
+
+	var knockback := KnockbackComponent.new()
+	var knockback_config := KnockbackConfig.new()
+	knockback_config.duration = 0.1
+	knockback.config = knockback_config
+	container.add_child(knockback)
+
+	var hit_stun := HitStunComponent.new()
+	var hit_stun_config := HitStunConfig.new()
+	hit_stun_config.duration = 0.2
+	hit_stun.config = hit_stun_config
+	container.add_child(hit_stun)
+	actor._collect_components()
+
+	var hit := HitData.new(10.0, null, Vector2(100.0, -50.0))
+	assert_true(knockback.apply_hit(hit))
+	assert_true(hit_stun.apply_hit(hit))
+	assert_false(movement.is_enabled)
+
+	knockback._finish_knockback()
+
+	assert_false(movement.is_enabled)
+	assert_true(hit_stun.is_stunned())
+
+	hit_stun._process(hit_stun_config.duration)
+
+	assert_false(hit_stun.is_stunned())
+	assert_true(movement.is_enabled)
+
+
 func test_enemy_attack_telegraphs_before_attacking() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

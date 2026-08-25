@@ -93,8 +93,15 @@ func _suspend_movement() -> void:
 
 
 func _finish_knockback() -> void:
+	var hit_stun := actor.get_component(HitStunComponent) as HitStunComponent
+
 	for movement: Component in _suspended_movement_components:
-		if is_instance_valid(movement):
+		if not is_instance_valid(movement):
+			continue
+
+		if hit_stun != null and hit_stun.is_stunned():
+			hit_stun.take_suspension_ownership(movement)
+		else:
 			movement.enable()
 
 	_suspended_movement_components.clear()

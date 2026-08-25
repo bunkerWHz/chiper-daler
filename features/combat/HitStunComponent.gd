@@ -35,7 +35,7 @@ func apply_hit(hit: HitData) -> bool:
 	if not is_enabled or hit == null or hit.damage <= 0.0:
 		return false
 
-	_suspend_combat_components()
+	_suspend_components()
 	_timer = config.duration
 	hit_stun_started.emit()
 	return true
@@ -45,24 +45,41 @@ func is_stunned() -> bool:
 	return _timer > 0.0
 
 
+func take_suspension_ownership(component: Component) -> void:
+	if component == null or _suspended_components.has(component):
+		return
+
+	if component.is_enabled:
+		component.disable()
+
+	_suspended_components.append(component)
+
+
 func disable() -> void:
 	_timer = 0.0
 	_suspended_components.clear()
 	super.disable()
 
 
-func _suspend_combat_components() -> void:
+func _suspend_components() -> void:
 	if not _suspended_components.is_empty():
 		return
 
 	var attack := actor.get_component(AttackComponent)
 	var enemy_attack := actor.get_component(EnemyAttackComponent)
 	var guard := actor.get_component(GuardComponent)
+	var player_movement := actor.get_component(MovementComponent)
+	var enemy_movement := actor.get_component(EnemyMovementComponent)
 
-	for component: Component in [attack, enemy_attack, guard]:
+	for component: Component in [
+		attack,
+		enemy_attack,
+		guard,
+		player_movement,
+		enemy_movement,
+	]:
 		if component != null and component.is_enabled:
-			component.disable()
-			_suspended_components.append(component)
+			take_suspension_ownership(component)
 
 
 func _finish_hit_stun() -> void:
