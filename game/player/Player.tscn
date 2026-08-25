@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
 [ext_resource type="Script" uid="uid://bcwnhbaqj47sg" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
 [ext_resource type="Script" uid="uid://cuofhl2p3ogcx" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
+[ext_resource type="Script" uid="uid://df5k1rqt7k0ak" path="res://framework/components/FacingComponent.gd" id="10_facing"]
 [ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="10_txqmf"]
 [ext_resource type="Texture2D" uid="uid://danne1jtbnxso" path="res://assets/Warrior_Attack2.png" id="11_bp8ig"]
 [ext_resource type="Texture2D" uid="uid://cdnbnpoxjui65" path="res://assets/Warrior_Idle.png" id="12_ptk05"]
@@ -209,6 +210,9 @@ script = ExtResource("1_wv0h6")
 config = SubResource("Resource_lg056")
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
+
+[node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
+script = ExtResource("10_facing")
 
 [node name="AnimationComponent" parent="_Components" unique_id=876596304 instance=ExtResource("6_lg056")]
 

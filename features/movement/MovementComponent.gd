@@ -1,5 +1,11 @@
 extends Component
 class_name MovementComponent
+
+signal state_changed(
+	previous_state: MovementState.Type,
+	current_state: MovementState.Type
+)
+
 @export var config: MovementConfig
 
 var _input_component: InputComponent
@@ -35,7 +41,7 @@ func _physics_process(delta: float) -> void:
 	_update_gravity(delta)
 	_update_jump_cut()
 	
-	_body_component.move()
+	_body_component.move_and_slide()
 	_update_state()
 	
 
@@ -103,23 +109,32 @@ func _update_jump_cut() -> void:
 
 
 func _update_state() -> void:
+	_set_state(_resolve_state())
+
+
+func _resolve_state() -> MovementState.Type:
 	var velocity := _body_component.get_velocity()
 
 	if not _body_component.is_on_floor():
 		if velocity.y < 0.0:
-			_state = MovementState.Type.JUMP
-		else:
-			_state = MovementState.Type.FALL
+			return MovementState.Type.JUMP
+
+		return MovementState.Type.FALL
+
+	if not is_zero_approx(velocity.x):
+		return MovementState.Type.RUN
+
+	return MovementState.Type.IDLE
+
+
+func _set_state(new_state: MovementState.Type) -> void:
+	if new_state == _state:
 		return
 
-	if abs(velocity.x) > 0.0:
-		_state = MovementState.Type.RUN
-	else:
-		_state = MovementState.Type.IDLE
+	var previous_state := _state
+	_state = new_state
+	state_changed.emit(previous_state, _state)
+
 
 func get_state() -> MovementState.Type:
 	return _state
-
-
-func get_move_direction() -> float:
-	return _input_component.get_move_axis()

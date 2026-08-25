@@ -1,40 +1,59 @@
 extends Component
 class_name AnimationComponent
 
-var sprite: AnimatedSprite2D
-var movement_component: MovementComponent
-var current_state: AnimationState.Type = AnimationState.Type.IDLE
+var _sprite: AnimatedSprite2D
+var _movement_component: MovementComponent
+var _facing_component: FacingComponent
+var _current_state: AnimationState.Type = AnimationState.Type.IDLE
 
 
 func on_initialize() -> void:
-	movement_component = actor.get_component(MovementComponent) as MovementComponent
+	_movement_component = actor.get_component(MovementComponent) as MovementComponent
 
-	if movement_component == null or not movement_component.is_enabled:
+	if _movement_component == null or not _movement_component.is_enabled:
 		push_error("AnimationComponent requires an enabled MovementComponent")
 		disable()
-		
-func _ready() -> void:
-	sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
-
-	if sprite == null:
-		push_error("AnimationComponent requires AnimatedSprite2D")
-		disable()
-		
-func _update_facing() -> void:
-	var direction := movement_component.get_move_direction()
-
-	if direction > 0.0:
-		sprite.flip_h = false
-	elif direction < 0.0:
-		sprite.flip_h = true
-		
-func _change_state(new_state: AnimationState.Type) -> void:
-	if current_state == new_state:
 		return
 
-	current_state = new_state
+	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 
-	match current_state:
+	if _facing_component == null or not _facing_component.is_enabled:
+		push_error("AnimationComponent requires an enabled FacingComponent")
+		disable()
+		return
+
+	if not _movement_component.state_changed.is_connected(
+		_on_movement_state_changed
+	):
+		_movement_component.state_changed.connect(_on_movement_state_changed)
+
+	if not _facing_component.facing_changed.is_connected(_on_facing_changed):
+		_facing_component.facing_changed.connect(_on_facing_changed)
+		
+func _ready() -> void:
+	_sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
+
+	if _sprite == null:
+		push_error("AnimationComponent requires AnimatedSprite2D")
+		disable()
+		return
+
+	if not is_enabled:
+		return
+
+	_apply_movement_state(_movement_component.get_state(), true)
+	_apply_facing(_facing_component.get_direction())
+		
+func _change_state(
+	new_state: AnimationState.Type,
+	force: bool = false
+) -> void:
+	if _current_state == new_state and not force:
+		return
+
+	_current_state = new_state
+
+	match _current_state:
 		AnimationState.Type.IDLE:
 			_play_animation("idle")
 
@@ -48,8 +67,8 @@ func _change_state(new_state: AnimationState.Type) -> void:
 			_play_animation("fall")
 	
 func _play_animation(animation_name: StringName) -> void:
-	if sprite.animation != animation_name:
-		sprite.play(animation_name)
+	if _sprite.animation != animation_name or not _sprite.is_playing():
+		_sprite.play(animation_name)
 
 func _get_animation_state(
 	movement_state: MovementState.Type
@@ -70,29 +89,34 @@ func _get_animation_state(
 
 	return AnimationState.Type.IDLE
 
-func _process(_delta: float) -> void:
-	_update_facing()
-	
-	var movement_state := movement_component.get_state()
+
+func _on_movement_state_changed(
+	_previous_state: MovementState.Type,
+	current_movement_state: MovementState.Type
+) -> void:
+	if not is_enabled:
+		return
+
+	_apply_movement_state(current_movement_state)
+
+
+func _on_facing_changed(
+	_previous_direction: FacingComponent.Direction,
+	current_direction: FacingComponent.Direction
+) -> void:
+	if not is_enabled:
+		return
+
+	_apply_facing(current_direction)
+
+
+func _apply_facing(direction: FacingComponent.Direction) -> void:
+	_sprite.flip_h = direction == FacingComponent.Direction.LEFT
+
+
+func _apply_movement_state(
+	movement_state: MovementState.Type,
+	force: bool = false
+) -> void:
 	var animation_state := _get_animation_state(movement_state)
-
-	_change_state(animation_state)
-
-func _update_idle() -> void:
-	if sprite.animation != "idle":
-		sprite.play("idle")
-
-
-func _update_run() -> void:
-	if sprite.animation != "run":
-		sprite.play("run")
-
-
-func _update_jump() -> void:
-	if sprite.animation != "jump":
-		sprite.play("jump")
-
-
-func _update_fall() -> void:
-	if sprite.animation != "fall":
-		sprite.play("fall")
+	_change_state(animation_state, force)
