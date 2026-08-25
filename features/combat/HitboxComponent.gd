@@ -8,6 +8,7 @@ signal hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
 @export_range(0.0, 1000.0, 1.0) var vertical_knockback: float = 100.0
 
 var _area: Area2D
+var _horizontal_direction: float = 1.0
 
 
 func _ready() -> void:
@@ -41,13 +42,20 @@ func set_horizontal_direction(direction: float) -> void:
 	if is_zero_approx(direction):
 		return
 
+	_horizontal_direction = signf(direction)
 	var spatial_root := get_node(".") as Node2D
 
 	if spatial_root == null:
 		return
 
 	var offset_x := absf(spatial_root.position.x)
-	spatial_root.position.x = offset_x if direction > 0.0 else -offset_x
+	spatial_root.position.x = (
+		offset_x if _horizontal_direction > 0.0 else -offset_x
+	)
+
+
+func get_horizontal_direction() -> float:
+	return _horizontal_direction
 
 
 func _on_area_entered(other_area: Area2D) -> void:

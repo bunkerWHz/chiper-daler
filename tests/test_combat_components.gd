@@ -119,6 +119,11 @@ func test_attack_can_be_driven_without_input_or_facing() -> void:
 	hitbox._ready()
 	attack._ready()
 
+	attack.set_horizontal_direction(-1.0)
+	assert_eq(hitbox.get_horizontal_direction(), -1.0)
+	attack.set_horizontal_direction(1.0)
+	assert_eq(hitbox.get_horizontal_direction(), 1.0)
+
 	assert_true(attack.attack())
 	assert_true(attack.is_attacking())
 	assert_true(area.monitoring)

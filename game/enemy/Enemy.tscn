@@ -46,6 +46,7 @@ faction = 2
 [node name="DeathComponent" parent="_Components" instance=ExtResource("8_death")]
 
 [node name="HitboxComponent" parent="_Components" instance=ExtResource("9_hitbox")]
+position = Vector2(-20, 0)
 
 [node name="AttackComponent" parent="_Components" instance=ExtResource("10_attack")]
 

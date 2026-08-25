@@ -79,6 +79,11 @@ func is_attacking() -> bool:
 	return _active_timer > 0.0
 
 
+func set_horizontal_direction(direction: float) -> void:
+	if _hitbox_component != null:
+		_hitbox_component.set_horizontal_direction(direction)
+
+
 func disable() -> void:
 	var was_attacking := is_attacking()
 	_active_timer = 0.0

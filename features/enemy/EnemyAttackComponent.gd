@@ -70,7 +70,14 @@ func _process(_delta: float) -> void:
 		_resume_movement()
 		return
 
+	var target := _get_closest_target()
+
+	if target == null:
+		_resume_movement()
+		return
+
 	_stop_movement()
+	_face_target(target)
 	_attack_component.attack()
 
 
@@ -110,6 +117,31 @@ func _remove_invalid_targets() -> void:
 	for index in range(_targets.size() - 1, -1, -1):
 		if not _is_valid_target(_targets[index]):
 			_targets.remove_at(index)
+
+
+func _get_closest_target() -> HurtboxComponent:
+	var closest_target: HurtboxComponent
+	var closest_distance_squared := INF
+
+	for target: HurtboxComponent in _targets:
+		var distance_squared := actor.global_position.distance_squared_to(
+			target.actor.global_position
+		)
+
+		if distance_squared < closest_distance_squared:
+			closest_distance_squared = distance_squared
+			closest_target = target
+
+	return closest_target
+
+
+func _face_target(target: HurtboxComponent) -> void:
+	var direction := signf(
+		target.actor.global_position.x - actor.global_position.x
+	)
+
+	if not is_zero_approx(direction):
+		_attack_component.set_horizontal_direction(direction)
 
 
 func _is_valid_target(hurtbox: HurtboxComponent) -> bool:
