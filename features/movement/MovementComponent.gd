@@ -14,6 +14,7 @@ signal state_changed(
 
 var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
+var _dodge_component: DodgeComponent
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _jump_count: int = 0
@@ -47,9 +48,18 @@ func on_initialize() -> void:
 		push_error("MovementComponent requires InputComponent")
 		disable()
 		return
+	_dodge_component = actor.get_component(DodgeComponent) as DodgeComponent
+
+	if _dodge_component != null and not _dodge_component.is_enabled:
+		_dodge_component = null
 
 
 func _physics_process(delta: float) -> void:
+	if _dodge_component != null and _dodge_component.is_dodging():
+		_dodge_component.apply_velocity()
+		_body_component.move_and_slide()
+		_update_state()
+		return
 	
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
@@ -192,6 +202,9 @@ func _update_state() -> void:
 
 func _resolve_state() -> MovementState.Type:
 	var velocity := _body_component.get_velocity()
+
+	if _dodge_component != null and _dodge_component.is_dodging():
+		return MovementState.Type.DODGE
 
 	if not _body_component.is_on_floor():
 		if velocity.y < 0.0:

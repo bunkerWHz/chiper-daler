@@ -138,6 +138,9 @@ func _get_animation_state(
 		MovementState.Type.WALL_JUMP:
 			return AnimationState.Type.JUMP
 
+		MovementState.Type.DODGE:
+			return AnimationState.Type.RUN
+
 		MovementState.Type.FALL:
 			return AnimationState.Type.FALL
 

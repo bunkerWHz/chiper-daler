@@ -33,6 +33,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/BlockReactionComponent.tscn" id="27_block_reaction"]
 [ext_resource type="Script" path="res://features/movement/JumpReachPreview.gd" id="28_jump_preview"]
 [ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="29_actor_state"]
+[ext_resource type="PackedScene" path="res://features/movement/DodgeComponent.tscn" id="30_dodge"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -274,6 +275,8 @@ faction = 1
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")
+
+[node name="DodgeComponent" parent="_Components" instance=ExtResource("30_dodge")]
 
 [node name="KnockbackComponent" parent="_Components" instance=ExtResource("21_knockback")]
 

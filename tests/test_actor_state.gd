@@ -52,7 +52,7 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 	components.add_child(body_component)
 	components.add_child(InputComponent.new())
 
-	var movement := MovementComponent.new()
+	var movement: Variant = _create_fresh_movement_component()
 	movement.config = MovementConfig.new()
 	components.add_child(movement)
 
@@ -80,6 +80,13 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 	assert_eq(
 		actor_state.get_locomotion(),
 		ActorState.Locomotion.WALL_JUMPING
+	)
+
+	movement._set_state(MovementState.Type.DODGE)
+	actor_state.refresh_state()
+	assert_eq(
+		actor_state.get_locomotion(),
+		ActorState.Locomotion.DODGING
 	)
 
 	movement._set_state(MovementState.Type.FALL)
@@ -138,7 +145,7 @@ func test_movement_consumes_exactly_one_air_jump() -> void:
 	components.add_child(body_component)
 	components.add_child(InputComponent.new())
 
-	var movement := MovementComponent.new()
+	var movement: Variant = _create_fresh_movement_component()
 	movement.config = MovementConfig.new()
 	components.add_child(movement)
 	actor._collect_components()
@@ -180,3 +187,12 @@ func test_wall_jump_velocity_pushes_away_from_wall() -> void:
 		WALL_JUMP_CALCULATOR.calculate_velocity(Vector2.UP, 260.0, 450.0),
 		Vector2.ZERO
 	)
+
+
+func _create_fresh_movement_component() -> Variant:
+	var movement_script := ResourceLoader.load(
+		"res://features/movement/MovementComponent.gd",
+		"GDScript",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as GDScript
+	return movement_script.new()

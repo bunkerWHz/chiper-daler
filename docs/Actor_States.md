@@ -30,6 +30,7 @@ not implement abilities and must not duplicate their gameplay logic.
 | Locomotion | `Jumping` | `MovementComponent.JUMP` or upward body velocity |
 | Locomotion | `DoubleJumping` | `MovementComponent.DOUBLE_JUMP` |
 | Locomotion | `WallJumping` | `MovementState.WALL_JUMP` |
+| Locomotion | `Dodging` | `DodgeComponent` through `MovementState.DODGE` |
 | Locomotion | `Falling` | `MovementComponent.FALL` or downward body velocity |
 | Action | `LightAttack` | `AttackComponent.is_attacking()` |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
@@ -45,7 +46,6 @@ be reported as active until the corresponding ability exists.
 
 ### Locomotion
 
-- `Dodging`
 - `ClimbingIdle`
 - `ClimbingUp`
 - `ClimbingDown`
@@ -86,9 +86,8 @@ When adding a state:
 
 ## Planned implementation order
 
-1. Dodge.
-2. Climbing.
-3. Heavy attack and parry.
-4. Timed interaction states.
-5. Items, throwing, ranged weapons, and magic as separate ability families.
-6. Knockdown, rest, level-up, buffs, and debuffs as condition components.
+1. Climbing.
+2. Heavy attack and parry.
+3. Timed interaction states.
+4. Items, throwing, ranged weapons, and magic as separate ability families.
+5. Knockdown, rest, level-up, buffs, and debuffs as condition components.

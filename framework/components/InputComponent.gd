@@ -8,6 +8,7 @@ const JUMP_ACTION: StringName = &"jump"
 const INTERACT_ACTION: StringName = &"interact"
 const ATTACK_ACTION: StringName = &"attack"
 const GUARD_ACTION: StringName = &"guard"
+const DODGE_ACTION: StringName = &"dodge"
 
 var _move_axis: float = 0.0
 var _jump_pressed: bool = false
@@ -15,6 +16,7 @@ var _jump_released: bool = false
 var _interact_pressed: bool = false
 var _attack_pressed: bool = false
 var _guard_pressed: bool = false
+var _dodge_pressed: bool = false
 
 
 func _ready() -> void:
@@ -58,6 +60,14 @@ func is_guard_pressed() -> bool:
 	return _guard_pressed
 
 
+func consume_dodge_pressed() -> bool:
+	if not _dodge_pressed:
+		return false
+
+	_dodge_pressed = false
+	return true
+
+
 func _process(_delta: float) -> void:
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
 	_attack_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
@@ -67,6 +77,7 @@ func _process(_delta: float) -> void:
 func _physics_process(_delta: float) -> void:
 	_move_axis = Input.get_axis(MOVE_LEFT_ACTION, MOVE_RIGHT_ACTION)
 	_jump_released = Input.is_action_just_released(JUMP_ACTION)
+	_dodge_pressed = Input.is_action_just_pressed(DODGE_ACTION)
 
 	if Input.is_action_just_pressed(JUMP_ACTION):
 		_jump_pressed = true
