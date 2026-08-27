@@ -2,6 +2,8 @@ extends Component
 class_name EnemyJumpComponent
 
 signal jump_started(target: Actor)
+signal jump_landed(target: Actor)
+signal jump_cancelled(target: Actor)
 
 const TRAJECTORY_CALCULATOR := preload(
 	"res://features/movement/JumpTrajectoryCalculator.gd"
@@ -14,8 +16,9 @@ var _movement_component: EnemyMovementComponent
 var _chase_component: EnemyChaseComponent
 var _ground_sensor: EnemyGroundSensorComponent
 var _cooldown_timer: float = 0.0
-var _has_committed_jump: bool = false
+var _is_jumping: bool = false
 var _has_left_ground: bool = false
+var _jump_target: Actor
 
 
 func on_initialize() -> void:
@@ -110,8 +113,9 @@ func _physics_process(delta: float) -> void:
 	_movement_component.lock_move_direction()
 
 	if _movement_component.jump(config.jump_velocity):
-		_has_committed_jump = true
+		_is_jumping = true
 		_has_left_ground = false
+		_jump_target = target.actor
 		_cooldown_timer = config.cooldown
 		jump_started.emit(target.actor)
 	else:
@@ -142,6 +146,10 @@ func can_reach_offset(offset: Vector2) -> bool:
 
 func is_on_cooldown() -> bool:
 	return _cooldown_timer > 0.0
+
+
+func is_jumping() -> bool:
+	return _is_jumping
 
 
 func should_attempt_jump(
@@ -190,7 +198,7 @@ func _has_landing_surface(target: HurtboxComponent) -> bool:
 
 
 func _update_jump_commitment() -> void:
-	if not _has_committed_jump:
+	if not _is_jumping:
 		return
 
 	if not _ground_sensor.is_grounded():
@@ -198,16 +206,25 @@ func _update_jump_commitment() -> void:
 		return
 
 	if _has_left_ground:
-		_has_committed_jump = false
+		var landed_target := _jump_target
+		_is_jumping = false
 		_has_left_ground = false
+		_jump_target = null
 		_movement_component.unlock_move_direction()
+		jump_landed.emit(landed_target)
 
 
 func disable() -> void:
-	_has_committed_jump = false
+	var cancelled_target := _jump_target
+	var was_jumping := _is_jumping
+	_is_jumping = false
 	_has_left_ground = false
+	_jump_target = null
 
 	if _movement_component != null:
 		_movement_component.unlock_move_direction()
 
 	super.disable()
+
+	if was_jumping:
+		jump_cancelled.emit(cancelled_target)

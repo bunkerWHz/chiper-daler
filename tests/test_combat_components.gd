@@ -839,6 +839,7 @@ func test_enemy_jump_ignores_an_airborne_target() -> void:
 	var jump := EnemyJumpComponent.new()
 	jump.config = EnemyJumpConfig.new()
 
+	assert_false(jump.is_jumping())
 	assert_false(
 		jump.should_attempt_jump(Vector2(40.0, -30.0), false, false)
 	)
