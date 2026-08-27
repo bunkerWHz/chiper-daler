@@ -51,6 +51,11 @@ func is_debug_visible() -> bool:
 func _update_overlay() -> void:
 	var lines := PackedStringArray()
 	lines.append("Actor: %s" % actor.name)
+	_append_actor_state_info(lines)
+	_append_movement_info(lines)
+	_append_interaction_info(lines)
+	_append_health_info(lines)
+	_append_guard_info(lines)
 	lines.append("Components:")
 
 	for component: Component in actor.get_components():
@@ -61,11 +66,21 @@ func _update_overlay() -> void:
 			]
 		)
 
-	_append_movement_info(lines)
-	_append_interaction_info(lines)
-	_append_health_info(lines)
-	_append_guard_info(lines)
 	_label.text = "\n".join(lines)
+
+
+func _append_actor_state_info(lines: PackedStringArray) -> void:
+	var actor_state := (
+		actor.get_component(ActorStateComponent) as ActorStateComponent
+	)
+
+	if actor_state == null or not actor_state.is_enabled:
+		return
+
+	actor_state.refresh_state()
+	lines.append(
+		"States: %s" % " + ".join(actor_state.get_active_state_names())
+	)
 
 
 func _append_movement_info(lines: PackedStringArray) -> void:
@@ -124,3 +139,7 @@ func _append_guard_info(lines: PackedStringArray) -> void:
 		status = "GUARDING" if guard.is_guarding() else "READY"
 
 	lines.append("Guard: %s" % status)
+
+
+func should_disable_on_actor_death() -> bool:
+	return false

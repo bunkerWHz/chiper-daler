@@ -97,3 +97,11 @@ func test_actor_state_component_survives_death_and_reports_it() -> void:
 
 	assert_true(actor_state.is_enabled)
 	assert_true(actor_state.has_condition(ActorState.Condition.DEAD))
+
+	var overlay := DebugOverlayComponent.new()
+	overlay.actor = actor
+	var lines := PackedStringArray()
+	overlay._append_actor_state_info(lines)
+
+	assert_true(lines.has("States: Idle + Dead"))
+	assert_false(overlay.should_disable_on_actor_death())
