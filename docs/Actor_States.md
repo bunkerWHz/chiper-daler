@@ -76,6 +76,8 @@ active. Every future equipment ability must follow the same ownership rule.
 | Condition | `Respawning` | `PlayerRespawnComponent.is_restart_scheduled()` |
 | Condition | `Resting` | `RestComponent.is_resting()` |
 | Condition | `LevelUp` | `ProgressionComponent.is_leveling_up()` |
+| Condition | `Debuffed` | active negative `StatusEffect` |
+| Condition | `Buffed` | active positive `StatusEffect` |
 
 ## Reserved states without mechanics
 
@@ -90,12 +92,9 @@ be reported as active until the corresponding ability exists.
 
 ### Conditions
 
-- `Debuffed`
-- `Buffed`
-
-Specific effects such as poison, bleed, slow, increased attack, or increased
-defence belong to future effect components. `Debuffed` and `Buffed` are summary
-condition flags, not containers for effect logic.
+Specific mechanics such as poison damage, bleeding, slowing, increased attack,
+or increased defence belong to their own effect implementations. `Debuffed`
+and `Buffed` remain summary condition flags reported by `StatusEffectComponent`.
 
 ## Extension rule
 

@@ -7,6 +7,7 @@ signal rest_finished
 @export var config: RestConfig
 
 var _health: HealthComponent
+var _status_effects: StatusEffectComponent
 var _timer: float = 0.0
 
 
@@ -20,6 +21,11 @@ func on_initialize() -> void:
 	if _health == null or not _health.is_enabled:
 		push_error("RestComponent requires an enabled HealthComponent")
 		disable()
+		return
+
+	_status_effects = (
+		actor.get_component(StatusEffectComponent) as StatusEffectComponent
+	)
 
 
 func _process(delta: float) -> void:
@@ -37,6 +43,8 @@ func start_rest() -> bool:
 
 	_timer = config.duration
 	_health.heal(_health.get_max_health())
+	if _status_effects != null and _status_effects.is_enabled:
+		_status_effects.clear_debuffs()
 	rest_started.emit()
 	return true
 

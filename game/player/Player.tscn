@@ -42,6 +42,7 @@
 [ext_resource type="PackedScene" path="res://features/magic/MagicComponent.tscn" id="36_magic"]
 [ext_resource type="PackedScene" path="res://features/rest/RestComponent.tscn" id="37_rest"]
 [ext_resource type="PackedScene" path="res://features/progression/ProgressionComponent.tscn" id="38_progression"]
+[ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="39_status"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -350,6 +351,8 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="RestComponent" parent="_Components" instance=ExtResource("37_rest")]
 
 [node name="ProgressionComponent" parent="_Components" instance=ExtResource("38_progression")]
+
+[node name="StatusEffectComponent" parent="_Components" instance=ExtResource("39_status")]
 
 [node name="ActorStateComponent" parent="_Components" instance=ExtResource("29_actor_state")]
 

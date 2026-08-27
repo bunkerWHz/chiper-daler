@@ -14,13 +14,21 @@ func test_rest_point_heals_and_reports_resting_state() -> void:
 
 	var health := HealthComponent.new()
 	health.config = HealthConfig.new()
+	var effects := StatusEffectComponent.new()
 	var rest := RestComponent.new()
 	rest.config = RestConfig.new()
 	var state := ActorStateComponent.new()
-	for component: Component in [health, rest, state]:
+	for component: Component in [health, effects, rest, state]:
 		components.add_child(component)
 	player._collect_components()
 	health.take_damage(40.0)
+	var buff := StatusEffect.new()
+	buff.effect_id = &"blessing"
+	var debuff := StatusEffect.new()
+	debuff.effect_id = &"poison"
+	debuff.polarity = StatusEffect.Polarity.DEBUFF
+	effects.apply_effect(buff)
+	effects.apply_effect(debuff)
 
 	var point := track(RestPoint.new()) as RestPoint
 	var point_components := Node2D.new()
@@ -34,6 +42,8 @@ func test_rest_point_heals_and_reports_resting_state() -> void:
 	interactable.interact(player)
 	state.refresh_state()
 	assert_eq(health.get_current_health(), health.get_max_health())
+	assert_true(effects.has_effect(&"blessing"))
+	assert_false(effects.has_effect(&"poison"))
 	assert_true(rest.is_resting())
 	assert_true(state.has_condition(ActorState.Condition.RESTING))
 

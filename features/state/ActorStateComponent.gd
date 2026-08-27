@@ -26,6 +26,7 @@ var _health_component: HealthComponent
 var _respawn_component: PlayerRespawnComponent
 var _rest_component: RestComponent
 var _progression_component: ProgressionComponent
+var _status_effect_component: StatusEffectComponent
 
 var _locomotion: ActorState.Locomotion = ActorState.Locomotion.IDLE
 var _action: ActorState.Action = ActorState.Action.NONE
@@ -74,6 +75,9 @@ func on_initialize() -> void:
 	_rest_component = actor.get_component(RestComponent) as RestComponent
 	_progression_component = (
 		actor.get_component(ProgressionComponent) as ProgressionComponent
+	)
+	_status_effect_component = (
+		actor.get_component(StatusEffectComponent) as StatusEffectComponent
 	)
 	refresh_state()
 
@@ -293,6 +297,15 @@ func _resolve_conditions() -> int:
 		and _progression_component.is_leveling_up()
 	):
 		result |= ActorState.Condition.LEVEL_UP
+
+	if (
+		_status_effect_component != null
+		and _status_effect_component.is_enabled
+	):
+		if _status_effect_component.has_debuff():
+			result |= ActorState.Condition.DEBUFFED
+		if _status_effect_component.has_buff():
+			result |= ActorState.Condition.BUFFED
 
 	return result
 
