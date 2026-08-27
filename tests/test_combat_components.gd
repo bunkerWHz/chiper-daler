@@ -190,6 +190,77 @@ func test_attack_interrupts_guard_and_guard_resumes_after_attack() -> void:
 	assert_true(guard.start_guard())
 
 
+func test_held_attack_becomes_heavy_and_restores_hitbox_damage() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var input := InputComponent.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	hitbox.damage = 10.0
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+
+	container.add_child(input)
+	container.add_child(hitbox)
+	container.add_child(attack)
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	attack._process(0.0)
+	assert_true(attack.is_charging_heavy_attack())
+
+	attack._process(attack.config.heavy_charge_time)
+	assert_true(attack.is_heavy_attacking())
+	assert_eq(hitbox.damage, 20.0)
+	assert_true(area.monitoring)
+
+	attack._process(attack.config.heavy_active_duration)
+	assert_false(attack.is_attacking())
+	assert_eq(hitbox.damage, 10.0)
+	assert_false(area.monitoring)
+
+
+func test_released_attack_remains_light_attack() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var input := InputComponent.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+
+	container.add_child(input)
+	container.add_child(hitbox)
+	container.add_child(attack)
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	attack._process(0.0)
+	input._attack_pressed = false
+	input._attack_released = true
+	attack._process(0.1)
+
+	assert_true(attack.is_attacking())
+	assert_false(attack.is_heavy_attacking())
+	assert_eq(hitbox.damage, 10.0)
+
+
 func test_damage_number_view_rises_and_fades() -> void:
 	var view := track(DamageNumberView.new()) as DamageNumberView
 	var config := DamageNumberConfig.new()
@@ -971,6 +1042,55 @@ func test_guard_reduces_only_frontal_damage() -> void:
 	assert_eq(target.health.get_current_health(), 50.0)
 
 
+func test_parry_negates_frontal_hit_and_uses_cooldown() -> void:
+	var target := _create_target(100.0)
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [input, facing, guard]:
+		target.actor.get_node("_Components").add_child(component)
+
+	target.actor._collect_components()
+
+	var source := track(Actor.new()) as Actor
+	source.global_position.x = 100.0
+	var hit := HitData.new(40.0, source)
+
+	assert_true(guard.start_parry())
+	assert_eq(target.hurtbox.receive_hit(hit), 0.0)
+	assert_eq(target.health.get_current_health(), 100.0)
+	assert_false(guard.is_parrying())
+	assert_false(guard.start_parry())
+
+	guard._process(guard.config.parry_cooldown)
+	assert_true(guard.start_parry())
+
+
+func test_held_guard_transitions_from_parry_to_block() -> void:
+	var target := _create_target(100.0)
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [input, facing, guard]:
+		target.actor.get_node("_Components").add_child(component)
+
+	target.actor._collect_components()
+	input._guard_just_pressed = true
+	input._guard_pressed = true
+	guard._process(0.0)
+
+	assert_true(guard.is_parrying())
+	assert_false(guard.is_guarding())
+
+	guard._process(guard.config.parry_window)
+	assert_false(guard.is_parrying())
+	assert_true(guard.is_guarding())
+
+
 func test_block_reaction_pulses_and_restores_visual() -> void:
 	var target := _create_target(100.0)
 	var visual := Node2D.new()
@@ -1030,6 +1150,12 @@ func test_debug_overlay_reports_guard_state() -> void:
 	lines.clear()
 	overlay._append_guard_info(lines)
 	assert_true(lines.has("Guard: GUARDING"))
+
+	guard.stop_guard()
+	guard.start_parry()
+	lines.clear()
+	overlay._append_guard_info(lines)
+	assert_true(lines.has("Guard: PARRYING"))
 
 	guard.disable()
 	lines.clear()

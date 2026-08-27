@@ -2,6 +2,7 @@ extends Component
 class_name AttackComponent
 
 signal attack_started
+signal heavy_attack_started
 signal attack_finished
 
 @export var config: AttackConfig
@@ -11,11 +12,27 @@ var _hitbox_component: HitboxComponent
 var _facing_component: FacingComponent
 var _active_timer: float = 0.0
 var _cooldown_timer: float = 0.0
+var _charge_timer: float = 0.0
+var _is_charging: bool = false
+var _is_heavy_attack: bool = false
+var _base_damage: float = 0.0
 
 
 func on_initialize() -> void:
 	if config == null:
 		push_error("AttackComponent requires AttackConfig")
+		disable()
+		return
+
+	if (
+		config.active_duration <= 0.0
+		or config.cooldown <= 0.0
+		or config.heavy_charge_time <= 0.0
+		or config.heavy_active_duration <= 0.0
+		or config.heavy_cooldown <= 0.0
+		or config.heavy_damage_multiplier < 1.0
+	):
+		push_error("AttackComponent has an invalid config")
 		disable()
 		return
 
@@ -27,6 +44,8 @@ func on_initialize() -> void:
 		push_error("AttackComponent requires an enabled HitboxComponent")
 		disable()
 		return
+
+	_base_damage = _hitbox_component.damage
 
 	if _input_component != null and not _input_component.is_enabled:
 		_input_component = null
@@ -60,19 +79,15 @@ func _process(delta: float) -> void:
 		if _active_timer == 0.0:
 			_finish_attack()
 
-	if _input_component != null and _input_component.consume_attack_pressed():
-		attack()
+	_update_attack_input(delta)
 
 
 func attack() -> bool:
-	if not can_attack():
-		return false
+	return _start_attack(false)
 
-	_active_timer = config.active_duration
-	_cooldown_timer = config.cooldown
-	_hitbox_component.activate()
-	attack_started.emit()
-	return true
+
+func heavy_attack() -> bool:
+	return _start_attack(true)
 
 
 func can_attack() -> bool:
@@ -83,6 +98,14 @@ func is_attacking() -> bool:
 	return _active_timer > 0.0
 
 
+func is_heavy_attacking() -> bool:
+	return is_attacking() and _is_heavy_attack
+
+
+func is_charging_heavy_attack() -> bool:
+	return _is_charging
+
+
 func set_horizontal_direction(direction: float) -> void:
 	if _hitbox_component != null:
 		_hitbox_component.set_horizontal_direction(direction)
@@ -91,6 +114,9 @@ func set_horizontal_direction(direction: float) -> void:
 func disable() -> void:
 	var was_attacking := is_attacking()
 	_active_timer = 0.0
+	_charge_timer = 0.0
+	_is_charging = false
+	_restore_hitbox_damage()
 
 	if _hitbox_component != null:
 		_hitbox_component.deactivate()
@@ -103,7 +129,57 @@ func disable() -> void:
 
 func _finish_attack() -> void:
 	_hitbox_component.deactivate()
+	_restore_hitbox_damage()
 	attack_finished.emit()
+
+
+func _update_attack_input(delta: float) -> void:
+	if _input_component == null:
+		return
+
+	if _input_component.consume_attack_pressed():
+		if can_attack():
+			_is_charging = true
+			_charge_timer = 0.0
+
+	if not _is_charging:
+		return
+
+	if _input_component.is_attack_pressed():
+		_charge_timer += delta
+
+		if _charge_timer >= config.heavy_charge_time:
+			heavy_attack()
+	elif _input_component.consume_attack_released():
+		attack()
+
+
+func _start_attack(heavy: bool) -> bool:
+	if not can_attack():
+		return false
+
+	_is_charging = false
+	_charge_timer = 0.0
+	_is_heavy_attack = heavy
+	_active_timer = (
+		config.heavy_active_duration if heavy else config.active_duration
+	)
+	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
+
+	if heavy:
+		_hitbox_component.damage = _base_damage * config.heavy_damage_multiplier
+		heavy_attack_started.emit()
+
+	_hitbox_component.activate()
+	attack_started.emit()
+	return true
+
+
+func _restore_hitbox_damage() -> void:
+	if _hitbox_component != null:
+		_hitbox_component.damage = _base_damage
+
+	_is_heavy_attack = false
 
 
 func _on_facing_changed(

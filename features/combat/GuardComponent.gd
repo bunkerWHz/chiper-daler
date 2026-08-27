@@ -3,6 +3,9 @@ class_name GuardComponent
 
 signal guard_started
 signal guard_finished
+signal parry_started
+signal parry_finished
+signal attack_parried(hit: HitData)
 signal damage_blocked(hit: HitData, prevented_damage: float)
 
 @export var config: GuardConfig
@@ -11,6 +14,8 @@ var _input_component: InputComponent
 var _facing_component: FacingComponent
 var _attack_component: AttackComponent
 var _is_guarding: bool = false
+var _parry_timer: float = 0.0
+var _parry_cooldown_timer: float = 0.0
 
 
 func on_initialize() -> void:
@@ -19,7 +24,12 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	if config.damage_multiplier < 0.0 or config.damage_multiplier > 1.0:
+	if (
+		config.damage_multiplier < 0.0
+		or config.damage_multiplier > 1.0
+		or config.parry_window <= 0.0
+		or config.parry_cooldown <= 0.0
+	):
 		push_error("GuardComponent has an invalid config")
 		disable()
 		return
@@ -46,21 +56,48 @@ func on_initialize() -> void:
 		_attack_component.attack_started.connect(_on_attack_started)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_parry_cooldown_timer = maxf(_parry_cooldown_timer - delta, 0.0)
+
+	if _parry_timer > 0.0:
+		_parry_timer = maxf(_parry_timer - delta, 0.0)
+
+		if _parry_timer == 0.0:
+			parry_finished.emit()
+
 	var attack_in_progress := (
 		_attack_component != null
 		and _attack_component.is_enabled
-		and _attack_component.is_attacking()
+		and (
+			_attack_component.is_attacking()
+			or _attack_component.is_charging_heavy_attack()
+		)
 	)
 
-	if _input_component.is_guard_pressed() and not attack_in_progress:
+	if (
+		_input_component.consume_guard_just_pressed()
+		and not attack_in_progress
+	):
+		start_parry()
+
+	if is_parrying():
+		stop_guard()
+	elif _input_component.is_guard_pressed() and not attack_in_progress:
 		start_guard()
 	else:
 		stop_guard()
 
 
 func modify_damage(hit: HitData, damage: float) -> float:
-	if not _is_guarding or not _is_hit_from_front(hit):
+	if not _is_hit_from_front(hit):
+		return damage
+
+	if is_parrying():
+		_finish_parry()
+		attack_parried.emit(hit)
+		return 0.0
+
+	if not _is_guarding:
 		return damage
 
 	var modified_damage := damage * config.damage_multiplier
@@ -71,20 +108,47 @@ func modify_damage(hit: HitData, damage: float) -> float:
 
 func allows_hit_reactions(hit: HitData) -> bool:
 	return not (
-		config.block_hit_reactions
-		and _is_guarding
+		(is_parrying() or (config.block_hit_reactions and _is_guarding))
 		and _is_hit_from_front(hit)
 	)
 
 
-func start_guard() -> bool:
-	if not is_enabled or _is_guarding:
+func start_parry() -> bool:
+	if (
+		not is_enabled
+		or is_parrying()
+		or _parry_cooldown_timer > 0.0
+	):
 		return false
 
 	if (
 		_attack_component != null
 		and _attack_component.is_enabled
-		and _attack_component.is_attacking()
+		and (
+			_attack_component.is_attacking()
+			or _attack_component.is_charging_heavy_attack()
+		)
+	):
+		return false
+
+	stop_guard()
+	_parry_timer = config.parry_window
+	_parry_cooldown_timer = config.parry_cooldown
+	parry_started.emit()
+	return true
+
+
+func start_guard() -> bool:
+	if not is_enabled or _is_guarding or is_parrying():
+		return false
+
+	if (
+		_attack_component != null
+		and _attack_component.is_enabled
+		and (
+			_attack_component.is_attacking()
+			or _attack_component.is_charging_heavy_attack()
+		)
 	):
 		return false
 
@@ -105,9 +169,22 @@ func is_guarding() -> bool:
 	return _is_guarding
 
 
+func is_parrying() -> bool:
+	return _parry_timer > 0.0
+
+
 func disable() -> void:
 	stop_guard()
+	_finish_parry()
 	super.disable()
+
+
+func _finish_parry() -> void:
+	if not is_parrying():
+		return
+
+	_parry_timer = 0.0
+	parry_finished.emit()
 
 
 func _is_hit_from_front(hit: HitData) -> bool:
@@ -126,3 +203,4 @@ func _is_hit_from_front(hit: HitData) -> bool:
 
 func _on_attack_started() -> void:
 	stop_guard()
+	_finish_parry()

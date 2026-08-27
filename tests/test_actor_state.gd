@@ -146,6 +146,54 @@ func test_actor_state_component_survives_death_and_reports_it() -> void:
 	assert_false(overlay.should_disable_on_actor_death())
 
 
+func test_actor_state_maps_heavy_attack_and_parry() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+
+	var input := InputComponent.new()
+	var facing := FacingComponent.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+	var actor_state := ActorStateComponent.new()
+
+	for component: Component in [
+		input,
+		facing,
+		hitbox,
+		attack,
+		guard,
+		actor_state,
+	]:
+		components.add_child(component)
+
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	attack._process(0.0)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.HEAVY_ATTACK)
+
+	assert_true(attack.heavy_attack())
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.HEAVY_ATTACK)
+
+	attack._process(attack.config.heavy_active_duration)
+	assert_true(guard.start_parry())
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.PARRYING)
+
+
 func test_movement_consumes_exactly_one_air_jump() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

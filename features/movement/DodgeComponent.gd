@@ -134,7 +134,10 @@ func can_dodge() -> bool:
 	if (
 		_attack_component != null
 		and _attack_component.is_enabled
-		and _attack_component.is_attacking()
+		and (
+			_attack_component.is_attacking()
+			or _attack_component.is_charging_heavy_attack()
+		)
 	):
 		return false
 

@@ -22,5 +22,17 @@ func consume_attack_pressed() -> bool:
 	return false
 
 
+func is_attack_pressed() -> bool:
+	return false
+
+
+func consume_attack_released() -> bool:
+	return false
+
+
 func is_guard_pressed() -> bool:
+	return false
+
+
+func consume_guard_just_pressed() -> bool:
 	return false

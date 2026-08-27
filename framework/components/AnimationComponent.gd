@@ -50,6 +50,12 @@ func on_initialize() -> void:
 
 		if not _guard_component.guard_finished.is_connected(_on_guard_finished):
 			_guard_component.guard_finished.connect(_on_guard_finished)
+
+		if not _guard_component.parry_started.is_connected(_on_guard_started):
+			_guard_component.parry_started.connect(_on_guard_started)
+
+		if not _guard_component.parry_finished.is_connected(_on_guard_finished):
+			_guard_component.parry_finished.connect(_on_guard_finished)
 		
 func _ready() -> void:
 	_sprite = actor.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
@@ -163,7 +169,13 @@ func _on_movement_state_changed(
 	if _is_attack_animation_playing:
 		return
 
-	if _guard_component != null and _guard_component.is_guarding():
+	if (
+		_guard_component != null
+		and (
+			_guard_component.is_guarding()
+			or _guard_component.is_parrying()
+		)
+	):
 		return
 
 	_apply_movement_state(current_movement_state)

@@ -136,7 +136,12 @@ func _append_guard_info(lines: PackedStringArray) -> void:
 	var status := "DISABLED"
 
 	if guard.is_enabled:
-		status = "GUARDING" if guard.is_guarding() else "READY"
+		if guard.is_parrying():
+			status = "PARRYING"
+		elif guard.is_guarding():
+			status = "GUARDING"
+		else:
+			status = "READY"
 
 	lines.append("Guard: %s" % status)
 

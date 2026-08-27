@@ -142,9 +142,26 @@ func _resolve_action() -> ActorState.Action:
 	if (
 		_attack_component != null
 		and _attack_component.is_enabled
+		and (
+			_attack_component.is_heavy_attacking()
+			or _attack_component.is_charging_heavy_attack()
+		)
+	):
+		return ActorState.Action.HEAVY_ATTACK
+
+	if (
+		_attack_component != null
+		and _attack_component.is_enabled
 		and _attack_component.is_attacking()
 	):
 		return ActorState.Action.LIGHT_ATTACK
+
+	if (
+		_guard_component != null
+		and _guard_component.is_enabled
+		and _guard_component.is_parrying()
+	):
+		return ActorState.Action.PARRYING
 
 	if (
 		_guard_component != null

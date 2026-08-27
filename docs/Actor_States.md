@@ -36,7 +36,9 @@ not implement abilities and must not duplicate their gameplay logic.
 | Locomotion | `ClimbingDown` | `ClimbingComponent` with downward input |
 | Locomotion | `Falling` | `MovementComponent.FALL` or downward body velocity |
 | Action | `LightAttack` | `AttackComponent.is_attacking()` |
+| Action | `HeavyAttack` | heavy charge or `AttackComponent.is_heavy_attacking()` |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
+| Action | `Parrying` | `GuardComponent.is_parrying()` |
 | Condition | `Hit` | `HitReactionComponent.is_reacting()` |
 | Condition | `Stunned` | `HitStunComponent.is_stunned()` |
 | Condition | `Dead` | `HealthComponent.is_dead()` |
@@ -51,13 +53,11 @@ be reported as active until the corresponding ability exists.
 
 ### Actions
 
-- `HeavyAttack`
 - `UsingItem`
 - `ThrowingAim`, `ThrowingAction`, `ThrowingRecovery`
 - `AimBow`, `LooseArrow`
 - `AimCrossbow`, `FireCrossbow`
 - `MagicCharge`, `MagicCast`, `MagicRecovery`, `MagicChanneling`
-- `Parrying`
 - `CriticalAttack`
 - `InteractingStart`, `InteractingProgress`, `InteractingEnd`
 
@@ -85,7 +85,6 @@ When adding a state:
 
 ## Planned implementation order
 
-1. Heavy attack and parry.
-2. Timed interaction states.
-3. Items, throwing, ranged weapons, and magic as separate ability families.
-4. Knockdown, rest, level-up, buffs, and debuffs as condition components.
+1. Timed interaction states.
+2. Items, throwing, ranged weapons, and magic as separate ability families.
+3. Knockdown, rest, level-up, buffs, and debuffs as condition components.

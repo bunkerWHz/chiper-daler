@@ -17,8 +17,11 @@ var _vertical_axis: float = 0.0
 var _jump_pressed: bool = false
 var _jump_released: bool = false
 var _interact_pressed: bool = false
+var _attack_just_pressed: bool = false
 var _attack_pressed: bool = false
+var _attack_released: bool = false
 var _guard_pressed: bool = false
+var _guard_just_pressed: bool = false
 var _dodge_pressed: bool = false
 
 
@@ -56,15 +59,35 @@ func consume_interact_pressed() -> bool:
 
 
 func consume_attack_pressed() -> bool:
-	if not _attack_pressed:
+	if not _attack_just_pressed:
 		return false
 
-	_attack_pressed = false
+	_attack_just_pressed = false
+	return true
+
+
+func is_attack_pressed() -> bool:
+	return _attack_pressed
+
+
+func consume_attack_released() -> bool:
+	if not _attack_released:
+		return false
+
+	_attack_released = false
 	return true
 
 
 func is_guard_pressed() -> bool:
 	return _guard_pressed
+
+
+func consume_guard_just_pressed() -> bool:
+	if not _guard_just_pressed:
+		return false
+
+	_guard_just_pressed = false
+	return true
 
 
 func consume_dodge_pressed() -> bool:
@@ -77,8 +100,11 @@ func consume_dodge_pressed() -> bool:
 
 func _process(_delta: float) -> void:
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
-	_attack_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
+	_attack_just_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
+	_attack_pressed = Input.is_action_pressed(ATTACK_ACTION)
+	_attack_released = Input.is_action_just_released(ATTACK_ACTION)
 	_guard_pressed = Input.is_action_pressed(GUARD_ACTION)
+	_guard_just_pressed = Input.is_action_just_pressed(GUARD_ACTION)
 
 
 func _physics_process(_delta: float) -> void:
