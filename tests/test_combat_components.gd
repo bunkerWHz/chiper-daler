@@ -851,6 +851,21 @@ func test_enemy_jump_ignores_an_airborne_target() -> void:
 	jump.free()
 
 
+func test_enemy_movement_direction_can_be_committed_for_a_jump() -> void:
+	var movement := EnemyMovementComponent.new()
+
+	assert_true(movement.set_move_direction(1.0))
+	movement.lock_move_direction()
+	assert_true(movement.is_move_direction_locked())
+	assert_false(movement.set_move_direction(-1.0))
+	assert_eq(movement.get_move_direction(), 1.0)
+
+	movement.unlock_move_direction()
+	assert_true(movement.set_move_direction(-1.0))
+	assert_eq(movement.get_move_direction(), -1.0)
+	movement.free()
+
+
 func test_enemy_patrol_reverses_movement_direction() -> void:
 	var enemy := track(Actor.new()) as Actor
 	var container := Node2D.new()

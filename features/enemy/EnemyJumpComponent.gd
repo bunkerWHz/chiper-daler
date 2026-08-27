@@ -14,6 +14,8 @@ var _movement_component: EnemyMovementComponent
 var _chase_component: EnemyChaseComponent
 var _ground_sensor: EnemyGroundSensorComponent
 var _cooldown_timer: float = 0.0
+var _has_committed_jump: bool = false
+var _has_left_ground: bool = false
 
 
 func on_initialize() -> void:
@@ -68,6 +70,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_cooldown_timer = maxf(_cooldown_timer - delta, 0.0)
+	_update_jump_commitment()
 
 	if _cooldown_timer > 0.0 or not _ground_sensor.is_grounded():
 		return
@@ -101,11 +104,18 @@ func _physics_process(delta: float) -> void:
 	):
 		return
 
-	_movement_component.set_move_direction(direction)
+	if not _movement_component.set_move_direction(direction):
+		return
+
+	_movement_component.lock_move_direction()
 
 	if _movement_component.jump(config.jump_velocity):
+		_has_committed_jump = true
+		_has_left_ground = false
 		_cooldown_timer = config.cooldown
 		jump_started.emit(target.actor)
+	else:
+		_movement_component.unlock_move_direction()
 
 
 func can_reach_offset(offset: Vector2) -> bool:
@@ -177,3 +187,27 @@ func _has_landing_surface(target: HurtboxComponent) -> bool:
 		config.landing_probe_depth,
 		excluded_body
 	)
+
+
+func _update_jump_commitment() -> void:
+	if not _has_committed_jump:
+		return
+
+	if not _ground_sensor.is_grounded():
+		_has_left_ground = true
+		return
+
+	if _has_left_ground:
+		_has_committed_jump = false
+		_has_left_ground = false
+		_movement_component.unlock_move_direction()
+
+
+func disable() -> void:
+	_has_committed_jump = false
+	_has_left_ground = false
+
+	if _movement_component != null:
+		_movement_component.unlock_move_direction()
+
+	super.disable()

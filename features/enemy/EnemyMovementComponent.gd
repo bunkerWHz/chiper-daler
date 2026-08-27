@@ -5,6 +5,7 @@ class_name EnemyMovementComponent
 
 var _body_component: CharacterBodyComponent
 var _move_direction: float = 0.0
+var _is_move_direction_locked: bool = false
 
 
 func on_initialize() -> void:
@@ -39,12 +40,28 @@ func _physics_process(delta: float) -> void:
 	_body_component.move_and_slide()
 
 
-func set_move_direction(direction: float) -> void:
+func set_move_direction(direction: float) -> bool:
+	if _is_move_direction_locked:
+		return false
+
 	_move_direction = clampf(direction, -1.0, 1.0)
+	return true
 
 
-func stop() -> void:
-	_move_direction = 0.0
+func stop() -> bool:
+	return set_move_direction(0.0)
+
+
+func lock_move_direction() -> void:
+	_is_move_direction_locked = true
+
+
+func unlock_move_direction() -> void:
+	_is_move_direction_locked = false
+
+
+func is_move_direction_locked() -> bool:
+	return _is_move_direction_locked
 
 
 func jump(jump_velocity: float) -> bool:
