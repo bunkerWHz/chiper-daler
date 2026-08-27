@@ -871,6 +871,23 @@ func test_enemy_movement_direction_can_be_committed_for_a_jump() -> void:
 	movement.free()
 
 
+func test_enemy_platform_sandbox_has_reachable_and_unreachable_steps() -> void:
+	var packed_scene := load(
+		"res://tests/EnemyPlatformSandbox.tscn"
+	) as PackedScene
+	assert_true(packed_scene != null)
+
+	var sandbox := track(packed_scene.instantiate())
+	assert_true(sandbox.get_node_or_null("Player") != null)
+	assert_true(sandbox.get_node_or_null("Enemy") != null)
+	assert_true(
+		sandbox.get_node_or_null("Platforms/MiddlePlatform") != null
+	)
+	assert_true(
+		sandbox.get_node_or_null("Platforms/UnreachablePlatform") != null
+	)
+
+
 func test_enemy_patrol_reverses_movement_direction() -> void:
 	var enemy := track(Actor.new()) as Actor
 	var container := Node2D.new()
