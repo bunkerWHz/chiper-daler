@@ -1,0 +1,76 @@
+@tool
+extends McpTestSuite
+
+
+func suite_name() -> String:
+	return "ranged_weapon"
+
+
+func test_bow_aims_and_looses_arrow_on_primary_release() -> void:
+	var setup := _create_ranged_actor()
+	var input := setup.input as InputComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var ranged := setup.ranged as RangedWeaponComponent
+	var actor_state := setup.actor_state as ActorStateComponent
+	equipment.equip(EquipmentComponent.Slot.BOW)
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	ranged._process(0.0)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.AIM_BOW)
+
+	input._attack_pressed = false
+	input._attack_released = true
+	ranged._process(0.0)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.LOOSE_ARROW)
+	assert_eq(ranged.get_arrow_count(), 19)
+
+	ranged._process(ranged.config.release_duration)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+
+
+func test_crossbow_aims_with_primary_and_fires_with_secondary() -> void:
+	var setup := _create_ranged_actor()
+	var input := setup.input as InputComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var ranged := setup.ranged as RangedWeaponComponent
+	var actor_state := setup.actor_state as ActorStateComponent
+	equipment.equip(EquipmentComponent.Slot.CROSSBOW)
+	input._attack_just_pressed = true
+	ranged._process(0.0)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.AIM_CROSSBOW)
+
+	input._guard_just_pressed = true
+	ranged._process(0.0)
+	actor_state.refresh_state()
+	assert_eq(actor_state.get_action(), ActorState.Action.FIRE_CROSSBOW)
+	assert_eq(ranged.get_bolt_count(), 11)
+
+
+func _create_ranged_actor() -> Dictionary:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var equipment := EquipmentComponent.new()
+	var facing := FacingComponent.new()
+	var ranged := RangedWeaponComponent.new()
+	ranged.config = RangedWeaponConfig.new()
+	var actor_state := ActorStateComponent.new()
+
+	for component: Component in [input, equipment, facing, ranged, actor_state]:
+		components.add_child(component)
+
+	actor._collect_components()
+	return {
+		"actor": actor,
+		"input": input,
+		"equipment": equipment,
+		"facing": facing,
+		"ranged": ranged,
+		"actor_state": actor_state,
+	}

@@ -56,6 +56,10 @@ active. Every future equipment ability must follow the same ownership rule.
 | Action | `ThrowingAim` | `ThrowingComponent.AIM` phase |
 | Action | `ThrowingAction` | `ThrowingComponent.ACTION` phase |
 | Action | `ThrowingRecovery` | `ThrowingComponent.RECOVERY` phase |
+| Action | `AimBow` | `RangedWeaponComponent.BOW_AIM` phase |
+| Action | `LooseArrow` | `RangedWeaponComponent.BOW_LOOSE` phase |
+| Action | `AimCrossbow` | `RangedWeaponComponent.CROSSBOW_AIM` phase |
+| Action | `FireCrossbow` | `RangedWeaponComponent.CROSSBOW_FIRE` phase |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
 | Action | `Parrying` | `GuardComponent.is_parrying()` |
 | Action | `InteractingStart` | `InteractionComponent.START` phase |
@@ -75,8 +79,6 @@ be reported as active until the corresponding ability exists.
 
 ### Actions
 
-- `AimBow`, `LooseArrow`
-- `AimCrossbow`, `FireCrossbow`
 - `MagicCharge`, `MagicCast`, `MagicRecovery`, `MagicChanneling`
 - `CriticalAttack`
 

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/ranged/RangedWeaponComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/ranged/RangedWeaponConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="RangedWeaponConfig_default"]
+script = ExtResource("2_config")
+
+[node name="RangedWeaponComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("RangedWeaponConfig_default")

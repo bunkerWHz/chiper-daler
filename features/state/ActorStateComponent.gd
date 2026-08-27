@@ -18,6 +18,7 @@ var _guard_component: GuardComponent
 var _interaction_component: InteractionComponent
 var _item_use_component: ItemUseComponent
 var _throwing_component: ThrowingComponent
+var _ranged_weapon_component: RangedWeaponComponent
 var _hit_reaction_component: HitReactionComponent
 var _hit_stun_component: HitStunComponent
 var _health_component: HealthComponent
@@ -48,6 +49,9 @@ func on_initialize() -> void:
 	)
 	_throwing_component = (
 		actor.get_component(ThrowingComponent) as ThrowingComponent
+	)
+	_ranged_weapon_component = (
+		actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	)
 	_hit_reaction_component = (
 		actor.get_component(HitReactionComponent)
@@ -197,6 +201,17 @@ func _resolve_action() -> ActorState.Action:
 				return ActorState.Action.THROWING_ACTION
 			ThrowingComponent.Phase.RECOVERY:
 				return ActorState.Action.THROWING_RECOVERY
+
+	if _ranged_weapon_component != null and _ranged_weapon_component.is_enabled:
+		match _ranged_weapon_component.get_phase():
+			RangedWeaponComponent.Phase.BOW_AIM:
+				return ActorState.Action.AIM_BOW
+			RangedWeaponComponent.Phase.BOW_LOOSE:
+				return ActorState.Action.LOOSE_ARROW
+			RangedWeaponComponent.Phase.CROSSBOW_AIM:
+				return ActorState.Action.AIM_CROSSBOW
+			RangedWeaponComponent.Phase.CROSSBOW_FIRE:
+				return ActorState.Action.FIRE_CROSSBOW
 
 	if (
 		_interaction_component != null
