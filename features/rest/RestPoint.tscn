@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/rest/RestPoint.gd" id="1_point"]
+[ext_resource type="Script" path="res://framework/components/InteractableComponent.gd" id="2_interactable"]
+
+[node name="RestPoint" type="Node2D"]
+script = ExtResource("1_point")
+
+[node name="_Components" type="Node2D" parent="."]
+
+[node name="InteractableComponent" type="Node" parent="_Components"]
+script = ExtResource("2_interactable")
+interaction_name = "Rest"
+
+[node name="Marker" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-12, 10, 0, -16, 12, 10)
+color = Color(0.35, 0.8, 1, 1)

@@ -24,6 +24,7 @@ var _hit_reaction_component: HitReactionComponent
 var _hit_stun_component: HitStunComponent
 var _health_component: HealthComponent
 var _respawn_component: PlayerRespawnComponent
+var _rest_component: RestComponent
 
 var _locomotion: ActorState.Locomotion = ActorState.Locomotion.IDLE
 var _action: ActorState.Action = ActorState.Action.NONE
@@ -69,6 +70,7 @@ func on_initialize() -> void:
 		actor.get_component(PlayerRespawnComponent)
 		as PlayerRespawnComponent
 	)
+	_rest_component = actor.get_component(RestComponent) as RestComponent
 	refresh_state()
 
 
@@ -273,6 +275,13 @@ func _resolve_conditions() -> int:
 		and _respawn_component.is_restart_scheduled()
 	):
 		result |= ActorState.Condition.RESPAWNING
+
+	if (
+		_rest_component != null
+		and _rest_component.is_enabled
+		and _rest_component.is_resting()
+	):
+		result |= ActorState.Condition.RESTING
 
 	return result
 

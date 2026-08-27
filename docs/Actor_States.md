@@ -74,6 +74,7 @@ active. Every future equipment ability must follow the same ownership rule.
 | Condition | `KnockedDown` | strong impact through `HitStunComponent` |
 | Condition | `Dead` | `HealthComponent.is_dead()` |
 | Condition | `Respawning` | `PlayerRespawnComponent.is_restart_scheduled()` |
+| Condition | `Resting` | `RestComponent.is_resting()` |
 
 ## Reserved states without mechanics
 
@@ -89,7 +90,6 @@ be reported as active until the corresponding ability exists.
 ### Conditions
 
 - `LevelUp`
-- `Resting`
 - `Debuffed`
 - `Buffed`
 

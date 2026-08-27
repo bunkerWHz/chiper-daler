@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/rest/RestComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/rest/RestConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="RestConfig_default"]
+script = ExtResource("2_config")
+
+[node name="RestComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("RestConfig_default")

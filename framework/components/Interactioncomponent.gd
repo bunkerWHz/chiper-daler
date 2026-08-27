@@ -93,7 +93,7 @@ func interact() -> bool:
 	if not current_target.can_interact():
 		return false
 
-	current_target.interact()
+	current_target.interact(actor)
 	cooldown_timer = interaction_cooldown
 	_set_phase(Phase.START, start_duration)
 	return true
