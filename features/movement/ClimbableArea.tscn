@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/movement/ClimbableArea.gd" id="1_area"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_climbable"]
+size = Vector2(28, 128)
+
+[node name="ClimbableArea" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_area")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -64, 14, -64, 14, 64, -14, 64)
+color = Color(0.72, 0.5, 0.22, 0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_climbable")

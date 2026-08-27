@@ -89,6 +89,20 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 		ActorState.Locomotion.DODGING
 	)
 
+	var climb_mappings := {
+		MovementState.Type.CLIMB_IDLE: ActorState.Locomotion.CLIMBING_IDLE,
+		MovementState.Type.CLIMB_UP: ActorState.Locomotion.CLIMBING_UP,
+		MovementState.Type.CLIMB_DOWN: ActorState.Locomotion.CLIMBING_DOWN,
+	}
+
+	for movement_state: MovementState.Type in climb_mappings:
+		movement._set_state(movement_state)
+		actor_state.refresh_state()
+		assert_eq(
+			actor_state.get_locomotion(),
+			climb_mappings[movement_state]
+		)
+
 	movement._set_state(MovementState.Type.FALL)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.FALLING)

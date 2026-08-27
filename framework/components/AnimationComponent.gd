@@ -141,6 +141,12 @@ func _get_animation_state(
 		MovementState.Type.DODGE:
 			return AnimationState.Type.RUN
 
+		MovementState.Type.CLIMB_IDLE:
+			return AnimationState.Type.IDLE
+
+		MovementState.Type.CLIMB_UP, MovementState.Type.CLIMB_DOWN:
+			return AnimationState.Type.RUN
+
 		MovementState.Type.FALL:
 			return AnimationState.Type.FALL
 

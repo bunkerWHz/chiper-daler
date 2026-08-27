@@ -15,6 +15,7 @@ signal state_changed(
 var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
 var _dodge_component: DodgeComponent
+var _climbing_component: ClimbingComponent
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _jump_count: int = 0
@@ -53,10 +54,32 @@ func on_initialize() -> void:
 	if _dodge_component != null and not _dodge_component.is_enabled:
 		_dodge_component = null
 
+	_climbing_component = (
+		actor.get_component(ClimbingComponent) as ClimbingComponent
+	)
+
+	if _climbing_component != null and not _climbing_component.is_enabled:
+		_climbing_component = null
+
 
 func _physics_process(delta: float) -> void:
 	if _dodge_component != null and _dodge_component.is_dodging():
 		_dodge_component.apply_velocity()
+		_body_component.move_and_slide()
+		_update_state()
+		return
+
+	if _climbing_component != null and _climbing_component.is_climbing():
+		_climbing_component.apply_velocity()
+		_body_component.move_and_slide()
+		_update_state()
+		return
+
+	if (
+		_climbing_component != null
+		and _climbing_component.is_exiting_climb()
+	):
+		_update_gravity(delta)
 		_body_component.move_and_slide()
 		_update_state()
 		return
@@ -205,6 +228,16 @@ func _resolve_state() -> MovementState.Type:
 
 	if _dodge_component != null and _dodge_component.is_dodging():
 		return MovementState.Type.DODGE
+
+	if _climbing_component != null and _climbing_component.is_climbing():
+		var climb_direction := _climbing_component.get_vertical_direction()
+
+		if climb_direction < 0.0:
+			return MovementState.Type.CLIMB_UP
+		if climb_direction > 0.0:
+			return MovementState.Type.CLIMB_DOWN
+
+		return MovementState.Type.CLIMB_IDLE
 
 	if not _body_component.is_on_floor():
 		if velocity.y < 0.0:

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/movement/ClimbingComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/movement/ClimbingConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="ClimbingConfig_default"]
+script = ExtResource("2_config")
+
+[node name="ClimbingComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("ClimbingConfig_default")

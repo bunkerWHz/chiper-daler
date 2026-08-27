@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bc62xyppv6kt0" path="res://tests/TestLever.tscn" id="4_1ymdb"]
 [ext_resource type="PackedScene" uid="uid://ccakle0tc4uyd" path="res://game/enemy/Enemy.tscn" id="5_6luox"]
 [ext_resource type="PackedScene" path="res://features/health/ui/HealthBarView.tscn" id="6_health_bar"]
+[ext_resource type="PackedScene" path="res://features/movement/ClimbableArea.tscn" id="7_climbable"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 10)
@@ -66,3 +67,6 @@ position = Vector2(161, 323)
 
 [node name="Enemy" parent="." unique_id=492946956 instance=ExtResource("5_6luox")]
 position = Vector2(534, 337)
+
+[node name="TestLadder" parent="." instance=ExtResource("7_climbable")]
+position = Vector2(690, 338)

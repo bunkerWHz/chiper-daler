@@ -9,4 +9,7 @@ enum Type {
 	WALL_JUMP,
 	FALL,
 	DODGE,
+	CLIMB_IDLE,
+	CLIMB_UP,
+	CLIMB_DOWN,
 }

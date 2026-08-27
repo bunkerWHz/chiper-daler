@@ -109,6 +109,12 @@ func _resolve_locomotion() -> ActorState.Locomotion:
 				return ActorState.Locomotion.WALL_JUMPING
 			MovementState.Type.DODGE:
 				return ActorState.Locomotion.DODGING
+			MovementState.Type.CLIMB_IDLE:
+				return ActorState.Locomotion.CLIMBING_IDLE
+			MovementState.Type.CLIMB_UP:
+				return ActorState.Locomotion.CLIMBING_UP
+			MovementState.Type.CLIMB_DOWN:
+				return ActorState.Locomotion.CLIMBING_DOWN
 			MovementState.Type.FALL:
 				return ActorState.Locomotion.FALLING
 			_:
