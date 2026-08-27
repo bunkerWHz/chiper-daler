@@ -1,6 +1,10 @@
 extends Component
 class_name MovementComponent
 
+const WALL_JUMP_CALCULATOR := preload(
+	"res://features/movement/WallJumpCalculator.gd"
+)
+
 signal state_changed(
 	previous_state: MovementState.Type,
 	current_state: MovementState.Type
@@ -13,6 +17,7 @@ var _body_component: CharacterBodyComponent
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _jump_count: int = 0
+var _wall_jump_timer: float = 0.0
 
 var _state: MovementState.Type = MovementState.Type.IDLE
 
@@ -25,6 +30,9 @@ func on_initialize() -> void:
 		config.jump_velocity <= 0.0
 		or config.air_jump_velocity <= 0.0
 		or config.max_jump_count < 1
+		or config.wall_jump_horizontal_velocity <= 0.0
+		or config.wall_jump_vertical_velocity <= 0.0
+		or config.wall_jump_control_lock_time < 0.0
 	):
 		push_error("MovementComponent has an invalid jump config")
 		disable()
@@ -45,6 +53,7 @@ func _physics_process(delta: float) -> void:
 	
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
+	_update_wall_jump_timer(delta)
 	_update_horizontal_velocity(delta)
 	_update_jump()
 	_update_gravity(delta)
@@ -63,6 +72,9 @@ func _update_gravity(delta: float) -> void:
 	_body_component.set_velocity(velocity)
 
 func _update_horizontal_velocity(delta: float) -> void:
+	if _wall_jump_timer > 0.0:
+		return
+
 	var direction := _input_component.get_move_axis()
 	var target_speed := direction * config.move_speed
 	var velocity := _body_component.get_velocity()
@@ -98,6 +110,7 @@ func _update_coyote_time(delta: float) -> void:
 	if _body_component.is_on_floor():
 		_coyote_timer = config.coyote_time
 		_jump_count = 0
+		_wall_jump_timer = 0.0
 	else:
 		_coyote_timer = max(_coyote_timer - delta, 0.0)
 
@@ -109,6 +122,11 @@ func _update_jump() -> void:
 		return
 
 	var is_ground_jump := _coyote_timer > 0.0
+
+	if not is_ground_jump and _body_component.is_on_wall():
+		if _perform_wall_jump(_body_component.get_wall_normal()):
+			return
+
 	var can_air_jump := (
 		not _body_component.is_on_floor()
 		and _jump_count < config.max_jump_count
@@ -133,6 +151,32 @@ func _update_jump() -> void:
 	_jump_buffer_timer = 0.0
 	_coyote_timer = 0.0
 
+
+func _perform_wall_jump(wall_normal: Vector2) -> bool:
+	if (
+		not is_enabled
+		or absf(wall_normal.x) < 0.5
+		or config.wall_jump_horizontal_velocity <= 0.0
+		or config.wall_jump_vertical_velocity <= 0.0
+	):
+		return false
+
+	var velocity := WALL_JUMP_CALCULATOR.calculate_velocity(
+		wall_normal,
+		config.wall_jump_horizontal_velocity,
+		config.wall_jump_vertical_velocity
+	)
+	_body_component.set_velocity(velocity)
+	_wall_jump_timer = config.wall_jump_control_lock_time
+	_jump_count = min(1, config.max_jump_count)
+	_jump_buffer_timer = 0.0
+	_coyote_timer = 0.0
+	return true
+
+
+func _update_wall_jump_timer(delta: float) -> void:
+	_wall_jump_timer = maxf(_wall_jump_timer - delta, 0.0)
+
 func _update_jump_cut() -> void:
 	var velocity := _body_component.get_velocity()
 
@@ -151,6 +195,9 @@ func _resolve_state() -> MovementState.Type:
 
 	if not _body_component.is_on_floor():
 		if velocity.y < 0.0:
+			if _wall_jump_timer > 0.0:
+				return MovementState.Type.WALL_JUMP
+
 			if _jump_count >= 2:
 				return MovementState.Type.DOUBLE_JUMP
 
@@ -179,3 +226,7 @@ func get_state() -> MovementState.Type:
 
 func get_jump_count() -> int:
 	return _jump_count
+
+
+func is_wall_jumping() -> bool:
+	return _wall_jump_timer > 0.0

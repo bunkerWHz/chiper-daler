@@ -1,6 +1,10 @@
 @tool
 extends McpTestSuite
 
+const WALL_JUMP_CALCULATOR := preload(
+	"res://features/movement/WallJumpCalculator.gd"
+)
+
 
 func suite_name() -> String:
 	return "actor_state"
@@ -69,6 +73,13 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 	assert_eq(
 		actor_state.get_locomotion(),
 		ActorState.Locomotion.DOUBLE_JUMPING
+	)
+
+	movement._set_state(MovementState.Type.WALL_JUMP)
+	actor_state.refresh_state()
+	assert_eq(
+		actor_state.get_locomotion(),
+		ActorState.Locomotion.WALL_JUMPING
 	)
 
 	movement._set_state(MovementState.Type.FALL)
@@ -149,3 +160,23 @@ func test_movement_consumes_exactly_one_air_jump() -> void:
 	movement._jump_buffer_timer = movement.config.jump_buffer_time
 	movement._update_jump()
 	assert_eq(movement.get_jump_count(), 2)
+
+
+func test_wall_jump_velocity_pushes_away_from_wall() -> void:
+	var left_wall_jump := WALL_JUMP_CALCULATOR.calculate_velocity(
+		Vector2.RIGHT,
+		260.0,
+		450.0
+	)
+	var right_wall_jump := WALL_JUMP_CALCULATOR.calculate_velocity(
+		Vector2.LEFT,
+		260.0,
+		450.0
+	)
+
+	assert_eq(left_wall_jump, Vector2(260.0, -450.0))
+	assert_eq(right_wall_jump, Vector2(-260.0, -450.0))
+	assert_eq(
+		WALL_JUMP_CALCULATOR.calculate_velocity(Vector2.UP, 260.0, 450.0),
+		Vector2.ZERO
+	)

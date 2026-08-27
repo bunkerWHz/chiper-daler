@@ -6,5 +6,6 @@ enum Type {
 	RUN,
 	JUMP,
 	DOUBLE_JUMP,
+	WALL_JUMP,
 	FALL
 }

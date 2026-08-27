@@ -7,6 +7,9 @@ class_name MovementConfig
 @export var jump_velocity: float = 450.0
 @export var air_jump_velocity: float = 450.0
 @export_range(1, 5, 1) var max_jump_count: int = 2
+@export var wall_jump_horizontal_velocity: float = 260.0
+@export var wall_jump_vertical_velocity: float = 450.0
+@export_range(0.0, 1.0, 0.01) var wall_jump_control_lock_time: float = 0.15
 @export var jump_cut_multiplier: float = 0.5
 @export var jump_buffer_time: float = 0.2
 @export var coyote_time: float = 0.2

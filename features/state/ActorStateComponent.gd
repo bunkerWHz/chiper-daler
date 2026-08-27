@@ -105,6 +105,8 @@ func _resolve_locomotion() -> ActorState.Locomotion:
 				return ActorState.Locomotion.JUMPING
 			MovementState.Type.DOUBLE_JUMP:
 				return ActorState.Locomotion.DOUBLE_JUMPING
+			MovementState.Type.WALL_JUMP:
+				return ActorState.Locomotion.WALL_JUMPING
 			MovementState.Type.FALL:
 				return ActorState.Locomotion.FALLING
 			_:
