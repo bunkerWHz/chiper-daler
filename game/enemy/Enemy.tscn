@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyGroundSensorComponent.tscn" id="19_ground_sensor"]
 [ext_resource type="PackedScene" path="res://features/enemy/EnemyJumpComponent.tscn" id="20_enemy_jump"]
 [ext_resource type="Script" path="res://features/enemy/EnemyJumpReachPreview.gd" id="21_jump_preview"]
+[ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="22_actor_state"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -70,6 +71,8 @@ visual_path = NodePath("_Visual/Placeholder")
 [node name="EnemyJumpComponent" parent="_Components" instance=ExtResource("20_enemy_jump")]
 
 [node name="EnemyPatrolComponent" parent="_Components" instance=ExtResource("18_patrol")]
+
+[node name="ActorStateComponent" parent="_Components" instance=ExtResource("22_actor_state")]
 
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 

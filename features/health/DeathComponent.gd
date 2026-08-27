@@ -78,7 +78,15 @@ func _on_health_died() -> void:
 
 func _disable_actor_components() -> void:
 	for component: Component in actor.get_components():
-		if component != self:
+		if component == self:
+			continue
+
+		var should_disable := true
+
+		if component.has_method(&"should_disable_on_actor_death"):
+			should_disable = component.call(&"should_disable_on_actor_death")
+
+		if should_disable:
 			component.disable()
 
 

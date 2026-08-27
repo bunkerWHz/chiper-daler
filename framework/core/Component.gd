@@ -14,6 +14,10 @@ func on_initialize() -> void:
 	pass
 
 
+func should_disable_on_actor_death() -> bool:
+	return true
+
+
 func enable() -> void:
 	is_enabled = true
 	process_mode = Node.PROCESS_MODE_INHERIT
