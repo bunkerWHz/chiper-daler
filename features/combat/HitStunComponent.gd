@@ -7,6 +7,7 @@ signal hit_stun_finished
 @export var config: HitStunConfig
 
 var _timer: float = 0.0
+var _is_knocked_down: bool = false
 var _suspended_components: Array[Component] = []
 
 
@@ -16,8 +17,12 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	if config.duration <= 0.0:
-		push_error("HitStunConfig duration must be greater than zero")
+	if (
+		config.duration <= 0.0
+		or config.knockdown_duration <= 0.0
+		or config.knockdown_velocity_threshold <= 0.0
+	):
+		push_error("HitStunComponent has an invalid config")
 		disable()
 
 
@@ -36,12 +41,28 @@ func apply_hit(hit: HitData) -> bool:
 		return false
 
 	_suspend_components()
-	_timer = config.duration
+	var strong_hit := (
+		hit.knockback_velocity.length()
+		>= config.knockdown_velocity_threshold
+	)
+	_is_knocked_down = _is_knocked_down or strong_hit
+	_timer = maxf(
+		_timer,
+		config.knockdown_duration if strong_hit else config.duration
+	)
 	hit_stun_started.emit()
 	return true
 
 
 func is_stunned() -> bool:
+	return _timer > 0.0 and not _is_knocked_down
+
+
+func is_knocked_down() -> bool:
+	return _timer > 0.0 and _is_knocked_down
+
+
+func is_incapacitated() -> bool:
 	return _timer > 0.0
 
 
@@ -57,6 +78,7 @@ func take_suspension_ownership(component: Component) -> void:
 
 func disable() -> void:
 	_timer = 0.0
+	_is_knocked_down = false
 	_suspended_components.clear()
 	super.disable()
 
@@ -95,6 +117,8 @@ func _suspend_components() -> void:
 
 
 func _finish_hit_stun() -> void:
+	_is_knocked_down = false
+
 	for component: Component in _suspended_components:
 		if is_instance_valid(component):
 			component.enable()

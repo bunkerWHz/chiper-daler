@@ -71,6 +71,7 @@ active. Every future equipment ability must follow the same ownership rule.
 | Action | `InteractingEnd` | `InteractionComponent.END` phase |
 | Condition | `Hit` | `HitReactionComponent.is_reacting()` |
 | Condition | `Stunned` | `HitStunComponent.is_stunned()` |
+| Condition | `KnockedDown` | strong impact through `HitStunComponent` |
 | Condition | `Dead` | `HealthComponent.is_dead()` |
 | Condition | `Respawning` | `PlayerRespawnComponent.is_restart_scheduled()` |
 
@@ -87,7 +88,6 @@ be reported as active until the corresponding ability exists.
 
 ### Conditions
 
-- `KnockedDown`
 - `LevelUp`
 - `Resting`
 - `Debuffed`

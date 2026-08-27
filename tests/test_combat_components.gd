@@ -617,6 +617,58 @@ func test_knockback_and_hit_stun_share_movement_ownership() -> void:
 	assert_true(movement.is_enabled)
 
 
+func test_strong_hit_knocks_actor_down() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	container.add_child(body_component)
+
+	var movement := EnemyMovementComponent.new()
+	movement.config = EnemyMovementConfig.new()
+	container.add_child(movement)
+
+	var knockback := KnockbackComponent.new()
+	var knockback_config := KnockbackConfig.new()
+	knockback_config.duration = 0.2
+	knockback.config = knockback_config
+	container.add_child(knockback)
+
+	var hit_stun := HitStunComponent.new()
+	var config := HitStunConfig.new()
+	config.knockdown_velocity_threshold = 300.0
+	config.knockdown_duration = 0.7
+	hit_stun.config = config
+	container.add_child(hit_stun)
+
+	var actor_state := ActorStateComponent.new()
+	container.add_child(actor_state)
+	actor._collect_components()
+
+	var hit := HitData.new(20.0, null, Vector2(350.0, -150.0))
+	assert_true(knockback.apply_hit(hit))
+	assert_true(hit_stun.apply_hit(hit))
+	actor_state.refresh_state()
+	assert_true(hit_stun.is_knocked_down())
+	assert_false(hit_stun.is_stunned())
+	assert_false(movement.is_enabled)
+	assert_true(actor_state.has_condition(ActorState.Condition.KNOCKED_DOWN))
+
+	knockback._finish_knockback()
+	assert_false(movement.is_enabled)
+
+	hit_stun._process(config.knockdown_duration)
+	actor_state.refresh_state()
+	assert_false(hit_stun.is_knocked_down())
+	assert_true(movement.is_enabled)
+	assert_false(actor_state.has_condition(ActorState.Condition.KNOCKED_DOWN))
+
+
 func test_enemy_attack_telegraphs_before_attacking() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

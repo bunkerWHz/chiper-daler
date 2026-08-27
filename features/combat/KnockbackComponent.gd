@@ -99,7 +99,7 @@ func _finish_knockback() -> void:
 		if not is_instance_valid(movement):
 			continue
 
-		if hit_stun != null and hit_stun.is_stunned():
+		if hit_stun != null and hit_stun.is_incapacitated():
 			hit_stun.take_suspension_ownership(movement)
 		else:
 			movement.enable()

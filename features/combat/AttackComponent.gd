@@ -21,6 +21,8 @@ var _charge_timer: float = 0.0
 var _is_charging: bool = false
 var _is_heavy_attack: bool = false
 var _base_damage: float = 0.0
+var _base_horizontal_knockback: float = 0.0
+var _base_vertical_knockback: float = 0.0
 
 
 func on_initialize() -> void:
@@ -36,6 +38,7 @@ func on_initialize() -> void:
 		or config.heavy_active_duration <= 0.0
 		or config.heavy_cooldown <= 0.0
 		or config.heavy_damage_multiplier < 1.0
+		or config.heavy_knockback_multiplier < 1.0
 	):
 		push_error("AttackComponent has an invalid config")
 		disable()
@@ -54,6 +57,8 @@ func on_initialize() -> void:
 		return
 
 	_base_damage = _hitbox_component.damage
+	_base_horizontal_knockback = _hitbox_component.horizontal_knockback
+	_base_vertical_knockback = _hitbox_component.vertical_knockback
 
 	if _input_component != null and not _input_component.is_enabled:
 		_input_component = null
@@ -198,6 +203,12 @@ func _start_attack(heavy: bool) -> bool:
 
 	if heavy:
 		_hitbox_component.damage = _base_damage * config.heavy_damage_multiplier
+		_hitbox_component.horizontal_knockback = (
+			_base_horizontal_knockback * config.heavy_knockback_multiplier
+		)
+		_hitbox_component.vertical_knockback = (
+			_base_vertical_knockback * config.heavy_knockback_multiplier
+		)
 		heavy_attack_started.emit()
 
 	_hitbox_component.activate()
@@ -208,6 +219,8 @@ func _start_attack(heavy: bool) -> bool:
 func _restore_hitbox_damage() -> void:
 	if _hitbox_component != null:
 		_hitbox_component.damage = _base_damage
+		_hitbox_component.horizontal_knockback = _base_horizontal_knockback
+		_hitbox_component.vertical_knockback = _base_vertical_knockback
 
 	_is_heavy_attack = false
 

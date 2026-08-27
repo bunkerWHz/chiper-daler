@@ -258,6 +258,13 @@ func _resolve_conditions() -> int:
 	):
 		result |= ActorState.Condition.STUNNED
 
+	if (
+		_hit_stun_component != null
+		and _hit_stun_component.is_enabled
+		and _hit_stun_component.is_knocked_down()
+	):
+		result |= ActorState.Condition.KNOCKED_DOWN
+
 	if _health_component != null and _health_component.is_dead():
 		result |= ActorState.Condition.DEAD
 
