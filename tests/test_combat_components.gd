@@ -886,6 +886,11 @@ func test_enemy_platform_sandbox_has_reachable_and_unreachable_steps() -> void:
 	assert_true(
 		sandbox.get_node_or_null("Platforms/UnreachablePlatform") != null
 	)
+	assert_true(
+		sandbox.get_node_or_null(
+			"Platforms/MiddlePlatform/EnemyReachMarker"
+		) != null
+	)
 
 
 func test_enemy_patrol_reverses_movement_direction() -> void:
