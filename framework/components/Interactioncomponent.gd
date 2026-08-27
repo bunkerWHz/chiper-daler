@@ -1,10 +1,24 @@
 extends Component
 class_name InteractionComponent
 
+enum Phase {
+	NONE,
+	START,
+	PROGRESS,
+	END,
+}
+
+signal phase_changed(previous_phase: Phase, current_phase: Phase)
+
 @export var interaction_distance: float = 48.0
 @export var interaction_cooldown: float = 0.15
+@export_range(0.01, 2.0, 0.01) var start_duration: float = 0.08
+@export_range(0.01, 5.0, 0.01) var progress_duration: float = 0.15
+@export_range(0.01, 2.0, 0.01) var end_duration: float = 0.12
 
 var cooldown_timer: float = 0.0
+var _phase_timer: float = 0.0
+var _phase: Phase = Phase.NONE
 
 var input_component: InputComponent
 var current_target: InteractableComponent = null
@@ -12,6 +26,17 @@ var current_target: InteractableComponent = null
 
 
 func on_initialize() -> void:
+	if (
+		interaction_distance <= 0.0
+		or interaction_cooldown < 0.0
+		or start_duration <= 0.0
+		or progress_duration <= 0.0
+		or end_duration <= 0.0
+	):
+		push_error("InteractionComponent has an invalid config")
+		disable()
+		return
+
 	input_component = actor.get_component(InputComponent) as InputComponent
 
 	if input_component == null:
@@ -23,6 +48,8 @@ func on_initialize() -> void:
 func _process(delta: float) -> void:
 	if cooldown_timer > 0.0:
 		cooldown_timer = max(cooldown_timer - delta, 0.0)
+
+	_update_interaction_phase(delta)
 		
 	_update_target()
 
@@ -56,18 +83,20 @@ func find_nearest_interactable() -> InteractableComponent:
 	return nearest
 
 
-func interact() -> void:
-	if cooldown_timer > 0.0:
-		return
+func interact() -> bool:
+	if cooldown_timer > 0.0 or is_interacting():
+		return false
 
 	if current_target == null:
-		return
+		return false
 
 	if not current_target.can_interact():
-		return
+		return false
 
 	current_target.interact()
 	cooldown_timer = interaction_cooldown
+	_set_phase(Phase.START, start_duration)
+	return true
 
 
 func has_target() -> bool:
@@ -76,3 +105,40 @@ func has_target() -> bool:
 
 func get_target() -> InteractableComponent:
 	return current_target
+
+
+func get_phase() -> Phase:
+	return _phase
+
+
+func is_interacting() -> bool:
+	return _phase != Phase.NONE
+
+
+func _update_interaction_phase(delta: float) -> void:
+	if _phase == Phase.NONE:
+		return
+
+	_phase_timer = maxf(_phase_timer - delta, 0.0)
+
+	if _phase_timer > 0.0:
+		return
+
+	match _phase:
+		Phase.START:
+			_set_phase(Phase.PROGRESS, progress_duration)
+		Phase.PROGRESS:
+			_set_phase(Phase.END, end_duration)
+		Phase.END:
+			_set_phase(Phase.NONE, 0.0)
+
+
+func _set_phase(new_phase: Phase, duration: float) -> void:
+	if new_phase == _phase:
+		_phase_timer = duration
+		return
+
+	var previous_phase := _phase
+	_phase = new_phase
+	_phase_timer = duration
+	phase_changed.emit(previous_phase, _phase)
