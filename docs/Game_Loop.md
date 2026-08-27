@@ -19,3 +19,10 @@ previous full-scene reload behavior.
 
 The main sandbox contains a `RestPoint` near the initial Player position. Press
 `E` beside its blue marker to activate it.
+
+## Enemy experience rewards
+
+Enemies own an `ExperienceRewardComponent`. When a hit kills an enemy, the
+component awards its configured experience amount to the attacking Actor's
+`ProgressionComponent`. Damage without an Actor source gives no experience,
+and one enemy can grant its reward only once.

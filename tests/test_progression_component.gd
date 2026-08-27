@@ -33,3 +33,9 @@ func test_experience_can_gain_multiple_levels_and_reports_state() -> void:
 	state.refresh_state()
 	assert_false(progression.is_leveling_up())
 	assert_false(state.has_condition(ActorState.Condition.LEVEL_UP))
+
+	var overlay := DebugOverlayComponent.new()
+	overlay.actor = actor
+	var lines := PackedStringArray()
+	overlay._append_progression_info(lines)
+	assert_true(lines.has("Level: 3  XP: 10 / 225"))

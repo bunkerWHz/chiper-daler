@@ -57,6 +57,7 @@ func _update_overlay() -> void:
 	_append_movement_info(lines)
 	_append_interaction_info(lines)
 	_append_health_info(lines)
+	_append_progression_info(lines)
 	_append_guard_info(lines)
 	lines.append("Components:")
 
@@ -167,6 +168,22 @@ func _append_guard_info(lines: PackedStringArray) -> void:
 			status = "READY"
 
 	lines.append("Guard: %s" % status)
+
+
+func _append_progression_info(lines: PackedStringArray) -> void:
+	var progression := (
+		actor.get_component(ProgressionComponent) as ProgressionComponent
+	)
+	if progression == null or not progression.is_enabled:
+		return
+
+	lines.append(
+		"Level: %d  XP: %d / %d" % [
+			progression.get_level(),
+			progression.get_experience(),
+			progression.get_experience_required(),
+		]
+	)
 
 
 func should_disable_on_actor_death() -> bool:

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/progression/ExperienceRewardComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/progression/ExperienceRewardConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="ExperienceRewardConfig_default"]
+script = ExtResource("2_config")
+
+[node name="ExperienceRewardComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("ExperienceRewardConfig_default")
