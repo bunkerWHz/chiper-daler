@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/items/ItemUseComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/items/ItemUseConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="ItemUseConfig_default"]
+script = ExtResource("2_config")
+
+[node name="ItemUseComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("ItemUseConfig_default")

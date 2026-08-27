@@ -52,6 +52,7 @@ active. Every future equipment ability must follow the same ownership rule.
 | Locomotion | `Falling` | `MovementComponent.FALL` or downward body velocity |
 | Action | `LightAttack` | `AttackComponent.is_attacking()` |
 | Action | `HeavyAttack` | heavy charge or `AttackComponent.is_heavy_attacking()` |
+| Action | `UsingItem` | `ItemUseComponent.is_using_item()` |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
 | Action | `Parrying` | `GuardComponent.is_parrying()` |
 | Action | `InteractingStart` | `InteractionComponent.START` phase |
@@ -71,7 +72,6 @@ be reported as active until the corresponding ability exists.
 
 ### Actions
 
-- `UsingItem`
 - `ThrowingAim`, `ThrowingAction`, `ThrowingRecovery`
 - `AimBow`, `LooseArrow`
 - `AimCrossbow`, `FireCrossbow`

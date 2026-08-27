@@ -53,6 +53,7 @@ func _update_overlay() -> void:
 	lines.append("Actor: %s" % actor.name)
 	_append_actor_state_info(lines)
 	_append_equipment_info(lines)
+	_append_item_info(lines)
 	_append_movement_info(lines)
 	_append_interaction_info(lines)
 	_append_health_info(lines)
@@ -77,6 +78,18 @@ func _append_equipment_info(lines: PackedStringArray) -> void:
 		return
 
 	lines.append("Equipment: %s" % equipment.get_current_slot_name())
+
+
+func _append_item_info(lines: PackedStringArray) -> void:
+	var item_use := actor.get_component(ItemUseComponent) as ItemUseComponent
+
+	if item_use == null or not item_use.is_enabled:
+		return
+
+	lines.append("Items: %d%s" % [
+		item_use.get_remaining_charges(),
+		" (USING)" if item_use.is_using_item() else "",
+	])
 
 
 func _append_actor_state_info(lines: PackedStringArray) -> void:

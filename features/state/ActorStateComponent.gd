@@ -16,6 +16,7 @@ var _body_component: CharacterBodyComponent
 var _attack_component: AttackComponent
 var _guard_component: GuardComponent
 var _interaction_component: InteractionComponent
+var _item_use_component: ItemUseComponent
 var _hit_reaction_component: HitReactionComponent
 var _hit_stun_component: HitStunComponent
 var _health_component: HealthComponent
@@ -40,6 +41,9 @@ func on_initialize() -> void:
 	_guard_component = actor.get_component(GuardComponent) as GuardComponent
 	_interaction_component = (
 		actor.get_component(InteractionComponent) as InteractionComponent
+	)
+	_item_use_component = (
+		actor.get_component(ItemUseComponent) as ItemUseComponent
 	)
 	_hit_reaction_component = (
 		actor.get_component(HitReactionComponent)
@@ -173,6 +177,13 @@ func _resolve_action() -> ActorState.Action:
 		and _guard_component.is_guarding()
 	):
 		return ActorState.Action.BLOCKING
+
+	if (
+		_item_use_component != null
+		and _item_use_component.is_enabled
+		and _item_use_component.is_using_item()
+	):
+		return ActorState.Action.USING_ITEM
 
 	if (
 		_interaction_component != null

@@ -53,6 +53,16 @@ func test_non_positive_damage_is_ignored() -> void:
 	assert_eq(health.get_current_health(), 100.0)
 
 
+func test_healing_is_clamped_to_maximum() -> void:
+	var health := _create_health(100.0)
+	health.take_damage(40.0)
+
+	assert_eq(health.heal(25.0), 25.0)
+	assert_eq(health.get_current_health(), 85.0)
+	assert_eq(health.heal(50.0), 15.0)
+	assert_eq(health.get_current_health(), 100.0)
+
+
 func test_death_component_disables_other_components() -> void:
 	var target := _create_death_target(false)
 

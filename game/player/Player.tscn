@@ -36,6 +36,7 @@
 [ext_resource type="PackedScene" path="res://features/movement/DodgeComponent.tscn" id="30_dodge"]
 [ext_resource type="PackedScene" path="res://features/movement/ClimbingComponent.tscn" id="31_climbing"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentComponent.tscn" id="32_equipment"]
+[ext_resource type="PackedScene" path="res://features/items/ItemUseComponent.tscn" id="33_item_use"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -332,6 +333,8 @@ script = ExtResource("9_ohvm5")
 metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
 [node name="EquipmentComponent" parent="_Components" instance=ExtResource("32_equipment")]
+
+[node name="ItemUseComponent" parent="_Components" instance=ExtResource("33_item_use")]
 
 [node name="ActorStateComponent" parent="_Components" instance=ExtResource("29_actor_state")]
 

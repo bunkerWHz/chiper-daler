@@ -59,3 +59,17 @@ func take_damage(amount: float) -> float:
 		died.emit()
 
 	return applied_damage
+
+
+func heal(amount: float) -> float:
+	if amount <= 0.0 or not is_alive():
+		return 0.0
+
+	var previous_health := _current_health
+	_current_health = minf(_current_health + amount, config.max_health)
+	var restored_health := _current_health - previous_health
+
+	if restored_health > 0.0:
+		health_changed.emit(previous_health, _current_health)
+
+	return restored_health
