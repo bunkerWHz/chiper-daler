@@ -102,6 +102,15 @@ func get_remaining_charges() -> int:
 	return _remaining_charges
 
 
+func add_charges(amount: int) -> int:
+	if not is_enabled or amount <= 0:
+		return 0
+
+	var previous := _remaining_charges
+	_remaining_charges = mini(_remaining_charges + amount, config.max_charges)
+	return _remaining_charges - previous
+
+
 func cancel_item_use() -> void:
 	if not is_using_item():
 		return

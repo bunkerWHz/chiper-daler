@@ -26,3 +26,13 @@ Enemies own an `ExperienceRewardComponent`. When a hit kills an enemy, the
 component awards its configured experience amount to the attacking Actor's
 `ProgressionComponent`. Damage without an Actor source gives no experience,
 and one enemy can grant its reward only once.
+
+## Loot drops
+
+Enemy death creates a `Pickup` at the enemy position. The default enemy drops
+a Health Essence that restores 25 health when collected with `E`. A full-health
+player cannot consume it, so the pickup remains available.
+
+`PickupData` also supports item charges, throwables, arrows, bolts, mana, and
+experience. Designers can create another drop by changing only the resource
+data used by `LootDropComponent`.

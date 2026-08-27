@@ -23,6 +23,7 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyJumpReachPreview.gd" id="21_jump_preview"]
 [ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="22_actor_state"]
 [ext_resource type="PackedScene" path="res://features/progression/ExperienceRewardComponent.tscn" id="23_experience"]
+[ext_resource type="PackedScene" path="res://features/loot/LootDropComponent.tscn" id="24_loot"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -47,6 +48,8 @@ faction = 2
 [node name="HurtboxComponent" parent="_Components" instance=ExtResource("6_hurtbox")]
 
 [node name="ExperienceRewardComponent" parent="_Components" instance=ExtResource("23_experience")]
+
+[node name="LootDropComponent" parent="_Components" instance=ExtResource("24_loot")]
 
 [node name="DamageNumberComponent" parent="_Components" instance=ExtResource("13_damage_number")]
 

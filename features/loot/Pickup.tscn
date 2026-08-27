@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/loot/Pickup.gd" id="1_pickup"]
+[ext_resource type="Script" path="res://features/loot/PickupData.gd" id="2_data"]
+[ext_resource type="Script" path="res://framework/components/InteractableComponent.gd" id="3_interactable"]
+
+[sub_resource type="Resource" id="PickupData_default"]
+script = ExtResource("2_data")
+
+[node name="Pickup" type="Node2D"]
+script = ExtResource("1_pickup")
+data = SubResource("PickupData_default")
+
+[node name="_Components" type="Node2D" parent="."]
+
+[node name="InteractableComponent" type="Node" parent="_Components"]
+script = ExtResource("3_interactable")
+interaction_name = "Pick up"
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -7, 7, 0, 0, 7, -7, 0)
+color = Color(0.3, 1, 0.45, 1)

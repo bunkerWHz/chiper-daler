@@ -81,6 +81,24 @@ func get_bolt_count() -> int:
 	return _bolts
 
 
+func add_arrows(amount: int) -> int:
+	if not is_enabled or amount <= 0:
+		return 0
+
+	var previous := _arrows
+	_arrows = mini(_arrows + amount, config.arrow_count)
+	return _arrows - previous
+
+
+func add_bolts(amount: int) -> int:
+	if not is_enabled or amount <= 0:
+		return 0
+
+	var previous := _bolts
+	_bolts = mini(_bolts + amount, config.bolt_count)
+	return _bolts - previous
+
+
 func cancel_aim() -> void:
 	if _phase == Phase.BOW_AIM or _phase == Phase.CROSSBOW_AIM:
 		_set_phase(Phase.NONE, 0.0)

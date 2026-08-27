@@ -54,6 +54,15 @@ func get_mana() -> float:
 	return _mana
 
 
+func restore_mana(amount: float) -> float:
+	if not is_enabled or amount <= 0.0:
+		return 0.0
+
+	var previous := _mana
+	_mana = minf(_mana + amount, config.max_mana)
+	return _mana - previous
+
+
 func disable() -> void:
 	_set_phase(Phase.NONE, 0.0)
 	super.disable()
