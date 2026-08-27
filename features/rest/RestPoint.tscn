@@ -10,7 +10,7 @@ script = ExtResource("1_point")
 
 [node name="InteractableComponent" type="Node" parent="_Components"]
 script = ExtResource("2_interactable")
-interaction_name = "Rest"
+interaction_name = "Rest / Set checkpoint"
 
 [node name="Marker" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-12, 10, 0, -16, 12, 10)

@@ -92,6 +92,7 @@ func test_death_component_fades_visual() -> void:
 
 
 func test_player_respawn_is_scheduled_once() -> void:
+	PlayerRespawnComponent.clear_saved_checkpoints()
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
 	container.name = "_Components"
@@ -116,6 +117,28 @@ func test_player_respawn_is_scheduled_once() -> void:
 
 	assert_true(respawn.is_restart_scheduled())
 	assert_eq(_respawn_schedule_count, 1)
+
+
+func test_player_respawn_stores_checkpoint_position() -> void:
+	PlayerRespawnComponent.clear_saved_checkpoints()
+	var actor := track(Actor.new()) as Actor
+	actor.global_position = Vector2(10.0, 20.0)
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var respawn := PlayerRespawnComponent.new()
+	respawn.config = PlayerRespawnConfig.new()
+	container.add_child(health)
+	container.add_child(respawn)
+	actor._collect_components()
+
+	assert_true(respawn.has_checkpoint())
+	assert_eq(respawn.get_checkpoint_position(), Vector2(10.0, 20.0))
+	respawn.set_checkpoint_position(Vector2(120.0, 64.0))
+	assert_eq(respawn.get_checkpoint_position(), Vector2(120.0, 64.0))
 
 
 func test_health_bar_tracks_health_changes() -> void:
