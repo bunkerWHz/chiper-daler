@@ -132,6 +132,9 @@ func _get_animation_state(
 		MovementState.Type.JUMP:
 			return AnimationState.Type.JUMP
 
+		MovementState.Type.DOUBLE_JUMP:
+			return AnimationState.Type.JUMP
+
 		MovementState.Type.FALL:
 			return AnimationState.Type.FALL
 

@@ -42,6 +42,15 @@ func _draw() -> void:
 	if config == null:
 		return
 
+	var resolved_running_color := _resolve_color(
+		&"running_jump_color",
+		Color(0.2, 1.0, 0.35, 0.9)
+	)
+	var resolved_standing_color := _resolve_color(
+		&"standing_jump_color",
+		Color(0.2, 0.8, 1.0, 0.8)
+	)
+
 	var running_right := TRAJECTORY_CALCULATOR.sample_jump(
 		config,
 		1.0,
@@ -56,13 +65,34 @@ func _draw() -> void:
 		preview_physics_fps,
 		max_preview_time
 	)
+	var double_right := PackedVector2Array()
 
-	_draw_symmetric_trajectory(running_right, running_jump_color, false)
+	if config.max_jump_count >= 2:
+		double_right = TRAJECTORY_CALCULATOR.sample_double_jump(
+			config,
+			1.0,
+			true,
+			preview_physics_fps,
+			maxf(max_preview_time, 3.0)
+		)
+
+	_draw_symmetric_trajectory(running_right, resolved_running_color, false)
+
+	if not double_right.is_empty():
+		_draw_symmetric_trajectory(
+			double_right,
+			Color(0.75, 0.35, 1.0, 0.9),
+			false
+		)
 
 	if show_standing_jump:
-		_draw_symmetric_trajectory(standing_right, standing_jump_color, true)
+		_draw_symmetric_trajectory(
+			standing_right,
+			resolved_standing_color,
+			true
+		)
 
-	_draw_measurements(running_right, standing_right)
+	_draw_measurements(running_right, standing_right, double_right)
 
 
 func _get_movement_config() -> MovementConfig:
@@ -72,6 +102,11 @@ func _get_movement_config() -> MovementConfig:
 		return null
 
 	return movement.get("config") as MovementConfig
+
+
+func _resolve_color(property_name: StringName, fallback: Color) -> Color:
+	var value: Variant = get(property_name)
+	return value if value is Color else fallback
 
 
 func _draw_symmetric_trajectory(
@@ -108,8 +143,21 @@ func _draw_trajectory(
 
 func _draw_measurements(
 	running_points: PackedVector2Array,
-	standing_points: PackedVector2Array
+	standing_points: PackedVector2Array,
+	double_points: PackedVector2Array
 ) -> void:
+	var resolved_guide_color := _resolve_color(
+		&"guide_color",
+		Color(1.0, 0.85, 0.2, 0.75)
+	)
+	var resolved_running_color := _resolve_color(
+		&"running_jump_color",
+		Color(0.2, 1.0, 0.35, 0.9)
+	)
+	var resolved_standing_color := _resolve_color(
+		&"standing_jump_color",
+		Color(0.2, 0.8, 1.0, 0.8)
+	)
 	var apex: Vector2 = TRAJECTORY_CALCULATOR.get_apex(running_points)
 	var running_landing: Vector2 = (
 		TRAJECTORY_CALCULATOR.get_landing_point(running_points)
@@ -117,26 +165,48 @@ func _draw_measurements(
 	var standing_landing: Vector2 = (
 		TRAJECTORY_CALCULATOR.get_landing_point(standing_points)
 	)
+	var double_landing := Vector2.ZERO
+	var horizontal_guide_landing := running_landing
+
+	if not double_points.is_empty():
+		var double_apex := TRAJECTORY_CALCULATOR.get_apex(double_points)
+		double_landing = TRAJECTORY_CALCULATOR.get_landing_point(double_points)
+		horizontal_guide_landing = double_landing
+
+		if double_apex.y < apex.y:
+			apex = double_apex
 
 	draw_dashed_line(
 		Vector2(0.0, apex.y),
 		Vector2.ZERO,
-		guide_color,
+		resolved_guide_color,
 		1.5,
 		4.0
 	)
 	draw_line(
-		Vector2(-running_landing.x, 0.0),
-		Vector2(running_landing.x, 0.0),
-		Color(guide_color, 0.35),
+		Vector2(-horizontal_guide_landing.x, 0.0),
+		Vector2(horizontal_guide_landing.x, 0.0),
+		Color(resolved_guide_color, 0.35),
 		1.0
 	)
-	draw_circle(running_landing, 4.0, running_jump_color)
-	draw_circle(Vector2(-running_landing.x, 0.0), 4.0, running_jump_color)
+	draw_circle(running_landing, 4.0, resolved_running_color)
+	draw_circle(Vector2(-running_landing.x, 0.0), 4.0, resolved_running_color)
+
+	if not double_points.is_empty():
+		draw_circle(double_landing, 4.0, Color(0.75, 0.35, 1.0, 0.9))
+		draw_circle(
+			Vector2(-double_landing.x, 0.0),
+			4.0,
+			Color(0.75, 0.35, 1.0, 0.9)
+		)
 
 	if show_standing_jump:
-		draw_circle(standing_landing, 3.0, standing_jump_color)
-		draw_circle(Vector2(-standing_landing.x, 0.0), 3.0, standing_jump_color)
+		draw_circle(standing_landing, 3.0, resolved_standing_color)
+		draw_circle(
+			Vector2(-standing_landing.x, 0.0),
+			3.0,
+			resolved_standing_color
+		)
 
 	var font := ThemeDB.fallback_font
 	var label := "H %.0f | REACH %.0f px" % [
@@ -151,6 +221,9 @@ func _draw_measurements(
 			absf(standing_landing.x),
 		]
 
+	if not double_points.is_empty():
+		label += " | DOUBLE %.0f px" % absf(double_landing.x)
+
 	draw_string(
 		font,
 		Vector2(8.0, apex.y - 8.0),
@@ -158,5 +231,5 @@ func _draw_measurements(
 		HORIZONTAL_ALIGNMENT_LEFT,
 		-1.0,
 		12,
-		guide_color
+		resolved_guide_color
 	)

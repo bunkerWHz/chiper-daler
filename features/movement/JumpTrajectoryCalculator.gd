@@ -9,12 +9,63 @@ static func sample_jump(
 	physics_fps: float = 60.0,
 	max_time: float = 2.0
 ) -> PackedVector2Array:
+	return _sample_jump_sequence(
+		config,
+		direction,
+		start_at_full_speed,
+		physics_fps,
+		max_time,
+		-1.0
+	)
+
+
+static func sample_double_jump(
+	config: MovementConfig,
+	direction: float,
+	start_at_full_speed: bool,
+	physics_fps: float = 60.0,
+	max_time: float = 3.0
+) -> PackedVector2Array:
+	if (
+		config == null
+		or config.max_jump_count < 2
+		or config.gravity <= 0.0
+		or config.air_jump_velocity <= 0.0
+	):
+		return sample_jump(
+			config,
+			direction,
+			start_at_full_speed,
+			physics_fps,
+			max_time
+		)
+
+	var second_jump_time := config.jump_velocity / config.gravity
+	return _sample_jump_sequence(
+		config,
+		direction,
+		start_at_full_speed,
+		physics_fps,
+		max_time,
+		second_jump_time
+	)
+
+
+static func _sample_jump_sequence(
+	config: MovementConfig,
+	direction: float,
+	start_at_full_speed: bool,
+	physics_fps: float,
+	max_time: float,
+	second_jump_time: float
+) -> PackedVector2Array:
 	var points := PackedVector2Array([Vector2.ZERO])
 
 	if (
 		config == null
 		or config.gravity <= 0.0
 		or config.jump_velocity <= 0.0
+		or (second_jump_time >= 0.0 and config.air_jump_velocity <= 0.0)
 		or physics_fps <= 0.0
 		or max_time <= 0.0
 	):
@@ -30,8 +81,14 @@ static func sample_jump(
 	var delta := 1.0 / physics_fps
 	var max_steps := ceili(max_time * physics_fps)
 	var left_ground := false
+	var elapsed_time := 0.0
+	var used_air_jump := second_jump_time < 0.0
 
 	for _step in max_steps:
+		if not used_air_jump and elapsed_time >= second_jump_time:
+			velocity.y = -config.air_jump_velocity
+			used_air_jump = true
+
 		velocity.x = _update_horizontal_velocity(
 			config,
 			velocity.x,
@@ -51,6 +108,7 @@ static func sample_jump(
 			break
 
 		points.append(position)
+		elapsed_time += delta
 
 	return points
 

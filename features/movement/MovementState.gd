@@ -5,5 +5,6 @@ enum Type {
 	IDLE,
 	RUN,
 	JUMP,
+	DOUBLE_JUMP,
 	FALL
 }

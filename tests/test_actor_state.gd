@@ -64,6 +64,13 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.JUMPING)
 
+	movement._set_state(MovementState.Type.DOUBLE_JUMP)
+	actor_state.refresh_state()
+	assert_eq(
+		actor_state.get_locomotion(),
+		ActorState.Locomotion.DOUBLE_JUMPING
+	)
+
 	movement._set_state(MovementState.Type.FALL)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.FALLING)
@@ -105,3 +112,40 @@ func test_actor_state_component_survives_death_and_reports_it() -> void:
 
 	assert_true(lines.has("States: Idle + Dead"))
 	assert_false(overlay.should_disable_on_actor_death())
+
+
+func test_movement_consumes_exactly_one_air_jump() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	components.add_child(body_component)
+	components.add_child(InputComponent.new())
+
+	var movement := MovementComponent.new()
+	movement.config = MovementConfig.new()
+	components.add_child(movement)
+	actor._collect_components()
+
+	movement._coyote_timer = movement.config.coyote_time
+	movement._jump_buffer_timer = movement.config.jump_buffer_time
+	movement._update_jump()
+	assert_eq(movement.get_jump_count(), 1)
+
+	movement._jump_buffer_timer = movement.config.jump_buffer_time
+	movement._update_jump()
+
+	assert_eq(movement.get_jump_count(), 2)
+	assert_eq(
+		body_component.get_velocity().y,
+		-movement.config.air_jump_velocity
+	)
+
+	movement._jump_buffer_timer = movement.config.jump_buffer_time
+	movement._update_jump()
+	assert_eq(movement.get_jump_count(), 2)

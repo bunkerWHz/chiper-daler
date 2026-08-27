@@ -41,6 +41,21 @@ func test_jump_trajectory_is_symmetric() -> void:
 	assert_true(absf(right_landing.y - left_landing.y) < 0.001)
 
 
+func test_double_jump_extends_player_height_and_reach() -> void:
+	var config := MovementConfig.new()
+	var single := JumpTrajectoryCalculator.sample_jump(config, 1.0, true)
+	var double := JumpTrajectoryCalculator.sample_double_jump(config, 1.0, true)
+
+	assert_true(
+		JumpTrajectoryCalculator.get_apex(double).y
+		< JumpTrajectoryCalculator.get_apex(single).y
+	)
+	assert_true(
+		JumpTrajectoryCalculator.get_landing_point(double).x
+		> JumpTrajectoryCalculator.get_landing_point(single).x
+	)
+
+
 func test_horizontal_reach_supports_different_platform_heights() -> void:
 	var same_height_time := (
 		JumpTrajectoryCalculator.get_flight_time_at_height(

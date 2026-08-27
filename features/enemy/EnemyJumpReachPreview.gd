@@ -30,5 +30,7 @@ func _get_movement_config() -> MovementConfig:
 	_preview_config.move_speed = movement_config.move_speed
 	_preview_config.gravity = movement_config.gravity
 	_preview_config.jump_velocity = jump_config.jump_velocity
+	_preview_config.air_jump_velocity = jump_config.jump_velocity
+	_preview_config.max_jump_count = 1
 	_preview_config.acceleration_mode = MovementConfig.AccelerationMode.INSTANT
 	return _preview_config
