@@ -82,6 +82,10 @@ State Machine
 -   State controls behavior.
 -   Components provide abilities.
 -   Avoid large if/else chains.
+-   Actor state is layered into locomotion, primary action, and overlapping
+    conditions; see `docs/Actor_States.md`.
+-   `ActorStateComponent` is a read model. Ability components remain the source
+    of truth and state names do not imply an implemented mechanic.
 
 Commands
 
