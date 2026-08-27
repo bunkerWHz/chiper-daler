@@ -1,6 +1,10 @@
 extends DamageModifierComponent
 class_name GuardComponent
 
+const EQUIPMENT_COMPONENT_SCRIPT := preload(
+	"res://features/equipment/EquipmentComponent.gd"
+)
+
 signal guard_started
 signal guard_finished
 signal parry_started
@@ -13,6 +17,7 @@ signal damage_blocked(hit: HitData, prevented_damage: float)
 var _input_component: InputComponent
 var _facing_component: FacingComponent
 var _attack_component: AttackComponent
+var _equipment_component: Component
 var _is_guarding: bool = false
 var _parry_timer: float = 0.0
 var _parry_cooldown_timer: float = 0.0
@@ -37,6 +42,9 @@ func on_initialize() -> void:
 	_input_component = actor.get_component(InputComponent) as InputComponent
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 	_attack_component = actor.get_component(AttackComponent) as AttackComponent
+	_equipment_component = (
+		actor.get_component(EQUIPMENT_COMPONENT_SCRIPT) as Component
+	)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("GuardComponent requires an enabled InputComponent")
@@ -55,6 +63,18 @@ func on_initialize() -> void:
 	):
 		_attack_component.attack_started.connect(_on_attack_started)
 
+	if _equipment_component != null:
+		if not _equipment_component.is_enabled:
+			_equipment_component = null
+		elif not _equipment_component.is_connected(
+			&"equipment_changed",
+			_on_equipment_changed
+		):
+			_equipment_component.connect(
+				&"equipment_changed",
+				_on_equipment_changed
+			)
+
 
 func _process(delta: float) -> void:
 	_parry_cooldown_timer = maxf(_parry_cooldown_timer - delta, 0.0)
@@ -64,6 +84,11 @@ func _process(delta: float) -> void:
 
 		if _parry_timer == 0.0:
 			parry_finished.emit()
+
+	if not _allows_melee_actions():
+		stop_guard()
+		_finish_parry()
+		return
 
 	var attack_in_progress := (
 		_attack_component != null
@@ -116,6 +141,7 @@ func allows_hit_reactions(hit: HitData) -> bool:
 func start_parry() -> bool:
 	if (
 		not is_enabled
+		or not _allows_melee_actions()
 		or is_parrying()
 		or _parry_cooldown_timer > 0.0
 	):
@@ -139,7 +165,12 @@ func start_parry() -> bool:
 
 
 func start_guard() -> bool:
-	if not is_enabled or _is_guarding or is_parrying():
+	if (
+		not is_enabled
+		or not _allows_melee_actions()
+		or _is_guarding
+		or is_parrying()
+	):
 		return false
 
 	if (
@@ -204,3 +235,16 @@ func _is_hit_from_front(hit: HitData) -> bool:
 func _on_attack_started() -> void:
 	stop_guard()
 	_finish_parry()
+
+
+func _allows_melee_actions() -> bool:
+	return (
+		_equipment_component == null
+		or bool(_equipment_component.call("allows_melee_actions"))
+	)
+
+
+func _on_equipment_changed(_previous_slot: int, _current_slot: int) -> void:
+	if not _allows_melee_actions():
+		stop_guard()
+		_finish_parry()

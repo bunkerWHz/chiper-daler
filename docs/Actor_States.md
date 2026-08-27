@@ -21,6 +21,21 @@ The layers are:
 `ActorStateComponent` derives the snapshot from capability components. It does
 not implement abilities and must not duplicate their gameplay logic.
 
+## Contextual equipment controls
+
+`EquipmentComponent` owns the active loadout slot. Number keys select it:
+
+- `1`: melee;
+- `2`: item;
+- `3`: throwable;
+- `4`: bow;
+- `5`: crossbow;
+- `6`: magic.
+
+`J` is the primary action and `K` is the secondary action of the active slot.
+Melee attack, parry, and block are available only while the melee slot is
+active. Every future equipment ability must follow the same ownership rule.
+
 ## Implemented states
 
 | Layer | Actor state | Source of truth |

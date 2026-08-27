@@ -1,6 +1,10 @@
 extends Component
 class_name AttackComponent
 
+const EQUIPMENT_COMPONENT_SCRIPT := preload(
+	"res://features/equipment/EquipmentComponent.gd"
+)
+
 signal attack_started
 signal heavy_attack_started
 signal attack_finished
@@ -10,6 +14,7 @@ signal attack_finished
 var _input_component: InputComponent
 var _hitbox_component: HitboxComponent
 var _facing_component: FacingComponent
+var _equipment_component: Component
 var _active_timer: float = 0.0
 var _cooldown_timer: float = 0.0
 var _charge_timer: float = 0.0
@@ -39,6 +44,9 @@ func on_initialize() -> void:
 	_input_component = actor.get_component(InputComponent) as InputComponent
 	_hitbox_component = actor.get_component(HitboxComponent) as HitboxComponent
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
+	_equipment_component = (
+		actor.get_component(EQUIPMENT_COMPONENT_SCRIPT) as Component
+	)
 
 	if _hitbox_component == null or not _hitbox_component.is_enabled:
 		push_error("AttackComponent requires an enabled HitboxComponent")
@@ -52,6 +60,18 @@ func on_initialize() -> void:
 
 	if _facing_component != null and not _facing_component.is_enabled:
 		_facing_component = null
+
+	if _equipment_component != null:
+		if not _equipment_component.is_enabled:
+			_equipment_component = null
+		elif not _equipment_component.is_connected(
+			&"equipment_changed",
+			_on_equipment_changed
+		):
+			_equipment_component.connect(
+				&"equipment_changed",
+				_on_equipment_changed
+			)
 
 	if (
 		_facing_component != null
@@ -91,7 +111,12 @@ func heavy_attack() -> bool:
 
 
 func can_attack() -> bool:
-	return is_enabled and _cooldown_timer <= 0.0 and _active_timer <= 0.0
+	return (
+		is_enabled
+		and _allows_melee_actions()
+		and _cooldown_timer <= 0.0
+		and _active_timer <= 0.0
+	)
 
 
 func is_attacking() -> bool:
@@ -137,6 +162,11 @@ func _update_attack_input(delta: float) -> void:
 	if _input_component == null:
 		return
 
+	if not _allows_melee_actions():
+		_is_charging = false
+		_charge_timer = 0.0
+		return
+
 	if _input_component.consume_attack_pressed():
 		if can_attack():
 			_is_charging = true
@@ -180,6 +210,28 @@ func _restore_hitbox_damage() -> void:
 		_hitbox_component.damage = _base_damage
 
 	_is_heavy_attack = false
+
+
+func _allows_melee_actions() -> bool:
+	return (
+		_equipment_component == null
+		or bool(_equipment_component.call("allows_melee_actions"))
+	)
+
+
+func _on_equipment_changed(_previous_slot: int, _current_slot: int) -> void:
+	if _allows_melee_actions():
+		return
+
+	var was_attacking := is_attacking()
+	_active_timer = 0.0
+	_charge_timer = 0.0
+	_is_charging = false
+	_hitbox_component.deactivate()
+	_restore_hitbox_damage()
+
+	if was_attacking:
+		attack_finished.emit()
 
 
 func _on_facing_changed(

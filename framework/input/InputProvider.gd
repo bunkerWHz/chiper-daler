@@ -36,3 +36,7 @@ func is_guard_pressed() -> bool:
 
 func consume_guard_just_pressed() -> bool:
 	return false
+
+
+func consume_equipment_slot_request() -> int:
+	return -1

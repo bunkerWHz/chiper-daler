@@ -52,6 +52,7 @@ func _update_overlay() -> void:
 	var lines := PackedStringArray()
 	lines.append("Actor: %s" % actor.name)
 	_append_actor_state_info(lines)
+	_append_equipment_info(lines)
 	_append_movement_info(lines)
 	_append_interaction_info(lines)
 	_append_health_info(lines)
@@ -67,6 +68,15 @@ func _update_overlay() -> void:
 		)
 
 	_label.text = "\n".join(lines)
+
+
+func _append_equipment_info(lines: PackedStringArray) -> void:
+	var equipment := actor.get_component(EquipmentComponent) as EquipmentComponent
+
+	if equipment == null or not equipment.is_enabled:
+		return
+
+	lines.append("Equipment: %s" % equipment.get_current_slot_name())
 
 
 func _append_actor_state_info(lines: PackedStringArray) -> void:

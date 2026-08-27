@@ -11,6 +11,14 @@ const INTERACT_ACTION: StringName = &"interact"
 const ATTACK_ACTION: StringName = &"attack"
 const GUARD_ACTION: StringName = &"guard"
 const DODGE_ACTION: StringName = &"dodge"
+const EQUIPMENT_ACTIONS: Array[StringName] = [
+	&"equip_melee",
+	&"equip_item",
+	&"equip_throwable",
+	&"equip_bow",
+	&"equip_crossbow",
+	&"equip_magic",
+]
 
 var _move_axis: float = 0.0
 var _vertical_axis: float = 0.0
@@ -23,6 +31,7 @@ var _attack_released: bool = false
 var _guard_pressed: bool = false
 var _guard_just_pressed: bool = false
 var _dodge_pressed: bool = false
+var _equipment_slot_request: int = -1
 
 
 func _ready() -> void:
@@ -98,6 +107,12 @@ func consume_dodge_pressed() -> bool:
 	return true
 
 
+func consume_equipment_slot_request() -> int:
+	var request := _equipment_slot_request
+	_equipment_slot_request = -1
+	return request
+
+
 func _process(_delta: float) -> void:
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
 	_attack_just_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
@@ -105,6 +120,11 @@ func _process(_delta: float) -> void:
 	_attack_released = Input.is_action_just_released(ATTACK_ACTION)
 	_guard_pressed = Input.is_action_pressed(GUARD_ACTION)
 	_guard_just_pressed = Input.is_action_just_pressed(GUARD_ACTION)
+
+	for slot_index in EQUIPMENT_ACTIONS.size():
+		if Input.is_action_just_pressed(EQUIPMENT_ACTIONS[slot_index]):
+			_equipment_slot_request = slot_index
+			break
 
 
 func _physics_process(_delta: float) -> void:
