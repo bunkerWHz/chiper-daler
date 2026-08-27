@@ -17,6 +17,7 @@ var _attack_component: AttackComponent
 var _guard_component: GuardComponent
 var _interaction_component: InteractionComponent
 var _item_use_component: ItemUseComponent
+var _throwing_component: ThrowingComponent
 var _hit_reaction_component: HitReactionComponent
 var _hit_stun_component: HitStunComponent
 var _health_component: HealthComponent
@@ -44,6 +45,9 @@ func on_initialize() -> void:
 	)
 	_item_use_component = (
 		actor.get_component(ItemUseComponent) as ItemUseComponent
+	)
+	_throwing_component = (
+		actor.get_component(ThrowingComponent) as ThrowingComponent
 	)
 	_hit_reaction_component = (
 		actor.get_component(HitReactionComponent)
@@ -184,6 +188,15 @@ func _resolve_action() -> ActorState.Action:
 		and _item_use_component.is_using_item()
 	):
 		return ActorState.Action.USING_ITEM
+
+	if _throwing_component != null and _throwing_component.is_enabled:
+		match _throwing_component.get_phase():
+			ThrowingComponent.Phase.AIM:
+				return ActorState.Action.THROWING_AIM
+			ThrowingComponent.Phase.ACTION:
+				return ActorState.Action.THROWING_ACTION
+			ThrowingComponent.Phase.RECOVERY:
+				return ActorState.Action.THROWING_RECOVERY
 
 	if (
 		_interaction_component != null

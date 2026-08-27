@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/throwing/ThrowingComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/throwing/ThrowingConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="ThrowingConfig_default"]
+script = ExtResource("2_config")
+
+[node name="ThrowingComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("ThrowingConfig_default")

@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/throwing/ThrownProjectile.gd" id="1_projectile"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
+radius = 5.0
+
+[node name="ThrownProjectile" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_projectile")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-6, -3, 6, -3, 6, 3, -6, 3)
+color = Color(0.85, 0.75, 0.35, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_projectile")

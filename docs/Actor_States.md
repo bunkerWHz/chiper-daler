@@ -53,6 +53,9 @@ active. Every future equipment ability must follow the same ownership rule.
 | Action | `LightAttack` | `AttackComponent.is_attacking()` |
 | Action | `HeavyAttack` | heavy charge or `AttackComponent.is_heavy_attacking()` |
 | Action | `UsingItem` | `ItemUseComponent.is_using_item()` |
+| Action | `ThrowingAim` | `ThrowingComponent.AIM` phase |
+| Action | `ThrowingAction` | `ThrowingComponent.ACTION` phase |
+| Action | `ThrowingRecovery` | `ThrowingComponent.RECOVERY` phase |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
 | Action | `Parrying` | `GuardComponent.is_parrying()` |
 | Action | `InteractingStart` | `InteractionComponent.START` phase |
@@ -72,7 +75,6 @@ be reported as active until the corresponding ability exists.
 
 ### Actions
 
-- `ThrowingAim`, `ThrowingAction`, `ThrowingRecovery`
 - `AimBow`, `LooseArrow`
 - `AimCrossbow`, `FireCrossbow`
 - `MagicCharge`, `MagicCast`, `MagicRecovery`, `MagicChanneling`
