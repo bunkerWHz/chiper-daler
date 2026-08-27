@@ -2,10 +2,12 @@ extends Component
 class_name HitboxComponent
 
 signal hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
+signal critical_hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
 
 @export_range(0.0, 100000.0, 1.0) var damage: float = 10.0
 @export_range(0.0, 1000.0, 1.0) var horizontal_knockback: float = 180.0
 @export_range(0.0, 1000.0, 1.0) var vertical_knockback: float = 100.0
+@export_range(1.0, 10.0, 0.1) var critical_damage_multiplier: float = 2.0
 
 var _area: Area2D
 var _horizontal_direction: float = 1.0
@@ -76,11 +78,42 @@ func _on_area_entered(other_area: Area2D) -> void:
 		direction * horizontal_knockback,
 		-vertical_knockback
 	)
-	var hit := HitData.new(damage, actor, knockback_velocity)
+	var is_critical := _is_backstab(hurtbox.actor, direction)
+	var hit_damage := damage * critical_damage_multiplier if is_critical else damage
+	var hit := HitData.new(
+		hit_damage,
+		actor,
+		knockback_velocity,
+		is_critical
+	)
 	var applied_damage := hurtbox.receive_hit(hit)
 
 	if applied_damage > 0.0:
 		hit_landed.emit(hurtbox, applied_damage)
+		if is_critical:
+			critical_hit_landed.emit(hurtbox, applied_damage)
+
+
+func _is_backstab(target: Actor, attack_direction: float) -> bool:
+	if target == null or is_zero_approx(attack_direction):
+		return false
+
+	var target_direction := 0.0
+	var facing := target.get_component(FacingComponent) as FacingComponent
+	if facing != null and facing.is_enabled:
+		target_direction = float(facing.get_direction())
+	else:
+		var enemy_movement := (
+			target.get_component(EnemyMovementComponent)
+			as EnemyMovementComponent
+		)
+		if enemy_movement != null and enemy_movement.is_enabled:
+			target_direction = enemy_movement.get_move_direction()
+
+	return (
+		not is_zero_approx(target_direction)
+		and signf(attack_direction) == signf(target_direction)
+	)
 
 
 func _can_hit(hurtbox: HurtboxComponent) -> bool:

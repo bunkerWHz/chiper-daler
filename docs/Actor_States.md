@@ -66,6 +66,7 @@ active. Every future equipment ability must follow the same ownership rule.
 | Action | `MagicChanneling` | `MagicComponent.CHANNELING` phase |
 | Action | `Blocking` | `GuardComponent.is_guarding()` |
 | Action | `Parrying` | `GuardComponent.is_parrying()` |
+| Action | `CriticalAttack` | successful backstab from `HitboxComponent` |
 | Action | `InteractingStart` | `InteractionComponent.START` phase |
 | Action | `InteractingProgress` | `InteractionComponent.PROGRESS` phase |
 | Action | `InteractingEnd` | `InteractionComponent.END` phase |
@@ -87,8 +88,6 @@ be reported as active until the corresponding ability exists.
 ### Locomotion
 
 ### Actions
-
-- `CriticalAttack`
 
 ### Conditions
 

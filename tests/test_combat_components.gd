@@ -669,6 +669,51 @@ func test_strong_hit_knocks_actor_down() -> void:
 	assert_false(actor_state.has_condition(ActorState.Condition.KNOCKED_DOWN))
 
 
+func test_backstab_reports_critical_attack_state() -> void:
+	var attacker := track(Actor.new()) as Actor
+	attacker.global_position.x = 0.0
+	var attacker_components := Node2D.new()
+	attacker_components.name = "_Components"
+	attacker.add_child(attacker_components)
+
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	var state := ActorStateComponent.new()
+	for component: Component in [hitbox, attack, state]:
+		attacker_components.add_child(component)
+	attacker._collect_components()
+
+	var target := track(Actor.new()) as Actor
+	target.global_position.x = 40.0
+	var target_components := Node2D.new()
+	target_components.name = "_Components"
+	target.add_child(target_components)
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	target_components.add_child(body_component)
+	var movement := EnemyMovementComponent.new()
+	movement.config = EnemyMovementConfig.new()
+	movement.config.initial_direction = 1.0
+	target_components.add_child(movement)
+	target._collect_components()
+
+	assert_true(hitbox._is_backstab(target, 1.0))
+	assert_false(hitbox._is_backstab(target, -1.0))
+	attack._on_critical_hit_landed(null, 20.0)
+	state.refresh_state()
+	assert_eq(state.get_action(), ActorState.Action.CRITICAL_ATTACK)
+
+	attack._process(attack.config.critical_state_duration)
+	state.refresh_state()
+	assert_eq(state.get_action(), ActorState.Action.NONE)
+
+
 func test_enemy_attack_telegraphs_before_attacking() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

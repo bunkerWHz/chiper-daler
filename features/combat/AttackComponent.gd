@@ -23,6 +23,7 @@ var _is_heavy_attack: bool = false
 var _base_damage: float = 0.0
 var _base_horizontal_knockback: float = 0.0
 var _base_vertical_knockback: float = 0.0
+var _critical_timer: float = 0.0
 
 
 func on_initialize() -> void:
@@ -39,6 +40,7 @@ func on_initialize() -> void:
 		or config.heavy_cooldown <= 0.0
 		or config.heavy_damage_multiplier < 1.0
 		or config.heavy_knockback_multiplier < 1.0
+		or config.critical_state_duration <= 0.0
 	):
 		push_error("AttackComponent has an invalid config")
 		disable()
@@ -59,6 +61,7 @@ func on_initialize() -> void:
 	_base_damage = _hitbox_component.damage
 	_base_horizontal_knockback = _hitbox_component.horizontal_knockback
 	_base_vertical_knockback = _hitbox_component.vertical_knockback
+	_hitbox_component.critical_hit_landed.connect(_on_critical_hit_landed)
 
 	if _input_component != null and not _input_component.is_enabled:
 		_input_component = null
@@ -97,6 +100,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_cooldown_timer = maxf(_cooldown_timer - delta, 0.0)
+	_critical_timer = maxf(_critical_timer - delta, 0.0)
 
 	if _active_timer > 0.0:
 		_active_timer = maxf(_active_timer - delta, 0.0)
@@ -136,6 +140,10 @@ func is_charging_heavy_attack() -> bool:
 	return _is_charging
 
 
+func is_critical_attacking() -> bool:
+	return _critical_timer > 0.0
+
+
 func set_horizontal_direction(direction: float) -> void:
 	if _hitbox_component != null:
 		_hitbox_component.set_horizontal_direction(direction)
@@ -145,6 +153,7 @@ func disable() -> void:
 	var was_attacking := is_attacking()
 	_active_timer = 0.0
 	_charge_timer = 0.0
+	_critical_timer = 0.0
 	_is_charging = false
 	_restore_hitbox_damage()
 
@@ -253,6 +262,13 @@ func _on_facing_changed(
 ) -> void:
 	if is_enabled:
 		_apply_facing(current_direction)
+
+
+func _on_critical_hit_landed(
+	_hurtbox: HurtboxComponent,
+	_applied_damage: float
+) -> void:
+	_critical_timer = config.critical_state_duration
 
 
 func _apply_facing(direction: FacingComponent.Direction) -> void:

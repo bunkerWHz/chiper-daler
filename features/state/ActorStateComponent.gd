@@ -170,6 +170,13 @@ func _resolve_action() -> ActorState.Action:
 	if (
 		_attack_component != null
 		and _attack_component.is_enabled
+		and _attack_component.is_critical_attacking()
+	):
+		return ActorState.Action.CRITICAL_ATTACK
+
+	if (
+		_attack_component != null
+		and _attack_component.is_enabled
 		and (
 			_attack_component.is_heavy_attacking()
 			or _attack_component.is_charging_heavy_attack()
