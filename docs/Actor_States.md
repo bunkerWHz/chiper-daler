@@ -80,16 +80,7 @@ active. Every future equipment ability must follow the same ownership rule.
 | Condition | `Debuffed` | active negative `StatusEffect` |
 | Condition | `Buffed` | active positive `StatusEffect` |
 
-## Reserved states without mechanics
-
-These names are stable and available to future components, but they must not
-be reported as active until the corresponding ability exists.
-
-### Locomotion
-
-### Actions
-
-### Conditions
+## Status effects
 
 Specific mechanics such as poison damage, bleeding, slowing, increased attack,
 or increased defence belong to their own effect implementations. `Debuffed`
@@ -105,7 +96,7 @@ When adding a state:
 4. Add a transition test and a debug-overlay check.
 5. Never make unrelated components write directly into Actor state.
 
-## Planned implementation order
+## Completion
 
-1. Items, throwing, ranged weapons, and magic as separate ability families.
-2. Knockdown, rest, level-up, buffs, and debuffs as condition components.
+All locomotion, action, and condition states in the current Actor taxonomy have
+an implemented gameplay source and are available through `ActorStateComponent`.
