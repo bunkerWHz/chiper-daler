@@ -78,6 +78,21 @@ static func get_horizontal_reach_at_height(
 	if move_speed < 0.0 or gravity <= 0.0 or jump_velocity <= 0.0:
 		return 0.0
 
+	return move_speed * get_flight_time_at_height(
+		gravity,
+		jump_velocity,
+		vertical_offset
+	)
+
+
+static func get_flight_time_at_height(
+	gravity: float,
+	jump_velocity: float,
+	vertical_offset: float
+) -> float:
+	if gravity <= 0.0 or jump_velocity <= 0.0:
+		return 0.0
+
 	var discriminant := (
 		jump_velocity * jump_velocity
 		+ 2.0 * gravity * vertical_offset
@@ -86,10 +101,9 @@ static func get_horizontal_reach_at_height(
 	if discriminant < 0.0:
 		return 0.0
 
-	var descending_time := (
+	return (
 		jump_velocity + sqrt(discriminant)
 	) / gravity
-	return move_speed * descending_time
 
 
 static func can_reach_height(

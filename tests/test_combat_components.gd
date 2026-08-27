@@ -825,6 +825,10 @@ func test_enemy_jump_uses_configured_trajectory_reach() -> void:
 	assert_false(jump.can_reach_offset(Vector2(80.0, 0.0)))
 	assert_true(jump.can_reach_offset(Vector2(80.0, 50.0)))
 	assert_false(jump.can_reach_offset(Vector2(10.0, -100.0)))
+	assert_true(
+		absf(jump.get_required_horizontal_speed(Vector2(60.0, 0.0)) - 80.0)
+		< 0.001
+	)
 
 
 func test_enemy_jump_requires_a_landing_surface_by_default() -> void:

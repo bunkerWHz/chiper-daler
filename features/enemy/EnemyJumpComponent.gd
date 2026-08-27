@@ -19,6 +19,7 @@ var _cooldown_timer: float = 0.0
 var _is_jumping: bool = false
 var _has_left_ground: bool = false
 var _jump_target: Actor
+var _jump_destination: Vector2
 
 
 func on_initialize() -> void:
@@ -112,10 +113,16 @@ func _physics_process(delta: float) -> void:
 
 	_movement_component.lock_move_direction()
 
-	if _movement_component.jump(config.jump_velocity):
+	var jump_speed := minf(
+		get_required_horizontal_speed(offset),
+		_movement_component.config.move_speed
+	)
+
+	if _movement_component.jump(config.jump_velocity, jump_speed):
 		_is_jumping = true
 		_has_left_ground = false
 		_jump_target = target.actor
+		_jump_destination = target.actor.global_position
 		_cooldown_timer = config.cooldown
 		jump_started.emit(target.actor)
 	else:
@@ -150,6 +157,26 @@ func is_on_cooldown() -> bool:
 
 func is_jumping() -> bool:
 	return _is_jumping
+
+
+func get_jump_destination() -> Vector2:
+	return _jump_destination
+
+
+func get_required_horizontal_speed(offset: Vector2) -> float:
+	if _movement_component == null or _movement_component.config == null:
+		return 0.0
+
+	var flight_time: float = TRAJECTORY_CALCULATOR.get_flight_time_at_height(
+		_movement_component.config.gravity,
+		config.jump_velocity,
+		offset.y
+	)
+
+	if flight_time <= 0.0:
+		return 0.0
+
+	return absf(offset.x) / flight_time
 
 
 func should_attempt_jump(
@@ -210,6 +237,7 @@ func _update_jump_commitment() -> void:
 		_is_jumping = false
 		_has_left_ground = false
 		_jump_target = null
+		_jump_destination = Vector2.ZERO
 		_movement_component.unlock_move_direction()
 		jump_landed.emit(landed_target)
 
@@ -220,6 +248,7 @@ func disable() -> void:
 	_is_jumping = false
 	_has_left_ground = false
 	_jump_target = null
+	_jump_destination = Vector2.ZERO
 
 	if _movement_component != null:
 		_movement_component.unlock_move_direction()

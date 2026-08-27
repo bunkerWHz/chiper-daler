@@ -6,6 +6,7 @@ class_name EnemyMovementComponent
 var _body_component: CharacterBodyComponent
 var _move_direction: float = 0.0
 var _is_move_direction_locked: bool = false
+var _committed_jump_speed: float = -1.0
 
 
 func on_initialize() -> void:
@@ -31,7 +32,12 @@ func on_initialize() -> void:
 
 func _physics_process(delta: float) -> void:
 	var velocity := _body_component.get_velocity()
-	velocity.x = _move_direction * config.move_speed
+	var horizontal_speed := config.move_speed
+
+	if _committed_jump_speed >= 0.0:
+		horizontal_speed = _committed_jump_speed
+
+	velocity.x = _move_direction * horizontal_speed
 
 	if not _body_component.is_on_floor():
 		velocity.y += config.gravity * delta
@@ -58,13 +64,14 @@ func lock_move_direction() -> void:
 
 func unlock_move_direction() -> void:
 	_is_move_direction_locked = false
+	_committed_jump_speed = -1.0
 
 
 func is_move_direction_locked() -> bool:
 	return _is_move_direction_locked
 
 
-func jump(jump_velocity: float) -> bool:
+func jump(jump_velocity: float, horizontal_speed: float = -1.0) -> bool:
 	if (
 		not is_enabled
 		or jump_velocity <= 0.0
@@ -74,6 +81,11 @@ func jump(jump_velocity: float) -> bool:
 
 	var velocity := _body_component.get_velocity()
 	velocity.y = -jump_velocity
+	_committed_jump_speed = (
+		clampf(horizontal_speed, 0.0, config.move_speed)
+		if horizontal_speed >= 0.0
+		else config.move_speed
+	)
 	_body_component.set_velocity(velocity)
 	return true
 

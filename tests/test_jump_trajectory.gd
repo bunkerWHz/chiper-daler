@@ -42,6 +42,13 @@ func test_jump_trajectory_is_symmetric() -> void:
 
 
 func test_horizontal_reach_supports_different_platform_heights() -> void:
+	var same_height_time := (
+		JumpTrajectoryCalculator.get_flight_time_at_height(
+			1200.0,
+			450.0,
+			0.0
+		)
+	)
 	var same_height := JumpTrajectoryCalculator.get_horizontal_reach_at_height(
 		100.0,
 		1200.0,
@@ -65,6 +72,7 @@ func test_horizontal_reach_supports_different_platform_heights() -> void:
 		)
 	)
 
+	assert_true(absf(same_height_time - 0.75) < 0.001)
 	assert_true(absf(same_height - 75.0) < 0.001)
 	assert_true(lower_platform > same_height)
 	assert_eq(unreachable_height, 0.0)
