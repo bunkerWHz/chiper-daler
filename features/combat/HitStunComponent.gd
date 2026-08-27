@@ -74,6 +74,7 @@ func _suspend_components() -> void:
 	var item_use := actor.get_component(ItemUseComponent)
 	var throwing := actor.get_component(ThrowingComponent)
 	var ranged_weapon := actor.get_component(RangedWeaponComponent)
+	var magic := actor.get_component(MagicComponent)
 	var enemy_movement := actor.get_component(EnemyMovementComponent)
 
 	for component: Component in [
@@ -86,6 +87,7 @@ func _suspend_components() -> void:
 		item_use,
 		throwing,
 		ranged_weapon,
+		magic,
 		enemy_movement,
 	]:
 		if component != null and component.is_enabled:

@@ -19,6 +19,7 @@ var _interaction_component: InteractionComponent
 var _item_use_component: ItemUseComponent
 var _throwing_component: ThrowingComponent
 var _ranged_weapon_component: RangedWeaponComponent
+var _magic_component: MagicComponent
 var _hit_reaction_component: HitReactionComponent
 var _hit_stun_component: HitStunComponent
 var _health_component: HealthComponent
@@ -53,6 +54,7 @@ func on_initialize() -> void:
 	_ranged_weapon_component = (
 		actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	)
+	_magic_component = actor.get_component(MagicComponent) as MagicComponent
 	_hit_reaction_component = (
 		actor.get_component(HitReactionComponent)
 		as HitReactionComponent
@@ -212,6 +214,17 @@ func _resolve_action() -> ActorState.Action:
 				return ActorState.Action.AIM_CROSSBOW
 			RangedWeaponComponent.Phase.CROSSBOW_FIRE:
 				return ActorState.Action.FIRE_CROSSBOW
+
+	if _magic_component != null and _magic_component.is_enabled:
+		match _magic_component.get_phase():
+			MagicComponent.Phase.CHARGE:
+				return ActorState.Action.MAGIC_CHARGE
+			MagicComponent.Phase.CAST:
+				return ActorState.Action.MAGIC_CAST
+			MagicComponent.Phase.RECOVERY:
+				return ActorState.Action.MAGIC_RECOVERY
+			MagicComponent.Phase.CHANNELING:
+				return ActorState.Action.MAGIC_CHANNELING
 
 	if (
 		_interaction_component != null
