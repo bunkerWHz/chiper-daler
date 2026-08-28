@@ -385,6 +385,10 @@ func _request_drop_selected_item() -> void:
 	var quantity := _inventory.get_quantity(_selected_item_id)
 	if quantity <= 0:
 		return
+	if quantity == 1:
+		_drop_dialog.hide()
+		_drop_selected_item()
+		return
 	_drop_quantity.max_value = quantity
 	_drop_quantity.value = 1
 	if is_inside_tree():

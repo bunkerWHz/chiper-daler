@@ -118,6 +118,17 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"slot_index": 3,
 	})
 	assert_eq(quick_access.get_slot(3).kind, QuickAccessSlot.Kind.EMPTY)
+	var single_item := ItemData.new()
+	single_item.id = &"single_test_item"
+	single_item.display_name = "Single Test Item"
+	single_item.category = ItemData.Category.MATERIAL
+	inventory.add_item(single_item)
+	menu._select_item(single_item.id)
+	var child_count_before_single_drop := world.get_child_count()
+	menu._request_drop_selected_item()
+	assert_eq(inventory.get_quantity(single_item.id), 0)
+	assert_eq(world.get_child_count(), child_count_before_single_drop + 1)
+	assert_true(world.get_child(world.get_child_count() - 1) is LootBag)
 
 	var sword := ItemData.new()
 	sword.id = &"test_sword"

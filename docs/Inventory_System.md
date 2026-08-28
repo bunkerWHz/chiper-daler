@@ -41,7 +41,8 @@ The functional menu supports immediate consumable use while paused,
 equip/unequip toggling, manual quick-slot assignment and clearing, stack
 splitting when a free cell exists, and quantity-confirmed dropping. Key items
 cannot be dropped. A confirmed multi-item drop creates one loot bag containing
-the selected quantity.
+the selected quantity. Dropping the only copy of an item skips the quantity
+dialog and creates the loot bag immediately.
 
 The single player hotbar sits to the right of the health bar. During gameplay it
 shows only available quick-access slots, so empty cells do not occupy space.
