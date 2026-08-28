@@ -22,9 +22,11 @@ back slot. Equipped entries reference items that remain visible in the main
 inventory. Removing the last copy of an item automatically unequips it.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
-Crossbow, Apprentice Focus, and three Health Potions. Weapon set one starts as
-sword and shield; set two starts with the bow. Crossbow and focus remain in the
-inventory and can replace a main-hand weapon through the equipment menu.
+Crossbow, Apprentice Focus, three Health Potions, three Mana Potions, and two
+Experience Tonics. The last two are temporary functional items for testing
+quick-access assignment and item use. Weapon set one starts as sword and shield;
+set two starts with the bow. Crossbow and focus remain in the inventory and can
+replace a main-hand weapon through the equipment menu.
 
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
