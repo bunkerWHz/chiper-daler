@@ -28,20 +28,36 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 		ItemData.Category.THROWABLE,
 		ItemData.CombatMode.THROWABLE
 	)
+	var secondary_weapon := ItemData.new()
+	secondary_weapon.id = &"secondary_sword"
+	secondary_weapon.display_name = "Secondary Sword"
+	secondary_weapon.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	secondary_weapon.combat_mode = ItemData.CombatMode.MELEE
 	helmet.usable_in_combat = false
 	inventory.add_item(bomb, 3)
 	inventory.add_item(knife, 2)
 	inventory.add_item(helmet)
+	inventory.add_item(secondary_weapon)
+	equipment.equip_inventory_item(
+		secondary_weapon.id, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	)
 
 	assert_eq(quick_access.get_slot(0).kind, QuickAccessSlot.Kind.WEAPON_SET)
 	assert_eq(quick_access.get_slot(1).weapon_set, 1)
 	assert_eq(quick_access.get_slot(2).item_id, &"health_potion")
+	assert_false(quick_access.is_slot_available(0))
+	assert_true(quick_access.is_slot_available(1))
+	assert_false(quick_access.is_slot_available(2))
 	assert_false(quick_access.assign_item(2, bomb.id))
 	assert_false(quick_access.assign_item(3, helmet.id))
 	assert_false(quick_access.activate_slot(4))
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	assert_eq(InputComponent.EQUIPMENT_ACTIONS[0], &"quick_slot_1")
 	assert_eq(InputComponent.EQUIPMENT_ACTIONS[5], &"quick_slot_6")
+	assert_eq(InputComponent.QUICK_SLOT_PREVIOUS_ACTION, &"quick_slot_previous")
+	assert_eq(InputComponent.QUICK_SLOT_NEXT_ACTION, &"quick_slot_next")
+	assert_true(InputMap.has_action(InputComponent.QUICK_SLOT_PREVIOUS_ACTION))
+	assert_true(InputMap.has_action(InputComponent.QUICK_SLOT_NEXT_ACTION))
 	assert_true(quick_access.assign_item(3, bomb.id))
 	assert_false(quick_access.assign_item(4, bomb.id))
 
@@ -62,11 +78,26 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	assert_eq(quick_access.get_slot(4).item_id, bomb.id)
 	assert_eq(quick_access.get_active_slot(), 4)
 	assert_false(quick_access.swap_slots(0, 4))
+	input._quick_slot_cycle_request = -1
+	quick_access._process(0.0)
+	assert_eq(quick_access.get_active_slot(), 3)
+	input._quick_slot_cycle_request = 1
+	quick_access._process(0.0)
+	assert_eq(quick_access.get_active_slot(), 4)
+	input._quick_slot_cycle_request = 1
+	quick_access._process(0.0)
+	assert_eq(quick_access.get_active_slot(), 1)
+	input._quick_slot_cycle_request = -1
+	quick_access._process(0.0)
+	assert_eq(quick_access.get_active_slot(), 4)
 
 	input._equipment_slot_request = 1
 	quick_access._process(0.0)
 	assert_eq(equipment.get_active_weapon_set(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
+	assert_true(quick_access.activate_slot(4))
+	inventory.remove_item(bomb.id, 3)
+	assert_eq(quick_access.get_active_slot(), 1)
 
 
 func _create_quick_access_actor() -> Dictionary:

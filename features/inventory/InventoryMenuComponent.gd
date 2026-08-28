@@ -18,7 +18,7 @@ var _quick_access: QuickAccessComponent
 var _inventory_drop: InventoryDropComponent
 var _attributes: CharacterAttributesComponent
 var _item_use: ItemUseComponent
-var _overlay: Control
+var _panel: Control
 var _grid: GridContainer
 var _equipment_text: Label
 var _details_text: Label
@@ -70,55 +70,55 @@ func _ready() -> void:
 	if not is_enabled:
 		return
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_overlay = get_node_or_null("CanvasLayer/Overlay") as Control
+	_panel = get_node_or_null("CanvasLayer/Panel") as Control
 	_grid = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll/Grid"
+		"CanvasLayer/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
 	_equipment_text = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentText"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentText"
 	) as Label
 	_details_text = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Details"
+		"CanvasLayer/Panel/Main/Details"
 	) as Label
 	_equip_button = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Actions/Equip"
+		"CanvasLayer/Panel/Main/Actions/Equip"
 	) as Button
 	_drop_button = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Actions/Drop"
+		"CanvasLayer/Panel/Main/Actions/Drop"
 	) as Button
 	_use_button = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Actions/Use"
+		"CanvasLayer/Panel/Main/Actions/Use"
 	) as Button
 	_split_button = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Actions/Split"
+		"CanvasLayer/Panel/Main/Actions/Split"
 	) as Button
 	_quick_buttons = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/QuickButtons"
+		"CanvasLayer/Panel/Main/QuickButtons"
 	) as HBoxContainer
 	_drop_dialog = get_node_or_null("CanvasLayer/DropDialog") as ConfirmationDialog
 	_drop_quantity = get_node_or_null(
 		"CanvasLayer/DropDialog/Content/Quantity"
 	) as SpinBox
 	_equipment_slots = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
 	_weapon_set_buttons = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/WeaponSets"
+		"CanvasLayer/Panel/Main/Content/Equipment/WeaponSets"
 	) as HBoxContainer
 	_category_filter = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar/Category"
+		"CanvasLayer/Panel/Main/Content/Inventory/Toolbar/Category"
 	) as OptionButton
 	_sort_option = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar/Sort"
+		"CanvasLayer/Panel/Main/Content/Inventory/Toolbar/Sort"
 	) as OptionButton
 	_inventory_summary = get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Summary"
+		"CanvasLayer/Panel/Main/Content/Inventory/Summary"
 	) as Label
 	var close_button := get_node_or_null(
-		"CanvasLayer/Overlay/Panel/Main/Header/Close"
+		"CanvasLayer/Panel/Main/Header/Close"
 	) as Button
 	if (
-		_overlay == null
+		_panel == null
 		or _grid == null
 		or _equipment_text == null
 		or _details_text == null
@@ -140,7 +140,7 @@ func _ready() -> void:
 		disable()
 		return
 
-	_overlay.visible = false
+	_panel.visible = false
 	close_button.pressed.connect(close_inventory)
 	_equip_button.pressed.connect(_equip_selected_item)
 	_drop_button.pressed.connect(_request_drop_selected_item)
@@ -166,9 +166,9 @@ func _process(_delta: float) -> void:
 
 
 func open_inventory() -> void:
-	if not is_enabled or _overlay == null:
+	if not is_enabled or _panel == null:
 		return
-	_overlay.visible = true
+	_panel.visible = true
 	_rebuild()
 	if is_inside_tree():
 		get_tree().paused = true
@@ -177,14 +177,14 @@ func open_inventory() -> void:
 func close_inventory() -> void:
 	if _drop_dialog != null:
 		_drop_dialog.hide()
-	if _overlay != null:
-		_overlay.visible = false
+	if _panel != null:
+		_panel.visible = false
 	if is_inside_tree():
 		get_tree().paused = false
 
 
 func is_open() -> bool:
-	return _overlay != null and _overlay.visible
+	return _panel != null and _panel.visible
 
 
 func disable() -> void:
@@ -350,15 +350,19 @@ func _split_selected_stack() -> void:
 func _create_quick_buttons() -> void:
 	for child: Node in _quick_buttons.get_children():
 		child.free()
-	for slot_index in range(QuickAccessComponent.FIRST_CONFIGURABLE_SLOT, 8):
+	for slot_index in 8:
 		var button := InventoryDragButton.new()
-		button.text = "Assign %d" % (slot_index + 1)
+		button.custom_minimum_size = Vector2(52.0, 46.0)
+		button.text = str(slot_index + 1)
 		button.icon = ItemData.PLACEHOLDER_ICON
 		button.add_theme_constant_override("icon_max_width", 32)
 		button.expand_icon = true
-		button.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
-		button.data_dropped.connect(_on_quick_slot_data_dropped.bind(slot_index))
-		button.pressed.connect(_toggle_selected_quick_slot.bind(slot_index))
+		if slot_index >= QuickAccessComponent.FIRST_CONFIGURABLE_SLOT:
+			button.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
+			button.data_dropped.connect(
+				_on_quick_slot_data_dropped.bind(slot_index)
+			)
+			button.pressed.connect(_toggle_selected_quick_slot.bind(slot_index))
 		_quick_buttons.add_child(button)
 
 
@@ -490,7 +494,10 @@ func _refresh_weapon_set_buttons() -> void:
 			set_index + 1,
 			" • Active" if set_index == active_set else "",
 		]
-		button.disabled = set_index == active_set
+		button.disabled = (
+			set_index == active_set
+			or not _quick_access.is_slot_available(set_index)
+		)
 		set_index += 1
 
 
@@ -622,33 +629,65 @@ func _on_quick_slot_data_dropped(data: Dictionary, slot_index: int) -> void:
 
 
 func _set_quick_buttons_enabled(value: bool) -> void:
-	var slot_index := QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
+	var slot_index := 0
 	for button: InventoryDragButton in _quick_buttons.get_children():
 		var slot := _quick_access.get_slot(slot_index)
-		button.text = (
-			"Clear %d" % (slot_index + 1)
-			if slot != null and slot.item_id == _selected_item_id
-			else "Assign %d" % (slot_index + 1)
+		var configurable := (
+			slot_index >= QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
 		)
-		button.disabled = false
-		button.modulate = Color.WHITE if value else Color(0.68, 0.68, 0.68, 0.9)
+		button.text = str(slot_index + 1)
+		button.disabled = not configurable
+		button.modulate = (
+			Color.WHITE
+			if value or not configurable
+			else Color(0.68, 0.68, 0.68, 0.9)
+		)
 		button.drag_payload = {}
-		button.icon = ItemData.PLACEHOLDER_ICON
+		button.icon = _quick_slot_icon(slot)
+		button.tooltip_text = _quick_slot_tooltip(slot_index, slot)
 		if slot != null and slot.kind == QuickAccessSlot.Kind.ITEM:
 			var assigned_item := _inventory.get_item_data(slot.item_id)
-			if assigned_item != null:
-				button.icon = assigned_item.get_display_icon()
-			button.drag_payload = {
-				"kind": InventoryDragButton.KIND_QUICK_SLOT,
-				"slot_index": slot_index,
-				"item_id": slot.item_id,
-				"display_name": (
-					assigned_item.display_name
-					if assigned_item != null
-					else String(slot.item_id).capitalize()
-				),
-			}
+			if configurable:
+				button.drag_payload = {
+					"kind": InventoryDragButton.KIND_QUICK_SLOT,
+					"slot_index": slot_index,
+					"item_id": slot.item_id,
+					"display_name": (
+						assigned_item.display_name
+						if assigned_item != null
+						else String(slot.item_id).capitalize()
+					),
+				}
 		slot_index += 1
+
+
+func _quick_slot_icon(slot: QuickAccessSlot) -> Texture2D:
+	if slot == null:
+		return ItemData.PLACEHOLDER_ICON
+	if slot.kind == QuickAccessSlot.Kind.ITEM:
+		var item := _inventory.get_item_data(slot.item_id)
+		return item.get_display_icon() if item != null else ItemData.PLACEHOLDER_ICON
+	if slot.kind == QuickAccessSlot.Kind.WEAPON_SET:
+		var main_hand := _equipment.get_equipped_item(
+			ItemData.EquipSlot.MAIN_HAND, 0, slot.weapon_set
+		)
+		if main_hand != null:
+			return main_hand.get_display_icon()
+		var off_hand := _equipment.get_equipped_item(
+			ItemData.EquipSlot.OFF_HAND, 0, slot.weapon_set
+		)
+		if off_hand != null:
+			return off_hand.get_display_icon()
+	return ItemData.PLACEHOLDER_ICON
+
+
+func _quick_slot_tooltip(slot_index: int, slot: QuickAccessSlot) -> String:
+	if slot_index < QuickAccessComponent.FIRST_CONFIGURABLE_SLOT:
+		return "Fixed quick slot %d" % (slot_index + 1)
+	if slot == null or slot.kind == QuickAccessSlot.Kind.EMPTY:
+		return "Drop a combat item into slot %d" % (slot_index + 1)
+	var item := _inventory.get_item_data(slot.item_id)
+	return item.display_name if item != null else String(slot.item_id).capitalize()
 
 
 func _rebuild_equipment_text() -> void:

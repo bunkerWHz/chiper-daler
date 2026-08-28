@@ -29,6 +29,8 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	assert_eq(weapon_display.detail, "Active • Sword")
 	assert_eq(weapon_display.icon, ItemData.PLACEHOLDER_ICON)
 	assert_eq(QuickAccessHUDComponent.ICON_SIZE, Vector2(64.0, 64.0))
+	assert_false(hud.get_slot_display(1).available)
+	assert_false(hud.get_slot_display(2).available)
 	var item_display := hud.get_slot_display(3)
 	assert_true(item_display.available)
 	assert_eq(item_display.title, "Fire Bomb")

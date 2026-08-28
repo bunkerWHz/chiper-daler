@@ -11,8 +11,10 @@ The first two quick slots represent weapon sets, the third starts as the health
 consumable slot, and slots four through eight are configurable. These rules are
 data-driven and may change after playtesting.
 
-All eight number keys now address real quick-access slots. Empty configurable
-slots do nothing; there are no hidden legacy combat-mode fallbacks.
+All eight number keys address real quick-access slots. `Q` and `E` cycle
+backward and forward through available slots, wrapping around and skipping
+empty ones. Interaction uses `R`; there are no hidden legacy combat-mode
+fallbacks.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
@@ -38,12 +40,12 @@ splitting when a free cell exists, and quantity-confirmed dropping. Key items
 cannot be dropped. A confirmed multi-item drop creates one loot bag containing
 the selected quantity.
 
-The player HUD presents all eight quick-access slots at the bottom of the
-screen. It follows the active slot, weapon-set contents, item assignments,
-icons and stack quantities in real time, and dims empty or unavailable slots.
-Hotbar icons render at a fixed 64 by 64 pixels. Items without final art use the
-shared `assets/icon_placeholder.png` texture, scaled down where smaller menu
-icons are required.
+The player HUD presents only available quick-access slots at the bottom of the
+screen, so empty cells do not occupy gameplay space. It follows the active
+slot, weapon-set contents, item assignments, icons and stack quantities in real
+time. Hotbar icons render at a fixed 64 by 64 pixels. Items without final art
+use the shared `assets/icon_placeholder.png` texture, scaled down where smaller
+menu icons are required.
 
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
@@ -61,7 +63,9 @@ their configured maximum. Non-stackable items always occupy separate cells.
    *(implemented)*
 
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
-current functional UI shows all stacks, item details and comparisons, both
+centered panel occupies half of the viewport without a fullscreen overlay. The
+inventory shows all eight quick-access cells, including empty cells available
+for assignment. It also shows all stacks, item details and comparisons, both
 weapon sets, armor and accessory slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything

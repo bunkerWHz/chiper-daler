@@ -34,6 +34,11 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"res://features/inventory/InventoryMenuComponent.tscn"
 	) as PackedScene
 	var menu := menu_scene.instantiate() as InventoryMenuComponent
+	var menu_panel := menu.get_node("CanvasLayer/Panel") as Control
+	assert_eq(menu_panel.anchor_left, 0.25)
+	assert_eq(menu_panel.anchor_top, 0.25)
+	assert_eq(menu_panel.anchor_right, 0.75)
+	assert_eq(menu_panel.anchor_bottom, 0.75)
 	for component: Component in [
 		input,
 		attributes,
@@ -63,7 +68,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 
 	menu.open_inventory()
 	var grid := menu.get_node(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll/Grid"
+		"CanvasLayer/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
@@ -71,7 +76,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq((grid.get_child(0) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	assert_eq((grid.get_child(1) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	var summary := menu.get_node(
-		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Summary"
+		"CanvasLayer/Panel/Main/Content/Inventory/Summary"
 	) as Label
 	assert_true(summary.text.contains("Slots 1 / 40"))
 
@@ -158,19 +163,17 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._on_category_selected(0)
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	var equipment_slots := menu.get_node(
-		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
 	assert_eq(equipment_slots.get_child_count(), 14)
 	menu._activate_weapon_set(1)
-	assert_eq(equipment.get_active_weapon_set(), 1)
-	menu._activate_weapon_set(0)
 	assert_eq(equipment.get_active_weapon_set(), 0)
 	menu._select_item(crossbow.id)
 	var details := menu.get_node(
-		"CanvasLayer/Overlay/Panel/Main/Details"
+		"CanvasLayer/Panel/Main/Details"
 	) as Label
 	var equip_button := menu.get_node(
-		"CanvasLayer/Overlay/Panel/Main/Actions/Equip"
+		"CanvasLayer/Panel/Main/Actions/Equip"
 	) as Button
 	assert_true(details.text.contains("Requirements not met: DEX 3"))
 	assert_true(details.text.contains("Compared with Test Sword"))

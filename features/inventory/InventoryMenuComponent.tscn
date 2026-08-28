@@ -9,10 +9,6 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.35, 0.4, 0.5, 0.9)
-content_margin_left = 14.0
-content_margin_top = 12.0
-content_margin_right = 14.0
-content_margin_bottom = 12.0
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -24,138 +20,138 @@ script = ExtResource("1_menu")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 20
 
-[node name="Overlay" type="ColorRect" parent="CanvasLayer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.02, 0.025, 0.04, 0.94)
-
-[node name="Panel" type="PanelContainer" parent="CanvasLayer/Overlay"]
+[node name="Panel" type="Panel" parent="CanvasLayer"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 35.0
-offset_right = -50.0
-offset_bottom = -35.0
+anchor_left = 0.25
+anchor_top = 0.25
+anchor_right = 0.75
+anchor_bottom = 0.75
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("InventoryPanel")
 
-[node name="Main" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel"]
-layout_mode = 2
-theme_override_constants/separation = 12
+[node name="Main" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = -14.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Inventory"
 
-[node name="Close" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Header"]
+[node name="Close" type="Button" parent="CanvasLayer/Panel/Main/Header"]
 layout_mode = 2
 text = "Close [I]"
 
-[node name="Content" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+[node name="Content" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 10
 
-[node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content"]
-custom_minimum_size = Vector2(310, 0)
+[node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
 text = "Equipment"
 
-[node name="EquipmentText" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+[node name="EquipmentText" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
 text = "Equipment slots"
 
-[node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+[node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="EquipmentScroll" type="ScrollContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+[node name="EquipmentScroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll"]
+[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 2
+columns = 1
 
-[node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content"]
+[node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 text = "Items"
 
-[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Category" type="OptionButton" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar"]
+[node name="Category" type="OptionButton" parent="CanvasLayer/Panel/Main/Content/Inventory/Toolbar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Sort" type="OptionButton" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar"]
+[node name="Sort" type="OptionButton" parent="CanvasLayer/Panel/Main/Content/Inventory/Toolbar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Summary" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+[node name="Summary" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
 text = "Slots 0 / 0    Weight 0.00"
 
-[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Grid" type="GridContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll"]
+[node name="Grid" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Inventory/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 4
+columns = 2
 
-[node name="Details" type="Label" parent="CanvasLayer/Overlay/Panel/Main"]
-custom_minimum_size = Vector2(0, 80)
+[node name="Details" type="Label" parent="CanvasLayer/Panel/Main"]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 text = "Select an item"
 autowrap_mode = 2
+text_overrun_behavior = 3
+max_lines_visible = 3
 
-[node name="Actions" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+[node name="Actions" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
 layout_mode = 2
 
-[node name="Equip" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+[node name="Equip" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
 layout_mode = 2
 text = "Equip"
 disabled = true
 
-[node name="Use" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+[node name="Use" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
 layout_mode = 2
 text = "Use"
 disabled = true
 
-[node name="Split" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+[node name="Split" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
 layout_mode = 2
 text = "Split Stack"
 disabled = true
 
-[node name="Drop" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+[node name="Drop" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
 layout_mode = 2
 text = "Drop..."
 disabled = true
 
-[node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+[node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
 layout_mode = 2
 theme_override_constants/separation = 6
 

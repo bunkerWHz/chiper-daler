@@ -12,6 +12,8 @@ const ATTACK_ACTION: StringName = &"attack"
 const GUARD_ACTION: StringName = &"guard"
 const DODGE_ACTION: StringName = &"dodge"
 const INVENTORY_ACTION: StringName = &"inventory"
+const QUICK_SLOT_PREVIOUS_ACTION: StringName = &"quick_slot_previous"
+const QUICK_SLOT_NEXT_ACTION: StringName = &"quick_slot_next"
 const EQUIPMENT_ACTIONS: Array[StringName] = [
 	&"quick_slot_1",
 	&"quick_slot_2",
@@ -35,6 +37,7 @@ var _guard_pressed: bool = false
 var _guard_just_pressed: bool = false
 var _dodge_pressed: bool = false
 var _equipment_slot_request: int = -1
+var _quick_slot_cycle_request: int = 0
 var _inventory_pressed: bool = false
 
 
@@ -118,6 +121,12 @@ func consume_equipment_slot_request() -> int:
 	return request
 
 
+func consume_quick_slot_cycle_request() -> int:
+	var request := _quick_slot_cycle_request
+	_quick_slot_cycle_request = 0
+	return request
+
+
 func consume_inventory_pressed() -> bool:
 	if not _inventory_pressed:
 		return false
@@ -133,6 +142,11 @@ func _process(_delta: float) -> void:
 	_attack_released = Input.is_action_just_released(ATTACK_ACTION)
 	_guard_pressed = Input.is_action_pressed(GUARD_ACTION)
 	_guard_just_pressed = Input.is_action_just_pressed(GUARD_ACTION)
+	_quick_slot_cycle_request = 0
+	if Input.is_action_just_pressed(QUICK_SLOT_PREVIOUS_ACTION):
+		_quick_slot_cycle_request = -1
+	elif Input.is_action_just_pressed(QUICK_SLOT_NEXT_ACTION):
+		_quick_slot_cycle_request = 1
 
 	for slot_index in EQUIPMENT_ACTIONS.size():
 		if Input.is_action_just_pressed(EQUIPMENT_ACTIONS[slot_index]):

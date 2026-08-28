@@ -55,7 +55,7 @@ func _process(_delta: float) -> void:
 		return
 
 	prompt.visible = true
-	prompt.text = target.interaction_name
+	prompt.text = "[R] %s" % target.interaction_name
 	prompt.reset_size()
 
 	var world_pos: Vector2 = target.actor.global_position + offset

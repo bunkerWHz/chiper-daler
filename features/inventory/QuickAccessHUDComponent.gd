@@ -164,6 +164,7 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 	key_label.text = String(display.key)
 	quantity_label.text = String(display.quantity)
 	icon.texture = display.icon as Texture2D
+	panel.visible = bool(display.available)
 	panel.modulate = Color.WHITE if bool(display.available) else Color(0.55, 0.55, 0.55, 0.75)
 	panel.add_theme_stylebox_override(
 		"panel",

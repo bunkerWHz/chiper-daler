@@ -31,6 +31,8 @@ func on_initialize() -> void:
 		return
 
 	_create_default_slots()
+	_inventory.inventory_changed.connect(_on_inventory_changed)
+	_equipment.loadout_item_changed.connect(_on_loadout_item_changed)
 
 
 func _ready() -> void:
@@ -41,10 +43,13 @@ func _process(_delta: float) -> void:
 	var requested_slot := _input.consume_equipment_slot_request()
 	if requested_slot >= 0 and requested_slot < _slots.size():
 		activate_slot(requested_slot)
+	var cycle_request := _input.consume_quick_slot_cycle_request()
+	if cycle_request != 0:
+		activate_adjacent_slot(cycle_request)
 
 
 func activate_slot(slot_index: int) -> bool:
-	if not is_enabled or slot_index < 0 or slot_index >= _slots.size():
+	if not is_slot_available(slot_index):
 		return false
 
 	var slot := _slots[slot_index]
@@ -65,6 +70,39 @@ func activate_slot(slot_index: int) -> bool:
 	if previous != _active_slot:
 		active_slot_changed.emit(previous, _active_slot)
 	return true
+
+
+func activate_adjacent_slot(direction: int) -> bool:
+	if not is_enabled or direction == 0 or _slots.is_empty():
+		return false
+	var step := -1 if direction < 0 else 1
+	for distance in range(1, _slots.size() + 1):
+		var candidate := posmod(_active_slot + distance * step, _slots.size())
+		if is_slot_available(candidate) and activate_slot(candidate):
+			return true
+	return false
+
+
+func is_slot_available(slot_index: int) -> bool:
+	if not is_enabled or slot_index < 0 or slot_index >= _slots.size():
+		return false
+	var slot := _slots[slot_index]
+	match slot.kind:
+		QuickAccessSlot.Kind.WEAPON_SET:
+			return (
+				_equipment.get_equipped_item(
+					ItemData.EquipSlot.MAIN_HAND, 0, slot.weapon_set
+				) != null
+				or _equipment.get_equipped_item(
+					ItemData.EquipSlot.OFF_HAND, 0, slot.weapon_set
+				) != null
+			)
+		QuickAccessSlot.Kind.ITEM:
+			return (
+				not slot.item_id.is_empty()
+				and _inventory.get_quantity(slot.item_id) > 0
+			)
+	return false
 
 
 func assign_item(slot_index: int, item_id: StringName) -> bool:
@@ -97,7 +135,8 @@ func clear_slot(slot_index: int) -> bool:
 	_slots[slot_index] = QuickAccessSlot.new()
 	slot_assignment_changed.emit(slot_index, &"")
 	if _active_slot == slot_index:
-		activate_slot(0)
+		if not activate_slot(0):
+			activate_adjacent_slot(1)
 	return true
 
 
@@ -170,7 +209,11 @@ func restore_runtime_state(state: Variant) -> void:
 			if not item_id.is_empty() and _inventory.has_item(item_id):
 				assign_item(index, item_id)
 
-	activate_slot(clampi(int(state.get("active_slot", 0)), 0, _slots.size() - 1))
+	var restored_slot := clampi(
+		int(state.get("active_slot", 0)), 0, _slots.size() - 1
+	)
+	if not activate_slot(restored_slot):
+		activate_adjacent_slot(1)
 
 
 func get_runtime_state_restore_priority() -> int:
@@ -213,3 +256,19 @@ func _activate_item(item_id: StringName) -> bool:
 	return _equipment.equip(action_slot) or (
 		_equipment.get_current_slot() == action_slot
 	)
+
+
+func _on_inventory_changed() -> void:
+	if not is_slot_available(_active_slot):
+		activate_adjacent_slot(1)
+
+
+func _on_loadout_item_changed(
+	_equip_slot: ItemData.EquipSlot,
+	_slot_index: int,
+	_weapon_set: int,
+	_previous_item_id: StringName,
+	_current_item_id: StringName
+) -> void:
+	if not is_slot_available(_active_slot):
+		activate_adjacent_slot(1)
