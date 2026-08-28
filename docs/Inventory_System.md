@@ -75,8 +75,10 @@ their configured maximum. Non-stackable items always occupy separate cells.
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
 centered panel occupies half of the viewport without a fullscreen overlay. The
 separate HUD hotbar reveals all eight quick-access cells, including empty cells
-available for assignment. The panel shows all stacks, item details and comparisons, both
-weapon sets, armor and accessory slots, and actions for using, equipping,
+available for assignment. The inventory grid uses icon-only 64-pixel cells. A
+temporary item card appears on hover; clicking an item selects it and pins the
+card with its description, quantity, weight, value, requirements, stats, and
+equipment comparison. The panel also shows both weapon sets, armor and accessory slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
 that fits and leaves any remainder on the ground. The item grid can be filtered

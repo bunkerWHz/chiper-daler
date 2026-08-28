@@ -23,6 +23,7 @@ var _item_use: ItemUseComponent
 var _panel: Control
 var _grid: GridContainer
 var _equipment_text: Label
+var _detail_popup: PanelContainer
 var _details_text: Label
 var _equip_button: Button
 var _drop_button: Button
@@ -38,6 +39,7 @@ var _inventory_summary: Label
 var _selected_item_id: StringName
 var _selected_category: int = ALL_CATEGORIES
 var _sort_mode: SortMode = SortMode.NAME
+var _details_pinned := false
 
 
 func on_initialize() -> void:
@@ -78,8 +80,11 @@ func _ready() -> void:
 	_equipment_text = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentText"
 	) as Label
+	_detail_popup = get_node_or_null(
+		"CanvasLayer/DetailPopup"
+	) as PanelContainer
 	_details_text = get_node_or_null(
-		"CanvasLayer/Panel/Main/Details"
+		"CanvasLayer/DetailPopup/Margin/Details"
 	) as Label
 	_equip_button = get_node_or_null(
 		"CanvasLayer/Panel/Main/Actions/Equip"
@@ -119,6 +124,7 @@ func _ready() -> void:
 		_panel == null
 		or _grid == null
 		or _equipment_text == null
+		or _detail_popup == null
 		or _details_text == null
 		or _equip_button == null
 		or _drop_button == null
@@ -165,6 +171,8 @@ func open_inventory() -> void:
 	if not is_enabled or _panel == null:
 		return
 	_panel.visible = true
+	_details_pinned = false
+	_detail_popup.visible = false
 	_rebuild()
 	open_state_changed.emit(true)
 	if is_inside_tree():
@@ -177,6 +185,9 @@ func close_inventory() -> void:
 		_drop_dialog.hide()
 	if _panel != null:
 		_panel.visible = false
+	_details_pinned = false
+	if _detail_popup != null:
+		_detail_popup.visible = false
 	if was_open:
 		open_state_changed.emit(false)
 	if is_inside_tree():
@@ -206,30 +217,29 @@ func _rebuild_grid() -> void:
 	var stacks := _get_visible_stacks()
 	for stack: InventoryStack in stacks:
 		var button := InventoryDragButton.new()
-		button.custom_minimum_size = Vector2(112.0, 74.0)
-		button.text = "%s\nx%d" % [stack.item.display_name, stack.quantity]
+		button.custom_minimum_size = Vector2(72.0, 72.0)
+		button.text = ""
 		button.icon = stack.item.get_display_icon()
-		button.add_theme_constant_override("icon_max_width", 48)
+		button.add_theme_constant_override("icon_max_width", 64)
 		button.expand_icon = true
-		button.tooltip_text = stack.item.description
-		button.add_theme_color_override(
-			"font_color", _rarity_color(stack.item.rarity)
-		)
+		button.tooltip_text = stack.item.display_name
 		if stack.item.id == _selected_item_id:
 			button.add_theme_stylebox_override("normal", _selected_item_style())
 		button.drag_payload = _inventory_item_payload(stack.item)
 		button.drop_target = InventoryDragButton.TARGET_INVENTORY
 		button.data_dropped.connect(_on_inventory_data_dropped)
 		button.pressed.connect(_select_item.bind(stack.item.id))
+		button.mouse_entered.connect(_show_hover_item.bind(stack.item.id))
+		button.mouse_exited.connect(_hide_hover_item)
 		_grid.add_child(button)
 
 	if _selected_category == ALL_CATEGORIES:
 		for _empty_index in _inventory.get_capacity() - stacks.size():
 			var empty_cell := InventoryDragButton.new()
-			empty_cell.custom_minimum_size = Vector2(112.0, 74.0)
-			empty_cell.text = "Empty"
+			empty_cell.custom_minimum_size = Vector2(72.0, 72.0)
+			empty_cell.text = ""
 			empty_cell.icon = ItemData.PLACEHOLDER_ICON
-			empty_cell.add_theme_constant_override("icon_max_width", 48)
+			empty_cell.add_theme_constant_override("icon_max_width", 64)
 			empty_cell.expand_icon = true
 			empty_cell.modulate = Color(0.45, 0.45, 0.45, 0.55)
 			empty_cell.focus_mode = Control.FOCUS_NONE
@@ -240,6 +250,7 @@ func _rebuild_grid() -> void:
 
 func _select_item(item_id: StringName) -> void:
 	_selected_item_id = item_id
+	_details_pinned = true
 	_rebuild_grid()
 	_rebuild_details()
 
@@ -247,26 +258,18 @@ func _select_item(item_id: StringName) -> void:
 func _rebuild_details() -> void:
 	var item := _inventory.get_item_data(_selected_item_id)
 	if item == null:
-		_details_text.text = "Select an item"
+		_details_pinned = false
+		_detail_popup.visible = false
 		_equip_button.disabled = true
 		_drop_button.disabled = true
 		_use_button.disabled = true
 		_split_button.disabled = true
 		return
 
-	var detail_lines := PackedStringArray()
-	detail_lines.append("%s [%s]" % [
-		item.display_name,
-		ItemData.Category.keys()[item.category].capitalize(),
-	])
-	detail_lines.append(item.description)
-	detail_lines.append("Qty: %d  Weight: %.2f  Sell: %d" % [
-		_inventory.get_quantity(item.id),
-		item.weight,
-		item.sell_price,
-	])
-	_append_item_stats(detail_lines, item)
-	_details_text.text = "\n".join(detail_lines)
+	_details_text.text = _get_item_details(item)
+	if _details_pinned:
+		_detail_popup.visible = true
+		_position_detail_popup()
 	var equipped := _equipment.is_item_equipped(item.id)
 	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
@@ -279,6 +282,53 @@ func _rebuild_details() -> void:
 		or not _item_use.can_use_inventory_item_now(item.id)
 	)
 	_split_button.disabled = not _inventory.can_split_stack(item.id)
+
+
+func _show_hover_item(item_id: StringName) -> void:
+	if _details_pinned:
+		return
+	var item := _inventory.get_item_data(item_id)
+	if item == null:
+		return
+	_details_text.text = _get_item_details(item)
+	_detail_popup.visible = true
+	_position_detail_popup()
+
+
+func _hide_hover_item() -> void:
+	if not _details_pinned:
+		_detail_popup.visible = false
+
+
+func _get_item_details(item: ItemData) -> String:
+	var detail_lines := PackedStringArray()
+	detail_lines.append("%s [%s]" % [
+		item.display_name,
+		ItemData.Category.keys()[item.category].capitalize(),
+	])
+	detail_lines.append(item.description)
+	detail_lines.append("Qty: %d  Weight: %.2f  Sell: %d" % [
+		_inventory.get_quantity(item.id),
+		item.weight,
+		item.sell_price,
+	])
+	_append_item_stats(detail_lines, item)
+	return "\n".join(detail_lines)
+
+
+func _position_detail_popup() -> void:
+	if not is_inside_tree():
+		return
+	var viewport_size := get_viewport().get_visible_rect().size
+	var popup_size := _detail_popup.size
+	var target := get_viewport().get_mouse_position() + Vector2(18.0, 18.0)
+	target.x = clampf(
+		target.x, 8.0, maxf(8.0, viewport_size.x - popup_size.x - 8.0)
+	)
+	target.y = clampf(
+		target.y, 8.0, maxf(8.0, viewport_size.y - popup_size.y - 8.0)
+	)
+	_detail_popup.position = target
 
 
 func _equip_selected_item() -> void:

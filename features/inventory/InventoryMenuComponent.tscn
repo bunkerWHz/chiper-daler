@@ -18,7 +18,7 @@ corner_radius_bottom_left = 8
 script = ExtResource("1_menu")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 20
+layer = 110
 
 [node name="Panel" type="Panel" parent="CanvasLayer"]
 layout_mode = 1
@@ -118,15 +118,7 @@ size_flags_vertical = 3
 [node name="Grid" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Inventory/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 2
-
-[node name="Details" type="Label" parent="CanvasLayer/Panel/Main"]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-text = "Select an item"
-autowrap_mode = 2
-text_overrun_behavior = 3
-max_lines_visible = 3
+columns = 4
 
 [node name="Actions" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
 layout_mode = 2
@@ -150,6 +142,28 @@ disabled = true
 layout_mode = 2
 text = "Drop..."
 disabled = true
+
+[node name="DetailPopup" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+custom_minimum_size = Vector2(340, 180)
+offset_right = 340.0
+offset_bottom = 180.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("InventoryPanel")
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/DetailPopup"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Details" type="Label" parent="CanvasLayer/DetailPopup/Margin"]
+layout_mode = 2
+text = "Item details"
+autowrap_mode = 2
+text_overrun_behavior = 3
+max_lines_visible = 8
 
 [node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
 title = "Drop item"

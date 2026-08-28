@@ -72,13 +72,19 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	) as GridContainer
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
-	assert_eq((grid.get_child(0) as Button).text, "Test Potion\nx3")
+	assert_eq((grid.get_child(0) as Button).text, "")
 	assert_eq((grid.get_child(0) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	assert_eq((grid.get_child(1) as Button).icon, ItemData.PLACEHOLDER_ICON)
+	menu._show_hover_item(potion.id)
+	var detail_popup := menu.get_node("CanvasLayer/DetailPopup") as Control
+	assert_true(detail_popup.visible)
+	menu._hide_hover_item()
+	assert_false(detail_popup.visible)
 	var clicked_button := grid.get_child(0) as Button
 	clicked_button.pressed.emit()
 	assert_eq(clicked_button.get_parent(), null)
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
+	assert_true(detail_popup.visible)
 	var summary := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Inventory/Summary"
 	) as Label
@@ -158,7 +164,10 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._on_category_selected(ItemData.Category.WEAPON + 1)
 	assert_eq(grid.get_child_count(), 2)
 	menu._on_sort_selected(InventoryMenuComponent.SortMode.VALUE)
-	assert_true((grid.get_child(0) as Button).text.begins_with("Test Crossbow"))
+	assert_eq(
+		(grid.get_child(0) as InventoryDragButton).drag_payload.item_id,
+		crossbow.id
+	)
 	menu._on_category_selected(0)
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	var equipment_slots := menu.get_node(
@@ -169,7 +178,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq(equipment.get_active_weapon_set(), 0)
 	menu._select_item(crossbow.id)
 	var details := menu.get_node(
-		"CanvasLayer/Panel/Main/Details"
+		"CanvasLayer/DetailPopup/Margin/Details"
 	) as Label
 	var equip_button := menu.get_node(
 		"CanvasLayer/Panel/Main/Actions/Equip"
