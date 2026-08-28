@@ -14,6 +14,10 @@ func on_initialize() -> void:
 	if config == null or config.capacity <= 0:
 		push_error("InventoryComponent requires a valid InventoryConfig")
 		disable()
+		return
+
+	for index in mini(config.starting_items.size(), config.starting_quantities.size()):
+		add_item(config.starting_items[index], config.starting_quantities[index])
 
 
 func add_item(item: ItemData, quantity: int = 1) -> int:

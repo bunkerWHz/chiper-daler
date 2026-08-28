@@ -43,6 +43,52 @@ func test_switching_slot_cancels_item_without_spending_charge() -> void:
 	assert_eq(health.get_current_health(), 80.0)
 
 
+func test_quick_health_potion_consumes_inventory_stack() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var equipment := EquipmentComponent.new()
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var item_use := ItemUseComponent.new()
+	item_use.config = ItemUseConfig.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var quick_access := QuickAccessComponent.new()
+	quick_access.config = QuickAccessConfig.new()
+	for component: Component in [
+		input,
+		equipment,
+		health,
+		item_use,
+		inventory,
+		quick_access,
+	]:
+		components.add_child(component)
+	actor._collect_components()
+
+	var potion := ItemData.new()
+	potion.id = &"health_potion"
+	potion.display_name = "Health Potion"
+	potion.category = ItemData.Category.CONSUMABLE
+	potion.stackable = true
+	potion.max_stack_size = 10
+	potion.usable_in_combat = true
+	potion.use_effect = ItemData.UseEffect.HEAL
+	potion.use_value = 35.0
+	inventory.add_item(potion, 2)
+	health.take_damage(50.0)
+	assert_true(quick_access.activate_slot(2))
+	assert_true(item_use.use_item())
+	item_use._process(item_use.config.use_duration)
+
+	assert_eq(health.get_current_health(), 85.0)
+	assert_eq(inventory.get_quantity(potion.id), 1)
+	assert_eq(item_use.get_remaining_charges(), 1)
+
+
 func _create_item_actor(include_actor_state: bool) -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

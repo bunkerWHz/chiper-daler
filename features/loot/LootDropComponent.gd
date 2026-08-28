@@ -4,7 +4,8 @@ class_name LootDropComponent
 signal loot_dropped(pickup: Pickup)
 
 @export var pickup_scene: PackedScene
-@export var pickup_data: PickupData
+@export var pickup_item: ItemData
+@export_range(1, 999, 1) var quantity: int = 1
 @export_range(0.0, 1.0, 0.01) var drop_chance: float = 1.0
 
 var _health: HealthComponent
@@ -12,8 +13,13 @@ var _has_dropped: bool = false
 
 
 func on_initialize() -> void:
-	if pickup_scene == null or pickup_data == null or not pickup_data.is_valid():
-		push_error("LootDropComponent requires a pickup scene and valid data")
+	if (
+		pickup_scene == null
+		or pickup_item == null
+		or not pickup_item.is_valid()
+		or quantity <= 0
+	):
+		push_error("LootDropComponent requires a pickup scene and valid item")
 		disable()
 		return
 
@@ -40,7 +46,8 @@ func _on_health_died() -> void:
 		return
 
 	_has_dropped = true
-	pickup.data = pickup_data.duplicate(true) as PickupData
+	pickup.item = pickup_item
+	pickup.quantity = quantity
 	parent.add_child(pickup)
 	pickup.global_position = actor.global_position
 	loot_dropped.emit(pickup)

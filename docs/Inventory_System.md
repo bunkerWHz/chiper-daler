@@ -28,7 +28,7 @@ their configured maximum. Non-stackable items always occupy separate cells.
 1. `ItemData`, stacks, and inventory storage.
 2. Paper-doll equipment with two weapon sets. *(implemented)*
 3. Eight quick-access slots and runtime switching. *(implemented)*
-4. Pickup and loot integration.
+4. Pickup and loot integration. *(implemented)*
 5. Paused inventory UI, item details, and management actions.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no

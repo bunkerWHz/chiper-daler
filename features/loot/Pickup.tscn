@@ -1,15 +1,12 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/loot/Pickup.gd" id="1_pickup"]
-[ext_resource type="Script" path="res://features/loot/PickupData.gd" id="2_data"]
+[ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="2_item"]
 [ext_resource type="Script" path="res://framework/components/InteractableComponent.gd" id="3_interactable"]
-
-[sub_resource type="Resource" id="PickupData_default"]
-script = ExtResource("2_data")
 
 [node name="Pickup" type="Node2D"]
 script = ExtResource("1_pickup")
-data = SubResource("PickupData_default")
+item = ExtResource("2_item")
 
 [node name="_Components" type="Node2D" parent="."]
 

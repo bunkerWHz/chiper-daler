@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"health_potion"
+display_name = "Health Potion"
+description = "Restores 35 health."
+category = 4
+stackable = true
+max_stack_size = 10
+weight = 0.25
+usable_in_combat = true
+use_effect = 1
+use_value = 35.0

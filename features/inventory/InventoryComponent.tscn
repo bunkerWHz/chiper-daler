@@ -2,9 +2,13 @@
 
 [ext_resource type="Script" path="res://features/inventory/InventoryComponent.gd" id="1_component"]
 [ext_resource type="Script" path="res://features/inventory/InventoryConfig.gd" id="2_config"]
+[ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_health_potion"]
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="4_item_data"]
 
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
+starting_items = Array[ExtResource("4_item_data")]([ExtResource("3_health_potion")])
+starting_quantities = Array[int]([3])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")

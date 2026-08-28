@@ -2,16 +2,11 @@
 
 [ext_resource type="Script" path="res://features/loot/LootDropComponent.gd" id="1_component"]
 [ext_resource type="PackedScene" path="res://features/loot/Pickup.tscn" id="2_pickup"]
-[ext_resource type="Script" path="res://features/loot/PickupData.gd" id="3_data"]
-
-[sub_resource type="Resource" id="PickupData_health"]
-script = ExtResource("3_data")
-display_name = "Health Essence"
-kind = 0
-amount = 25.0
+[ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_item"]
 
 [node name="LootDropComponent" type="Node"]
 script = ExtResource("1_component")
 pickup_scene = ExtResource("2_pickup")
-pickup_data = SubResource("PickupData_health")
+pickup_item = ExtResource("3_item")
+quantity = 1
 drop_chance = 1.0

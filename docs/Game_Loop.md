@@ -32,12 +32,11 @@ and one enemy can grant its reward only once.
 ## Loot drops
 
 Enemy death creates a `Pickup` at the enemy position. The default enemy drops
-a Health Essence that restores 25 health when collected with `E`. A full-health
-player cannot consume it, so the pickup remains available.
+one Health Potion into the player's real inventory when collected with `E`.
+Pickup quantity can be accepted partially when the inventory has limited room.
 
-`PickupData` also supports item charges, throwables, arrows, bolts, mana, and
-experience. Designers can create another drop by changing only the resource
-data used by `LootDropComponent`.
+`LootDropComponent` and `Pickup` reference the same reusable `ItemData` assets
+as inventory, equipment, and quick-access slots.
 
 ## Level completion
 

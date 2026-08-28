@@ -46,6 +46,13 @@ enum CombatMode {
 	MAGIC,
 }
 
+enum UseEffect {
+	NONE,
+	HEAL,
+	RESTORE_MANA,
+	GRANT_EXPERIENCE,
+}
+
 @export var id: StringName
 @export var display_name: String = "New Item"
 @export_multiline var description: String
@@ -56,6 +63,8 @@ enum CombatMode {
 @export_range(0.0, 1000.0, 0.01) var weight: float = 0.0
 @export var equip_slot: EquipSlot = EquipSlot.NONE
 @export var combat_mode: CombatMode = CombatMode.NONE
+@export var use_effect: UseEffect = UseEffect.NONE
+@export var use_value: float = 0.0
 @export var stats: ItemStats
 @export var rarity: Rarity = Rarity.COMMON
 @export_range(0, 1000000, 1) var sell_price: int = 0
