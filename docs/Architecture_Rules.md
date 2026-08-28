@@ -7,8 +7,9 @@ Core Principles
 3.  Component dependencies are resolved explicitly through the owning Actor.
 4.  Prefer events over direct calls.
 5.  Keep global managers to an absolute minimum.
-6.  New mechanics should be added by composing components, not modifying
-    existing ones.
+6.  New mechanics should primarily be added by composing components. Existing
+    capability owners may gain small integration points, but the new mechanic's
+    state and rules stay in its own component.
 7.  Separate data from logic.
 8.  Every Actor is assembled from reusable components.
 9.  Prefer capabilities (interfaces) over concrete types.
@@ -33,6 +34,36 @@ Component Rules
 -   Communicate through events or the owning Actor.
 -   No gameplay constants embedded in code.
 -   Components must be optional and removable.
+
+Component Lifecycle
+
+-   Actor uses two-pass setup: it first collects every direct Component under
+    `_Components`, then initializes them. Sibling lookup is therefore safe in
+    `on_initialize()` regardless of scene order.
+-   `Component.initialize()` owns the base lifecycle and is not overridden.
+-   Resolve and validate sibling dependencies in `on_initialize()`.
+-   Use `_ready()` only for owned nodes, SceneTree state, and external UI.
+-   A missing required dependency produces one initialization error, calls
+    `disable()`, and returns. Optional dependencies degrade gracefully.
+-   Disabled components do not process or physics-process until enabled again.
+
+Capability Gates and Action Coordination
+
+-   The component that owns an action remains its single source of truth and
+    exposes read-only queries plus fact signals.
+-   Consumers check capability gates when an action starts and react to source
+    signals when an ongoing action must be cancelled. They do not copy the
+    source state into a second flag.
+-   Dependencies remain directed. If component A already observes component B,
+    B must not add a dependency back to A; use a signal or a focused capability
+    contract instead.
+-   Locomotion restrictions use the `get_locomotion_blocks()` capability and
+    `LocomotionConstraint` flags. `MovementComponent` and `DodgeComponent`
+    consume those flags without knowing which ability produced them.
+-   During normal player control, `MovementComponent` owns input-driven body
+    velocity. Ability components expose constraints instead of writing movement
+    directly. Physical effects such as knockback may take explicit temporary
+    ownership while normal movement is suspended.
 
 Actor Rules
 

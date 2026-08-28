@@ -23,14 +23,10 @@ not implement abilities and must not duplicate their gameplay logic.
 
 ## Contextual equipment controls
 
-`EquipmentComponent` owns the active loadout slot. Number keys select it:
-
-- `1`: melee;
-- `2`: item;
-- `3`: throwable;
-- `4`: bow;
-- `5`: crossbow;
-- `6`: magic.
+`EquipmentComponent` owns the active weapon set and derives its combat mode
+from the active main-hand item. `Tab` switches between the two weapon sets.
+Number keys `1` through `8` address item hotbar slots; `Q` and `E` cycle through
+non-empty hotbar slots. Hotbar selection does not change weapon stance.
 
 `J` is the primary action and `K` is the secondary action of the active slot.
 Melee attack, parry, and block are available only while the melee slot is
@@ -42,7 +38,9 @@ Guard and its opening parry window form a grounded defensive stance. It can be
 entered only while standing on the floor, immediately stops horizontal motion,
 and suppresses running, jumping, and dodging until released. Horizontal input
 still updates facing, so the Actor can turn toward an incoming attack. Losing
-floor contact ends the stance.
+floor contact ends the stance. Guard exposes these restrictions through the
+generic locomotion-constraint capability; movement code does not depend on the
+concrete guard implementation.
 
 ## Implemented states
 

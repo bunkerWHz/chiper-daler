@@ -237,7 +237,12 @@ func test_guard_is_grounded_and_locks_locomotion() -> void:
 	body_component.set_velocity(Vector2(200.0, 0.0))
 	input._jump_pressed = true
 
+	assert_true(dodge.try_start_dodge())
+	assert_true(dodge.is_dodging())
 	assert_true(guard.start_guard())
+	dodge._physics_process(0.0)
+	assert_false(dodge.is_dodging())
+	dodge._cooldown_timer = 0.0
 	assert_false(dodge.can_dodge())
 	movement._physics_process(0.0)
 	assert_eq(body_component.get_velocity(), Vector2.ZERO)

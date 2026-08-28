@@ -69,10 +69,10 @@ func on_initialize() -> void:
 	if _facing_component != null and not _facing_component.is_enabled:
 		_facing_component = null
 
+	if _equipment_component != null and not _equipment_component.is_enabled:
+		_equipment_component = null
 	if _equipment_component != null:
-		if not _equipment_component.is_enabled:
-			_equipment_component = null
-		elif not _equipment_component.is_connected(
+		if not _equipment_component.is_connected(
 			&"equipment_changed",
 			_on_equipment_changed
 		):

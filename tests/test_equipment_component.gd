@@ -61,6 +61,45 @@ func test_removing_last_active_weapon_disables_melee_actions() -> void:
 	assert_false(guard.start_parry())
 
 
+func test_disabled_equipment_is_safe_for_scripted_combat() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+
+	var input := InputComponent.new()
+	var equipment := EquipmentComponent.new()
+	equipment.disable()
+	var facing := FacingComponent.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [
+		input,
+		equipment,
+		facing,
+		hitbox,
+		attack,
+		guard,
+	]:
+		components.add_child(component)
+
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	assert_false(equipment.is_enabled)
+	assert_true(attack.attack())
+	attack._process(attack.config.active_duration)
+	assert_true(guard.start_guard())
+
+
 func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

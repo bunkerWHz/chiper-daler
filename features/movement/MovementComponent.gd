@@ -4,6 +4,9 @@ class_name MovementComponent
 const WALL_JUMP_CALCULATOR := preload(
 	"res://features/movement/WallJumpCalculator.gd"
 )
+const LOCOMOTION_CONSTRAINT := preload(
+	"res://features/movement/LocomotionConstraint.gd"
+)
 
 signal state_changed(
 	previous_state: MovementState.Type,
@@ -16,7 +19,7 @@ var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
 var _dodge_component: DodgeComponent
 var _climbing_component: ClimbingComponent
-var _guard_component: GuardComponent
+var _constraint_providers: Array[Component] = []
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _jump_count: int = 0
@@ -62,13 +65,26 @@ func on_initialize() -> void:
 	if _climbing_component != null and not _climbing_component.is_enabled:
 		_climbing_component = null
 
-	_guard_component = actor.get_component(GuardComponent) as GuardComponent
-
-	if _guard_component != null and not _guard_component.is_enabled:
-		_guard_component = null
+	_constraint_providers = LOCOMOTION_CONSTRAINT.collect_providers(
+		self.actor, self
+	)
 
 
 func _physics_process(delta: float) -> void:
+	var locomotion_blocks: int = LOCOMOTION_CONSTRAINT.get_active_blocks(
+		_constraint_providers
+	)
+	if (
+		LOCOMOTION_CONSTRAINT.has_block(
+			locomotion_blocks, LOCOMOTION_CONSTRAINT.Block.HORIZONTAL
+		)
+		or LOCOMOTION_CONSTRAINT.has_block(
+			locomotion_blocks, LOCOMOTION_CONSTRAINT.Block.JUMP
+		)
+	):
+		_apply_locomotion_constraints(delta, locomotion_blocks)
+		return
+
 	if _dodge_component != null and _dodge_component.is_dodging():
 		_dodge_component.apply_velocity()
 		_body_component.move_and_slide()
@@ -90,10 +106,6 @@ func _physics_process(delta: float) -> void:
 		_update_state()
 		return
 
-	if _guard_component != null and _guard_component.is_defending():
-		_apply_guard_stance(delta)
-		return
-	
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
 	_update_wall_jump_timer(delta)
@@ -106,14 +118,30 @@ func _physics_process(delta: float) -> void:
 	_update_state()
 	
 
-func _apply_guard_stance(delta: float) -> void:
-	_input_component.consume_jump_pressed()
-	_jump_buffer_timer = 0.0
+func _apply_locomotion_constraints(delta: float, blocks: int) -> void:
+	var horizontal_blocked: bool = LOCOMOTION_CONSTRAINT.has_block(
+		blocks, LOCOMOTION_CONSTRAINT.Block.HORIZONTAL
+	)
+	var jump_blocked: bool = LOCOMOTION_CONSTRAINT.has_block(
+		blocks, LOCOMOTION_CONSTRAINT.Block.JUMP
+	)
+	if jump_blocked:
+		_input_component.consume_jump_pressed()
+		_jump_buffer_timer = 0.0
+	else:
+		_update_jump_buffer(delta)
 	_update_coyote_time(delta)
-	var velocity := _body_component.get_velocity()
-	velocity.x = 0.0
-	_body_component.set_velocity(velocity)
+	_update_wall_jump_timer(delta)
+	if horizontal_blocked:
+		var velocity := _body_component.get_velocity()
+		velocity.x = 0.0
+		_body_component.set_velocity(velocity)
+	else:
+		_update_horizontal_velocity(delta)
+	if not jump_blocked:
+		_update_jump()
 	_update_gravity(delta)
+	_update_jump_cut()
 	_body_component.move_and_slide()
 	_update_state()
 

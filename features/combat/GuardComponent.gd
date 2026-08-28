@@ -4,6 +4,9 @@ class_name GuardComponent
 const EQUIPMENT_COMPONENT_SCRIPT := preload(
 	"res://features/equipment/EquipmentComponent.gd"
 )
+const LOCOMOTION_CONSTRAINT := preload(
+	"res://features/movement/LocomotionConstraint.gd"
+)
 
 signal guard_started
 signal guard_finished
@@ -18,7 +21,6 @@ var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
 var _facing_component: FacingComponent
 var _attack_component: AttackComponent
-var _dodge_component: DodgeComponent
 var _equipment_component: Component
 var _is_guarding: bool = false
 var _parry_timer: float = 0.0
@@ -47,7 +49,6 @@ func on_initialize() -> void:
 	)
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 	_attack_component = actor.get_component(AttackComponent) as AttackComponent
-	_dodge_component = actor.get_component(DodgeComponent) as DodgeComponent
 	_equipment_component = (
 		actor.get_component(EQUIPMENT_COMPONENT_SCRIPT) as Component
 	)
@@ -69,10 +70,10 @@ func on_initialize() -> void:
 	):
 		_attack_component.attack_started.connect(_on_attack_started)
 
+	if _equipment_component != null and not _equipment_component.is_enabled:
+		_equipment_component = null
 	if _equipment_component != null:
-		if not _equipment_component.is_enabled:
-			_equipment_component = null
-		elif not _equipment_component.is_connected(
+		if not _equipment_component.is_connected(
 			&"equipment_changed",
 			_on_equipment_changed
 		):
@@ -236,6 +237,16 @@ func is_defending() -> bool:
 	return is_guarding() or is_parrying()
 
 
+func get_locomotion_blocks() -> int:
+	if not is_defending():
+		return LOCOMOTION_CONSTRAINT.Block.NONE
+	return (
+		LOCOMOTION_CONSTRAINT.Block.HORIZONTAL
+		| LOCOMOTION_CONSTRAINT.Block.JUMP
+		| LOCOMOTION_CONSTRAINT.Block.DODGE
+	)
+
+
 func disable() -> void:
 	stop_guard()
 	_finish_parry()
@@ -265,14 +276,7 @@ func _is_hit_from_front(hit: HitData) -> bool:
 
 
 func _can_enter_defense() -> bool:
-	return (
-		_is_grounded()
-		and (
-			_dodge_component == null
-			or not _dodge_component.is_enabled
-			or not _dodge_component.is_dodging()
-		)
-	)
+	return _is_grounded()
 
 
 func _is_grounded() -> bool:

@@ -1,6 +1,10 @@
 extends Component
 class_name DodgeComponent
 
+const LOCOMOTION_CONSTRAINT := preload(
+	"res://features/movement/LocomotionConstraint.gd"
+)
+
 signal dodge_started(direction: float)
 signal dodge_finished
 
@@ -13,7 +17,7 @@ var _body_component: CharacterBodyComponent
 var _facing_component: FacingComponent
 var _invulnerability_component: InvulnerabilityComponent
 var _attack_component: AttackComponent
-var _guard_component: GuardComponent
+var _constraint_providers: Array[Component] = []
 var _active_timer: float = 0.0
 var _cooldown_timer: float = 0.0
 var _direction: float = 1.0
@@ -51,7 +55,9 @@ func on_initialize() -> void:
 	_attack_component = (
 		actor.get_component(AttackComponent) as AttackComponent
 	)
-	_guard_component = actor.get_component(GuardComponent) as GuardComponent
+	_constraint_providers = LOCOMOTION_CONSTRAINT.collect_providers(
+		self.actor, self
+	)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("DodgeComponent requires an enabled InputComponent")
@@ -81,6 +87,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_cooldown_timer = maxf(_cooldown_timer - delta, 0.0)
+	if _is_dodge_blocked():
+		_input_component.consume_dodge_pressed()
+		_cancel_dodge()
+		return
 
 	if _body_component.is_on_floor():
 		_air_dodge_available = true
@@ -120,9 +130,6 @@ func try_start_dodge() -> bool:
 			config.invulnerability_duration
 		)
 
-	if _guard_component != null and _guard_component.is_enabled:
-		_guard_component.stop_guard()
-
 	dodge_started.emit(_direction)
 	return true
 
@@ -130,11 +137,7 @@ func try_start_dodge() -> bool:
 func can_dodge() -> bool:
 	if not is_enabled or is_dodging() or _cooldown_timer > 0.0:
 		return false
-	if (
-		_guard_component != null
-		and _guard_component.is_enabled
-		and _guard_component.is_defending()
-	):
+	if _is_dodge_blocked():
 		return false
 
 	if (
@@ -169,10 +172,19 @@ func get_direction() -> float:
 
 
 func disable() -> void:
-	var was_dodging := is_dodging()
-	_active_timer = 0.0
-
-	if was_dodging:
-		dodge_finished.emit()
-
+	_cancel_dodge()
 	super.disable()
+
+
+func _is_dodge_blocked() -> bool:
+	return LOCOMOTION_CONSTRAINT.has_block(
+		LOCOMOTION_CONSTRAINT.get_active_blocks(_constraint_providers),
+		LOCOMOTION_CONSTRAINT.Block.DODGE
+	)
+
+
+func _cancel_dodge() -> void:
+	if not is_dodging():
+		return
+	_active_timer = 0.0
+	dodge_finished.emit()
