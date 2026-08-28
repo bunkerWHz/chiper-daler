@@ -83,6 +83,10 @@ func get_phase() -> Phase:
 	return _phase
 
 
+func is_primary_action_active() -> bool:
+	return _phase != Phase.NONE
+
+
 func get_mana() -> float:
 	return _mana
 

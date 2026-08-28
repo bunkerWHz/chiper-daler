@@ -1,6 +1,10 @@
 extends Component
 class_name InteractionComponent
 
+const PRIMARY_ACTION_GATE := preload(
+	"res://features/state/PrimaryActionGate.gd"
+)
+
 enum Phase {
 	NONE,
 	START,
@@ -22,6 +26,7 @@ var _phase: Phase = Phase.NONE
 
 var input_component: InputComponent
 var current_target: InteractableComponent = null
+var _action_providers: Array[Component] = []
 
 
 
@@ -43,6 +48,8 @@ func on_initialize() -> void:
 		push_error("InteractionComponent requires an enabled InputComponent")
 		disable()
 		return
+
+	_action_providers = PRIMARY_ACTION_GATE.collect_providers(actor, self)
 
 
 func _process(delta: float) -> void:
@@ -84,7 +91,11 @@ func find_nearest_interactable() -> InteractableComponent:
 
 
 func interact() -> bool:
-	if cooldown_timer > 0.0 or is_interacting():
+	if (
+		cooldown_timer > 0.0
+		or is_interacting()
+		or PRIMARY_ACTION_GATE.has_active_action(_action_providers)
+	):
 		return false
 
 	if current_target == null:
@@ -113,6 +124,10 @@ func get_phase() -> Phase:
 
 func is_interacting() -> bool:
 	return _phase != Phase.NONE
+
+
+func is_primary_action_active() -> bool:
+	return is_interacting()
 
 
 func disable() -> void:

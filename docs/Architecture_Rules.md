@@ -62,6 +62,9 @@ Capability Gates and Action Coordination
 -   Consumers check capability gates when an action starts and react to source
     signals when an ongoing action must be cancelled. They do not copy the
     source state into a second flag.
+-   Primary-action owners expose `is_primary_action_active()`. Interaction
+    checks that generic capability and waits while another primary action is
+    active; it never cancels the action it found.
 -   Dependencies remain directed. If component A already observes component B,
     B must not add a dependency back to A; use a signal or a focused capability
     contract instead.

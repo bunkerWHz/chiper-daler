@@ -161,6 +161,10 @@ func is_using_item() -> bool:
 	return _use_timer > 0.0
 
 
+func is_primary_action_active() -> bool:
+	return is_using_item()
+
+
 func get_remaining_charges() -> int:
 	var item_id := _get_selected_inventory_item_id()
 	if not item_id.is_empty():

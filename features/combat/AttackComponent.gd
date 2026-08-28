@@ -163,6 +163,14 @@ func is_critical_attacking() -> bool:
 	return _critical_timer > 0.0
 
 
+func is_primary_action_active() -> bool:
+	return (
+		is_attacking()
+		or is_charging_heavy_attack()
+		or is_critical_attacking()
+	)
+
+
 func set_horizontal_direction(direction: float) -> void:
 	if _hitbox_component != null:
 		_hitbox_component.set_horizontal_direction(direction)

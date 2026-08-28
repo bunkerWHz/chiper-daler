@@ -40,6 +40,11 @@ cancels an aim, charge, cast, or release phase that started from the previous
 context. Changing only an unrelated armour or inactive-set item does not cancel
 the action.
 
+Interaction is lower priority than combat actions. Pressing `R` during attack,
+guard, item use, throwing, ranged, or magic phases does nothing; interaction
+becomes available again after the active action finishes. It does not interrupt
+or cancel the combat action.
+
 Guard and its opening parry window form a grounded defensive stance. It can be
 entered only while standing on the floor, immediately stops horizontal motion,
 and suppresses running, jumping, and dodging until released. Horizontal input

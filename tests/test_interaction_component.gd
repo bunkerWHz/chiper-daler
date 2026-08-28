@@ -4,11 +4,21 @@ extends McpTestSuite
 var _interaction_count: int = 0
 
 
+class PrimaryActionStub:
+	extends Component
+
+	var active: bool = false
+
+
+	func is_primary_action_active() -> bool:
+		return active
+
+
 func suite_name() -> String:
 	return "interaction"
 
 
-func before_each() -> void:
+func setup() -> void:
 	_interaction_count = 0
 
 
@@ -70,6 +80,54 @@ func test_actor_state_maps_all_interaction_phases() -> void:
 	interaction._update_interaction_phase(interaction.end_duration)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+
+
+func test_interaction_waits_for_an_active_primary_action() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var action := PrimaryActionStub.new()
+	var interaction := InteractionComponent.new()
+	components.add_child(input)
+	components.add_child(action)
+	components.add_child(interaction)
+	actor._collect_components()
+
+	var target := track(Actor.new()) as Actor
+	var target_components := Node2D.new()
+	target_components.name = "_Components"
+	target.add_child(target_components)
+	var interactable := InteractableComponent.new()
+	target_components.add_child(interactable)
+	target._collect_components()
+	interactable.interacted.connect(_on_interacted)
+	interaction.current_target = interactable
+
+	action.active = true
+	assert_false(interaction.interact())
+	assert_eq(_interaction_count, 0)
+	assert_eq(interaction.get_phase(), InteractionComponent.Phase.NONE)
+
+	action.active = false
+	assert_true(interaction.interact())
+	assert_eq(_interaction_count, 1)
+	assert_eq(interaction.get_phase(), InteractionComponent.Phase.START)
+
+
+func test_all_combat_actions_publish_the_primary_action_capability() -> void:
+	var providers: Array[Component] = [
+		track(AttackComponent.new()) as AttackComponent,
+		track(GuardComponent.new()) as GuardComponent,
+		track(ItemUseComponent.new()) as ItemUseComponent,
+		track(ThrowingComponent.new()) as ThrowingComponent,
+		track(RangedWeaponComponent.new()) as RangedWeaponComponent,
+		track(MagicComponent.new()) as MagicComponent,
+	]
+
+	for provider: Component in providers:
+		assert_true(provider.has_method(&"is_primary_action_active"))
 
 
 func _create_interaction_setup(include_actor_state: bool) -> Dictionary:

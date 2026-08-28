@@ -237,6 +237,10 @@ func is_defending() -> bool:
 	return is_guarding() or is_parrying()
 
 
+func is_primary_action_active() -> bool:
+	return is_defending()
+
+
 func get_locomotion_blocks() -> int:
 	if not is_defending():
 		return LOCOMOTION_CONSTRAINT.Block.NONE

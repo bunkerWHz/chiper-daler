@@ -89,6 +89,10 @@ func get_phase() -> Phase:
 	return _phase
 
 
+func is_primary_action_active() -> bool:
+	return _phase != Phase.NONE
+
+
 func get_remaining_charges() -> int:
 	return _remaining_charges
 
