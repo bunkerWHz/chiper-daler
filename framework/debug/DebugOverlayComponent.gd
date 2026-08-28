@@ -58,6 +58,7 @@ func _update_overlay() -> void:
 	_append_interaction_info(lines)
 	_append_health_info(lines)
 	_append_progression_info(lines)
+	_append_inventory_info(lines)
 	_append_guard_info(lines)
 	lines.append("Components:")
 
@@ -182,6 +183,20 @@ func _append_progression_info(lines: PackedStringArray) -> void:
 			progression.get_level(),
 			progression.get_experience(),
 			progression.get_experience_required(),
+		]
+	)
+
+
+func _append_inventory_info(lines: PackedStringArray) -> void:
+	var inventory := actor.get_component(InventoryComponent) as InventoryComponent
+	if inventory == null or not inventory.is_enabled:
+		return
+
+	lines.append(
+		"Inventory: %d / %d  Weight: %.2f" % [
+			inventory.get_used_slots(),
+			inventory.get_capacity(),
+			inventory.get_total_weight(),
 		]
 	)
 

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/inventory/InventoryComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/inventory/InventoryConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="InventoryConfig_default"]
+script = ExtResource("2_config")
+
+[node name="InventoryComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("InventoryConfig_default")
