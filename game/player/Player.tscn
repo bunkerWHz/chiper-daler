@@ -46,6 +46,7 @@
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryComponent.tscn" id="40_inventory"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessComponent.tscn" id="41_quick_access"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryMenuComponent.tscn" id="42_inventory_menu"]
+[ext_resource type="PackedScene" path="res://features/inventory/InventoryDropComponent.tscn" id="43_inventory_drop"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -358,6 +359,8 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="StatusEffectComponent" parent="_Components" instance=ExtResource("39_status")]
 
 [node name="InventoryComponent" parent="_Components" instance=ExtResource("40_inventory")]
+
+[node name="InventoryDropComponent" parent="_Components" instance=ExtResource("43_inventory_drop")]
 
 [node name="QuickAccessComponent" parent="_Components" instance=ExtResource("41_quick_access")]
 

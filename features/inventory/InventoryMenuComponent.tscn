@@ -94,5 +94,10 @@ layout_mode = 2
 text = "Equip"
 disabled = true
 
+[node name="Drop" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+layout_mode = 2
+text = "Drop One"
+disabled = true
+
 [node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
 layout_mode = 2

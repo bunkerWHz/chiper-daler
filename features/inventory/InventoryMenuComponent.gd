@@ -7,11 +7,13 @@ var _input: InputComponent
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
 var _quick_access: QuickAccessComponent
+var _inventory_drop: InventoryDropComponent
 var _overlay: Control
 var _grid: GridContainer
 var _equipment_text: Label
 var _details_text: Label
 var _equip_button: Button
+var _drop_button: Button
 var _quick_buttons: HBoxContainer
 var _selected_item_id: StringName
 
@@ -21,9 +23,18 @@ func on_initialize() -> void:
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
 	_quick_access = actor.get_component(QuickAccessComponent) as QuickAccessComponent
-	if _input == null or _inventory == null or _equipment == null or _quick_access == null:
+	_inventory_drop = (
+		actor.get_component(InventoryDropComponent) as InventoryDropComponent
+	)
+	if (
+		_input == null
+		or _inventory == null
+		or _equipment == null
+		or _quick_access == null
+		or _inventory_drop == null
+	):
 		push_error(
-			"InventoryMenuComponent requires input, inventory, equipment, and quick access"
+			"InventoryMenuComponent requires inventory, equipment, quick access, and drop"
 		)
 		disable()
 
@@ -46,6 +57,9 @@ func _ready() -> void:
 	_equip_button = get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/Actions/Equip"
 	) as Button
+	_drop_button = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Actions/Drop"
+	) as Button
 	_quick_buttons = get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/QuickButtons"
 	) as HBoxContainer
@@ -58,6 +72,7 @@ func _ready() -> void:
 		or _equipment_text == null
 		or _details_text == null
 		or _equip_button == null
+		or _drop_button == null
 		or _quick_buttons == null
 		or close_button == null
 	):
@@ -68,6 +83,7 @@ func _ready() -> void:
 	_overlay.visible = false
 	close_button.pressed.connect(close_inventory)
 	_equip_button.pressed.connect(_equip_selected_item)
+	_drop_button.pressed.connect(_drop_selected_item)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_changed)
 	_create_quick_buttons()
@@ -135,6 +151,7 @@ func _rebuild_details() -> void:
 	if item == null:
 		_details_text.text = "Select an item"
 		_equip_button.disabled = true
+		_drop_button.disabled = true
 		_set_quick_buttons_enabled(false)
 		return
 
@@ -147,6 +164,7 @@ func _rebuild_details() -> void:
 		item.sell_price,
 	]
 	_equip_button.disabled = item.equip_slot == ItemData.EquipSlot.NONE
+	_drop_button.disabled = item.is_key_item
 	_set_quick_buttons_enabled(item.usable_in_combat)
 
 
@@ -168,6 +186,11 @@ func _equip_selected_item() -> void:
 func _assign_selected_to_quick_slot(slot_index: int) -> void:
 	if _quick_access.assign_item(slot_index, _selected_item_id):
 		_rebuild_details()
+
+
+func _drop_selected_item() -> void:
+	if _inventory_drop.drop_item(_selected_item_id, 1) != null:
+		_rebuild()
 
 
 func _create_quick_buttons() -> void:

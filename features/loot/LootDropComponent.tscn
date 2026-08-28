@@ -1,12 +1,18 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://features/loot/LootDropComponent.gd" id="1_component"]
-[ext_resource type="PackedScene" path="res://features/loot/Pickup.tscn" id="2_pickup"]
+[ext_resource type="PackedScene" path="res://features/loot/LootBag.tscn" id="2_bag"]
 [ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_item"]
+[ext_resource type="Script" path="res://features/loot/LootEntry.gd" id="4_entry"]
+
+[sub_resource type="Resource" id="LootEntry_health_potion"]
+script = ExtResource("4_entry")
+item = ExtResource("3_item")
+minimum_quantity = 1
+maximum_quantity = 1
+drop_chance = 1.0
 
 [node name="LootDropComponent" type="Node"]
 script = ExtResource("1_component")
-pickup_scene = ExtResource("2_pickup")
-pickup_item = ExtResource("3_item")
-quantity = 1
-drop_chance = 1.0
+loot_bag_scene = ExtResource("2_bag")
+loot_entries = Array[ExtResource("4_entry")]([SubResource("LootEntry_health_potion")])

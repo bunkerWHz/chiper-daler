@@ -1,25 +1,18 @@
 extends Component
 class_name LootDropComponent
 
-signal loot_dropped(pickup: Pickup)
+signal loot_dropped(bag: LootBag)
 
-@export var pickup_scene: PackedScene
-@export var pickup_item: ItemData
-@export_range(1, 999, 1) var quantity: int = 1
-@export_range(0.0, 1.0, 0.01) var drop_chance: float = 1.0
+@export var loot_bag_scene: PackedScene
+@export var loot_entries: Array[LootEntry] = []
 
 var _health: HealthComponent
 var _has_dropped: bool = false
 
 
 func on_initialize() -> void:
-	if (
-		pickup_scene == null
-		or pickup_item == null
-		or not pickup_item.is_valid()
-		or quantity <= 0
-	):
-		push_error("LootDropComponent requires a pickup scene and valid item")
+	if loot_bag_scene == null or not _has_valid_entry():
+		push_error("LootDropComponent requires a loot bag scene and valid loot")
 		disable()
 		return
 
@@ -37,17 +30,32 @@ func should_disable_on_actor_death() -> bool:
 
 
 func _on_health_died() -> void:
-	if _has_dropped or randf() > drop_chance:
+	if _has_dropped:
 		return
+	_has_dropped = true
 
 	var parent := actor.get_parent()
-	var pickup := pickup_scene.instantiate() as Pickup
-	if parent == null or pickup == null:
+	var bag := loot_bag_scene.instantiate() as LootBag
+	if parent == null or bag == null:
 		return
 
-	_has_dropped = true
-	pickup.item = pickup_item
-	pickup.quantity = quantity
-	parent.add_child(pickup)
-	pickup.global_position = actor.global_position
-	loot_dropped.emit(pickup)
+	for entry: LootEntry in loot_entries:
+		if entry == null:
+			continue
+		var rolled_quantity := entry.roll_quantity()
+		if rolled_quantity > 0:
+			bag.add_item(entry.item, rolled_quantity)
+	if bag.is_empty():
+		bag.free()
+		return
+
+	parent.add_child(bag)
+	bag.global_position = actor.global_position
+	loot_dropped.emit(bag)
+
+
+func _has_valid_entry() -> bool:
+	for entry: LootEntry in loot_entries:
+		if entry != null and entry.is_valid():
+			return true
+	return false

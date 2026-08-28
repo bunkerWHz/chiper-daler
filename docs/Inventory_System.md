@@ -35,8 +35,11 @@ their configured maximum. Non-stackable items always occupy separate cells.
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
 current functional UI shows all stacks, item details, both weapon sets, armor
 and accessory slots, and buttons for equipment and quick slots four through
-eight. Visual styling, drag-and-drop, sorting, comparison, splitting, selling,
-and confirmed dropping remain later presentation/interaction work.
+eight. `Drop One` removes one non-key item and creates an interactable loot bag
+at the player's position. The same multi-stack bag is used by enemy drop tables;
+collecting it transfers everything that fits and leaves any remainder on the
+ground. Visual styling, drag-and-drop, sorting, comparison, splitting, selling,
+and quantity confirmation remain later presentation/interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
