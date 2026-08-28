@@ -47,6 +47,26 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	assert_eq(item_display.title, "Fire Bomb")
 	assert_eq(item_display.quantity, "x3")
 	assert_eq(item_display.icon, ItemData.PLACEHOLDER_ICON)
+	hud._slots_container = track(HBoxContainer.new()) as HBoxContainer
+	hud._create_slot_views()
+	hud.refresh()
+	hud._on_inventory_open_changed(true)
+	for slot_index in QuickAccessHUDComponent.SLOT_COUNT:
+		assert_true(hud.get_slot_view(slot_index).visible)
+	var tonic := _create_item(&"tonic", "Combat Tonic", true)
+	inventory.add_item(tonic, 2)
+	var target := hud.get_slot_view(4)
+	var tonic_payload := {
+		"kind": InventoryDragButton.KIND_INVENTORY_ITEM,
+		"item_id": tonic.id,
+		"usable": true,
+		"display_name": tonic.display_name,
+	}
+	assert_true(target._can_drop_data(Vector2.ZERO, tonic_payload))
+	target._drop_data(Vector2.ZERO, tonic_payload)
+	assert_eq(quick_access.get_slot(4).item_id, tonic.id)
+	hud._on_inventory_open_changed(false)
+	assert_false(hud.get_slot_view(1).visible)
 
 	quick_access.activate_slot(3)
 	assert_true(hud.get_slot_display(3).active)

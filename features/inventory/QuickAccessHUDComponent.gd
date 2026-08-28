@@ -8,23 +8,29 @@ const SLOT_SIZE := Vector2(68.0, 68.0)
 var _quick_access: QuickAccessComponent
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
-var _slot_views: Array[PanelContainer] = []
+var _inventory_menu: InventoryMenuComponent
+var _slot_views: Array[InventoryDragButton] = []
 var _key_labels: Array[Label] = []
 var _quantity_labels: Array[Label] = []
 var _icons: Array[TextureRect] = []
 var _slots_container: HBoxContainer
+var _inventory_open := false
 
 
 func on_initialize() -> void:
 	_quick_access = actor.get_component(QuickAccessComponent) as QuickAccessComponent
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
+	_inventory_menu = (
+		actor.get_component(InventoryMenuComponent) as InventoryMenuComponent
+	)
 	if _quick_access == null or _inventory == null or _equipment == null:
 		push_error("QuickAccessHUDComponent requires quick access, inventory, and equipment")
 		disable()
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_slots_container = get_node_or_null(
 		"CanvasLayer/TopMargin/Slots"
 	) as HBoxContainer
@@ -68,7 +74,7 @@ func get_slot_display(slot_index: int) -> Dictionary:
 	return result
 
 
-func get_slot_view(slot_index: int) -> PanelContainer:
+func get_slot_view(slot_index: int) -> InventoryDragButton:
 	if slot_index < 0 or slot_index >= _slot_views.size():
 		return null
 	return _slot_views[slot_index]
@@ -83,23 +89,22 @@ func _create_slot_views() -> void:
 	_icons.clear()
 
 	for slot_index in SLOT_COUNT:
-		var panel := PanelContainer.new()
+		var panel := InventoryDragButton.new()
 		panel.name = "Slot%d" % (slot_index + 1)
 		panel.custom_minimum_size = SLOT_SIZE
 		panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-		var margin := MarginContainer.new()
-		margin.add_theme_constant_override("margin_left", 2)
-		margin.add_theme_constant_override("margin_top", 2)
-		margin.add_theme_constant_override("margin_right", 2)
-		margin.add_theme_constant_override("margin_bottom", 2)
-		panel.add_child(margin)
+		panel.focus_mode = Control.FOCUS_NONE
+		panel.data_dropped.connect(_on_slot_data_dropped.bind(slot_index))
 
 		var content := Control.new()
 		content.custom_minimum_size = ICON_SIZE
 		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		margin.add_child(content)
+		content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		content.offset_left = 2.0
+		content.offset_top = 2.0
+		content.offset_right = -2.0
+		content.offset_bottom = -2.0
+		panel.add_child(content)
 
 		var icon := TextureRect.new()
 		icon.name = "Icon"
@@ -151,6 +156,9 @@ func _connect_signals() -> void:
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.weapon_set_changed.connect(_on_weapon_set_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_item_changed)
+	if _inventory_menu != null:
+		_inventory_open = _inventory_menu.is_open()
+		_inventory_menu.open_state_changed.connect(_on_inventory_open_changed)
 
 
 func _update_slot_view(slot_index: int, display: Dictionary) -> void:
@@ -164,10 +172,37 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 	key_label.text = String(display.key)
 	quantity_label.text = String(display.quantity)
 	icon.texture = display.icon as Texture2D
-	panel.visible = bool(display.available)
+	panel.visible = _inventory_open or bool(display.available)
 	panel.modulate = Color.WHITE if bool(display.available) else Color(0.55, 0.55, 0.55, 0.75)
+	var configurable := (
+		slot_index >= QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
+	)
+	panel.drop_target = (
+		InventoryDragButton.TARGET_QUICK_SLOT
+		if _inventory_open and configurable
+		else InventoryDragButton.TARGET_NONE
+	)
+	panel.drag_payload = {}
+	var slot := _quick_access.get_slot(slot_index)
+	if (
+		_inventory_open
+		and configurable
+		and slot != null
+		and slot.kind == QuickAccessSlot.Kind.ITEM
+	):
+		var item := _inventory.get_item_data(slot.item_id)
+		panel.drag_payload = {
+			"kind": InventoryDragButton.KIND_QUICK_SLOT,
+			"slot_index": slot_index,
+			"item_id": slot.item_id,
+			"display_name": (
+				item.display_name
+				if item != null
+				else String(slot.item_id).capitalize()
+			),
+		}
 	panel.add_theme_stylebox_override(
-		"panel",
+		"normal",
 		_create_panel_style(
 			bool(display.active),
 			bool(display.available),
@@ -247,6 +282,26 @@ func _on_quick_access_changed(_previous: int, _current: int) -> void:
 
 
 func _on_slot_assignment_changed(_slot_index: int, _item_id: StringName) -> void:
+	refresh()
+
+
+func _on_inventory_open_changed(value: bool) -> void:
+	_inventory_open = value
+	refresh()
+
+
+func _on_slot_data_dropped(data: Dictionary, slot_index: int) -> void:
+	if not _inventory_open:
+		return
+	var kind := StringName(data.get("kind", &""))
+	if kind == InventoryDragButton.KIND_INVENTORY_ITEM:
+		_quick_access.assign_item(
+			slot_index, StringName(data.get("item_id", &""))
+		)
+	elif kind == InventoryDragButton.KIND_QUICK_SLOT:
+		_quick_access.swap_slots(
+			int(data.get("slot_index", -1)), slot_index
+		)
 	refresh()
 
 

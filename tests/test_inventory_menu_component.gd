@@ -88,10 +88,6 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._use_selected_item()
 	assert_eq(health.get_current_health(), 85.0)
 	assert_eq(inventory.get_quantity(potion.id), 2)
-	menu._assign_selected_to_quick_slot(3)
-	assert_eq(quick_access.get_slot(3).item_id, potion.id)
-	menu._assign_selected_to_quick_slot(3)
-	assert_eq(quick_access.get_slot(3).kind, QuickAccessSlot.Kind.EMPTY)
 	menu._request_drop_selected_item()
 	assert_eq(menu._drop_quantity.max_value, 2.0)
 	menu._drop_quantity.value = 2
@@ -107,8 +103,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	) as InventoryDragButton
 	quick_drop_target.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
 	assert_true(quick_drop_target._can_drop_data(Vector2.ZERO, potion_payload))
-	menu._on_quick_slot_data_dropped(potion_payload, 3)
-	assert_eq(quick_access.get_slot(3).item_id, potion.id)
+	quick_access.assign_item(3, potion.id)
 	menu._on_inventory_data_dropped({
 		"kind": InventoryDragButton.KIND_QUICK_SLOT,
 		"slot_index": 3,

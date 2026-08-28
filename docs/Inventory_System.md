@@ -40,12 +40,15 @@ splitting when a free cell exists, and quantity-confirmed dropping. Key items
 cannot be dropped. A confirmed multi-item drop creates one loot bag containing
 the selected quantity.
 
-The player HUD presents only available quick-access slots at the bottom of the
-screen, so empty cells do not occupy gameplay space. It follows the active
-slot, weapon-set contents, item assignments, icons and stack quantities in real
-time. Hotbar icons render at a fixed 64 by 64 pixels. Items without final art
-use the shared `assets/icon_placeholder.png` texture, scaled down where smaller
-menu icons are required.
+The single player hotbar sits to the right of the health bar. During gameplay it
+shows only available quick-access slots, so empty cells do not occupy space.
+Opening the inventory expands this same hotbar to all eight cells and enables
+drag-and-drop into configurable slots four through eight; the inventory panel
+does not create a second hotbar. It follows the active slot, weapon-set contents,
+item assignments, icons and stack quantities in real time. Hotbar icons render
+at a fixed 64 by 64 pixels. Items without final art use the shared
+`assets/icon_placeholder.png` texture, scaled down where smaller menu icons are
+required.
 
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
@@ -64,8 +67,8 @@ their configured maximum. Non-stackable items always occupy separate cells.
 
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
 centered panel occupies half of the viewport without a fullscreen overlay. The
-inventory shows all eight quick-access cells, including empty cells available
-for assignment. It also shows all stacks, item details and comparisons, both
+separate HUD hotbar reveals all eight quick-access cells, including empty cells
+available for assignment. The panel shows all stacks, item details and comparisons, both
 weapon sets, armor and accessory slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything

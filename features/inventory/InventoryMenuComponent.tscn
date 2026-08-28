@@ -151,10 +151,6 @@ layout_mode = 2
 text = "Drop..."
 disabled = true
 
-[node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
 [node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
 title = "Drop item"
 size = Vector2i(320, 140)
