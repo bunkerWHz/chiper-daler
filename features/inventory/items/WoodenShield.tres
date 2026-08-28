@@ -1,0 +1,23 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+
+[sub_resource type="Resource" id="ItemStats_shield"]
+script = ExtResource("2_stats")
+defense = 5.0
+durability = 40.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"wooden_shield"
+display_name = "Wooden Shield"
+description = "A light shield suited to basic guarding and parrying."
+category = 1
+stackable = false
+max_stack_size = 1
+weight = 3.0
+equip_slot = 2
+combat_mode = 1
+stats = SubResource("ItemStats_shield")
+sell_price = 18

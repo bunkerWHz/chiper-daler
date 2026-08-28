@@ -31,12 +31,13 @@ and one enemy can grant its reward only once.
 
 ## Loot drops
 
-Enemy death creates a `Pickup` at the enemy position. The default enemy drops
-one Health Potion into the player's real inventory when collected with `E`.
-Pickup quantity can be accepted partially when the inventory has limited room.
+Enemy death creates an interactable `LootBag` at the enemy position. The
+default enemy puts one Health Potion into that bag, which transfers its contents
+to the player's real inventory when collected with `E`. A full inventory leaves
+the unaccepted remainder in the bag.
 
-`LootDropComponent` and `Pickup` reference the same reusable `ItemData` assets
-as inventory, equipment, and quick-access slots.
+`LootDropComponent`, `LootBag`, inventory, equipment, and quick-access slots
+reference the same reusable `ItemData` assets.
 
 ## Level completion
 

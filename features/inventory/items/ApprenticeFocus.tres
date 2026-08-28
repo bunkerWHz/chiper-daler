@@ -1,0 +1,25 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+
+[sub_resource type="Resource" id="ItemStats_focus"]
+script = ExtResource("2_stats")
+damage = 7.0
+durability = 60.0
+buff_type = &"magic_power"
+buff_value = 1.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"apprentice_focus"
+display_name = "Apprentice Focus"
+description = "A basic catalyst used to shape simple spells."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 1.5
+equip_slot = 1
+combat_mode = 5
+stats = SubResource("ItemStats_focus")
+sell_price = 35

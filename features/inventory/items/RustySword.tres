@@ -1,0 +1,23 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+
+[sub_resource type="Resource" id="ItemStats_sword"]
+script = ExtResource("2_stats")
+damage = 10.0
+durability = 50.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"rusty_sword"
+display_name = "Rusty Sword"
+description = "A worn but dependable one-handed sword."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 4.0
+equip_slot = 1
+combat_mode = 1
+stats = SubResource("ItemStats_sword")
+sell_price = 25

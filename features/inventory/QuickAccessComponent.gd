@@ -55,7 +55,7 @@ func activate_slot(slot_index: int) -> bool:
 		QuickAccessSlot.Kind.ITEM:
 			activated = _activate_item(slot.item_id)
 		QuickAccessSlot.Kind.EMPTY:
-			activated = _activate_legacy_fallback(slot_index)
+			activated = false
 
 	if not activated:
 		return false
@@ -167,8 +167,9 @@ func _activate_weapon_set(set_index: int) -> bool:
 	var main_hand := _equipment.get_equipped_item(
 		ItemData.EquipSlot.MAIN_HAND, 0, set_index
 	)
-	return _equipment.equip(_get_action_slot(main_hand)) or (
-		_equipment.get_current_slot() == _get_action_slot(main_hand)
+	var action_slot := _equipment.get_item_action_slot(main_hand)
+	return _equipment.equip(action_slot) or (
+		_equipment.get_current_slot() == action_slot
 	)
 
 
@@ -181,42 +182,7 @@ func _activate_item(item_id: StringName) -> bool:
 	var item := _inventory.get_item_data(item_id)
 	if item == null or not item.usable_in_combat:
 		return false
-	var action_slot := _get_action_slot(item)
+	var action_slot := _equipment.get_item_action_slot(item)
 	return _equipment.equip(action_slot) or (
 		_equipment.get_current_slot() == action_slot
-	)
-
-
-func _get_action_slot(item: ItemData) -> EquipmentComponent.Slot:
-	if item == null:
-		return EquipmentComponent.Slot.MELEE
-
-	match item.combat_mode:
-		ItemData.CombatMode.THROWABLE:
-			return EquipmentComponent.Slot.THROWABLE
-		ItemData.CombatMode.BOW:
-			return EquipmentComponent.Slot.BOW
-		ItemData.CombatMode.CROSSBOW:
-			return EquipmentComponent.Slot.CROSSBOW
-		ItemData.CombatMode.MAGIC:
-			return EquipmentComponent.Slot.MAGIC
-		ItemData.CombatMode.MELEE:
-			return EquipmentComponent.Slot.MELEE
-
-	match item.category:
-		ItemData.Category.CONSUMABLE:
-			return EquipmentComponent.Slot.ITEM
-		ItemData.Category.THROWABLE:
-			return EquipmentComponent.Slot.THROWABLE
-		ItemData.Category.SCROLL:
-			return EquipmentComponent.Slot.MAGIC
-		_:
-			return EquipmentComponent.Slot.MELEE
-
-
-func _activate_legacy_fallback(slot_index: int) -> bool:
-	if slot_index < FIRST_CONFIGURABLE_SLOT or slot_index >= EquipmentComponent.Slot.size():
-		return false
-	return _equipment.equip(slot_index as EquipmentComponent.Slot) or (
-		_equipment.get_current_slot() == slot_index
 	)

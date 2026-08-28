@@ -13,12 +13,12 @@ const GUARD_ACTION: StringName = &"guard"
 const DODGE_ACTION: StringName = &"dodge"
 const INVENTORY_ACTION: StringName = &"inventory"
 const EQUIPMENT_ACTIONS: Array[StringName] = [
-	&"equip_melee",
-	&"equip_item",
-	&"equip_throwable",
-	&"equip_bow",
-	&"equip_crossbow",
-	&"equip_magic",
+	&"quick_slot_1",
+	&"quick_slot_2",
+	&"quick_slot_3",
+	&"quick_slot_4",
+	&"quick_slot_5",
+	&"quick_slot_6",
 	&"quick_slot_7",
 	&"quick_slot_8",
 ]

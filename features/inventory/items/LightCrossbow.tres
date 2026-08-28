@@ -1,0 +1,24 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+
+[sub_resource type="Resource" id="ItemStats_crossbow"]
+script = ExtResource("2_stats")
+damage = 12.0
+durability = 55.0
+dexterity_requirement = 3
+
+[resource]
+script = ExtResource("1_item")
+id = &"light_crossbow"
+display_name = "Light Crossbow"
+description = "A simple crossbow with a powerful but slower shot."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 3.5
+equip_slot = 1
+combat_mode = 4
+stats = SubResource("ItemStats_crossbow")
+sell_price = 40

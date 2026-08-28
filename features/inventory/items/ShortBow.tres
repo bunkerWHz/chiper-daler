@@ -1,0 +1,24 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+
+[sub_resource type="Resource" id="ItemStats_bow"]
+script = ExtResource("2_stats")
+damage = 8.0
+durability = 45.0
+dexterity_requirement = 2
+
+[resource]
+script = ExtResource("1_item")
+id = &"short_bow"
+display_name = "Short Bow"
+description = "A compact bow for quick ranged attacks."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 2.0
+equip_slot = 1
+combat_mode = 3
+stats = SubResource("ItemStats_bow")
+sell_price = 30

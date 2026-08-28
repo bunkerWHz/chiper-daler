@@ -4,11 +4,16 @@
 [ext_resource type="Script" path="res://features/inventory/InventoryConfig.gd" id="2_config"]
 [ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_health_potion"]
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="4_item_data"]
+[ext_resource type="Resource" path="res://features/inventory/items/RustySword.tres" id="5_sword"]
+[ext_resource type="Resource" path="res://features/inventory/items/WoodenShield.tres" id="6_shield"]
+[ext_resource type="Resource" path="res://features/inventory/items/ShortBow.tres" id="7_bow"]
+[ext_resource type="Resource" path="res://features/inventory/items/LightCrossbow.tres" id="8_crossbow"]
+[ext_resource type="Resource" path="res://features/inventory/items/ApprenticeFocus.tres" id="9_focus"]
 
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
-starting_items = Array[ExtResource("4_item_data")]([ExtResource("3_health_potion")])
-starting_quantities = Array[int]([3])
+starting_items = Array[ExtResource("4_item_data")]([ExtResource("5_sword"), ExtResource("6_shield"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("9_focus"), ExtResource("3_health_potion")])
+starting_quantities = Array[int]([1, 1, 1, 1, 1, 3])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")

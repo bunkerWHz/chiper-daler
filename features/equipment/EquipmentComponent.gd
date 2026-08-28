@@ -24,6 +24,8 @@ const EQUIPMENT_PROCESS_PRIORITY := -90
 const WEAPON_SET_COUNT := 2
 
 @export var default_slot: Slot = Slot.MELEE
+@export var starting_main_hand_ids: Array[StringName] = []
+@export var starting_off_hand_ids: Array[StringName] = []
 
 var _input_component: InputComponent
 var _inventory_component: InventoryComponent
@@ -50,6 +52,7 @@ func on_initialize() -> void:
 
 func _ready() -> void:
 	process_priority = EQUIPMENT_PROCESS_PRIORITY
+	_equip_starting_weapon_sets()
 
 
 func _process(_delta: float) -> void:
@@ -119,6 +122,11 @@ func equip_inventory_item(
 		previous,
 		item_id
 	)
+	if (
+		target_slot == ItemData.EquipSlot.MAIN_HAND
+		and resolved_set == _active_weapon_set
+	):
+		equip(get_item_action_slot(item))
 	return true
 
 
@@ -175,6 +183,7 @@ func switch_weapon_set(set_index: int) -> bool:
 	var previous := _active_weapon_set
 	_active_weapon_set = set_index
 	weapon_set_changed.emit(previous, _active_weapon_set)
+	equip(get_item_action_slot(get_equipped_item(ItemData.EquipSlot.MAIN_HAND)))
 	return true
 
 
@@ -185,6 +194,31 @@ func cycle_weapon_set() -> int:
 
 func get_active_weapon_set() -> int:
 	return _active_weapon_set
+
+
+func get_item_action_slot(item: ItemData) -> Slot:
+	if item == null:
+		return Slot.MELEE
+	match item.combat_mode:
+		ItemData.CombatMode.THROWABLE:
+			return Slot.THROWABLE
+		ItemData.CombatMode.BOW:
+			return Slot.BOW
+		ItemData.CombatMode.CROSSBOW:
+			return Slot.CROSSBOW
+		ItemData.CombatMode.MAGIC:
+			return Slot.MAGIC
+		ItemData.CombatMode.MELEE:
+			return Slot.MELEE
+	match item.category:
+		ItemData.Category.CONSUMABLE:
+			return Slot.ITEM
+		ItemData.Category.THROWABLE:
+			return Slot.THROWABLE
+		ItemData.Category.SCROLL:
+			return Slot.MAGIC
+		_:
+			return Slot.MELEE
 
 
 func get_slot_capacity(target_slot: ItemData.EquipSlot) -> int:
@@ -274,3 +308,21 @@ func _count_equipped_item(item_id: StringName) -> int:
 		if StringName(equipped_id) == item_id:
 			count += 1
 	return count
+
+
+func _equip_starting_weapon_sets() -> void:
+	if _inventory_component == null or not _inventory_component.is_enabled:
+		return
+	for set_index in WEAPON_SET_COUNT:
+		if set_index < starting_main_hand_ids.size():
+			var main_id := starting_main_hand_ids[set_index]
+			if not main_id.is_empty() and _inventory_component.has_item(main_id):
+				equip_inventory_item(
+					main_id, ItemData.EquipSlot.MAIN_HAND, 0, set_index
+				)
+		if set_index < starting_off_hand_ids.size():
+			var off_id := starting_off_hand_ids[set_index]
+			if not off_id.is_empty() and _inventory_component.has_item(off_id):
+				equip_inventory_item(
+					off_id, ItemData.EquipSlot.OFF_HAND, 0, set_index
+				)
