@@ -50,6 +50,38 @@ func test_crossbow_aims_with_primary_and_fires_with_secondary() -> void:
 	assert_eq(ranged.get_bolt_count(), 11)
 
 
+func test_ranged_aim_cancels_when_active_weapon_context_changes() -> void:
+	var setup := _create_ranged_actor()
+	var actor := setup.actor as Actor
+	var input := setup.input as InputComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var ranged := setup.ranged as RangedWeaponComponent
+	equipment.equip(EquipmentComponent.Slot.BOW)
+	input._attack_just_pressed = true
+	ranged._process(0.0)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.BOW_AIM)
+
+	equipment.loadout_item_changed.emit(
+		ItemData.EquipSlot.MAIN_HAND,
+		0,
+		equipment.get_active_weapon_set(),
+		&"old_bow",
+		&"new_bow"
+	)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
+
+	input._attack_just_pressed = true
+	ranged._process(0.0)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.BOW_AIM)
+	equipment.switch_weapon_set(1)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
+
+	actor._collect_components()
+	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
+	assert_eq(equipment.loadout_item_changed.get_connections().size(), 1)
+	assert_eq(equipment.weapon_set_changed.get_connections().size(), 1)
+
+
 func _create_ranged_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

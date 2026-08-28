@@ -40,6 +40,9 @@ func on_initialize() -> void:
 		or config.projectile_lifetime <= 0.0
 		or config.arrow_damage < 0.0
 		or config.bolt_damage < 0.0
+		or config.knockback < 0.0
+		or config.arrow_count < 0
+		or config.bolt_count < 0
 	):
 		push_error("RangedWeaponComponent has an invalid config")
 		disable()
@@ -49,14 +52,40 @@ func on_initialize() -> void:
 	_equipment_component = actor.get_component(EquipmentComponent) as EquipmentComponent
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 
-	if _input_component == null or _equipment_component == null or _facing_component == null:
-		push_error("RangedWeaponComponent requires input, equipment, and facing")
+	if (
+		_input_component == null
+		or not _input_component.is_enabled
+		or _equipment_component == null
+		or not _equipment_component.is_enabled
+		or _facing_component == null
+		or not _facing_component.is_enabled
+	):
+		push_error(
+			"RangedWeaponComponent requires enabled input, equipment, and facing"
+		)
 		disable()
 		return
 
 	_arrows = config.arrow_count
 	_bolts = config.bolt_count
-	_equipment_component.equipment_changed.connect(_on_equipment_changed)
+	if not _equipment_component.equipment_changed.is_connected(
+		_on_equipment_changed
+	):
+		_equipment_component.equipment_changed.connect(
+			_on_equipment_changed
+		)
+	if not _equipment_component.loadout_item_changed.is_connected(
+		_on_loadout_item_changed
+	):
+		_equipment_component.loadout_item_changed.connect(
+			_on_loadout_item_changed
+		)
+	if not _equipment_component.weapon_set_changed.is_connected(
+		_on_weapon_set_changed
+	):
+		_equipment_component.weapon_set_changed.connect(
+			_on_weapon_set_changed
+		)
 
 
 func _process(delta: float) -> void:
@@ -197,4 +226,22 @@ func _on_equipment_changed(
 	_previous_slot: EquipmentComponent.Slot,
 	_current_slot: EquipmentComponent.Slot
 ) -> void:
+	_set_phase(Phase.NONE, 0.0)
+
+
+func _on_loadout_item_changed(
+	equip_slot: ItemData.EquipSlot,
+	_slot_index: int,
+	weapon_set: int,
+	_previous_item_id: StringName,
+	_current_item_id: StringName
+) -> void:
+	if (
+		equip_slot == ItemData.EquipSlot.MAIN_HAND
+		and weapon_set == _equipment_component.get_active_weapon_set()
+	):
+		_set_phase(Phase.NONE, 0.0)
+
+
+func _on_weapon_set_changed(_previous_set: int, _current_set: int) -> void:
 	_set_phase(Phase.NONE, 0.0)

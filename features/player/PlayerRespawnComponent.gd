@@ -12,6 +12,7 @@ static var _scene_checkpoints: Dictionary = {}
 
 var _health_component: HealthComponent
 var _restart_scheduled: bool = false
+var _restart_timer: SceneTreeTimer
 
 
 func on_initialize() -> void:
@@ -63,6 +64,17 @@ func should_disable_on_actor_death() -> bool:
 	return false
 
 
+func disable() -> void:
+	_restart_scheduled = false
+	if (
+		_restart_timer != null
+		and _restart_timer.timeout.is_connected(_restart_current_scene)
+	):
+		_restart_timer.timeout.disconnect(_restart_current_scene)
+	_restart_timer = null
+	super.disable()
+
+
 func _on_health_died() -> void:
 	if _restart_scheduled or not is_enabled:
 		return
@@ -73,12 +85,13 @@ func _on_health_died() -> void:
 	if not is_inside_tree():
 		return
 
-	var timer := get_tree().create_timer(config.restart_delay)
-	timer.timeout.connect(_restart_current_scene)
+	_restart_timer = get_tree().create_timer(config.restart_delay)
+	_restart_timer.timeout.connect(_restart_current_scene)
 
 
 func _restart_current_scene() -> void:
 	_restart_scheduled = false
+	_restart_timer = null
 	restart_requested.emit()
 
 	if _replace_actor_at_checkpoint():

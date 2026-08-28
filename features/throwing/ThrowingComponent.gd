@@ -35,6 +35,7 @@ func on_initialize() -> void:
 		or config.projectile_speed <= 0.0
 		or config.projectile_lifetime <= 0.0
 		or config.damage < 0.0
+		or config.knockback < 0.0
 		or config.max_charges < 0
 	):
 		push_error("ThrowingComponent has an invalid config")
@@ -45,13 +46,27 @@ func on_initialize() -> void:
 	_equipment_component = actor.get_component(EquipmentComponent) as EquipmentComponent
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 
-	if _input_component == null or _equipment_component == null or _facing_component == null:
-		push_error("ThrowingComponent requires input, equipment, and facing")
+	if (
+		_input_component == null
+		or not _input_component.is_enabled
+		or _equipment_component == null
+		or not _equipment_component.is_enabled
+		or _facing_component == null
+		or not _facing_component.is_enabled
+	):
+		push_error(
+			"ThrowingComponent requires enabled input, equipment, and facing"
+		)
 		disable()
 		return
 
 	_remaining_charges = config.max_charges
-	_equipment_component.equipment_changed.connect(_on_equipment_changed)
+	if not _equipment_component.equipment_changed.is_connected(
+		_on_equipment_changed
+	):
+		_equipment_component.equipment_changed.connect(
+			_on_equipment_changed
+		)
 
 
 func _process(delta: float) -> void:

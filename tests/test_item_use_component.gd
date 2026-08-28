@@ -29,6 +29,7 @@ func test_item_heals_after_use_duration_and_reports_actor_state() -> void:
 
 func test_switching_slot_cancels_item_without_spending_charge() -> void:
 	var setup := _create_item_actor(false)
+	var actor := setup.actor as Actor
 	var equipment := setup.equipment as EquipmentComponent
 	var item_use := setup.item_use as ItemUseComponent
 	var health := setup.health as HealthComponent
@@ -41,6 +42,9 @@ func test_switching_slot_cancels_item_without_spending_charge() -> void:
 	assert_false(item_use.is_using_item())
 	assert_eq(item_use.get_remaining_charges(), 3)
 	assert_eq(health.get_current_health(), 80.0)
+
+	actor._collect_components()
+	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
 
 
 func test_quick_health_potion_consumes_inventory_stack() -> void:

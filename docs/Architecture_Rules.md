@@ -42,10 +42,18 @@ Component Lifecycle
     `on_initialize()` regardless of scene order.
 -   `Component.initialize()` owns the base lifecycle and is not overridden.
 -   Resolve and validate sibling dependencies in `on_initialize()`.
+-   Required sibling dependencies must exist and be enabled. A present but
+    disabled dependency is not a usable capability.
 -   Use `_ready()` only for owned nodes, SceneTree state, and external UI.
 -   A missing required dependency produces one initialization error, calls
     `disable()`, and returns. Optional dependencies degrade gracefully.
+-   Signal subscriptions made during initialization are idempotent: guard them
+    with `is_connected()` so scene re-entry, tooling, and tests cannot create
+    duplicate callbacks.
 -   Disabled components do not process or physics-process until enabled again.
+-   A component that owns a timed action or condition must cancel its timers,
+    restore its owned visual/physical state, and emit the matching finish fact
+    when it is disabled while active.
 
 Capability Gates and Action Coordination
 
@@ -64,6 +72,10 @@ Capability Gates and Action Coordination
     velocity. Ability components expose constraints instead of writing movement
     directly. Physical effects such as knockback may take explicit temporary
     ownership while normal movement is suspended.
+-   Temporary suspension ownership must be released or explicitly handed to
+    another active effect. Cancelling hit stun or knockback while the Actor is
+    alive restores the components they suspended; death cancellation never
+    re-enables them.
 
 Actor Rules
 

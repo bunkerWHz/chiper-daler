@@ -64,6 +64,15 @@ func is_reacting() -> bool:
 	return _reaction_timer > 0.0
 
 
+func disable() -> void:
+	var was_reacting := is_reacting()
+	_reaction_timer = 0.0
+	_restore_visual()
+	if was_reacting:
+		reaction_finished.emit()
+	super.disable()
+
+
 func _on_hit_received(_hit: HitData, _applied_damage: float) -> void:
 	if not is_enabled or _visual == null:
 		return
@@ -78,6 +87,11 @@ func _on_hit_received(_hit: HitData, _applied_damage: float) -> void:
 
 
 func _finish_reaction() -> void:
+	_restore_visual()
+	reaction_finished.emit()
+
+
+func _restore_visual() -> void:
 	if _visual == null:
 		return
 
@@ -85,5 +99,3 @@ func _finish_reaction() -> void:
 
 	if _visual is Node2D:
 		(_visual as Node2D).scale = _original_scale
-
-	reaction_finished.emit()

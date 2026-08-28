@@ -1,6 +1,8 @@
 @tool
 extends McpTestSuite
 
+var _rest_finished_count: int = 0
+
 
 func suite_name() -> String:
 	return "rest"
@@ -54,8 +56,36 @@ func test_rest_point_heals_and_reports_resting_state() -> void:
 	)
 	assert_true(rest.is_resting())
 	assert_true(state.has_condition(ActorState.Condition.RESTING))
+	assert_false(rest.start_rest())
 
 	rest._process(rest.config.duration)
 	state.refresh_state()
 	assert_false(rest.is_resting())
 	assert_false(state.has_condition(ActorState.Condition.RESTING))
+
+
+func test_disabling_rest_finishes_the_active_condition_once() -> void:
+	_rest_finished_count = 0
+	var player := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	player.add_child(components)
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var rest := RestComponent.new()
+	rest.config = RestConfig.new()
+	components.add_child(health)
+	components.add_child(rest)
+	player._collect_components()
+	rest.rest_finished.connect(_on_rest_finished)
+
+	assert_true(rest.start_rest())
+	rest.disable()
+	assert_false(rest.is_resting())
+	assert_eq(_rest_finished_count, 1)
+	rest.disable()
+	assert_eq(_rest_finished_count, 1)
+
+
+func _on_rest_finished() -> void:
+	_rest_finished_count += 1

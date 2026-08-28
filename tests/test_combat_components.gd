@@ -100,7 +100,9 @@ func test_hit_reaction_changes_and_restores_visual() -> void:
 	config.scale_multiplier = 1.15
 	reaction.config = config
 	reaction.visual_path = ^"_Visual/Body"
+	var actor_state := ActorStateComponent.new()
 	target.actor.get_node("_Components").add_child(reaction)
+	target.actor.get_node("_Components").add_child(actor_state)
 	target.actor._collect_components()
 	reaction._ready()
 
@@ -111,10 +113,14 @@ func test_hit_reaction_changes_and_restores_visual() -> void:
 	assert_eq(body_visual.scale, Vector2.ONE * config.scale_multiplier)
 	assert_eq(health_bar.modulate, Color.WHITE)
 	assert_eq(health_bar.scale, Vector2.ONE)
+	actor_state.refresh_state()
+	assert_true(actor_state.has_condition(ActorState.Condition.HIT))
 
 	reaction._process(config.duration)
+	actor_state.refresh_state()
 
 	assert_false(reaction.is_reacting())
+	assert_false(actor_state.has_condition(ActorState.Condition.HIT))
 	assert_eq(body_visual.modulate, Color.WHITE)
 	assert_eq(body_visual.scale, Vector2.ONE)
 	assert_eq(health_bar.modulate, Color.WHITE)
@@ -616,15 +622,27 @@ func test_hit_stun_suspends_and_restores_enemy_movement() -> void:
 	hit_stun_config.duration = 0.2
 	hit_stun.config = hit_stun_config
 	container.add_child(hit_stun)
+	var actor_state := ActorStateComponent.new()
+	container.add_child(actor_state)
 	actor._collect_components()
 
 	assert_true(movement.is_enabled)
 	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
 	assert_true(hit_stun.is_stunned())
 	assert_false(movement.is_enabled)
+	actor_state.refresh_state()
+	assert_true(actor_state.has_condition(ActorState.Condition.STUNNED))
 
 	hit_stun._process(hit_stun_config.duration)
+	actor_state.refresh_state()
 
+	assert_false(hit_stun.is_stunned())
+	assert_true(movement.is_enabled)
+	assert_false(actor_state.has_condition(ActorState.Condition.STUNNED))
+
+	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
+	assert_false(movement.is_enabled)
+	hit_stun.disable()
 	assert_false(hit_stun.is_stunned())
 	assert_true(movement.is_enabled)
 
@@ -685,6 +703,38 @@ func test_knockback_and_hit_stun_share_movement_ownership() -> void:
 
 	knockback._finish_knockback()
 
+	assert_true(movement.is_enabled)
+
+
+func test_disabling_knockback_transfers_active_movement_suspension() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var body_component := CharacterBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	container.add_child(body_component)
+	var movement := EnemyMovementComponent.new()
+	movement.config = EnemyMovementConfig.new()
+	container.add_child(movement)
+	var knockback := KnockbackComponent.new()
+	knockback.config = KnockbackConfig.new()
+	container.add_child(knockback)
+	var hit_stun := HitStunComponent.new()
+	hit_stun.config = HitStunConfig.new()
+	container.add_child(hit_stun)
+	actor._collect_components()
+
+	var hit := HitData.new(10.0, null, Vector2(100.0, -50.0))
+	assert_true(knockback.apply_hit(hit))
+	assert_true(hit_stun.apply_hit(hit))
+	assert_false(movement.is_enabled)
+	knockback.disable()
+	assert_false(movement.is_enabled)
+	hit_stun._process(hit_stun.config.duration)
 	assert_true(movement.is_enabled)
 
 

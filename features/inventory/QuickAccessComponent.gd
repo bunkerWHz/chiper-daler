@@ -25,13 +25,23 @@ func on_initialize() -> void:
 	_input = actor.get_component(InputComponent) as InputComponent
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
-	if _input == null or _inventory == null or _equipment == null:
-		push_error("QuickAccessComponent requires input, inventory, and equipment")
+	if (
+		_input == null
+		or not _input.is_enabled
+		or _inventory == null
+		or not _inventory.is_enabled
+		or _equipment == null
+		or not _equipment.is_enabled
+	):
+		push_error(
+			"QuickAccessComponent requires enabled input, inventory, and equipment"
+		)
 		disable()
 		return
 
 	_create_default_slots()
-	_inventory.inventory_changed.connect(_on_inventory_changed)
+	if not _inventory.inventory_changed.is_connected(_on_inventory_changed):
+		_inventory.inventory_changed.connect(_on_inventory_changed)
 
 
 func _ready() -> void:

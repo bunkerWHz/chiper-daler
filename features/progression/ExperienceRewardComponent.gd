@@ -30,7 +30,8 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_hurtbox.hit_received.connect(_on_hit_received)
+	if not _hurtbox.hit_received.is_connected(_on_hit_received):
+		_hurtbox.hit_received.connect(_on_hit_received)
 
 
 func should_disable_on_actor_death() -> bool:

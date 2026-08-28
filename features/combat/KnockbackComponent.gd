@@ -74,8 +74,11 @@ func is_knocked_back() -> bool:
 
 
 func disable() -> void:
+	var was_knocked_back := is_knocked_back()
 	_timer = 0.0
-	_suspended_movement_components.clear()
+	_release_movement(not _is_actor_dead())
+	if was_knocked_back:
+		knockback_finished.emit()
 	super.disable()
 
 
@@ -93,16 +96,27 @@ func _suspend_movement() -> void:
 
 
 func _finish_knockback() -> void:
+	_timer = 0.0
+	_release_movement(true)
+	knockback_finished.emit()
+
+
+func _release_movement(restore_movement: bool) -> void:
 	var hit_stun := actor.get_component(HitStunComponent) as HitStunComponent
 
-	for movement: Component in _suspended_movement_components:
-		if not is_instance_valid(movement):
-			continue
+	if restore_movement:
+		for movement: Component in _suspended_movement_components:
+			if not is_instance_valid(movement):
+				continue
 
-		if hit_stun != null and hit_stun.is_incapacitated():
-			hit_stun.take_suspension_ownership(movement)
-		else:
-			movement.enable()
+			if hit_stun != null and hit_stun.is_incapacitated():
+				hit_stun.take_suspension_ownership(movement)
+			else:
+				movement.enable()
 
 	_suspended_movement_components.clear()
-	knockback_finished.emit()
+
+
+func _is_actor_dead() -> bool:
+	var health := actor.get_component(HealthComponent) as HealthComponent
+	return health != null and health.is_dead()

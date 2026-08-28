@@ -38,6 +38,7 @@ func test_throwing_runs_aim_action_and_recovery_states() -> void:
 
 func test_secondary_action_cancels_throwing_aim() -> void:
 	var setup := _create_throwing_actor()
+	var actor := setup.actor as Actor
 	var input := setup.input as InputComponent
 	var equipment := setup.equipment as EquipmentComponent
 	var throwing := setup.throwing as ThrowingComponent
@@ -50,6 +51,9 @@ func test_secondary_action_cancels_throwing_aim() -> void:
 	throwing._process(0.0)
 	assert_eq(throwing.get_phase(), ThrowingComponent.Phase.NONE)
 	assert_eq(throwing.get_remaining_charges(), 5)
+
+	actor._collect_components()
+	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
 
 
 func _create_throwing_actor() -> Dictionary:

@@ -287,6 +287,7 @@ func _resolve_conditions() -> int:
 
 	if (
 		_respawn_component != null
+		and _respawn_component.is_enabled
 		and _respawn_component.is_restart_scheduled()
 	):
 		result |= ActorState.Condition.RESPAWNING

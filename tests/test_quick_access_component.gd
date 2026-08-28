@@ -93,6 +93,9 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	inventory.remove_item(bomb.id, 3)
 	assert_eq(quick_access.get_active_slot(), 0)
 
+	(setup.actor as Actor)._collect_components()
+	assert_eq(inventory.inventory_changed.get_connections().size(), 2)
+
 
 func _create_quick_access_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor

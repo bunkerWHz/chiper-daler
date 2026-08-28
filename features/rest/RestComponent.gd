@@ -38,7 +38,12 @@ func _process(delta: float) -> void:
 
 
 func start_rest() -> bool:
-	if not is_enabled or _health == null or _health.is_dead():
+	if (
+		not is_enabled
+		or is_resting()
+		or _health == null
+		or _health.is_dead()
+	):
 		return false
 
 	_timer = config.duration
@@ -54,5 +59,8 @@ func is_resting() -> bool:
 
 
 func disable() -> void:
+	var was_resting := is_resting()
 	_timer = 0.0
+	if was_resting:
+		rest_finished.emit()
 	super.disable()

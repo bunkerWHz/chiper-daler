@@ -33,6 +33,13 @@ func test_interaction_runs_start_progress_and_end_phases() -> void:
 	assert_eq(interaction.get_phase(), InteractionComponent.Phase.NONE)
 	assert_false(interaction.is_interacting())
 
+	interaction.cooldown_timer = 0.0
+	interaction.current_target = interactable
+	assert_true(interaction.interact())
+	interaction.disable()
+	assert_false(interaction.is_interacting())
+	assert_eq(interaction.get_phase(), InteractionComponent.Phase.NONE)
+
 
 func test_actor_state_maps_all_interaction_phases() -> void:
 	var setup := _create_interaction_setup(true)

@@ -69,7 +69,10 @@ func on_initialize() -> void:
 		return
 
 	_remaining_charges = config.max_charges
-	_equipment_component.equipment_changed.connect(_on_equipment_changed)
+	if not _equipment_component.equipment_changed.is_connected(
+		_on_equipment_changed
+	):
+		_equipment_component.equipment_changed.connect(_on_equipment_changed)
 
 
 func _process(delta: float) -> void:

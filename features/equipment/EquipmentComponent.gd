@@ -59,7 +59,12 @@ func on_initialize() -> void:
 
 	_current_slot = default_slot
 	if _inventory_component != null and _inventory_component.is_enabled:
-		_inventory_component.inventory_changed.connect(_on_inventory_changed)
+		if not _inventory_component.inventory_changed.is_connected(
+			_on_inventory_changed
+		):
+			_inventory_component.inventory_changed.connect(
+				_on_inventory_changed
+			)
 
 
 func _ready() -> void:

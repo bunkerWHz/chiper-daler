@@ -34,6 +34,12 @@ active and the active weapon set has a melee weapon in its main hand. Removing
 that weapon cancels any of those actions already in progress. Every future
 equipment ability must follow the same ownership rule.
 
+Equipment-driven actions also observe changes inside their active context.
+Changing the active ranged or magic main-hand item, or switching weapon sets,
+cancels an aim, charge, cast, or release phase that started from the previous
+context. Changing only an unrelated armour or inactive-set item does not cancel
+the action.
+
 Guard and its opening parry window form a grounded defensive stance. It can be
 entered only while standing on the floor, immediately stops horizontal motion,
 and suppresses running, jumping, and dodging until released. Horizontal input

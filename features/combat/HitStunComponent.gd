@@ -77,9 +77,13 @@ func take_suspension_ownership(component: Component) -> void:
 
 
 func disable() -> void:
+	var was_incapacitated := is_incapacitated()
+	var restore_components := not _is_actor_dead()
 	_timer = 0.0
 	_is_knocked_down = false
-	_suspended_components.clear()
+	_release_suspended_components(restore_components)
+	if was_incapacitated:
+		hit_stun_finished.emit()
 	super.disable()
 
 
@@ -118,10 +122,19 @@ func _suspend_components() -> void:
 
 func _finish_hit_stun() -> void:
 	_is_knocked_down = false
+	_release_suspended_components(true)
+	hit_stun_finished.emit()
 
-	for component: Component in _suspended_components:
-		if is_instance_valid(component):
-			component.enable()
+
+func _release_suspended_components(restore_components: bool) -> void:
+	if restore_components:
+		for component: Component in _suspended_components:
+			if is_instance_valid(component):
+				component.enable()
 
 	_suspended_components.clear()
-	hit_stun_finished.emit()
+
+
+func _is_actor_dead() -> bool:
+	var health := actor.get_component(HealthComponent) as HealthComponent
+	return health != null and health.is_dead()

@@ -39,8 +39,8 @@ func on_initialize() -> void:
 
 	input_component = actor.get_component(InputComponent) as InputComponent
 
-	if input_component == null:
-		push_error("InteractionComponent requires InputComponent")
+	if input_component == null or not input_component.is_enabled:
+		push_error("InteractionComponent requires an enabled InputComponent")
 		disable()
 		return
 
@@ -113,6 +113,12 @@ func get_phase() -> Phase:
 
 func is_interacting() -> bool:
 	return _phase != Phase.NONE
+
+
+func disable() -> void:
+	current_target = null
+	_set_phase(Phase.NONE, 0.0)
+	super.disable()
 
 
 func _update_interaction_phase(delta: float) -> void:

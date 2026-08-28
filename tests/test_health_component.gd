@@ -109,6 +109,8 @@ func test_player_respawn_is_scheduled_once() -> void:
 	respawn_config.restart_delay = 0.5
 	respawn.config = respawn_config
 	container.add_child(respawn)
+	var actor_state := ActorStateComponent.new()
+	container.add_child(actor_state)
 	actor._collect_components()
 	respawn.restart_scheduled.connect(_on_respawn_scheduled)
 
@@ -117,6 +119,12 @@ func test_player_respawn_is_scheduled_once() -> void:
 
 	assert_true(respawn.is_restart_scheduled())
 	assert_eq(_respawn_schedule_count, 1)
+	actor_state.refresh_state()
+	assert_true(actor_state.has_condition(ActorState.Condition.DEAD))
+	assert_true(actor_state.has_condition(ActorState.Condition.RESPAWNING))
+	respawn.disable()
+	actor_state.refresh_state()
+	assert_false(actor_state.has_condition(ActorState.Condition.RESPAWNING))
 
 
 func test_player_respawn_stores_checkpoint_position() -> void:

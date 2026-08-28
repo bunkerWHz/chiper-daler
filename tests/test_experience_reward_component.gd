@@ -30,6 +30,8 @@ func test_lethal_hit_awards_experience_once_to_source_actor() -> void:
 	for component: Component in [health, hurtbox, reward]:
 		target_components.add_child(component)
 	target._collect_components()
+	target._collect_components()
+	assert_eq(hurtbox.hit_received.get_connections().size(), 1)
 
 	assert_eq(hurtbox.receive_hit(HitData.new(10.0, source)), 10.0)
 	assert_eq(progression.get_experience(), 25)

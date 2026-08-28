@@ -61,7 +61,10 @@ func on_initialize() -> void:
 	_base_damage = _hitbox_component.damage
 	_base_horizontal_knockback = _hitbox_component.horizontal_knockback
 	_base_vertical_knockback = _hitbox_component.vertical_knockback
-	_hitbox_component.critical_hit_landed.connect(_on_critical_hit_landed)
+	if not _hitbox_component.critical_hit_landed.is_connected(
+		_on_critical_hit_landed
+	):
+		_hitbox_component.critical_hit_landed.connect(_on_critical_hit_landed)
 
 	if _input_component != null and not _input_component.is_enabled:
 		_input_component = null
