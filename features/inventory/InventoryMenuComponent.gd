@@ -2,6 +2,14 @@ extends Component
 class_name InventoryMenuComponent
 
 const MENU_PROCESS_PRIORITY := -80
+const ALL_CATEGORIES := -1
+
+enum SortMode {
+	NAME,
+	CATEGORY,
+	WEIGHT,
+	VALUE,
+}
 
 var _input: InputComponent
 var _inventory: InventoryComponent
@@ -21,7 +29,14 @@ var _split_button: Button
 var _quick_buttons: HBoxContainer
 var _drop_dialog: ConfirmationDialog
 var _drop_quantity: SpinBox
+var _equipment_slots: GridContainer
+var _weapon_set_buttons: HBoxContainer
+var _category_filter: OptionButton
+var _sort_option: OptionButton
+var _inventory_summary: Label
 var _selected_item_id: StringName
+var _selected_category: int = ALL_CATEGORIES
+var _sort_mode: SortMode = SortMode.NAME
 
 
 func on_initialize() -> void:
@@ -84,6 +99,21 @@ func _ready() -> void:
 	_drop_quantity = get_node_or_null(
 		"CanvasLayer/DropDialog/Content/Quantity"
 	) as SpinBox
+	_equipment_slots = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+	) as GridContainer
+	_weapon_set_buttons = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/WeaponSets"
+	) as HBoxContainer
+	_category_filter = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar/Category"
+	) as OptionButton
+	_sort_option = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar/Sort"
+	) as OptionButton
+	_inventory_summary = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Summary"
+	) as Label
 	var close_button := get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/Header/Close"
 	) as Button
@@ -99,6 +129,11 @@ func _ready() -> void:
 		or _quick_buttons == null
 		or _drop_dialog == null
 		or _drop_quantity == null
+		or _equipment_slots == null
+		or _weapon_set_buttons == null
+		or _category_filter == null
+		or _sort_option == null
+		or _inventory_summary == null
 		or close_button == null
 	):
 		push_error("InventoryMenuComponent scene hierarchy is invalid")
@@ -114,8 +149,11 @@ func _ready() -> void:
 	_drop_dialog.confirmed.connect(_confirm_drop_selected_item)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_changed)
+	_equipment.weapon_set_changed.connect(_on_weapon_set_changed)
 	if _attributes != null:
 		_attributes.attributes_changed.connect(_on_attributes_changed)
+	_setup_toolbar()
+	_create_weapon_set_buttons()
 	_create_quick_buttons()
 
 
@@ -157,6 +195,8 @@ func disable() -> void:
 func _rebuild() -> void:
 	_rebuild_grid()
 	_rebuild_equipment_text()
+	_rebuild_equipment_slots()
+	_rebuild_inventory_summary()
 	_rebuild_details()
 
 
@@ -164,17 +204,36 @@ func _rebuild_grid() -> void:
 	for child: Node in _grid.get_children():
 		child.free()
 
-	for stack: InventoryStack in _inventory.get_stacks():
+	var stacks := _get_visible_stacks()
+	for stack: InventoryStack in stacks:
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(130.0, 58.0)
+		button.custom_minimum_size = Vector2(112.0, 74.0)
 		button.text = "%s\nx%d" % [stack.item.display_name, stack.quantity]
+		button.icon = stack.item.icon
+		button.add_theme_constant_override("icon_max_width", 28)
+		button.expand_icon = true
 		button.tooltip_text = stack.item.description
+		button.add_theme_color_override(
+			"font_color", _rarity_color(stack.item.rarity)
+		)
+		if stack.item.id == _selected_item_id:
+			button.add_theme_stylebox_override("normal", _selected_item_style())
 		button.pressed.connect(_select_item.bind(stack.item.id))
 		_grid.add_child(button)
+
+	if _selected_category == ALL_CATEGORIES:
+		for _empty_index in _inventory.get_capacity() - stacks.size():
+			var empty_cell := Button.new()
+			empty_cell.custom_minimum_size = Vector2(112.0, 74.0)
+			empty_cell.text = "Empty"
+			empty_cell.disabled = true
+			empty_cell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_grid.add_child(empty_cell)
 
 
 func _select_item(item_id: StringName) -> void:
 	_selected_item_id = item_id
+	_rebuild_grid()
 	_rebuild_details()
 
 
@@ -233,7 +292,7 @@ func _equip_selected_item() -> void:
 			slot_index = index
 			break
 	_equipment.equip_inventory_item(item.id, item.equip_slot, slot_index)
-	_rebuild_equipment_text()
+	_rebuild()
 
 
 func _toggle_selected_quick_slot(slot_index: int) -> void:
@@ -290,6 +349,203 @@ func _create_quick_buttons() -> void:
 		_quick_buttons.add_child(button)
 
 
+func _setup_toolbar() -> void:
+	_category_filter.clear()
+	_category_filter.add_item("All categories")
+	for category_name: String in ItemData.Category.keys():
+		_category_filter.add_item(category_name.capitalize())
+	_category_filter.select(0)
+	_category_filter.item_selected.connect(_on_category_selected)
+
+	_sort_option.clear()
+	_sort_option.add_item("Name")
+	_sort_option.add_item("Category")
+	_sort_option.add_item("Weight")
+	_sort_option.add_item("Value")
+	_sort_option.select(SortMode.NAME)
+	_sort_option.item_selected.connect(_on_sort_selected)
+
+
+func _create_weapon_set_buttons() -> void:
+	for child: Node in _weapon_set_buttons.get_children():
+		child.free()
+	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
+		var button := Button.new()
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.pressed.connect(_activate_weapon_set.bind(set_index))
+		_weapon_set_buttons.add_child(button)
+	_refresh_weapon_set_buttons()
+
+
+func _rebuild_equipment_slots() -> void:
+	for child: Node in _equipment_slots.get_children():
+		child.free()
+
+	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
+		_add_equipment_slot_button(
+			"Set %d Main" % (set_index + 1),
+			ItemData.EquipSlot.MAIN_HAND,
+			0,
+			set_index
+		)
+		_add_equipment_slot_button(
+			"Set %d Off" % (set_index + 1),
+			ItemData.EquipSlot.OFF_HAND,
+			0,
+			set_index
+		)
+
+	for slot: ItemData.EquipSlot in [
+		ItemData.EquipSlot.HEAD,
+		ItemData.EquipSlot.CHEST,
+		ItemData.EquipSlot.HANDS,
+		ItemData.EquipSlot.LEGS,
+		ItemData.EquipSlot.AMULET,
+		ItemData.EquipSlot.BACK,
+	]:
+		_add_equipment_slot_button(
+			ItemData.EquipSlot.keys()[slot].capitalize(), slot
+		)
+	for index in 2:
+		_add_equipment_slot_button(
+			"Ring %d" % (index + 1), ItemData.EquipSlot.RING, index
+		)
+		_add_equipment_slot_button(
+			"Earring %d" % (index + 1), ItemData.EquipSlot.EARRING, index
+		)
+	_refresh_weapon_set_buttons()
+
+
+func _add_equipment_slot_button(
+	label: String,
+	slot: ItemData.EquipSlot,
+	index: int = 0,
+	weapon_set: int = -1
+) -> void:
+	var item := _equipment.get_equipped_item(slot, index, weapon_set)
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(132.0, 54.0)
+	button.text = "%s\n%s" % [
+		label,
+		item.display_name if item != null else "—",
+	]
+	button.icon = item.icon if item != null else null
+	button.add_theme_constant_override("icon_max_width", 24)
+	button.expand_icon = true
+	button.disabled = item == null
+	if item != null:
+		button.tooltip_text = item.description
+		button.add_theme_color_override("font_color", _rarity_color(item.rarity))
+		button.pressed.connect(
+			_select_equipped_slot.bind(slot, index, weapon_set)
+		)
+	_equipment_slots.add_child(button)
+
+
+func _select_equipped_slot(
+	slot: ItemData.EquipSlot,
+	index: int,
+	weapon_set: int
+) -> void:
+	var item_id := _equipment.get_equipped_item_id(slot, index, weapon_set)
+	if not item_id.is_empty():
+		_select_item(item_id)
+
+
+func _activate_weapon_set(set_index: int) -> void:
+	_quick_access.activate_slot(set_index)
+	_rebuild()
+
+
+func _refresh_weapon_set_buttons() -> void:
+	var active_set := _equipment.get_active_weapon_set()
+	var set_index := 0
+	for button: Button in _weapon_set_buttons.get_children():
+		button.text = "Weapon Set %d%s" % [
+			set_index + 1,
+			" • Active" if set_index == active_set else "",
+		]
+		button.disabled = set_index == active_set
+		set_index += 1
+
+
+func _rebuild_inventory_summary() -> void:
+	_inventory_summary.text = "Slots %d / %d    Weight %.2f" % [
+		_inventory.get_used_slots(),
+		_inventory.get_capacity(),
+		_inventory.get_total_weight(),
+	]
+
+
+func _get_visible_stacks() -> Array[InventoryStack]:
+	var result: Array[InventoryStack] = []
+	for stack: InventoryStack in _inventory.get_stacks():
+		if (
+			_selected_category == ALL_CATEGORIES
+			or stack.item.category == _selected_category
+		):
+			result.append(stack)
+	result.sort_custom(_is_stack_before)
+	return result
+
+
+func _is_stack_before(left: InventoryStack, right: InventoryStack) -> bool:
+	match _sort_mode:
+		SortMode.CATEGORY:
+			if left.item.category != right.item.category:
+				return left.item.category < right.item.category
+		SortMode.WEIGHT:
+			if not is_equal_approx(left.item.weight, right.item.weight):
+				return left.item.weight < right.item.weight
+		SortMode.VALUE:
+			if left.item.sell_price != right.item.sell_price:
+				return left.item.sell_price > right.item.sell_price
+		SortMode.NAME:
+			pass
+	return left.item.display_name.naturalnocasecmp_to(
+		right.item.display_name
+	) < 0
+
+
+func _rarity_color(rarity: ItemData.Rarity) -> Color:
+	match rarity:
+		ItemData.Rarity.UNCOMMON:
+			return Color(0.48, 0.9, 0.5)
+		ItemData.Rarity.RARE:
+			return Color(0.4, 0.68, 1.0)
+		ItemData.Rarity.EPIC:
+			return Color(0.75, 0.48, 1.0)
+		ItemData.Rarity.LEGENDARY:
+			return Color(1.0, 0.68, 0.22)
+		_:
+			return Color(0.92, 0.94, 1.0)
+
+
+func _selected_item_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.14, 0.12, 0.07, 0.95)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.96, 0.72, 0.22, 1.0)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_right = 4
+	style.corner_radius_bottom_left = 4
+	return style
+
+
+func _on_category_selected(index: int) -> void:
+	_selected_category = index - 1
+	_rebuild_grid()
+
+
+func _on_sort_selected(index: int) -> void:
+	_sort_mode = index as SortMode
+	_rebuild_grid()
+
+
 func _set_quick_buttons_enabled(value: bool) -> void:
 	var slot_index := QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
 	for button: Button in _quick_buttons.get_children():
@@ -315,39 +571,9 @@ func _rebuild_equipment_text() -> void:
 			attributes.dexterity,
 		])
 	lines.append("Total Defense: %.1f" % _equipment.get_total_defense())
-	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
-		lines.append("Weapon Set %d%s" % [
-			set_index + 1,
-			" (active)" if set_index == _equipment.get_active_weapon_set() else "",
-		])
-		lines.append("  Main: %s" % _equipped_name(
-			ItemData.EquipSlot.MAIN_HAND, 0, set_index
-		))
-		lines.append("  Off: %s" % _equipped_name(
-			ItemData.EquipSlot.OFF_HAND, 0, set_index
-		))
-
-	for slot: ItemData.EquipSlot in [
-		ItemData.EquipSlot.HEAD,
-		ItemData.EquipSlot.CHEST,
-		ItemData.EquipSlot.HANDS,
-		ItemData.EquipSlot.LEGS,
-		ItemData.EquipSlot.AMULET,
-		ItemData.EquipSlot.BACK,
-	]:
-		lines.append("%s: %s" % [
-			ItemData.EquipSlot.keys()[slot].capitalize(),
-			_equipped_name(slot),
-		])
-	for index in 2:
-		lines.append("Ring %d: %s" % [
-			index + 1,
-			_equipped_name(ItemData.EquipSlot.RING, index),
-		])
-		lines.append("Earring %d: %s" % [
-			index + 1,
-			_equipped_name(ItemData.EquipSlot.EARRING, index),
-		])
+	lines.append("Active weapon set: %d" % (
+		_equipment.get_active_weapon_set() + 1
+	))
 	_equipment_text.text = "\n".join(lines)
 
 
@@ -381,15 +607,6 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 	])
 
 
-func _equipped_name(
-	slot: ItemData.EquipSlot,
-	index: int = 0,
-	weapon_set: int = -1
-) -> String:
-	var item := _equipment.get_equipped_item(slot, index, weapon_set)
-	return item.display_name if item != null else "—"
-
-
 func _on_inventory_changed() -> void:
 	if is_open():
 		_rebuild()
@@ -407,5 +624,10 @@ func _on_loadout_changed(
 
 
 func _on_attributes_changed(_strength: int, _dexterity: int) -> void:
+	if is_open():
+		_rebuild()
+
+
+func _on_weapon_set_changed(_previous: int, _current: int) -> void:
 	if is_open():
 		_rebuild()

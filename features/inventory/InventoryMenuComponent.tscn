@@ -2,6 +2,22 @@
 
 [ext_resource type="Script" path="res://features/inventory/InventoryMenuComponent.gd" id="1_menu"]
 
+[sub_resource type="StyleBoxFlat" id="InventoryPanel"]
+bg_color = Color(0.055, 0.063, 0.085, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.4, 0.5, 0.9)
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="InventoryMenuComponent" type="Node"]
 script = ExtResource("1_menu")
 
@@ -27,6 +43,7 @@ offset_right = -50.0
 offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("InventoryPanel")
 
 [node name="Main" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel"]
 layout_mode = 2
@@ -60,8 +77,20 @@ text = "Equipment"
 
 [node name="EquipmentText" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
 layout_mode = 2
-size_flags_vertical = 3
 text = "Equipment slots"
+
+[node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EquipmentScroll" type="ScrollContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
 
 [node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content"]
 layout_mode = 2
@@ -71,6 +100,23 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Items"
 
+[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Category" type="OptionButton" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sort" type="OptionButton" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Summary" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
+text = "Slots 0 / 0    Weight 0.00"
+
 [node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -78,7 +124,7 @@ size_flags_vertical = 3
 [node name="Grid" type="GridContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 5
+columns = 4
 
 [node name="Details" type="Label" parent="CanvasLayer/Overlay/Panel/Main"]
 custom_minimum_size = Vector2(0, 80)
@@ -111,6 +157,7 @@ disabled = true
 
 [node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
 title = "Drop item"

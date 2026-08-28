@@ -66,8 +66,12 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
 	assert_true(menu.is_open())
-	assert_eq(grid.get_child_count(), 1)
+	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	assert_eq((grid.get_child(0) as Button).text, "Test Potion\nx3")
+	var summary := menu.get_node(
+		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Summary"
+	) as Label
+	assert_true(summary.text.contains("Slots 1 / 40"))
 
 	menu._select_item(potion.id)
 	menu._use_selected_item()
@@ -94,6 +98,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	sword.equip_slot = ItemData.EquipSlot.MAIN_HAND
 	sword.stats = ItemStats.new()
 	sword.stats.damage = 5.0
+	sword.sell_price = 25
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(sword.id, sword.equip_slot)
 	var crossbow := ItemData.new()
@@ -104,7 +109,22 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	crossbow.stats = ItemStats.new()
 	crossbow.stats.damage = 12.0
 	crossbow.stats.dexterity_requirement = 3
+	crossbow.sell_price = 100
 	inventory.add_item(crossbow)
+	menu._on_category_selected(ItemData.Category.WEAPON + 1)
+	assert_eq(grid.get_child_count(), 2)
+	menu._on_sort_selected(InventoryMenuComponent.SortMode.VALUE)
+	assert_true((grid.get_child(0) as Button).text.begins_with("Test Crossbow"))
+	menu._on_category_selected(0)
+	assert_eq(grid.get_child_count(), inventory.get_capacity())
+	var equipment_slots := menu.get_node(
+		"CanvasLayer/Overlay/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+	) as GridContainer
+	assert_eq(equipment_slots.get_child_count(), 14)
+	menu._activate_weapon_set(1)
+	assert_eq(equipment.get_active_weapon_set(), 1)
+	menu._activate_weapon_set(0)
+	assert_eq(equipment.get_active_weapon_set(), 0)
 	menu._select_item(crossbow.id)
 	var details := menu.get_node(
 		"CanvasLayer/Overlay/Panel/Main/Details"

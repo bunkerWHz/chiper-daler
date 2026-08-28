@@ -51,8 +51,8 @@ their configured maximum. Non-stackable items always occupy separate cells.
 2. Paper-doll equipment with two weapon sets. *(implemented)*
 3. Eight quick-access slots and runtime switching. *(implemented)*
 4. Loot-bag and enemy-drop integration. *(implemented)*
-5. Paused inventory UI, item details, equipment, and quick assignment.
-   *(first functional version implemented)*
+5. Paused inventory UI, item details, equipment, filtering, sorting, and quick
+   assignment. *(implemented)*
 6. Reactive eight-slot quick-access HUD. *(implemented)*
 
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
@@ -60,8 +60,9 @@ current functional UI shows all stacks, item details and comparisons, both
 weapon sets, armor and accessory slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
-that fits and leaves any remainder on the ground. Visual styling, drag-and-drop,
-sorting, and selling remain later presentation/interaction work.
+that fits and leaves any remainder on the ground. The item grid can be filtered
+by category and sorted by name, category, weight, or value. Manual drag-and-drop
+ordering and selling remain later interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.

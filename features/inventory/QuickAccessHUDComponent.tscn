@@ -6,7 +6,7 @@
 script = ExtResource("1_component")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 20
+layer = 10
 
 [node name="BottomMargin" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 12
