@@ -130,10 +130,22 @@ func _capture_actor_runtime_state(source: Actor) -> Dictionary:
 
 
 func _restore_actor_runtime_state(target: Actor, state: Dictionary) -> void:
-	for component: Component in target.get_components():
+	var components := target.get_components()
+	components.sort_custom(_sort_runtime_restore_priority)
+	for component: Component in components:
 		var key := String(component.name)
 		if state.has(key):
 			component.restore_runtime_state(state[key])
+
+
+func _sort_runtime_restore_priority(
+	left: Component,
+	right: Component
+) -> bool:
+	return (
+		left.get_runtime_state_restore_priority()
+		< right.get_runtime_state_restore_priority()
+	)
 
 
 func _get_scene_key() -> String:

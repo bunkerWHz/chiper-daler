@@ -38,6 +38,81 @@ func test_switching_from_melee_cancels_attack_and_guard() -> void:
 	assert_false(guard.start_parry())
 
 
+func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var equipment := EquipmentComponent.new()
+	components.add_child(input)
+	components.add_child(equipment)
+	components.add_child(inventory)
+	actor._collect_components()
+
+	var sword := _create_equippable(&"iron_sword", ItemData.EquipSlot.MAIN_HAND)
+	var bow := _create_equippable(&"short_bow", ItemData.EquipSlot.MAIN_HAND)
+	var shield := _create_equippable(&"wood_shield", ItemData.EquipSlot.OFF_HAND)
+	var helmet := _create_equippable(&"iron_helmet", ItemData.EquipSlot.HEAD)
+	var ring := _create_equippable(&"copper_ring", ItemData.EquipSlot.RING)
+	assert_eq(inventory.add_item(sword), 1)
+	assert_eq(inventory.add_item(bow), 1)
+	assert_eq(inventory.add_item(shield), 1)
+	assert_eq(inventory.add_item(helmet), 1)
+	assert_eq(inventory.add_item(ring, 2), 2)
+
+	assert_true(equipment.equip_inventory_item(
+		sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	))
+	assert_true(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND, 0, 0
+	))
+	assert_true(equipment.equip_inventory_item(
+		bow.id, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	))
+	assert_true(equipment.equip_inventory_item(
+		helmet.id, ItemData.EquipSlot.HEAD
+	))
+	assert_true(equipment.equip_inventory_item(
+		ring.id, ItemData.EquipSlot.RING, 0
+	))
+	assert_true(equipment.equip_inventory_item(
+		ring.id, ItemData.EquipSlot.RING, 1
+	))
+	assert_false(equipment.equip_inventory_item(
+		ring.id, ItemData.EquipSlot.RING, 2
+	))
+	assert_false(equipment.equip_inventory_item(
+		helmet.id, ItemData.EquipSlot.OFF_HAND
+	))
+
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 0),
+		sword.id
+	)
+	assert_true(equipment.switch_weapon_set(1))
+	assert_eq(equipment.get_active_weapon_set(), 1)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND),
+		bow.id
+	)
+	var overlay := DebugOverlayComponent.new()
+	overlay.actor = actor
+	var lines := PackedStringArray()
+	overlay._append_equipment_info(lines)
+	assert_true(lines.has(
+		"Weapon Set: 2  Main: short_bow  Off: none"
+	))
+
+	inventory.remove_item(sword.id)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 0),
+		&""
+	)
+
+
 func _create_equipped_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
@@ -79,3 +154,14 @@ func _create_equipped_actor() -> Dictionary:
 		"attack": attack,
 		"guard": guard,
 	}
+
+
+func _create_equippable(
+	id: StringName,
+	equip_slot: ItemData.EquipSlot
+) -> ItemData:
+	var item := ItemData.new()
+	item.id = id
+	item.display_name = String(id).capitalize()
+	item.equip_slot = equip_slot
+	return item

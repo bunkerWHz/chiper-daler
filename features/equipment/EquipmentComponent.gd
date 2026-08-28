@@ -11,17 +11,32 @@ enum Slot {
 }
 
 signal equipment_changed(previous_slot: Slot, current_slot: Slot)
+signal weapon_set_changed(previous_set: int, current_set: int)
+signal loadout_item_changed(
+	equip_slot: ItemData.EquipSlot,
+	slot_index: int,
+	weapon_set: int,
+	previous_item_id: StringName,
+	current_item_id: StringName
+)
 
 const EQUIPMENT_PROCESS_PRIORITY := -90
+const WEAPON_SET_COUNT := 2
 
 @export var default_slot: Slot = Slot.MELEE
 
 var _input_component: InputComponent
+var _inventory_component: InventoryComponent
 var _current_slot: Slot = Slot.MELEE
+var _active_weapon_set: int = 0
+var _equipped_items: Dictionary = {}
 
 
 func on_initialize() -> void:
 	_input_component = actor.get_component(InputComponent) as InputComponent
+	_inventory_component = (
+		actor.get_component(InventoryComponent) as InventoryComponent
+	)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("EquipmentComponent requires an enabled InputComponent")
@@ -29,6 +44,8 @@ func on_initialize() -> void:
 		return
 
 	_current_slot = default_slot
+	if _inventory_component != null and _inventory_component.is_enabled:
+		_inventory_component.inventory_changed.connect(_on_inventory_changed)
 
 
 func _ready() -> void:
@@ -68,11 +85,192 @@ func allows_melee_actions() -> bool:
 	return is_slot_active(Slot.MELEE)
 
 
+func equip_inventory_item(
+	item_id: StringName,
+	target_slot: ItemData.EquipSlot,
+	slot_index: int = 0,
+	weapon_set: int = -1
+) -> bool:
+	if not is_enabled or _inventory_component == null:
+		return false
+
+	var item := _inventory_component.get_item_data(item_id)
+	if item == null or not item.can_equip_in(target_slot):
+		return false
+
+	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
+	if resolved_set < -1 or resolved_set >= WEAPON_SET_COUNT:
+		return false
+	if not _is_valid_slot_index(target_slot, slot_index):
+		return false
+
+	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
+	var previous := StringName(_equipped_items.get(key, &""))
+	if previous == item_id:
+		return false
+	if _count_equipped_item(item_id) >= _inventory_component.get_quantity(item_id):
+		return false
+
+	_equipped_items[key] = item_id
+	loadout_item_changed.emit(
+		target_slot,
+		slot_index,
+		resolved_set,
+		previous,
+		item_id
+	)
+	return true
+
+
+func unequip_item(
+	target_slot: ItemData.EquipSlot,
+	slot_index: int = 0,
+	weapon_set: int = -1
+) -> bool:
+	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
+	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
+	if not _equipped_items.has(key):
+		return false
+
+	var previous := StringName(_equipped_items[key])
+	_equipped_items.erase(key)
+	loadout_item_changed.emit(
+		target_slot,
+		slot_index,
+		resolved_set,
+		previous,
+		&""
+	)
+	return true
+
+
+func get_equipped_item_id(
+	target_slot: ItemData.EquipSlot,
+	slot_index: int = 0,
+	weapon_set: int = -1
+) -> StringName:
+	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
+	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
+	return StringName(_equipped_items.get(key, &""))
+
+
+func get_equipped_item(
+	target_slot: ItemData.EquipSlot,
+	slot_index: int = 0,
+	weapon_set: int = -1
+) -> ItemData:
+	if _inventory_component == null:
+		return null
+	return _inventory_component.get_item_data(
+		get_equipped_item_id(target_slot, slot_index, weapon_set)
+	)
+
+
+func switch_weapon_set(set_index: int) -> bool:
+	if not is_enabled or set_index < 0 or set_index >= WEAPON_SET_COUNT:
+		return false
+	if set_index == _active_weapon_set:
+		return false
+
+	var previous := _active_weapon_set
+	_active_weapon_set = set_index
+	weapon_set_changed.emit(previous, _active_weapon_set)
+	return true
+
+
+func cycle_weapon_set() -> int:
+	switch_weapon_set((_active_weapon_set + 1) % WEAPON_SET_COUNT)
+	return _active_weapon_set
+
+
+func get_active_weapon_set() -> int:
+	return _active_weapon_set
+
+
+func get_slot_capacity(target_slot: ItemData.EquipSlot) -> int:
+	match target_slot:
+		ItemData.EquipSlot.RING, ItemData.EquipSlot.EARRING:
+			return 2
+		ItemData.EquipSlot.NONE:
+			return 0
+		_:
+			return 1
+
+
 func capture_runtime_state() -> Variant:
-	return _current_slot
+	return {
+		"action_slot": _current_slot,
+		"active_weapon_set": _active_weapon_set,
+		"equipped_items": _equipped_items.duplicate(),
+	}
 
 
 func restore_runtime_state(state: Variant) -> void:
-	var slot := int(state)
-	if slot >= 0 and slot < Slot.size():
-		equip(slot as Slot)
+	if not state is Dictionary:
+		var legacy_slot := int(state)
+		if legacy_slot >= 0 and legacy_slot < Slot.size():
+			equip(legacy_slot as Slot)
+		return
+
+	var action_slot := int(state.get("action_slot", _current_slot))
+	if action_slot >= 0 and action_slot < Slot.size():
+		equip(action_slot as Slot)
+	switch_weapon_set(
+		clampi(int(state.get("active_weapon_set", 0)), 0, WEAPON_SET_COUNT - 1)
+	)
+	_equipped_items.clear()
+	var equipped_state: Variant = state.get("equipped_items", {})
+	if equipped_state is Dictionary:
+		for key: Variant in equipped_state:
+			var item_id := StringName(equipped_state[key])
+			if (
+				_inventory_component != null
+				and _inventory_component.has_item(item_id)
+			):
+				_equipped_items[String(key)] = item_id
+
+
+func _resolve_weapon_set(
+	target_slot: ItemData.EquipSlot,
+	requested_set: int
+) -> int:
+	if (
+		target_slot == ItemData.EquipSlot.MAIN_HAND
+		or target_slot == ItemData.EquipSlot.OFF_HAND
+	):
+		return _active_weapon_set if requested_set < 0 else requested_set
+	return -1
+
+
+func _is_valid_slot_index(
+	target_slot: ItemData.EquipSlot,
+	slot_index: int
+) -> bool:
+	return slot_index >= 0 and slot_index < get_slot_capacity(target_slot)
+
+
+func _make_equipment_key(
+	target_slot: ItemData.EquipSlot,
+	slot_index: int,
+	weapon_set: int
+) -> String:
+	return "%d:%d:%d" % [target_slot, slot_index, weapon_set]
+
+
+func _on_inventory_changed() -> void:
+	var equipped_counts := {}
+	for key: Variant in _equipped_items.keys():
+		var item_id := StringName(_equipped_items[key])
+		var used_count := int(equipped_counts.get(item_id, 0))
+		if used_count >= _inventory_component.get_quantity(item_id):
+			_equipped_items.erase(key)
+		else:
+			equipped_counts[item_id] = used_count + 1
+
+
+func _count_equipped_item(item_id: StringName) -> int:
+	var count := 0
+	for equipped_id: Variant in _equipped_items.values():
+		if StringName(equipped_id) == item_id:
+			count += 1
+	return count

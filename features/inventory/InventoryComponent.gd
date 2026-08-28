@@ -77,6 +77,13 @@ func get_quantity(item_id: StringName) -> int:
 	return total
 
 
+func get_item_data(item_id: StringName) -> ItemData:
+	for stack: InventoryStack in _stacks:
+		if stack.item.id == item_id:
+			return stack.item
+	return null
+
+
 func has_item(item_id: StringName, quantity: int = 1) -> bool:
 	return quantity > 0 and get_quantity(item_id) >= quantity
 
@@ -127,3 +134,7 @@ func restore_runtime_state(state: Variant) -> void:
 			add_item(item, quantity)
 
 	inventory_changed.emit()
+
+
+func get_runtime_state_restore_priority() -> int:
+	return -100

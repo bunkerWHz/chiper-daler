@@ -80,6 +80,19 @@ func _append_equipment_info(lines: PackedStringArray) -> void:
 		return
 
 	lines.append("Equipment: %s" % equipment.get_current_slot_name())
+	var main_hand := equipment.get_equipped_item_id(
+		ItemData.EquipSlot.MAIN_HAND
+	)
+	var off_hand := equipment.get_equipped_item_id(
+		ItemData.EquipSlot.OFF_HAND
+	)
+	lines.append(
+		"Weapon Set: %d  Main: %s  Off: %s" % [
+			equipment.get_active_weapon_set() + 1,
+			String(main_hand) if not main_hand.is_empty() else "none",
+			String(off_hand) if not off_hand.is_empty() else "none",
+		]
+	)
 
 
 func _append_item_info(lines: PackedStringArray) -> void:

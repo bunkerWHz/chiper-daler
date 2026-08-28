@@ -26,6 +26,10 @@ func restore_runtime_state(_state: Variant) -> void:
 	pass
 
 
+func get_runtime_state_restore_priority() -> int:
+	return 0
+
+
 func enable() -> void:
 	is_enabled = true
 	process_mode = Node.PROCESS_MODE_INHERIT
