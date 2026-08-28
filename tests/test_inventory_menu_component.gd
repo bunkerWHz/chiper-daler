@@ -75,10 +75,10 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq((grid.get_child(0) as Button).text, "")
 	assert_eq((grid.get_child(0) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	assert_eq((grid.get_child(1) as Button).icon, ItemData.PLACEHOLDER_ICON)
-	menu._show_hover_item(potion.id)
+	menu.show_item_details(potion.id)
 	var detail_popup := menu.get_node("CanvasLayer/DetailPopup") as Control
 	assert_true(detail_popup.visible)
-	menu._hide_hover_item()
+	menu.hide_hover_details()
 	assert_false(detail_popup.visible)
 	var clicked_button := grid.get_child(0) as Button
 	clicked_button.pressed.emit()
@@ -110,6 +110,9 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	quick_drop_target.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
 	assert_true(quick_drop_target._can_drop_data(Vector2.ZERO, potion_payload))
 	quick_access.assign_item(3, potion.id)
+	menu.show_quick_slot_details(3)
+	assert_true(menu._details_text.text.contains("Test Potion"))
+	menu.hide_hover_details()
 	menu._on_inventory_data_dropped({
 		"kind": InventoryDragButton.KIND_QUICK_SLOT,
 		"slot_index": 3,

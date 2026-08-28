@@ -52,6 +52,12 @@ at a fixed 64 by 64 pixels. Items without final art use the shared
 `assets/icon_placeholder.png` texture, scaled down where smaller menu icons are
 required.
 
+While the inventory is open, hovering a hotbar slot uses the same item card as
+the inventory grid. Item slots show full item details, weapon-set slots summarize
+both hands, and empty configurable slots explain that a combat item can be
+dropped there. Leaving the slot restores any card previously pinned by clicking
+an inventory item.
+
 Each item type may be assigned to only one quick-access slot, including the
 fixed health-potion slot. A configurable assignment can be removed by dragging
 it back into the inventory grid or releasing it outside the hotbar while the

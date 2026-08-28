@@ -40,6 +40,7 @@ var _selected_item_id: StringName
 var _selected_category: int = ALL_CATEGORIES
 var _sort_mode: SortMode = SortMode.NAME
 var _details_pinned := false
+var _pinned_detail_position := Vector2.ZERO
 
 
 func on_initialize() -> void:
@@ -229,8 +230,8 @@ func _rebuild_grid() -> void:
 		button.drop_target = InventoryDragButton.TARGET_INVENTORY
 		button.data_dropped.connect(_on_inventory_data_dropped)
 		button.pressed.connect(_select_item.bind(stack.item.id))
-		button.mouse_entered.connect(_show_hover_item.bind(stack.item.id))
-		button.mouse_exited.connect(_hide_hover_item)
+		button.mouse_entered.connect(show_item_details.bind(stack.item.id))
+		button.mouse_exited.connect(hide_hover_details)
 		_grid.add_child(button)
 
 	if _selected_category == ALL_CATEGORIES:
@@ -270,6 +271,7 @@ func _rebuild_details() -> void:
 	if _details_pinned:
 		_detail_popup.visible = true
 		_position_detail_popup()
+		_pinned_detail_position = _detail_popup.position
 	var equipped := _equipment.is_item_equipped(item.id)
 	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
@@ -284,20 +286,85 @@ func _rebuild_details() -> void:
 	_split_button.disabled = not _inventory.can_split_stack(item.id)
 
 
-func _show_hover_item(item_id: StringName) -> void:
-	if _details_pinned:
-		return
+func show_item_details(item_id: StringName) -> void:
 	var item := _inventory.get_item_data(item_id)
 	if item == null:
 		return
-	_details_text.text = _get_item_details(item)
+	_show_details_text(_get_item_details(item))
+
+
+func show_quick_slot_details(slot_index: int) -> void:
+	if not is_open():
+		return
+	var slot := _quick_access.get_slot(slot_index)
+	if slot == null:
+		return
+	match slot.kind:
+		QuickAccessSlot.Kind.ITEM:
+			show_item_details(slot.item_id)
+		QuickAccessSlot.Kind.WEAPON_SET:
+			_show_details_text(_get_weapon_set_details(slot.weapon_set))
+		QuickAccessSlot.Kind.EMPTY:
+			_show_details_text(
+				"Quick Slot %d\nEmpty\nDrag a combat item here."
+				% (slot_index + 1)
+			)
+
+
+func hide_hover_details() -> void:
+	if _details_pinned:
+		var selected := _inventory.get_item_data(_selected_item_id)
+		if selected != null:
+			_details_text.text = _get_item_details(selected)
+			_detail_popup.position = _pinned_detail_position
+			_detail_popup.visible = true
+			return
+	_detail_popup.visible = false
+
+
+func _show_details_text(text: String) -> void:
+	_details_text.text = text
 	_detail_popup.visible = true
 	_position_detail_popup()
 
 
-func _hide_hover_item() -> void:
-	if not _details_pinned:
-		_detail_popup.visible = false
+func _get_weapon_set_details(weapon_set: int) -> String:
+	var lines := PackedStringArray([
+		"Weapon Set %d" % (weapon_set + 1),
+	])
+	_append_weapon_set_item(
+		lines,
+		"Main Hand",
+		_equipment.get_equipped_item(
+			ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
+		)
+	)
+	_append_weapon_set_item(
+		lines,
+		"Off Hand",
+		_equipment.get_equipped_item(
+			ItemData.EquipSlot.OFF_HAND, 0, weapon_set
+		)
+	)
+	return "\n".join(lines)
+
+
+func _append_weapon_set_item(
+	lines: PackedStringArray,
+	label: String,
+	item: ItemData
+) -> void:
+	if item == null:
+		lines.append("%s: Empty" % label)
+		return
+	lines.append("%s: %s" % [label, item.display_name])
+	if not item.description.is_empty():
+		lines.append(item.description)
+	if item.stats != null:
+		lines.append("Damage: %.1f  Defense: %.1f" % [
+			item.stats.damage,
+			item.stats.defense,
+		])
 
 
 func _get_item_details(item: ItemData) -> String:

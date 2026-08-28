@@ -96,6 +96,8 @@ func _create_slot_views() -> void:
 		panel.focus_mode = Control.FOCUS_NONE
 		panel.data_dropped.connect(_on_slot_data_dropped.bind(slot_index))
 		panel.drag_finished.connect(_on_slot_drag_finished.bind(slot_index))
+		panel.mouse_entered.connect(_on_slot_hovered.bind(slot_index))
+		panel.mouse_exited.connect(_on_slot_hover_ended)
 
 		var content := Control.new()
 		content.custom_minimum_size = ICON_SIZE
@@ -289,6 +291,16 @@ func _on_slot_assignment_changed(_slot_index: int, _item_id: StringName) -> void
 func _on_inventory_open_changed(value: bool) -> void:
 	_inventory_open = value
 	refresh()
+
+
+func _on_slot_hovered(slot_index: int) -> void:
+	if _inventory_open and _inventory_menu != null:
+		_inventory_menu.show_quick_slot_details(slot_index)
+
+
+func _on_slot_hover_ended() -> void:
+	if _inventory_menu != null:
+		_inventory_menu.hide_hover_details()
 
 
 func _on_slot_data_dropped(data: Dictionary, slot_index: int) -> void:
