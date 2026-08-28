@@ -36,3 +36,13 @@ player cannot consume it, so the pickup remains available.
 `PickupData` also supports item charges, throwables, arrows, bolts, mana, and
 experience. Designers can create another drop by changing only the resource
 data used by `LootDropComponent`.
+
+## Level completion
+
+`LevelExit` counts living Actors in the `enemies` group. Its interaction stays
+locked while any enemy is alive. After the level is cleared, interacting with
+the exit emits `level_completed` and optionally changes to its configured next
+scene. Without a next scene, the marker turns green and remains as a visible
+completion result.
+
+The main sandbox places the orange `EXIT` marker on the right platform.

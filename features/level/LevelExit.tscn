@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/level/LevelExit.gd" id="1_exit"]
+[ext_resource type="Script" path="res://framework/components/InteractableComponent.gd" id="2_interactable"]
+
+[node name="LevelExit" type="Node2D"]
+script = ExtResource("1_exit")
+
+[node name="_Components" type="Node2D" parent="."]
+
+[node name="InteractableComponent" type="Node" parent="_Components"]
+script = ExtResource("2_interactable")
+interaction_name = "Exit"
+
+[node name="Marker" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -24, 14, -24, 14, 24, -14, 24)
+color = Color(1, 0.65, 0.15, 0.8)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -18.0
+offset_top = -49.0
+offset_right = 26.0
+offset_bottom = -26.0
+text = "EXIT"
