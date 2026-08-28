@@ -18,6 +18,8 @@ const EQUIPMENT_ACTIONS: Array[StringName] = [
 	&"equip_bow",
 	&"equip_crossbow",
 	&"equip_magic",
+	&"quick_slot_7",
+	&"quick_slot_8",
 ]
 
 var _move_axis: float = 0.0

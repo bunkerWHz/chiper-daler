@@ -37,6 +37,15 @@ enum Rarity {
 	LEGENDARY,
 }
 
+enum CombatMode {
+	NONE,
+	MELEE,
+	THROWABLE,
+	BOW,
+	CROSSBOW,
+	MAGIC,
+}
+
 @export var id: StringName
 @export var display_name: String = "New Item"
 @export_multiline var description: String
@@ -46,6 +55,7 @@ enum Rarity {
 @export_range(1, 999, 1) var max_stack_size: int = 1
 @export_range(0.0, 1000.0, 0.01) var weight: float = 0.0
 @export var equip_slot: EquipSlot = EquipSlot.NONE
+@export var combat_mode: CombatMode = CombatMode.NONE
 @export var stats: ItemStats
 @export var rarity: Rarity = Rarity.COMMON
 @export_range(0, 1000000, 1) var sell_price: int = 0

@@ -59,6 +59,7 @@ func _update_overlay() -> void:
 	_append_health_info(lines)
 	_append_progression_info(lines)
 	_append_inventory_info(lines)
+	_append_quick_access_info(lines)
 	_append_guard_info(lines)
 	lines.append("Components:")
 
@@ -212,6 +213,27 @@ func _append_inventory_info(lines: PackedStringArray) -> void:
 			inventory.get_total_weight(),
 		]
 	)
+
+
+func _append_quick_access_info(lines: PackedStringArray) -> void:
+	var quick_access := (
+		actor.get_component(QuickAccessComponent) as QuickAccessComponent
+	)
+	if quick_access == null or not quick_access.is_enabled:
+		return
+
+	var slot_number := quick_access.get_active_slot() + 1
+	var item_id := quick_access.get_active_item_id()
+	if item_id.is_empty():
+		lines.append("Quick Slot: %d" % slot_number)
+	else:
+		lines.append(
+			"Quick Slot: %d  %s x%d" % [
+				slot_number,
+				String(item_id),
+				quick_access.get_active_item_quantity(),
+			]
+		)
 
 
 func should_disable_on_actor_death() -> bool:

@@ -11,6 +11,10 @@ The first two quick slots represent weapon sets, the third starts as the health
 consumable slot, and slots four through eight are configurable. These rules are
 data-driven and may change after playtesting.
 
+Until inventory-backed starter weapons are introduced, empty quick slots four
+through six retain the previous bow, crossbow, and magic shortcuts. Assigning a
+combat item replaces that temporary fallback for the slot.
+
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
 back slot. Equipped entries reference items that remain visible in the main
@@ -23,7 +27,7 @@ their configured maximum. Non-stackable items always occupy separate cells.
 
 1. `ItemData`, stacks, and inventory storage.
 2. Paper-doll equipment with two weapon sets. *(implemented)*
-3. Eight quick-access slots and runtime switching.
+3. Eight quick-access slots and runtime switching. *(implemented)*
 4. Pickup and loot integration.
 5. Paused inventory UI, item details, and management actions.
 

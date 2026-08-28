@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/inventory/QuickAccessComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/inventory/QuickAccessConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="QuickAccessConfig_default"]
+script = ExtResource("2_config")
+
+[node name="QuickAccessComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("QuickAccessConfig_default")
