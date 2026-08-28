@@ -94,10 +94,40 @@ layout_mode = 2
 text = "Equip"
 disabled = true
 
+[node name="Use" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+layout_mode = 2
+text = "Use"
+disabled = true
+
+[node name="Split" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+layout_mode = 2
+text = "Split Stack"
+disabled = true
+
 [node name="Drop" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
 layout_mode = 2
-text = "Drop One"
+text = "Drop..."
 disabled = true
 
 [node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
 layout_mode = 2
+
+[node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
+title = "Drop item"
+size = Vector2i(320, 140)
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/DropDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 312.0
+offset_bottom = 90.0
+
+[node name="Prompt" type="Label" parent="CanvasLayer/DropDialog/Content"]
+layout_mode = 2
+text = "Choose quantity to drop"
+
+[node name="Quantity" type="SpinBox" parent="CanvasLayer/DropDialog/Content"]
+layout_mode = 2
+min_value = 1.0
+max_value = 1.0
+value = 1.0

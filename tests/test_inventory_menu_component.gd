@@ -17,11 +17,15 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var input := InputComponent.new()
 	var attributes := CharacterAttributesComponent.new()
 	attributes.dexterity = 1
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
 	var inventory := InventoryComponent.new()
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
 	var quick_access := QuickAccessComponent.new()
 	quick_access.config = QuickAccessConfig.new()
+	var item_use := ItemUseComponent.new()
+	item_use.config = ItemUseConfig.new()
 	var inventory_drop := InventoryDropComponent.new()
 	inventory_drop.loot_bag_scene = load(
 		"res://features/loot/LootBag.tscn"
@@ -33,9 +37,11 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	for component: Component in [
 		input,
 		attributes,
+		health,
 		inventory,
 		equipment,
 		quick_access,
+		item_use,
 		inventory_drop,
 		menu,
 	]:
@@ -50,7 +56,10 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	potion.stackable = true
 	potion.max_stack_size = 10
 	potion.usable_in_combat = true
-	assert_eq(inventory.add_item(potion, 2), 2)
+	potion.use_effect = ItemData.UseEffect.HEAL
+	potion.use_value = 35.0
+	assert_eq(inventory.add_item(potion, 3), 3)
+	health.take_damage(50.0)
 
 	menu.open_inventory()
 	var grid := menu.get_node(
@@ -58,13 +67,21 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	) as GridContainer
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), 1)
-	assert_eq((grid.get_child(0) as Button).text, "Test Potion\nx2")
+	assert_eq((grid.get_child(0) as Button).text, "Test Potion\nx3")
 
 	menu._select_item(potion.id)
+	menu._use_selected_item()
+	assert_eq(health.get_current_health(), 85.0)
+	assert_eq(inventory.get_quantity(potion.id), 2)
 	menu._assign_selected_to_quick_slot(3)
 	assert_eq(quick_access.get_slot(3).item_id, potion.id)
-	menu._drop_selected_item()
-	assert_eq(inventory.get_quantity(potion.id), 1)
+	menu._assign_selected_to_quick_slot(3)
+	assert_eq(quick_access.get_slot(3).kind, QuickAccessSlot.Kind.EMPTY)
+	menu._request_drop_selected_item()
+	assert_eq(menu._drop_quantity.max_value, 2.0)
+	menu._drop_quantity.value = 2
+	menu._confirm_drop_selected_item()
+	assert_eq(inventory.get_quantity(potion.id), 0)
 	assert_true(world.get_child(1) is LootBag)
 	var dropped_bag := world.get_child(1) as LootBag
 	assert_true(dropped_bag.try_collect(actor))
@@ -99,5 +116,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(details.text.contains("Compared with Test Sword"))
 	assert_true(details.text.contains("Damage +7.0"))
 	assert_true(equip_button.disabled)
+	menu._select_item(sword.id)
+	menu._equip_selected_item()
+	assert_false(equipment.is_item_equipped(sword.id))
 	menu.close_inventory()
 	assert_false(menu.is_open())

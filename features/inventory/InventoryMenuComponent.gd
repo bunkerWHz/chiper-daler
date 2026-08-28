@@ -9,13 +9,18 @@ var _equipment: EquipmentComponent
 var _quick_access: QuickAccessComponent
 var _inventory_drop: InventoryDropComponent
 var _attributes: CharacterAttributesComponent
+var _item_use: ItemUseComponent
 var _overlay: Control
 var _grid: GridContainer
 var _equipment_text: Label
 var _details_text: Label
 var _equip_button: Button
 var _drop_button: Button
+var _use_button: Button
+var _split_button: Button
 var _quick_buttons: HBoxContainer
+var _drop_dialog: ConfirmationDialog
+var _drop_quantity: SpinBox
 var _selected_item_id: StringName
 
 
@@ -31,6 +36,7 @@ func on_initialize() -> void:
 		actor.get_component(CharacterAttributesComponent)
 		as CharacterAttributesComponent
 	)
+	_item_use = actor.get_component(ItemUseComponent) as ItemUseComponent
 	if (
 		_input == null
 		or _inventory == null
@@ -65,9 +71,19 @@ func _ready() -> void:
 	_drop_button = get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/Actions/Drop"
 	) as Button
+	_use_button = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Actions/Use"
+	) as Button
+	_split_button = get_node_or_null(
+		"CanvasLayer/Overlay/Panel/Main/Actions/Split"
+	) as Button
 	_quick_buttons = get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/QuickButtons"
 	) as HBoxContainer
+	_drop_dialog = get_node_or_null("CanvasLayer/DropDialog") as ConfirmationDialog
+	_drop_quantity = get_node_or_null(
+		"CanvasLayer/DropDialog/Content/Quantity"
+	) as SpinBox
 	var close_button := get_node_or_null(
 		"CanvasLayer/Overlay/Panel/Main/Header/Close"
 	) as Button
@@ -78,7 +94,11 @@ func _ready() -> void:
 		or _details_text == null
 		or _equip_button == null
 		or _drop_button == null
+		or _use_button == null
+		or _split_button == null
 		or _quick_buttons == null
+		or _drop_dialog == null
+		or _drop_quantity == null
 		or close_button == null
 	):
 		push_error("InventoryMenuComponent scene hierarchy is invalid")
@@ -88,7 +108,10 @@ func _ready() -> void:
 	_overlay.visible = false
 	close_button.pressed.connect(close_inventory)
 	_equip_button.pressed.connect(_equip_selected_item)
-	_drop_button.pressed.connect(_drop_selected_item)
+	_drop_button.pressed.connect(_request_drop_selected_item)
+	_use_button.pressed.connect(_use_selected_item)
+	_split_button.pressed.connect(_split_selected_stack)
+	_drop_dialog.confirmed.connect(_confirm_drop_selected_item)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_changed)
 	if _attributes != null:
@@ -114,6 +137,8 @@ func open_inventory() -> void:
 
 
 func close_inventory() -> void:
+	if _drop_dialog != null:
+		_drop_dialog.hide()
 	if _overlay != null:
 		_overlay.visible = false
 	if is_inside_tree():
@@ -159,6 +184,8 @@ func _rebuild_details() -> void:
 		_details_text.text = "Select an item"
 		_equip_button.disabled = true
 		_drop_button.disabled = true
+		_use_button.disabled = true
+		_split_button.disabled = true
 		_set_quick_buttons_enabled(false)
 		return
 
@@ -175,17 +202,28 @@ func _rebuild_details() -> void:
 	])
 	_append_item_stats(detail_lines, item)
 	_details_text.text = "\n".join(detail_lines)
+	var equipped := _equipment.is_item_equipped(item.id)
+	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
 		item.equip_slot == ItemData.EquipSlot.NONE
-		or not _equipment.meets_item_requirements(item)
+		or (not equipped and not _equipment.meets_item_requirements(item))
 	)
 	_drop_button.disabled = item.is_key_item
+	_use_button.disabled = (
+		_item_use == null
+		or not _item_use.can_use_inventory_item_now(item.id)
+	)
+	_split_button.disabled = not _inventory.can_split_stack(item.id)
 	_set_quick_buttons_enabled(item.usable_in_combat)
 
 
 func _equip_selected_item() -> void:
 	var item := _inventory.get_item_data(_selected_item_id)
 	if item == null or item.equip_slot == ItemData.EquipSlot.NONE:
+		return
+	if _equipment.is_item_equipped(item.id):
+		_equipment.unequip_inventory_item(item.id)
+		_rebuild()
 		return
 
 	var slot_index := 0
@@ -198,13 +236,47 @@ func _equip_selected_item() -> void:
 	_rebuild_equipment_text()
 
 
-func _assign_selected_to_quick_slot(slot_index: int) -> void:
-	if _quick_access.assign_item(slot_index, _selected_item_id):
+func _toggle_selected_quick_slot(slot_index: int) -> void:
+	var slot := _quick_access.get_slot(slot_index)
+	if slot != null and slot.item_id == _selected_item_id:
+		if _quick_access.clear_slot(slot_index):
+			_rebuild_details()
+	elif _quick_access.assign_item(slot_index, _selected_item_id):
 		_rebuild_details()
+
+
+func _assign_selected_to_quick_slot(slot_index: int) -> void:
+	_toggle_selected_quick_slot(slot_index)
 
 
 func _drop_selected_item() -> void:
 	if _inventory_drop.drop_item(_selected_item_id, 1) != null:
+		_rebuild()
+
+
+func _request_drop_selected_item() -> void:
+	var quantity := _inventory.get_quantity(_selected_item_id)
+	if quantity <= 0:
+		return
+	_drop_quantity.max_value = quantity
+	_drop_quantity.value = 1
+	if is_inside_tree():
+		_drop_dialog.popup_centered()
+
+
+func _confirm_drop_selected_item() -> void:
+	var quantity := int(_drop_quantity.value)
+	if _inventory_drop.drop_item(_selected_item_id, quantity) != null:
+		_rebuild()
+
+
+func _use_selected_item() -> void:
+	if _item_use != null and _item_use.use_inventory_item_now(_selected_item_id):
+		_rebuild()
+
+
+func _split_selected_stack() -> void:
+	if _inventory.split_stack(_selected_item_id):
 		_rebuild()
 
 
@@ -214,13 +286,21 @@ func _create_quick_buttons() -> void:
 	for slot_index in range(QuickAccessComponent.FIRST_CONFIGURABLE_SLOT, 8):
 		var button := Button.new()
 		button.text = "Assign %d" % (slot_index + 1)
-		button.pressed.connect(_assign_selected_to_quick_slot.bind(slot_index))
+		button.pressed.connect(_toggle_selected_quick_slot.bind(slot_index))
 		_quick_buttons.add_child(button)
 
 
 func _set_quick_buttons_enabled(value: bool) -> void:
+	var slot_index := QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
 	for button: Button in _quick_buttons.get_children():
+		var slot := _quick_access.get_slot(slot_index)
+		button.text = (
+			"Clear %d" % (slot_index + 1)
+			if slot != null and slot.item_id == _selected_item_id
+			else "Assign %d" % (slot_index + 1)
+		)
 		button.disabled = not value
+		slot_index += 1
 
 
 func _rebuild_equipment_text() -> void:

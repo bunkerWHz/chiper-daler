@@ -92,6 +92,32 @@ func has_item(item_id: StringName, quantity: int = 1) -> bool:
 	return quantity > 0 and get_quantity(item_id) >= quantity
 
 
+func can_split_stack(item_id: StringName) -> bool:
+	if _stacks.size() >= config.capacity:
+		return false
+	for stack: InventoryStack in _stacks:
+		if stack.item.id == item_id and stack.item.stackable and stack.quantity > 1:
+			return true
+	return false
+
+
+func split_stack(item_id: StringName, quantity: int = -1) -> bool:
+	if not is_enabled or not can_split_stack(item_id):
+		return false
+	for stack: InventoryStack in _stacks:
+		if stack.item.id != item_id or not stack.item.stackable or stack.quantity <= 1:
+			continue
+		var split_quantity := quantity
+		if split_quantity <= 0:
+			split_quantity = stack.quantity / 2
+		split_quantity = clampi(split_quantity, 1, stack.quantity - 1)
+		stack.quantity -= split_quantity
+		_stacks.append(InventoryStack.new(stack.item, split_quantity))
+		inventory_changed.emit()
+		return true
+	return false
+
+
 func get_stacks() -> Array[InventoryStack]:
 	var result: Array[InventoryStack] = []
 	for stack: InventoryStack in _stacks:

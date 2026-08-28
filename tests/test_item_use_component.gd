@@ -87,6 +87,10 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	assert_eq(health.get_current_health(), 85.0)
 	assert_eq(inventory.get_quantity(potion.id), 1)
 	assert_eq(item_use.get_remaining_charges(), 1)
+	health.take_damage(15.0)
+	assert_true(item_use.use_inventory_item_now(potion.id))
+	assert_eq(health.get_current_health(), 100.0)
+	assert_eq(inventory.get_quantity(potion.id), 0)
 
 
 func _create_item_actor(include_actor_state: bool) -> Dictionary:

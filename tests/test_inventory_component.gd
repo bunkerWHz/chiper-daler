@@ -50,6 +50,19 @@ func test_removal_spans_stacks_and_runtime_state_restores() -> void:
 	assert_eq(restored.get_used_slots(), 1)
 
 
+func test_stack_can_be_split_when_inventory_has_room() -> void:
+	var inventory := _create_inventory(3)
+	var potion := _create_item(&"split_potion", true, 10, 0.1)
+	inventory.add_item(potion, 7)
+
+	assert_true(inventory.can_split_stack(potion.id))
+	assert_true(inventory.split_stack(potion.id, 3))
+	assert_eq(inventory.get_used_slots(), 2)
+	assert_eq(inventory.get_stacks()[0].quantity, 4)
+	assert_eq(inventory.get_stacks()[1].quantity, 3)
+	assert_eq(inventory.get_quantity(potion.id), 7)
+
+
 func _create_inventory(capacity: int) -> InventoryComponent:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

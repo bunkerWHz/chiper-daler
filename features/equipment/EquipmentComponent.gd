@@ -168,6 +168,26 @@ func unequip_item(
 	return true
 
 
+func is_item_equipped(item_id: StringName) -> bool:
+	return not item_id.is_empty() and _equipped_items.values().has(item_id)
+
+
+func unequip_inventory_item(item_id: StringName) -> bool:
+	if item_id.is_empty():
+		return false
+	for key: Variant in _equipped_items.keys():
+		if StringName(_equipped_items[key]) != item_id:
+			continue
+		var was_active_main := (
+			get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND) == item_id
+		)
+		_remove_equipped_key(key)
+		if was_active_main:
+			equip(Slot.MELEE)
+		return true
+	return false
+
+
 func get_equipped_item_id(
 	target_slot: ItemData.EquipSlot,
 	slot_index: int = 0,

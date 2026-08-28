@@ -32,6 +32,12 @@ equipping an item until the Actor has the required attributes. The inventory
 details panel shows these values and compares an item with the active equipped
 item in the same slot.
 
+The functional menu supports immediate consumable use while paused,
+equip/unequip toggling, manual quick-slot assignment and clearing, stack
+splitting when a free cell exists, and quantity-confirmed dropping. Key items
+cannot be dropped. A confirmed multi-item drop creates one loot bag containing
+the selected quantity.
+
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
 

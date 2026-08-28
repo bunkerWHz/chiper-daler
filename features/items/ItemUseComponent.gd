@@ -98,6 +98,35 @@ func use_item() -> bool:
 	return true
 
 
+func use_inventory_item_now(item_id: StringName) -> bool:
+	if not can_use_inventory_item_now(item_id):
+		return false
+	var item := _inventory_component.get_item_data(item_id)
+	var applied_value := _apply_inventory_item(item)
+	if item == null or applied_value <= 0.0:
+		return false
+	_inventory_component.remove_item(item.id, 1)
+	_cooldown_timer = config.cooldown
+	var remaining := _inventory_component.get_quantity(item.id)
+	item_used.emit(
+		applied_value if item.use_effect == ItemData.UseEffect.HEAL else 0.0,
+		remaining
+	)
+	inventory_item_used.emit(item, applied_value, remaining)
+	return true
+
+
+func can_use_inventory_item_now(item_id: StringName) -> bool:
+	if (
+		not is_enabled
+		or is_using_item()
+		or _inventory_component == null
+		or not _inventory_component.has_item(item_id)
+	):
+		return false
+	return _can_apply_inventory_item(_inventory_component.get_item_data(item_id))
+
+
 func can_use_item() -> bool:
 	var base_conditions := (
 		is_enabled
