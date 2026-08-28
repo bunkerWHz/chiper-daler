@@ -11,6 +11,7 @@ const INTERACT_ACTION: StringName = &"interact"
 const ATTACK_ACTION: StringName = &"attack"
 const GUARD_ACTION: StringName = &"guard"
 const DODGE_ACTION: StringName = &"dodge"
+const INVENTORY_ACTION: StringName = &"inventory"
 const EQUIPMENT_ACTIONS: Array[StringName] = [
 	&"equip_melee",
 	&"equip_item",
@@ -34,9 +35,11 @@ var _guard_pressed: bool = false
 var _guard_just_pressed: bool = false
 var _dodge_pressed: bool = false
 var _equipment_slot_request: int = -1
+var _inventory_pressed: bool = false
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	process_priority = INPUT_PROCESS_PRIORITY
 	process_physics_priority = INPUT_PROCESS_PRIORITY
 
@@ -115,7 +118,15 @@ func consume_equipment_slot_request() -> int:
 	return request
 
 
+func consume_inventory_pressed() -> bool:
+	if not _inventory_pressed:
+		return false
+	_inventory_pressed = false
+	return true
+
+
 func _process(_delta: float) -> void:
+	_inventory_pressed = Input.is_action_just_pressed(INVENTORY_ACTION)
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
 	_attack_just_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
 	_attack_pressed = Input.is_action_pressed(ATTACK_ACTION)

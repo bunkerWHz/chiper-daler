@@ -1,0 +1,98 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/inventory/InventoryMenuComponent.gd" id="1_menu"]
+
+[node name="InventoryMenuComponent" type="Node"]
+script = ExtResource("1_menu")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Overlay" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.04, 0.94)
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 35.0
+offset_right = -50.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Main" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Inventory"
+
+[node name="Close" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Header"]
+layout_mode = 2
+text = "Close [I]"
+
+[node name="Content" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content"]
+custom_minimum_size = Vector2(310, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="EquipmentText" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Equipment"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Equipment slots"
+
+[node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Overlay/Panel/Main/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+layout_mode = 2
+text = "Items"
+
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Grid" type="GridContainer" parent="CanvasLayer/Overlay/Panel/Main/Content/Inventory/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 5
+
+[node name="Details" type="Label" parent="CanvasLayer/Overlay/Panel/Main"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "Select an item"
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+layout_mode = 2
+
+[node name="Equip" type="Button" parent="CanvasLayer/Overlay/Panel/Main/Actions"]
+layout_mode = 2
+text = "Equip"
+disabled = true
+
+[node name="QuickButtons" type="HBoxContainer" parent="CanvasLayer/Overlay/Panel/Main"]
+layout_mode = 2

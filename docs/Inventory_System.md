@@ -29,7 +29,14 @@ their configured maximum. Non-stackable items always occupy separate cells.
 2. Paper-doll equipment with two weapon sets. *(implemented)*
 3. Eight quick-access slots and runtime switching. *(implemented)*
 4. Pickup and loot integration. *(implemented)*
-5. Paused inventory UI, item details, and management actions.
+5. Paused inventory UI, item details, equipment, and quick assignment.
+   *(first functional version implemented)*
+
+Press `I` to open or close the inventory. Opening it pauses the scene tree. The
+current functional UI shows all stacks, item details, both weapon sets, armor
+and accessory slots, and buttons for equipment and quick slots four through
+eight. Visual styling, drag-and-drop, sorting, comparison, splitting, selling,
+and confirmed dropping remain later presentation/interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
