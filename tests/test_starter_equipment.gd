@@ -61,12 +61,16 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"short_bow"
 	)
 
-	assert_true(quick_access.activate_slot(1))
+	assert_eq(quick_access.get_slot(0).item_id, &"health_potion")
+	assert_true(quick_access.is_slot_available(0))
+	assert_false(quick_access.activate_slot(1))
+	input._weapon_set_swap_pressed = true
+	equipment._process(0.0)
 	assert_eq(equipment.get_active_weapon_set(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
 	assert_eq(equipment.get_total_defense(), 0.0)
-	assert_false(quick_access.activate_slot(3))
-	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
+	assert_true(quick_access.activate_slot(0))
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.ITEM)
 
 
 func test_replacing_active_main_hand_changes_combat_mode() -> void:

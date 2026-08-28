@@ -7,14 +7,15 @@ The inventory has two connected layers:
 - a paused main inventory for item management and equipment;
 - eight fixed quick-access slots for real-time use.
 
-The first two quick slots represent weapon sets, the third starts as the health
-consumable slot, and slots four through eight are configurable. These rules are
-data-driven and may change after playtesting.
+The hotbar contains items only. Slot one is the fixed Health Potion slot, while
+slots two through eight are configurable for consumables, throwables, spells,
+and future combat-ready item types. Weapon sets are not hotbar entries.
 
 All eight number keys address real quick-access slots. `Q` and `E` cycle
 backward and forward through available slots, wrapping around and skipping
 empty ones. Interaction uses `R`; there are no hidden legacy combat-mode
-fallbacks.
+fallbacks. `Tab` cycles the two weapon sets separately, like changing combat
+stance, and activates the combat mode of the new main-hand weapon.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
@@ -45,18 +46,17 @@ the selected quantity.
 The single player hotbar sits to the right of the health bar. During gameplay it
 shows only available quick-access slots, so empty cells do not occupy space.
 Opening the inventory expands this same hotbar to all eight cells and enables
-drag-and-drop into configurable slots four through eight; the inventory panel
-does not create a second hotbar. It follows the active slot, weapon-set contents,
-item assignments, icons and stack quantities in real time. Hotbar icons render
+drag-and-drop into configurable slots two through eight; the inventory panel
+does not create a second hotbar. It follows the active slot, item assignments,
+icons and stack quantities in real time. Hotbar icons render
 at a fixed 64 by 64 pixels. Items without final art use the shared
 `assets/icon_placeholder.png` texture, scaled down where smaller menu icons are
 required.
 
 While the inventory is open, hovering a hotbar slot uses the same item card as
-the inventory grid. Item slots show full item details, weapon-set slots summarize
-both hands, and empty configurable slots explain that a combat item can be
-dropped there. Leaving the slot restores any card previously pinned by clicking
-an inventory item.
+the inventory grid. Assigned slots show full item details, and empty configurable
+slots explain that a combat item can be dropped there. Leaving the slot restores
+any card previously pinned by clicking an inventory item.
 
 Each item type may be assigned to only one quick-access slot, including the
 fixed health-potion slot. A configurable assignment can be removed by dragging
@@ -84,7 +84,8 @@ separate HUD hotbar reveals all eight quick-access cells, including empty cells
 available for assignment. The inventory grid uses icon-only 64-pixel cells. A
 temporary item card appears on hover; clicking an item selects it and pins the
 card with its description, quantity, weight, value, requirements, stats, and
-equipment comparison. The panel also shows both weapon sets, armor and accessory slots, and actions for using, equipping,
+equipment comparison. The panel also shows both weapon sets, armor and accessory
+slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
 that fits and leaves any remainder on the ground. The item grid can be filtered

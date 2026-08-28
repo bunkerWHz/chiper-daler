@@ -14,7 +14,8 @@ const DODGE_ACTION: StringName = &"dodge"
 const INVENTORY_ACTION: StringName = &"inventory"
 const QUICK_SLOT_PREVIOUS_ACTION: StringName = &"quick_slot_previous"
 const QUICK_SLOT_NEXT_ACTION: StringName = &"quick_slot_next"
-const EQUIPMENT_ACTIONS: Array[StringName] = [
+const WEAPON_SET_SWAP_ACTION: StringName = &"weapon_set_swap"
+const QUICK_SLOT_ACTIONS: Array[StringName] = [
 	&"quick_slot_1",
 	&"quick_slot_2",
 	&"quick_slot_3",
@@ -36,8 +37,9 @@ var _attack_released: bool = false
 var _guard_pressed: bool = false
 var _guard_just_pressed: bool = false
 var _dodge_pressed: bool = false
-var _equipment_slot_request: int = -1
+var _quick_slot_request: int = -1
 var _quick_slot_cycle_request: int = 0
+var _weapon_set_swap_pressed := false
 var _inventory_pressed: bool = false
 
 
@@ -115,9 +117,9 @@ func consume_dodge_pressed() -> bool:
 	return true
 
 
-func consume_equipment_slot_request() -> int:
-	var request := _equipment_slot_request
-	_equipment_slot_request = -1
+func consume_quick_slot_request() -> int:
+	var request := _quick_slot_request
+	_quick_slot_request = -1
 	return request
 
 
@@ -125,6 +127,13 @@ func consume_quick_slot_cycle_request() -> int:
 	var request := _quick_slot_cycle_request
 	_quick_slot_cycle_request = 0
 	return request
+
+
+func consume_weapon_set_swap_pressed() -> bool:
+	if not _weapon_set_swap_pressed:
+		return false
+	_weapon_set_swap_pressed = false
+	return true
 
 
 func consume_inventory_pressed() -> bool:
@@ -142,15 +151,18 @@ func _process(_delta: float) -> void:
 	_attack_released = Input.is_action_just_released(ATTACK_ACTION)
 	_guard_pressed = Input.is_action_pressed(GUARD_ACTION)
 	_guard_just_pressed = Input.is_action_just_pressed(GUARD_ACTION)
+	_weapon_set_swap_pressed = Input.is_action_just_pressed(
+		WEAPON_SET_SWAP_ACTION
+	)
 	_quick_slot_cycle_request = 0
 	if Input.is_action_just_pressed(QUICK_SLOT_PREVIOUS_ACTION):
 		_quick_slot_cycle_request = -1
 	elif Input.is_action_just_pressed(QUICK_SLOT_NEXT_ACTION):
 		_quick_slot_cycle_request = 1
 
-	for slot_index in EQUIPMENT_ACTIONS.size():
-		if Input.is_action_just_pressed(EQUIPMENT_ACTIONS[slot_index]):
-			_equipment_slot_request = slot_index
+	for slot_index in QUICK_SLOT_ACTIONS.size():
+		if Input.is_action_just_pressed(QUICK_SLOT_ACTIONS[slot_index]):
+			_quick_slot_request = slot_index
 			break
 
 

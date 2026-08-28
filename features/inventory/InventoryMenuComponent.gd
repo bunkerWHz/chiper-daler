@@ -302,8 +302,6 @@ func show_quick_slot_details(slot_index: int) -> void:
 	match slot.kind:
 		QuickAccessSlot.Kind.ITEM:
 			show_item_details(slot.item_id)
-		QuickAccessSlot.Kind.WEAPON_SET:
-			_show_details_text(_get_weapon_set_details(slot.weapon_set))
 		QuickAccessSlot.Kind.EMPTY:
 			_show_details_text(
 				"Quick Slot %d\nEmpty\nDrag a combat item here."
@@ -326,45 +324,6 @@ func _show_details_text(text: String) -> void:
 	_details_text.text = text
 	_detail_popup.visible = true
 	_position_detail_popup()
-
-
-func _get_weapon_set_details(weapon_set: int) -> String:
-	var lines := PackedStringArray([
-		"Weapon Set %d" % (weapon_set + 1),
-	])
-	_append_weapon_set_item(
-		lines,
-		"Main Hand",
-		_equipment.get_equipped_item(
-			ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
-		)
-	)
-	_append_weapon_set_item(
-		lines,
-		"Off Hand",
-		_equipment.get_equipped_item(
-			ItemData.EquipSlot.OFF_HAND, 0, weapon_set
-		)
-	)
-	return "\n".join(lines)
-
-
-func _append_weapon_set_item(
-	lines: PackedStringArray,
-	label: String,
-	item: ItemData
-) -> void:
-	if item == null:
-		lines.append("%s: Empty" % label)
-		return
-	lines.append("%s: %s" % [label, item.display_name])
-	if not item.description.is_empty():
-		lines.append(item.description)
-	if item.stats != null:
-		lines.append("Damage: %.1f  Defense: %.1f" % [
-			item.stats.damage,
-			item.stats.defense,
-		])
 
 
 func _get_item_details(item: ItemData) -> String:

@@ -68,10 +68,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	var requested_slot := _input_component.consume_equipment_slot_request()
-
-	if requested_slot >= 0 and requested_slot < Slot.size():
-		equip(requested_slot)
+	if _input_component.consume_weapon_set_swap_pressed():
+		cycle_weapon_set()
 
 
 func equip(slot: Slot) -> bool:

@@ -7,7 +7,6 @@ const SLOT_SIZE := Vector2(68.0, 68.0)
 
 var _quick_access: QuickAccessComponent
 var _inventory: InventoryComponent
-var _equipment: EquipmentComponent
 var _inventory_menu: InventoryMenuComponent
 var _slot_views: Array[InventoryDragButton] = []
 var _key_labels: Array[Label] = []
@@ -20,12 +19,11 @@ var _inventory_open := false
 func on_initialize() -> void:
 	_quick_access = actor.get_component(QuickAccessComponent) as QuickAccessComponent
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
-	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
 	_inventory_menu = (
 		actor.get_component(InventoryMenuComponent) as InventoryMenuComponent
 	)
-	if _quick_access == null or _inventory == null or _equipment == null:
-		push_error("QuickAccessHUDComponent requires quick access, inventory, and equipment")
+	if _quick_access == null or _inventory == null:
+		push_error("QuickAccessHUDComponent requires quick access and inventory")
 		disable()
 
 
@@ -58,15 +56,12 @@ func get_slot_display(slot_index: int) -> Dictionary:
 		"icon": ItemData.PLACEHOLDER_ICON,
 		"available": false,
 		"active": slot_index == _quick_access.get_active_slot(),
-		"equipped": false,
 	}
 	var slot := _quick_access.get_slot(slot_index)
 	if slot == null:
 		return result
 
 	match slot.kind:
-		QuickAccessSlot.Kind.WEAPON_SET:
-			_apply_weapon_set_display(result, slot.weapon_set)
 		QuickAccessSlot.Kind.ITEM:
 			_apply_item_display(result, slot.item_id)
 		QuickAccessSlot.Kind.EMPTY:
@@ -157,8 +152,6 @@ func _connect_signals() -> void:
 	_quick_access.active_slot_changed.connect(_on_quick_access_changed)
 	_quick_access.slot_assignment_changed.connect(_on_slot_assignment_changed)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
-	_equipment.weapon_set_changed.connect(_on_weapon_set_changed)
-	_equipment.loadout_item_changed.connect(_on_loadout_item_changed)
 	if _inventory_menu != null:
 		_inventory_open = _inventory_menu.is_open()
 		_inventory_menu.open_state_changed.connect(_on_inventory_open_changed)
@@ -208,32 +201,9 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 		"normal",
 		_create_panel_style(
 			bool(display.active),
-			bool(display.available),
-			bool(display.equipped)
+			bool(display.available)
 		)
 	)
-
-
-func _apply_weapon_set_display(result: Dictionary, weapon_set: int) -> void:
-	var main_hand := _equipment.get_equipped_item(
-		ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
-	)
-	var off_hand := _equipment.get_equipped_item(
-		ItemData.EquipSlot.OFF_HAND, 0, weapon_set
-	)
-	result.title = "Set %d" % (weapon_set + 1)
-	result.equipped = weapon_set == _equipment.get_active_weapon_set()
-	var names := PackedStringArray()
-	if main_hand != null:
-		names.append(main_hand.display_name)
-		result.icon = main_hand.get_display_icon()
-	if off_hand != null:
-		names.append(off_hand.display_name)
-		if main_hand == null:
-			result.icon = off_hand.get_display_icon()
-	var loadout := " + ".join(names) if not names.is_empty() else "No weapon"
-	result.detail = "Active • %s" % loadout if bool(result.equipped) else loadout
-	result.available = not names.is_empty()
 
 
 func _apply_item_display(result: Dictionary, item_id: StringName) -> void:
@@ -252,23 +222,16 @@ func _apply_item_display(result: Dictionary, item_id: StringName) -> void:
 
 func _create_panel_style(
 	active: bool,
-	available: bool,
-	equipped: bool
+	available: bool
 ) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = (
-		Color(0.07, 0.14, 0.16, 0.96)
-		if equipped
-		else Color(0.07, 0.08, 0.11, 0.94)
-	)
+	style.bg_color = Color(0.07, 0.08, 0.11, 0.94)
 	style.border_width_left = 2 if active else 1
 	style.border_width_top = 2 if active else 1
 	style.border_width_right = 2 if active else 1
 	style.border_width_bottom = 2 if active else 1
 	if active:
 		style.border_color = Color(0.96, 0.72, 0.22, 1.0)
-	elif equipped:
-		style.border_color = Color(0.24, 0.75, 0.82, 0.95)
 	elif available:
 		style.border_color = Color(0.42, 0.47, 0.58, 0.9)
 	else:
@@ -335,20 +298,6 @@ func _on_slot_drag_finished(
 
 
 func _on_inventory_changed() -> void:
-	refresh()
-
-
-func _on_weapon_set_changed(_previous: int, _current: int) -> void:
-	refresh()
-
-
-func _on_loadout_item_changed(
-	_equip_slot: ItemData.EquipSlot,
-	_slot_index: int,
-	_weapon_set: int,
-	_previous_item_id: StringName,
-	_current_item_id: StringName
-) -> void:
 	refresh()
 
 

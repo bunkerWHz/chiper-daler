@@ -6,18 +6,20 @@ func suite_name() -> String:
 	return "equipment"
 
 
-func test_number_slot_request_changes_equipment() -> void:
+func test_tab_request_cycles_weapon_set() -> void:
 	var setup := _create_equipped_actor()
 	var input := setup.input as InputComponent
 	var equipment := setup.equipment as EquipmentComponent
 
-	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
-	input._equipment_slot_request = EquipmentComponent.Slot.BOW
+	assert_eq(equipment.get_active_weapon_set(), 0)
+	assert_eq(InputComponent.WEAPON_SET_SWAP_ACTION, &"weapon_set_swap")
+	assert_true(InputMap.has_action(InputComponent.WEAPON_SET_SWAP_ACTION))
+	input._weapon_set_swap_pressed = true
 	equipment._process(0.0)
-
-	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
-	assert_eq(equipment.get_current_slot_name(), "Bow")
-	assert_false(equipment.allows_melee_actions())
+	assert_eq(equipment.get_active_weapon_set(), 1)
+	input._weapon_set_swap_pressed = true
+	equipment._process(0.0)
+	assert_eq(equipment.get_active_weapon_set(), 0)
 
 
 func test_switching_from_melee_cancels_attack_and_guard() -> void:

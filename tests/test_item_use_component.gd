@@ -80,7 +80,7 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	potion.use_value = 35.0
 	inventory.add_item(potion, 2)
 	health.take_damage(50.0)
-	assert_true(quick_access.activate_slot(2))
+	assert_true(quick_access.activate_slot(0))
 	assert_true(item_use.use_item())
 	item_use._process(item_use.config.use_duration)
 

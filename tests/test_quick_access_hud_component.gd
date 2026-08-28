@@ -17,32 +17,23 @@ func test_scene_places_hotbar_right_of_player_health() -> void:
 	assert_true(margin.offset_left > 248.0)
 
 
-func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
+func test_slot_display_tracks_item_assignments_and_quantities() -> void:
 	var setup := _create_actor()
 	var inventory := setup.inventory as InventoryComponent
-	var equipment := setup.equipment as EquipmentComponent
 	var quick_access := setup.quick_access as QuickAccessComponent
 	var hud := setup.hud as QuickAccessHUDComponent
 
-	var sword := _create_item(&"sword", "Sword", false)
-	sword.equip_slot = ItemData.EquipSlot.MAIN_HAND
-	sword.combat_mode = ItemData.CombatMode.MELEE
 	var bomb := _create_item(&"bomb", "Fire Bomb", true)
 	bomb.combat_mode = ItemData.CombatMode.THROWABLE
-	inventory.add_item(sword)
 	inventory.add_item(bomb, 3)
-	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0)
-	quick_access.assign_item(3, bomb.id)
+	quick_access.assign_item(1, bomb.id)
 
-	var weapon_display := hud.get_slot_display(0)
-	assert_true(weapon_display.available)
-	assert_true(weapon_display.equipped)
-	assert_eq(weapon_display.detail, "Active • Sword")
-	assert_eq(weapon_display.icon, ItemData.PLACEHOLDER_ICON)
+	var health_display := hud.get_slot_display(0)
+	assert_false(health_display.available)
+	assert_eq(health_display.title, "Health Potion")
 	assert_eq(QuickAccessHUDComponent.ICON_SIZE, Vector2(64.0, 64.0))
-	assert_false(hud.get_slot_display(1).available)
 	assert_false(hud.get_slot_display(2).available)
-	var item_display := hud.get_slot_display(3)
+	var item_display := hud.get_slot_display(1)
 	assert_true(item_display.available)
 	assert_eq(item_display.title, "Fire Bomb")
 	assert_eq(item_display.quantity, "x3")
@@ -55,7 +46,7 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 		assert_true(hud.get_slot_view(slot_index).visible)
 	var tonic := _create_item(&"tonic", "Combat Tonic", true)
 	inventory.add_item(tonic, 2)
-	var target := hud.get_slot_view(4)
+	var target := hud.get_slot_view(2)
 	var tonic_payload := {
 		"kind": InventoryDragButton.KIND_INVENTORY_ITEM,
 		"item_id": tonic.id,
@@ -64,21 +55,20 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	}
 	assert_true(target._can_drop_data(Vector2.ZERO, tonic_payload))
 	target._drop_data(Vector2.ZERO, tonic_payload)
-	assert_eq(quick_access.get_slot(4).item_id, tonic.id)
-	hud._on_slot_drag_finished(false, Vector2(-100.0, -100.0), 4)
-	assert_eq(quick_access.get_slot(4).kind, QuickAccessSlot.Kind.EMPTY)
+	assert_eq(quick_access.get_slot(2).item_id, tonic.id)
+	hud._on_slot_drag_finished(false, Vector2(-100.0, -100.0), 2)
+	assert_eq(quick_access.get_slot(2).kind, QuickAccessSlot.Kind.EMPTY)
 	hud._on_inventory_open_changed(false)
-	assert_false(hud.get_slot_view(1).visible)
+	assert_false(hud.get_slot_view(2).visible)
 
-	quick_access.activate_slot(3)
-	assert_true(hud.get_slot_display(3).active)
-	assert_true(hud.get_slot_display(0).equipped)
+	quick_access.activate_slot(1)
+	assert_true(hud.get_slot_display(1).active)
 	inventory.remove_item(bomb.id, 3)
-	item_display = hud.get_slot_display(3)
+	item_display = hud.get_slot_display(1)
 	assert_false(item_display.available)
 	assert_eq(item_display.detail, "Unavailable")
-	quick_access.clear_slot(3)
-	assert_eq(hud.get_slot_display(3).title, "Empty")
+	quick_access.clear_slot(1)
+	assert_eq(hud.get_slot_display(1).title, "Empty")
 
 
 func _create_actor() -> Dictionary:

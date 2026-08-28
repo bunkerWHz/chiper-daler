@@ -5,7 +5,7 @@ signal active_slot_changed(previous_index: int, current_index: int)
 signal slot_assignment_changed(slot_index: int, item_id: StringName)
 
 const QUICK_ACCESS_PROCESS_PRIORITY := -95
-const FIRST_CONFIGURABLE_SLOT := 3
+const FIRST_CONFIGURABLE_SLOT := 1
 
 @export var config: QuickAccessConfig
 
@@ -32,7 +32,6 @@ func on_initialize() -> void:
 
 	_create_default_slots()
 	_inventory.inventory_changed.connect(_on_inventory_changed)
-	_equipment.loadout_item_changed.connect(_on_loadout_item_changed)
 
 
 func _ready() -> void:
@@ -40,7 +39,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	var requested_slot := _input.consume_equipment_slot_request()
+	var requested_slot := _input.consume_quick_slot_request()
 	if requested_slot >= 0 and requested_slot < _slots.size():
 		activate_slot(requested_slot)
 	var cycle_request := _input.consume_quick_slot_cycle_request()
@@ -55,8 +54,6 @@ func activate_slot(slot_index: int) -> bool:
 	var slot := _slots[slot_index]
 	var activated := false
 	match slot.kind:
-		QuickAccessSlot.Kind.WEAPON_SET:
-			activated = _activate_weapon_set(slot.weapon_set)
 		QuickAccessSlot.Kind.ITEM:
 			activated = _activate_item(slot.item_id)
 		QuickAccessSlot.Kind.EMPTY:
@@ -88,15 +85,6 @@ func is_slot_available(slot_index: int) -> bool:
 		return false
 	var slot := _slots[slot_index]
 	match slot.kind:
-		QuickAccessSlot.Kind.WEAPON_SET:
-			return (
-				_equipment.get_equipped_item(
-					ItemData.EquipSlot.MAIN_HAND, 0, slot.weapon_set
-				) != null
-				or _equipment.get_equipped_item(
-					ItemData.EquipSlot.OFF_HAND, 0, slot.weapon_set
-				) != null
-			)
 		QuickAccessSlot.Kind.ITEM:
 			return (
 				not slot.item_id.is_empty()
@@ -229,22 +217,7 @@ func _create_default_slots() -> void:
 	_slots.resize(config.slot_count)
 	for index in _slots.size():
 		_slots[index] = QuickAccessSlot.new()
-	_slots[0] = QuickAccessSlot.weapon_set_slot(0)
-	_slots[1] = QuickAccessSlot.weapon_set_slot(1)
-	_slots[2] = QuickAccessSlot.item_slot(config.health_item_id)
-
-
-func _activate_weapon_set(set_index: int) -> bool:
-	if set_index < 0 or set_index >= EquipmentComponent.WEAPON_SET_COUNT:
-		return false
-	_equipment.switch_weapon_set(set_index)
-	var main_hand := _equipment.get_equipped_item(
-		ItemData.EquipSlot.MAIN_HAND, 0, set_index
-	)
-	var action_slot := _equipment.get_item_action_slot(main_hand)
-	return _equipment.equip(action_slot) or (
-		_equipment.get_current_slot() == action_slot
-	)
+	_slots[0] = QuickAccessSlot.item_slot(config.health_item_id)
 
 
 func _activate_item(item_id: StringName) -> bool:
@@ -263,16 +236,5 @@ func _activate_item(item_id: StringName) -> bool:
 
 
 func _on_inventory_changed() -> void:
-	if not is_slot_available(_active_slot):
-		activate_adjacent_slot(1)
-
-
-func _on_loadout_item_changed(
-	_equip_slot: ItemData.EquipSlot,
-	_slot_index: int,
-	_weapon_set: int,
-	_previous_item_id: StringName,
-	_current_item_id: StringName
-) -> void:
 	if not is_slot_available(_active_slot):
 		activate_adjacent_slot(1)
