@@ -206,7 +206,7 @@ func _rebuild_grid() -> void:
 
 	var stacks := _get_visible_stacks()
 	for stack: InventoryStack in stacks:
-		var button := Button.new()
+		var button := InventoryDragButton.new()
 		button.custom_minimum_size = Vector2(112.0, 74.0)
 		button.text = "%s\nx%d" % [stack.item.display_name, stack.quantity]
 		button.icon = stack.item.icon
@@ -218,16 +218,20 @@ func _rebuild_grid() -> void:
 		)
 		if stack.item.id == _selected_item_id:
 			button.add_theme_stylebox_override("normal", _selected_item_style())
+		button.drag_payload = _inventory_item_payload(stack.item)
+		button.drop_target = InventoryDragButton.TARGET_INVENTORY
+		button.data_dropped.connect(_on_inventory_data_dropped)
 		button.pressed.connect(_select_item.bind(stack.item.id))
 		_grid.add_child(button)
 
 	if _selected_category == ALL_CATEGORIES:
 		for _empty_index in _inventory.get_capacity() - stacks.size():
-			var empty_cell := Button.new()
+			var empty_cell := InventoryDragButton.new()
 			empty_cell.custom_minimum_size = Vector2(112.0, 74.0)
 			empty_cell.text = "Empty"
-			empty_cell.disabled = true
-			empty_cell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			empty_cell.focus_mode = Control.FOCUS_NONE
+			empty_cell.drop_target = InventoryDragButton.TARGET_INVENTORY
+			empty_cell.data_dropped.connect(_on_inventory_data_dropped)
 			_grid.add_child(empty_cell)
 
 
@@ -343,8 +347,10 @@ func _create_quick_buttons() -> void:
 	for child: Node in _quick_buttons.get_children():
 		child.free()
 	for slot_index in range(QuickAccessComponent.FIRST_CONFIGURABLE_SLOT, 8):
-		var button := Button.new()
+		var button := InventoryDragButton.new()
 		button.text = "Assign %d" % (slot_index + 1)
+		button.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
+		button.data_dropped.connect(_on_quick_slot_data_dropped.bind(slot_index))
 		button.pressed.connect(_toggle_selected_quick_slot.bind(slot_index))
 		_quick_buttons.add_child(button)
 
@@ -423,7 +429,7 @@ func _add_equipment_slot_button(
 	weapon_set: int = -1
 ) -> void:
 	var item := _equipment.get_equipped_item(slot, index, weapon_set)
-	var button := Button.new()
+	var button := InventoryDragButton.new()
 	button.custom_minimum_size = Vector2(132.0, 54.0)
 	button.text = "%s\n%s" % [
 		label,
@@ -432,10 +438,22 @@ func _add_equipment_slot_button(
 	button.icon = item.icon if item != null else null
 	button.add_theme_constant_override("icon_max_width", 24)
 	button.expand_icon = true
-	button.disabled = item == null
+	button.drop_target = InventoryDragButton.TARGET_EQUIPMENT
+	button.target_equip_slot = slot
+	button.data_dropped.connect(
+		_on_equipment_data_dropped.bind(slot, index, weapon_set)
+	)
 	if item != null:
 		button.tooltip_text = item.description
 		button.add_theme_color_override("font_color", _rarity_color(item.rarity))
+		button.drag_payload = {
+			"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
+			"item_id": item.id,
+			"equip_slot": slot,
+			"slot_index": index,
+			"weapon_set": weapon_set,
+			"display_name": item.display_name,
+		}
 		button.pressed.connect(
 			_select_equipped_slot.bind(slot, index, weapon_set)
 		)
@@ -546,16 +564,80 @@ func _on_sort_selected(index: int) -> void:
 	_rebuild_grid()
 
 
+func _inventory_item_payload(item: ItemData) -> Dictionary:
+	return {
+		"kind": InventoryDragButton.KIND_INVENTORY_ITEM,
+		"item_id": item.id,
+		"equip_slot": item.equip_slot,
+		"usable": item.usable_in_combat,
+		"display_name": item.display_name,
+	}
+
+
+func _on_inventory_data_dropped(data: Dictionary) -> void:
+	var kind := StringName(data.get("kind", &""))
+	if kind == InventoryDragButton.KIND_EQUIPPED_ITEM:
+		_equipment.unequip_item(
+			int(data.get("equip_slot", ItemData.EquipSlot.NONE)) as ItemData.EquipSlot,
+			int(data.get("slot_index", 0)),
+			int(data.get("weapon_set", -1))
+		)
+	elif kind == InventoryDragButton.KIND_QUICK_SLOT:
+		_quick_access.clear_slot(int(data.get("slot_index", -1)))
+	_rebuild()
+
+
+func _on_equipment_data_dropped(
+	data: Dictionary,
+	slot: ItemData.EquipSlot,
+	index: int,
+	weapon_set: int
+) -> void:
+	if StringName(data.get("kind", &"")) != InventoryDragButton.KIND_INVENTORY_ITEM:
+		return
+	_equipment.equip_inventory_item(
+		StringName(data.get("item_id", &"")), slot, index, weapon_set
+	)
+	_rebuild()
+
+
+func _on_quick_slot_data_dropped(data: Dictionary, slot_index: int) -> void:
+	var kind := StringName(data.get("kind", &""))
+	if kind == InventoryDragButton.KIND_INVENTORY_ITEM:
+		_quick_access.assign_item(
+			slot_index, StringName(data.get("item_id", &""))
+		)
+	elif kind == InventoryDragButton.KIND_QUICK_SLOT:
+		_quick_access.swap_slots(
+			int(data.get("slot_index", -1)), slot_index
+		)
+	_rebuild()
+
+
 func _set_quick_buttons_enabled(value: bool) -> void:
 	var slot_index := QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
-	for button: Button in _quick_buttons.get_children():
+	for button: InventoryDragButton in _quick_buttons.get_children():
 		var slot := _quick_access.get_slot(slot_index)
 		button.text = (
 			"Clear %d" % (slot_index + 1)
 			if slot != null and slot.item_id == _selected_item_id
 			else "Assign %d" % (slot_index + 1)
 		)
-		button.disabled = not value
+		button.disabled = false
+		button.modulate = Color.WHITE if value else Color(0.68, 0.68, 0.68, 0.9)
+		button.drag_payload = {}
+		if slot != null and slot.kind == QuickAccessSlot.Kind.ITEM:
+			var assigned_item := _inventory.get_item_data(slot.item_id)
+			button.drag_payload = {
+				"kind": InventoryDragButton.KIND_QUICK_SLOT,
+				"slot_index": slot_index,
+				"item_id": slot.item_id,
+				"display_name": (
+					assigned_item.display_name
+					if assigned_item != null
+					else String(slot.item_id).capitalize()
+				),
+			}
 		slot_index += 1
 
 

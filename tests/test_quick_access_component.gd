@@ -23,8 +23,14 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 		ItemData.Category.ARMOR,
 		ItemData.CombatMode.NONE
 	)
+	var knife := _create_quick_item(
+		&"throwing_knife",
+		ItemData.Category.THROWABLE,
+		ItemData.CombatMode.THROWABLE
+	)
 	helmet.usable_in_combat = false
 	inventory.add_item(bomb, 3)
+	inventory.add_item(knife, 2)
 	inventory.add_item(helmet)
 
 	assert_eq(quick_access.get_slot(0).kind, QuickAccessSlot.Kind.WEAPON_SET)
@@ -50,6 +56,12 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	var lines := PackedStringArray()
 	overlay._append_quick_access_info(lines)
 	assert_true(lines.has("Quick Slot: 4  fire_bomb x3"))
+	assert_true(quick_access.assign_item(4, knife.id))
+	assert_true(quick_access.swap_slots(3, 4))
+	assert_eq(quick_access.get_slot(3).item_id, knife.id)
+	assert_eq(quick_access.get_slot(4).item_id, bomb.id)
+	assert_eq(quick_access.get_active_slot(), 4)
+	assert_false(quick_access.swap_slots(0, 4))
 
 	input._equipment_slot_request = 1
 	quick_access._process(0.0)

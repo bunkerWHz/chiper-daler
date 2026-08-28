@@ -101,6 +101,33 @@ func clear_slot(slot_index: int) -> bool:
 	return true
 
 
+func swap_slots(first_index: int, second_index: int) -> bool:
+	if (
+		not is_enabled
+		or first_index < FIRST_CONFIGURABLE_SLOT
+		or second_index < FIRST_CONFIGURABLE_SLOT
+		or first_index >= _slots.size()
+		or second_index >= _slots.size()
+		or first_index == second_index
+	):
+		return false
+
+	var first := _slots[first_index]
+	_slots[first_index] = _slots[second_index]
+	_slots[second_index] = first
+	slot_assignment_changed.emit(first_index, _slots[first_index].item_id)
+	slot_assignment_changed.emit(second_index, _slots[second_index].item_id)
+	if _active_slot == first_index:
+		var previous := _active_slot
+		_active_slot = second_index
+		active_slot_changed.emit(previous, _active_slot)
+	elif _active_slot == second_index:
+		var previous := _active_slot
+		_active_slot = first_index
+		active_slot_changed.emit(previous, _active_slot)
+	return true
+
+
 func get_active_slot() -> int:
 	return _active_slot
 

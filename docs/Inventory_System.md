@@ -54,6 +54,8 @@ their configured maximum. Non-stackable items always occupy separate cells.
 5. Paused inventory UI, item details, equipment, filtering, sorting, and quick
    assignment. *(implemented)*
 6. Reactive eight-slot quick-access HUD. *(implemented)*
+7. Drag-and-drop between inventory, equipment, and configurable quick slots.
+   *(implemented)*
 
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
 current functional UI shows all stacks, item details and comparisons, both
@@ -61,7 +63,9 @@ weapon sets, armor and accessory slots, and actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
 that fits and leaves any remainder on the ground. The item grid can be filtered
-by category and sorted by name, category, weight, or value. Manual drag-and-drop
+by category and sorted by name, category, weight, or value. Drag-and-drop
+supports equipping compatible slots, returning equipment to inventory, assigning
+or clearing quick slots, and rearranging quick-slot assignments. Manual item-grid
 ordering and selling remain later interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no

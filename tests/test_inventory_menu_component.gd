@@ -90,6 +90,19 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var dropped_bag := world.get_child(1) as LootBag
 	assert_true(dropped_bag.try_collect(actor))
 	assert_eq(inventory.get_quantity(potion.id), 2)
+	var potion_payload := menu._inventory_item_payload(potion)
+	var quick_drop_target := track(
+		InventoryDragButton.new()
+	) as InventoryDragButton
+	quick_drop_target.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
+	assert_true(quick_drop_target._can_drop_data(Vector2.ZERO, potion_payload))
+	menu._on_quick_slot_data_dropped(potion_payload, 3)
+	assert_eq(quick_access.get_slot(3).item_id, potion.id)
+	menu._on_inventory_data_dropped({
+		"kind": InventoryDragButton.KIND_QUICK_SLOT,
+		"slot_index": 3,
+	})
+	assert_eq(quick_access.get_slot(3).kind, QuickAccessSlot.Kind.EMPTY)
 
 	var sword := ItemData.new()
 	sword.id = &"test_sword"
@@ -101,6 +114,31 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	sword.sell_price = 25
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(sword.id, sword.equip_slot)
+	var sword_payload := menu._inventory_item_payload(sword)
+	var equipment_drop_target := track(
+		InventoryDragButton.new()
+	) as InventoryDragButton
+	equipment_drop_target.drop_target = InventoryDragButton.TARGET_EQUIPMENT
+	equipment_drop_target.target_equip_slot = ItemData.EquipSlot.MAIN_HAND
+	assert_true(equipment_drop_target._can_drop_data(Vector2.ZERO, sword_payload))
+	equipment_drop_target.target_equip_slot = ItemData.EquipSlot.RING
+	assert_false(equipment_drop_target._can_drop_data(Vector2.ZERO, sword_payload))
+	menu._on_inventory_data_dropped({
+		"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
+		"equip_slot": ItemData.EquipSlot.MAIN_HAND,
+		"slot_index": 0,
+		"weapon_set": 0,
+	})
+	assert_false(equipment.is_item_equipped(sword.id))
+	menu._on_equipment_data_dropped(
+		sword_payload, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 1),
+		sword.id
+	)
+	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND, 0, 1)
+	equipment.equip_inventory_item(sword.id, sword.equip_slot, 0, 0)
 	var crossbow := ItemData.new()
 	crossbow.id = &"test_crossbow"
 	crossbow.display_name = "Test Crossbow"
