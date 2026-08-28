@@ -87,6 +87,14 @@ func add_charges(amount: int) -> int:
 	return _remaining_charges - previous
 
 
+func capture_runtime_state() -> Variant:
+	return _remaining_charges
+
+
+func restore_runtime_state(state: Variant) -> void:
+	_remaining_charges = clampi(int(state), 0, config.max_charges)
+
+
 func cancel_throw() -> void:
 	if _phase != Phase.NONE:
 		_set_phase(Phase.NONE, 0.0)

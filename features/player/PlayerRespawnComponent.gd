@@ -104,6 +104,7 @@ func _replace_actor_at_checkpoint() -> bool:
 		return false
 
 	var spawn_position := get_checkpoint_position()
+	var runtime_state := _capture_actor_runtime_state(actor)
 	var sibling_index := actor.get_index()
 	var actor_name := actor.name
 	parent.remove_child(actor)
@@ -113,8 +114,26 @@ func _replace_actor_at_checkpoint() -> bool:
 	parent.add_child(replacement)
 	parent.move_child(replacement, mini(sibling_index, parent.get_child_count() - 1))
 	replacement.global_position = spawn_position
+	_restore_actor_runtime_state(replacement, runtime_state)
 	actor_respawned.emit(replacement)
 	return true
+
+
+func _capture_actor_runtime_state(source: Actor) -> Dictionary:
+	var result := {}
+	for component: Component in source.get_components():
+		var state := component.capture_runtime_state()
+		if state != null:
+			result[String(component.name)] = state
+
+	return result
+
+
+func _restore_actor_runtime_state(target: Actor, state: Dictionary) -> void:
+	for component: Component in target.get_components():
+		var key := String(component.name)
+		if state.has(key):
+			component.restore_runtime_state(state[key])
 
 
 func _get_scene_key() -> String:

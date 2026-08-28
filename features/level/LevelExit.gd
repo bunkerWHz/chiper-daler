@@ -41,7 +41,7 @@ func try_complete(interactor: Actor) -> bool:
 	level_completed.emit(interactor)
 
 	if next_scene != null and is_inside_tree():
-		get_tree().change_scene_to_packed.call_deferred(next_scene)
+		get_tree().call_deferred(&"change_scene_to_packed", next_scene)
 
 	return true
 

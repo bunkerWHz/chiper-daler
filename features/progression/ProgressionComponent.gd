@@ -67,6 +67,27 @@ func is_leveling_up() -> bool:
 	return _level_up_timer > 0.0
 
 
+func capture_runtime_state() -> Variant:
+	return {
+		"level": _level,
+		"experience": _experience,
+	}
+
+
+func restore_runtime_state(state: Variant) -> void:
+	if not state is Dictionary:
+		return
+
+	_level = maxi(int(state.get("level", _level)), 1)
+	_experience = clampi(
+		int(state.get("experience", _experience)),
+		0,
+		get_experience_required() - 1
+	)
+	_level_up_timer = 0.0
+	experience_changed.emit(_experience, get_experience_required())
+
+
 func disable() -> void:
 	_level_up_timer = 0.0
 	super.disable()

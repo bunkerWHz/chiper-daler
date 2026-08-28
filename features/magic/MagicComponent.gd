@@ -63,6 +63,14 @@ func restore_mana(amount: float) -> float:
 	return _mana - previous
 
 
+func capture_runtime_state() -> Variant:
+	return _mana
+
+
+func restore_runtime_state(state: Variant) -> void:
+	_mana = clampf(float(state), 0.0, config.max_mana)
+
+
 func disable() -> void:
 	_set_phase(Phase.NONE, 0.0)
 	super.disable()

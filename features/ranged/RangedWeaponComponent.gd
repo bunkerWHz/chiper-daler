@@ -99,6 +99,21 @@ func add_bolts(amount: int) -> int:
 	return _bolts - previous
 
 
+func capture_runtime_state() -> Variant:
+	return {
+		"arrows": _arrows,
+		"bolts": _bolts,
+	}
+
+
+func restore_runtime_state(state: Variant) -> void:
+	if not state is Dictionary:
+		return
+
+	_arrows = clampi(int(state.get("arrows", _arrows)), 0, config.arrow_count)
+	_bolts = clampi(int(state.get("bolts", _bolts)), 0, config.bolt_count)
+
+
 func cancel_aim() -> void:
 	if _phase == Phase.BOW_AIM or _phase == Phase.CROSSBOW_AIM:
 		_set_phase(Phase.NONE, 0.0)

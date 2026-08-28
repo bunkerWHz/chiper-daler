@@ -18,6 +18,14 @@ func should_disable_on_actor_death() -> bool:
 	return true
 
 
+func capture_runtime_state() -> Variant:
+	return null
+
+
+func restore_runtime_state(_state: Variant) -> void:
+	pass
+
+
 func enable() -> void:
 	is_enabled = true
 	process_mode = Node.PROCESS_MODE_INHERIT

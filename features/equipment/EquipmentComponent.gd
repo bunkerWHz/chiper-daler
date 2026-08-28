@@ -66,3 +66,13 @@ func is_slot_active(slot: Slot) -> bool:
 
 func allows_melee_actions() -> bool:
 	return is_slot_active(Slot.MELEE)
+
+
+func capture_runtime_state() -> Variant:
+	return _current_slot
+
+
+func restore_runtime_state(state: Variant) -> void:
+	var slot := int(state)
+	if slot >= 0 and slot < Slot.size():
+		equip(slot as Slot)

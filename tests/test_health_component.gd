@@ -141,6 +141,40 @@ func test_player_respawn_stores_checkpoint_position() -> void:
 	assert_eq(respawn.get_checkpoint_position(), Vector2(120.0, 64.0))
 
 
+func test_player_respawn_transfers_component_runtime_state() -> void:
+	var source := track(Actor.new()) as Actor
+	var source_components := Node2D.new()
+	source_components.name = "_Components"
+	source.add_child(source_components)
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var respawn := PlayerRespawnComponent.new()
+	respawn.config = PlayerRespawnConfig.new()
+	var progression := ProgressionComponent.new()
+	progression.name = "ProgressionComponent"
+	progression.config = ProgressionConfig.new()
+	for component: Component in [health, respawn, progression]:
+		source_components.add_child(component)
+	source._collect_components()
+	progression.gain_experience(125)
+
+	var saved_state := respawn._capture_actor_runtime_state(source)
+	var replacement := track(Actor.new()) as Actor
+	var replacement_components := Node2D.new()
+	replacement_components.name = "_Components"
+	replacement.add_child(replacement_components)
+	var restored_progression := ProgressionComponent.new()
+	restored_progression.name = "ProgressionComponent"
+	restored_progression.config = ProgressionConfig.new()
+	replacement_components.add_child(restored_progression)
+	replacement._collect_components()
+
+	respawn._restore_actor_runtime_state(replacement, saved_state)
+	assert_eq(restored_progression.get_level(), 2)
+	assert_eq(restored_progression.get_experience(), 25)
+	assert_false(restored_progression.is_leveling_up())
+
+
 func test_health_bar_tracks_health_changes() -> void:
 	var health := _create_health(100.0)
 	var view := track(HealthBarView.new()) as HealthBarView

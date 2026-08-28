@@ -12,7 +12,9 @@ When the player dies, `PlayerRespawnComponent` replaces only the dead Player
 instance after its configured delay. The level scene is not reloaded, so its
 current state remains intact. The replacement Player is a fresh instance with
 all components, collisions, resources, and visuals reset to their scene
-defaults.
+defaults. Stateful components restore earned progression, the equipped slot,
+remaining consumables and ammunition, and current mana. Temporary combat and
+status phases are intentionally cleared by death.
 
 If replacing the Player scene is impossible, respawn safely falls back to the
 previous full-scene reload behavior.
