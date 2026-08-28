@@ -201,8 +201,7 @@ func _rebuild() -> void:
 
 
 func _rebuild_grid() -> void:
-	for child: Node in _grid.get_children():
-		child.free()
+	_clear_dynamic_children(_grid)
 
 	var stacks := _get_visible_stacks()
 	for stack: InventoryStack in stacks:
@@ -348,8 +347,7 @@ func _split_selected_stack() -> void:
 
 
 func _create_quick_buttons() -> void:
-	for child: Node in _quick_buttons.get_children():
-		child.free()
+	_clear_dynamic_children(_quick_buttons)
 	for slot_index in 8:
 		var button := InventoryDragButton.new()
 		button.custom_minimum_size = Vector2(52.0, 46.0)
@@ -384,8 +382,7 @@ func _setup_toolbar() -> void:
 
 
 func _create_weapon_set_buttons() -> void:
-	for child: Node in _weapon_set_buttons.get_children():
-		child.free()
+	_clear_dynamic_children(_weapon_set_buttons)
 	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
 		var button := Button.new()
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -395,8 +392,7 @@ func _create_weapon_set_buttons() -> void:
 
 
 func _rebuild_equipment_slots() -> void:
-	for child: Node in _equipment_slots.get_children():
-		child.free()
+	_clear_dynamic_children(_equipment_slots)
 
 	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
 		_add_equipment_slot_button(
@@ -431,6 +427,12 @@ func _rebuild_equipment_slots() -> void:
 			"Earring %d" % (index + 1), ItemData.EquipSlot.EARRING, index
 		)
 	_refresh_weapon_set_buttons()
+
+
+func _clear_dynamic_children(container: Container) -> void:
+	for child: Node in container.get_children():
+		container.remove_child(child)
+		child.queue_free()
 
 
 func _add_equipment_slot_button(
