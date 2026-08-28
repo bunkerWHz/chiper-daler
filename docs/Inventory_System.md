@@ -41,6 +41,9 @@ the selected quantity.
 The player HUD presents all eight quick-access slots at the bottom of the
 screen. It follows the active slot, weapon-set contents, item assignments,
 icons and stack quantities in real time, and dims empty or unavailable slots.
+Hotbar icons render at a fixed 64 by 64 pixels. Items without final art use the
+shared `assets/icon_placeholder.png` texture, scaled down where smaller menu
+icons are required.
 
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.

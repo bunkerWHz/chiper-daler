@@ -2,6 +2,8 @@ extends Component
 class_name QuickAccessHUDComponent
 
 const SLOT_COUNT := 8
+const ICON_SIZE := Vector2(64.0, 64.0)
+const SLOT_SIZE := Vector2(68.0, 68.0)
 
 var _quick_access: QuickAccessComponent
 var _inventory: InventoryComponent
@@ -10,8 +12,6 @@ var _slot_views: Array[PanelContainer] = []
 var _key_labels: Array[Label] = []
 var _quantity_labels: Array[Label] = []
 var _icons: Array[TextureRect] = []
-var _title_labels: Array[Label] = []
-var _detail_labels: Array[Label] = []
 var _slots_container: HBoxContainer
 
 
@@ -49,7 +49,7 @@ func get_slot_display(slot_index: int) -> Dictionary:
 		"title": "Empty",
 		"detail": "",
 		"quantity": "",
-		"icon": null,
+		"icon": ItemData.PLACEHOLDER_ICON,
 		"available": false,
 		"active": slot_index == _quick_access.get_active_slot(),
 		"equipped": false,
@@ -81,68 +81,68 @@ func _create_slot_views() -> void:
 	_key_labels.clear()
 	_quantity_labels.clear()
 	_icons.clear()
-	_title_labels.clear()
-	_detail_labels.clear()
 
 	for slot_index in SLOT_COUNT:
 		var panel := PanelContainer.new()
 		panel.name = "Slot%d" % (slot_index + 1)
-		panel.custom_minimum_size = Vector2(84.0, 76.0)
+		panel.custom_minimum_size = SLOT_SIZE
+		panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 		var margin := MarginContainer.new()
-		margin.add_theme_constant_override("margin_left", 6)
-		margin.add_theme_constant_override("margin_top", 4)
-		margin.add_theme_constant_override("margin_right", 6)
-		margin.add_theme_constant_override("margin_bottom", 4)
+		margin.add_theme_constant_override("margin_left", 2)
+		margin.add_theme_constant_override("margin_top", 2)
+		margin.add_theme_constant_override("margin_right", 2)
+		margin.add_theme_constant_override("margin_bottom", 2)
 		panel.add_child(margin)
 
-		var content := VBoxContainer.new()
-		content.add_theme_constant_override("separation", 1)
+		var content := Control.new()
+		content.custom_minimum_size = ICON_SIZE
+		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		margin.add_child(content)
 
-		var header := HBoxContainer.new()
-		content.add_child(header)
-		var key_label := Label.new()
-		key_label.name = "Key"
-		key_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		key_label.add_theme_font_size_override("font_size", 11)
-		header.add_child(key_label)
-		var quantity_label := Label.new()
-		quantity_label.name = "Quantity"
-		quantity_label.add_theme_font_size_override("font_size", 11)
-		header.add_child(quantity_label)
-
-		var body := HBoxContainer.new()
-		body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		content.add_child(body)
 		var icon := TextureRect.new()
 		icon.name = "Icon"
-		icon.custom_minimum_size = Vector2(28.0, 28.0)
+		icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		body.add_child(icon)
-		var labels := VBoxContainer.new()
-		labels.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		body.add_child(labels)
-		var title := Label.new()
-		title.name = "Title"
-		title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		title.add_theme_font_size_override("font_size", 11)
-		labels.add_child(title)
-		var detail := Label.new()
-		detail.name = "Detail"
-		detail.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		detail.add_theme_font_size_override("font_size", 9)
-		labels.add_child(detail)
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(icon)
+
+		var key_label := Label.new()
+		key_label.name = "Key"
+		key_label.offset_left = 3.0
+		key_label.offset_top = 1.0
+		key_label.offset_right = 23.0
+		key_label.offset_bottom = 20.0
+		key_label.add_theme_font_size_override("font_size", 11)
+		key_label.add_theme_color_override("font_outline_color", Color.BLACK)
+		key_label.add_theme_constant_override("outline_size", 3)
+		key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(key_label)
+
+		var quantity_label := Label.new()
+		quantity_label.name = "Quantity"
+		quantity_label.anchor_left = 1.0
+		quantity_label.anchor_top = 1.0
+		quantity_label.anchor_right = 1.0
+		quantity_label.anchor_bottom = 1.0
+		quantity_label.offset_left = -43.0
+		quantity_label.offset_top = -21.0
+		quantity_label.offset_right = -3.0
+		quantity_label.offset_bottom = -1.0
+		quantity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		quantity_label.add_theme_font_size_override("font_size", 11)
+		quantity_label.add_theme_color_override("font_outline_color", Color.BLACK)
+		quantity_label.add_theme_constant_override("outline_size", 3)
+		quantity_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(quantity_label)
 
 		_slots_container.add_child(panel)
 		_slot_views.append(panel)
 		_key_labels.append(key_label)
 		_quantity_labels.append(quantity_label)
 		_icons.append(icon)
-		_title_labels.append(title)
-		_detail_labels.append(detail)
 
 
 func _connect_signals() -> void:
@@ -160,16 +160,10 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 	var key_label := _key_labels[slot_index]
 	var quantity_label := _quantity_labels[slot_index]
 	var icon := _icons[slot_index]
-	var title := _title_labels[slot_index]
-	var detail := _detail_labels[slot_index]
 
 	key_label.text = String(display.key)
 	quantity_label.text = String(display.quantity)
 	icon.texture = display.icon as Texture2D
-	icon.visible = icon.texture != null
-	title.text = String(display.title)
-	detail.text = String(display.detail)
-	detail.visible = not detail.text.is_empty()
 	panel.modulate = Color.WHITE if bool(display.available) else Color(0.55, 0.55, 0.55, 0.75)
 	panel.add_theme_stylebox_override(
 		"panel",
@@ -193,11 +187,11 @@ func _apply_weapon_set_display(result: Dictionary, weapon_set: int) -> void:
 	var names := PackedStringArray()
 	if main_hand != null:
 		names.append(main_hand.display_name)
-		result.icon = main_hand.icon
+		result.icon = main_hand.get_display_icon()
 	if off_hand != null:
 		names.append(off_hand.display_name)
-		if result.icon == null:
-			result.icon = off_hand.icon
+		if main_hand == null:
+			result.icon = off_hand.get_display_icon()
 	var loadout := " + ".join(names) if not names.is_empty() else "No weapon"
 	result.detail = "Active • %s" % loadout if bool(result.equipped) else loadout
 	result.available = not names.is_empty()
@@ -212,7 +206,7 @@ func _apply_item_display(result: Dictionary, item_id: StringName) -> void:
 		result.detail = "Unavailable" if not item_id.is_empty() else ""
 		return
 	result.title = item.display_name
-	result.icon = item.icon
+	result.icon = item.get_display_icon()
 	result.available = quantity > 0
 	result.detail = "Ready" if quantity > 0 else "Unavailable"
 

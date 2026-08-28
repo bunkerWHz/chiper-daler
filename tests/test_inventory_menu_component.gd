@@ -68,6 +68,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	assert_eq((grid.get_child(0) as Button).text, "Test Potion\nx3")
+	assert_eq((grid.get_child(0) as Button).icon, ItemData.PLACEHOLDER_ICON)
+	assert_eq((grid.get_child(1) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	var summary := menu.get_node(
 		"CanvasLayer/Overlay/Panel/Main/Content/Inventory/Summary"
 	) as Label

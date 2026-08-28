@@ -27,10 +27,13 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	assert_true(weapon_display.available)
 	assert_true(weapon_display.equipped)
 	assert_eq(weapon_display.detail, "Active • Sword")
+	assert_eq(weapon_display.icon, ItemData.PLACEHOLDER_ICON)
+	assert_eq(QuickAccessHUDComponent.ICON_SIZE, Vector2(64.0, 64.0))
 	var item_display := hud.get_slot_display(3)
 	assert_true(item_display.available)
 	assert_eq(item_display.title, "Fire Bomb")
 	assert_eq(item_display.quantity, "x3")
+	assert_eq(item_display.icon, ItemData.PLACEHOLDER_ICON)
 
 	quick_access.activate_slot(3)
 	assert_true(hud.get_slot_display(3).active)

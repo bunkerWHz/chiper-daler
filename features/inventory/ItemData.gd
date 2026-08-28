@@ -1,6 +1,8 @@
 extends Resource
 class_name ItemData
 
+const PLACEHOLDER_ICON: Texture2D = preload("res://assets/icon_placeholder.png")
+
 enum Category {
 	WEAPON,
 	ARMOR,
@@ -87,3 +89,7 @@ func get_effective_stack_size() -> int:
 
 func can_equip_in(slot: EquipSlot) -> bool:
 	return equip_slot != EquipSlot.NONE and equip_slot == slot
+
+
+func get_display_icon() -> Texture2D:
+	return icon if icon != null else PLACEHOLDER_ICON

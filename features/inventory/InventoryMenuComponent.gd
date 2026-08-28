@@ -209,8 +209,8 @@ func _rebuild_grid() -> void:
 		var button := InventoryDragButton.new()
 		button.custom_minimum_size = Vector2(112.0, 74.0)
 		button.text = "%s\nx%d" % [stack.item.display_name, stack.quantity]
-		button.icon = stack.item.icon
-		button.add_theme_constant_override("icon_max_width", 28)
+		button.icon = stack.item.get_display_icon()
+		button.add_theme_constant_override("icon_max_width", 48)
 		button.expand_icon = true
 		button.tooltip_text = stack.item.description
 		button.add_theme_color_override(
@@ -229,6 +229,10 @@ func _rebuild_grid() -> void:
 			var empty_cell := InventoryDragButton.new()
 			empty_cell.custom_minimum_size = Vector2(112.0, 74.0)
 			empty_cell.text = "Empty"
+			empty_cell.icon = ItemData.PLACEHOLDER_ICON
+			empty_cell.add_theme_constant_override("icon_max_width", 48)
+			empty_cell.expand_icon = true
+			empty_cell.modulate = Color(0.45, 0.45, 0.45, 0.55)
 			empty_cell.focus_mode = Control.FOCUS_NONE
 			empty_cell.drop_target = InventoryDragButton.TARGET_INVENTORY
 			empty_cell.data_dropped.connect(_on_inventory_data_dropped)
@@ -349,6 +353,9 @@ func _create_quick_buttons() -> void:
 	for slot_index in range(QuickAccessComponent.FIRST_CONFIGURABLE_SLOT, 8):
 		var button := InventoryDragButton.new()
 		button.text = "Assign %d" % (slot_index + 1)
+		button.icon = ItemData.PLACEHOLDER_ICON
+		button.add_theme_constant_override("icon_max_width", 32)
+		button.expand_icon = true
 		button.drop_target = InventoryDragButton.TARGET_QUICK_SLOT
 		button.data_dropped.connect(_on_quick_slot_data_dropped.bind(slot_index))
 		button.pressed.connect(_toggle_selected_quick_slot.bind(slot_index))
@@ -435,7 +442,7 @@ func _add_equipment_slot_button(
 		label,
 		item.display_name if item != null else "—",
 	]
-	button.icon = item.icon if item != null else null
+	button.icon = item.get_display_icon() if item != null else ItemData.PLACEHOLDER_ICON
 	button.add_theme_constant_override("icon_max_width", 24)
 	button.expand_icon = true
 	button.drop_target = InventoryDragButton.TARGET_EQUIPMENT
@@ -626,8 +633,11 @@ func _set_quick_buttons_enabled(value: bool) -> void:
 		button.disabled = false
 		button.modulate = Color.WHITE if value else Color(0.68, 0.68, 0.68, 0.9)
 		button.drag_payload = {}
+		button.icon = ItemData.PLACEHOLDER_ICON
 		if slot != null and slot.kind == QuickAccessSlot.Kind.ITEM:
 			var assigned_item := _inventory.get_item_data(slot.item_id)
+			if assigned_item != null:
+				button.icon = assigned_item.get_display_icon()
 			button.drag_payload = {
 				"kind": InventoryDragButton.KIND_QUICK_SLOT,
 				"slot_index": slot_index,
