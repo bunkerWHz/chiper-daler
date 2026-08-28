@@ -15,6 +15,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	actor.add_child(components)
 
 	var input := InputComponent.new()
+	var attributes := CharacterAttributesComponent.new()
+	attributes.dexterity = 1
 	var inventory := InventoryComponent.new()
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
@@ -30,6 +32,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var menu := menu_scene.instantiate() as InventoryMenuComponent
 	for component: Component in [
 		input,
+		attributes,
 		inventory,
 		equipment,
 		quick_access,
@@ -66,5 +69,35 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var dropped_bag := world.get_child(1) as LootBag
 	assert_true(dropped_bag.try_collect(actor))
 	assert_eq(inventory.get_quantity(potion.id), 2)
+
+	var sword := ItemData.new()
+	sword.id = &"test_sword"
+	sword.display_name = "Test Sword"
+	sword.category = ItemData.Category.WEAPON
+	sword.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	sword.stats = ItemStats.new()
+	sword.stats.damage = 5.0
+	inventory.add_item(sword)
+	equipment.equip_inventory_item(sword.id, sword.equip_slot)
+	var crossbow := ItemData.new()
+	crossbow.id = &"test_crossbow"
+	crossbow.display_name = "Test Crossbow"
+	crossbow.category = ItemData.Category.WEAPON
+	crossbow.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	crossbow.stats = ItemStats.new()
+	crossbow.stats.damage = 12.0
+	crossbow.stats.dexterity_requirement = 3
+	inventory.add_item(crossbow)
+	menu._select_item(crossbow.id)
+	var details := menu.get_node(
+		"CanvasLayer/Overlay/Panel/Main/Details"
+	) as Label
+	var equip_button := menu.get_node(
+		"CanvasLayer/Overlay/Panel/Main/Actions/Equip"
+	) as Button
+	assert_true(details.text.contains("Requirements not met: DEX 3"))
+	assert_true(details.text.contains("Compared with Test Sword"))
+	assert_true(details.text.contains("Damage +7.0"))
+	assert_true(equip_button.disabled)
 	menu.close_inventory()
 	assert_false(menu.is_open())

@@ -29,6 +29,7 @@ const WEAPON_SET_COUNT := 2
 
 var _input_component: InputComponent
 var _inventory_component: InventoryComponent
+var _attributes_component: CharacterAttributesComponent
 var _current_slot: Slot = Slot.MELEE
 var _active_weapon_set: int = 0
 var _equipped_items: Dictionary = {}
@@ -39,6 +40,17 @@ func on_initialize() -> void:
 	_inventory_component = (
 		actor.get_component(InventoryComponent) as InventoryComponent
 	)
+	_attributes_component = (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	if (
+		_attributes_component != null
+		and not _attributes_component.attributes_changed.is_connected(
+			_on_attributes_changed
+		)
+	):
+		_attributes_component.attributes_changed.connect(_on_attributes_changed)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("EquipmentComponent requires an enabled InputComponent")
@@ -98,7 +110,11 @@ func equip_inventory_item(
 		return false
 
 	var item := _inventory_component.get_item_data(item_id)
-	if item == null or not item.can_equip_in(target_slot):
+	if (
+		item == null
+		or not item.can_equip_in(target_slot)
+		or not meets_item_requirements(item)
+	):
 		return false
 
 	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
@@ -196,6 +212,42 @@ func get_active_weapon_set() -> int:
 	return _active_weapon_set
 
 
+func meets_item_requirements(item: ItemData) -> bool:
+	return (
+		_attributes_component == null
+		or _attributes_component.meets_item_requirements(item)
+	)
+
+
+func get_requirement_failure(item: ItemData) -> String:
+	if _attributes_component == null:
+		return ""
+	return _attributes_component.get_requirement_failure(item)
+
+
+func get_active_weapon_damage() -> float:
+	var item := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	return item.stats.damage if item != null and item.stats != null else 0.0
+
+
+func get_total_defense() -> float:
+	var total := 0.0
+	for item: ItemData in _get_effective_equipped_items():
+		if item.stats != null:
+			total += item.stats.defense
+	return total
+
+
+func get_total_buff_value(buff_type: StringName) -> float:
+	if buff_type.is_empty():
+		return 0.0
+	var total := 0.0
+	for item: ItemData in _get_effective_equipped_items():
+		if item.stats != null and item.stats.buff_type == buff_type:
+			total += item.stats.buff_value
+	return total
+
+
 func get_item_action_slot(item: ItemData) -> Slot:
 	if item == null:
 		return Slot.MELEE
@@ -257,9 +309,14 @@ func restore_runtime_state(state: Variant) -> void:
 	if equipped_state is Dictionary:
 		for key: Variant in equipped_state:
 			var item_id := StringName(equipped_state[key])
+			var item := (
+				_inventory_component.get_item_data(item_id)
+				if _inventory_component != null
+				else null
+			)
 			if (
-				_inventory_component != null
-				and _inventory_component.has_item(item_id)
+				item != null
+				and meets_item_requirements(item)
 			):
 				_equipped_items[String(key)] = item_id
 
@@ -292,14 +349,18 @@ func _make_equipment_key(
 
 
 func _on_inventory_changed() -> void:
+	var previous_active_main := get_equipped_item_id(
+		ItemData.EquipSlot.MAIN_HAND
+	)
 	var equipped_counts := {}
 	for key: Variant in _equipped_items.keys():
 		var item_id := StringName(_equipped_items[key])
 		var used_count := int(equipped_counts.get(item_id, 0))
 		if used_count >= _inventory_component.get_quantity(item_id):
-			_equipped_items.erase(key)
+			_remove_equipped_key(key)
 		else:
 			equipped_counts[item_id] = used_count + 1
+	_update_mode_after_active_weapon_removal(previous_active_main)
 
 
 func _count_equipped_item(item_id: StringName) -> int:
@@ -326,3 +387,79 @@ func _equip_starting_weapon_sets() -> void:
 				equip_inventory_item(
 					off_id, ItemData.EquipSlot.OFF_HAND, 0, set_index
 				)
+
+
+func _get_effective_equipped_items() -> Array[ItemData]:
+	var result: Array[ItemData] = []
+	_append_equipped_item(
+		result, ItemData.EquipSlot.MAIN_HAND, 0, _active_weapon_set
+	)
+	_append_equipped_item(
+		result, ItemData.EquipSlot.OFF_HAND, 0, _active_weapon_set
+	)
+	for slot: ItemData.EquipSlot in [
+		ItemData.EquipSlot.HEAD,
+		ItemData.EquipSlot.CHEST,
+		ItemData.EquipSlot.HANDS,
+		ItemData.EquipSlot.LEGS,
+		ItemData.EquipSlot.AMULET,
+		ItemData.EquipSlot.BACK,
+	]:
+		_append_equipped_item(result, slot)
+	for index in 2:
+		_append_equipped_item(result, ItemData.EquipSlot.RING, index)
+		_append_equipped_item(result, ItemData.EquipSlot.EARRING, index)
+	return result
+
+
+func _append_equipped_item(
+	result: Array[ItemData],
+	slot: ItemData.EquipSlot,
+	index: int = 0,
+	weapon_set: int = -1
+) -> void:
+	var item := get_equipped_item(slot, index, weapon_set)
+	if item != null:
+		result.append(item)
+
+
+func _on_attributes_changed(_strength: int, _dexterity: int) -> void:
+	if _inventory_component == null:
+		return
+	var previous_active_main := get_equipped_item_id(
+		ItemData.EquipSlot.MAIN_HAND
+	)
+	for key: Variant in _equipped_items.keys():
+		var item := _inventory_component.get_item_data(
+			StringName(_equipped_items[key])
+		)
+		if item == null or not meets_item_requirements(item):
+			_remove_equipped_key(key)
+	_update_mode_after_active_weapon_removal(previous_active_main)
+
+
+func _update_mode_after_active_weapon_removal(
+	previous_active_main: StringName
+) -> void:
+	if (
+		not previous_active_main.is_empty()
+		and get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND).is_empty()
+	):
+		equip(Slot.MELEE)
+
+
+func _remove_equipped_key(key: Variant) -> void:
+	if not _equipped_items.has(key):
+		return
+	var previous := StringName(_equipped_items[key])
+	var parts := String(key).split(":")
+	_equipped_items.erase(key)
+	if parts.size() != 3:
+		return
+	loadout_item_changed.emit(
+		int(parts[0]) as ItemData.EquipSlot,
+		int(parts[1]),
+		int(parts[2]),
+		previous,
+		&""
+	)

@@ -8,6 +8,7 @@ var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
 var _quick_access: QuickAccessComponent
 var _inventory_drop: InventoryDropComponent
+var _attributes: CharacterAttributesComponent
 var _overlay: Control
 var _grid: GridContainer
 var _equipment_text: Label
@@ -25,6 +26,10 @@ func on_initialize() -> void:
 	_quick_access = actor.get_component(QuickAccessComponent) as QuickAccessComponent
 	_inventory_drop = (
 		actor.get_component(InventoryDropComponent) as InventoryDropComponent
+	)
+	_attributes = (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
 	)
 	if (
 		_input == null
@@ -86,6 +91,8 @@ func _ready() -> void:
 	_drop_button.pressed.connect(_drop_selected_item)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_changed)
+	if _attributes != null:
+		_attributes.attributes_changed.connect(_on_attributes_changed)
 	_create_quick_buttons()
 
 
@@ -155,15 +162,23 @@ func _rebuild_details() -> void:
 		_set_quick_buttons_enabled(false)
 		return
 
-	_details_text.text = "%s [%s]\n%s\nQty: %d  Weight: %.2f  Sell: %d" % [
+	var detail_lines := PackedStringArray()
+	detail_lines.append("%s [%s]" % [
 		item.display_name,
 		ItemData.Category.keys()[item.category].capitalize(),
-		item.description,
+	])
+	detail_lines.append(item.description)
+	detail_lines.append("Qty: %d  Weight: %.2f  Sell: %d" % [
 		_inventory.get_quantity(item.id),
 		item.weight,
 		item.sell_price,
-	]
-	_equip_button.disabled = item.equip_slot == ItemData.EquipSlot.NONE
+	])
+	_append_item_stats(detail_lines, item)
+	_details_text.text = "\n".join(detail_lines)
+	_equip_button.disabled = (
+		item.equip_slot == ItemData.EquipSlot.NONE
+		or not _equipment.meets_item_requirements(item)
+	)
 	_drop_button.disabled = item.is_key_item
 	_set_quick_buttons_enabled(item.usable_in_combat)
 
@@ -210,6 +225,16 @@ func _set_quick_buttons_enabled(value: bool) -> void:
 
 func _rebuild_equipment_text() -> void:
 	var lines := PackedStringArray()
+	var attributes := (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	if attributes != null:
+		lines.append("STR: %d  DEX: %d" % [
+			attributes.strength,
+			attributes.dexterity,
+		])
+	lines.append("Total Defense: %.1f" % _equipment.get_total_defense())
 	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
 		lines.append("Weapon Set %d%s" % [
 			set_index + 1,
@@ -246,6 +271,36 @@ func _rebuild_equipment_text() -> void:
 	_equipment_text.text = "\n".join(lines)
 
 
+func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
+	if item.stats == null:
+		return
+	lines.append("Damage: %.1f  Defense: %.1f" % [
+		item.stats.damage,
+		item.stats.defense,
+	])
+	if (
+		item.stats.strength_requirement > 0
+		or item.stats.dexterity_requirement > 0
+	):
+		lines.append("Requires STR %d / DEX %d" % [
+			item.stats.strength_requirement,
+			item.stats.dexterity_requirement,
+		])
+	var failure := _equipment.get_requirement_failure(item)
+	if not failure.is_empty():
+		lines.append("Requirements not met: %s" % failure)
+	if item.equip_slot == ItemData.EquipSlot.NONE:
+		return
+	var equipped := _equipment.get_equipped_item(item.equip_slot)
+	if equipped == null or equipped.id == item.id or equipped.stats == null:
+		return
+	lines.append("Compared with %s: Damage %+.1f / Defense %+.1f" % [
+		equipped.display_name,
+		item.stats.damage - equipped.stats.damage,
+		item.stats.defense - equipped.stats.defense,
+	])
+
+
 func _equipped_name(
 	slot: ItemData.EquipSlot,
 	index: int = 0,
@@ -268,4 +323,9 @@ func _on_loadout_changed(
 	_current: StringName
 ) -> void:
 	if is_open():
-		_rebuild_equipment_text()
+		_rebuild()
+
+
+func _on_attributes_changed(_strength: int, _dexterity: int) -> void:
+	if is_open():
+		_rebuild()

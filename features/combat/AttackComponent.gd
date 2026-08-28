@@ -209,9 +209,13 @@ func _start_attack(heavy: bool) -> bool:
 		config.heavy_active_duration if heavy else config.active_duration
 	)
 	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
+	var equipped_damage := _get_equipped_melee_damage()
+	_hitbox_component.damage = equipped_damage
 
 	if heavy:
-		_hitbox_component.damage = _base_damage * config.heavy_damage_multiplier
+		_hitbox_component.damage = (
+			equipped_damage * config.heavy_damage_multiplier
+		)
 		_hitbox_component.horizontal_knockback = (
 			_base_horizontal_knockback * config.heavy_knockback_multiplier
 		)
@@ -227,11 +231,21 @@ func _start_attack(heavy: bool) -> bool:
 
 func _restore_hitbox_damage() -> void:
 	if _hitbox_component != null:
-		_hitbox_component.damage = _base_damage
+		_hitbox_component.damage = _get_equipped_melee_damage()
 		_hitbox_component.horizontal_knockback = _base_horizontal_knockback
 		_hitbox_component.vertical_knockback = _base_vertical_knockback
 
 	_is_heavy_attack = false
+
+
+func _get_equipped_melee_damage() -> float:
+	var result := _base_damage
+	if (
+		_equipment_component != null
+		and _equipment_component.has_method("get_active_weapon_damage")
+	):
+		result += float(_equipment_component.call("get_active_weapon_damage"))
+	return result
 
 
 func _allows_melee_actions() -> bool:

@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/stats/CharacterAttributesComponent.gd" id="1_component"]
+
+[node name="CharacterAttributesComponent" type="Node"]
+script = ExtResource("1_component")
+strength = 5
+dexterity = 5

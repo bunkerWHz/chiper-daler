@@ -83,7 +83,14 @@ func _cast_spell() -> void:
 		var projectile := preload("res://features/throwing/ThrownProjectile.tscn").instantiate() as ThrownProjectile
 		parent.add_child(projectile)
 		projectile.global_position = actor.global_position
-		projectile.setup(actor, float(_facing.get_direction()), config.projectile_speed, config.damage, 120.0, 2.0)
+		projectile.setup(
+			actor,
+			float(_facing.get_direction()),
+			config.projectile_speed,
+			config.damage + _equipment.get_active_weapon_damage(),
+			120.0,
+			2.0
+		)
 	_set_phase(Phase.CAST, config.cast_duration)
 
 

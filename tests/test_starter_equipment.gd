@@ -60,6 +60,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_true(quick_access.activate_slot(1))
 	assert_eq(equipment.get_active_weapon_set(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
+	assert_eq(equipment.get_total_defense(), 0.0)
 	assert_false(quick_access.activate_slot(3))
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
 

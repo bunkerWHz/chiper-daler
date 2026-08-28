@@ -47,6 +47,8 @@
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessComponent.tscn" id="41_quick_access"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryMenuComponent.tscn" id="42_inventory_menu"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryDropComponent.tscn" id="43_inventory_drop"]
+[ext_resource type="PackedScene" path="res://features/stats/CharacterAttributesComponent.tscn" id="44_attributes"]
+[ext_resource type="PackedScene" path="res://features/equipment/EquipmentDefenseComponent.tscn" id="45_equipment_defense"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -342,7 +344,11 @@ metadata/_custom_type_script = "uid://bcwnhbaqj47sg"
 script = ExtResource("9_ohvm5")
 metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
+[node name="CharacterAttributesComponent" parent="_Components" instance=ExtResource("44_attributes")]
+
 [node name="EquipmentComponent" parent="_Components" instance=ExtResource("32_equipment")]
+
+[node name="EquipmentDefenseComponent" parent="_Components" instance=ExtResource("45_equipment_defense")]
 
 [node name="ItemUseComponent" parent="_Components" instance=ExtResource("33_item_use")]
 

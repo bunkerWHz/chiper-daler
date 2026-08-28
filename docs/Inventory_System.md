@@ -24,6 +24,14 @@ Crossbow, Apprentice Focus, and three Health Potions. Weapon set one starts as
 sword and shield; set two starts with the bow. Crossbow and focus remain in the
 inventory and can replace a main-hand weapon through the equipment menu.
 
+Equipped main-hand damage is added to melee, bow, crossbow, and magic base
+damage. Heavy melee attacks multiply the combined value. Defense from the
+active weapon set, armor, and accessories reduces incoming damage with
+`damage * 100 / (100 + defense)`. Strength and dexterity requirements prevent
+equipping an item until the Actor has the required attributes. The inventory
+details panel shows these values and compares an item with the active equipped
+item in the same slot.
+
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
 

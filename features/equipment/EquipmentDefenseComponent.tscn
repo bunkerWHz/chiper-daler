@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/equipment/EquipmentDefenseComponent.gd" id="1_component"]
+
+[node name="EquipmentDefenseComponent" type="Node"]
+script = ExtResource("1_component")
+defense_scale = 100.0

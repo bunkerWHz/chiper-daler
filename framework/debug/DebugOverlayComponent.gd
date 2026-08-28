@@ -94,6 +94,19 @@ func _append_equipment_info(lines: PackedStringArray) -> void:
 			String(off_hand) if not off_hand.is_empty() else "none",
 		]
 	)
+	lines.append("Equipment Stats: Damage %.1f  Defense %.1f" % [
+		equipment.get_active_weapon_damage(),
+		equipment.get_total_defense(),
+	])
+	var attributes := (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	if attributes != null and attributes.is_enabled:
+		lines.append("Attributes: STR %d  DEX %d" % [
+			attributes.strength,
+			attributes.dexterity,
+		])
 
 
 func _append_item_info(lines: PackedStringArray) -> void:

@@ -177,7 +177,7 @@ func _spawn_projectile(speed: float, damage: float) -> void:
 		actor,
 		float(_facing_component.get_direction()),
 		speed,
-		damage,
+		damage + _equipment_component.get_active_weapon_damage(),
 		config.knockback,
 		config.projectile_lifetime
 	)
