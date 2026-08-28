@@ -65,6 +65,8 @@ func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	assert_true(target._can_drop_data(Vector2.ZERO, tonic_payload))
 	target._drop_data(Vector2.ZERO, tonic_payload)
 	assert_eq(quick_access.get_slot(4).item_id, tonic.id)
+	hud._on_slot_drag_finished(false, Vector2(-100.0, -100.0), 4)
+	assert_eq(quick_access.get_slot(4).kind, QuickAccessSlot.Kind.EMPTY)
 	hud._on_inventory_open_changed(false)
 	assert_false(hud.get_slot_view(1).visible)
 

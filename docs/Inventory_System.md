@@ -50,6 +50,11 @@ at a fixed 64 by 64 pixels. Items without final art use the shared
 `assets/icon_placeholder.png` texture, scaled down where smaller menu icons are
 required.
 
+Each item type may be assigned to only one quick-access slot, including the
+fixed health-potion slot. A configurable assignment can be removed by dragging
+it back into the inventory grid or releasing it outside the hotbar while the
+inventory is open.
+
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
 

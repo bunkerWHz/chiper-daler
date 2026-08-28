@@ -2,6 +2,7 @@ extends Button
 class_name InventoryDragButton
 
 signal data_dropped(data: Dictionary)
+signal drag_finished(successful: bool, pointer_position: Vector2)
 
 const KIND_INVENTORY_ITEM: StringName = &"inventory_item"
 const KIND_EQUIPPED_ITEM: StringName = &"equipped_item"
@@ -18,6 +19,17 @@ var drop_target: StringName = TARGET_NONE
 var target_equip_slot: int = ItemData.EquipSlot.NONE
 var _drag_armed := false
 var _drag_origin := Vector2.ZERO
+var _drag_in_progress := false
+
+
+func _notification(what: int) -> void:
+	if what != NOTIFICATION_DRAG_END or not _drag_in_progress:
+		return
+	_drag_in_progress = false
+	var viewport := get_viewport()
+	drag_finished.emit(
+		viewport.gui_is_drag_successful(), viewport.get_mouse_position()
+	)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -33,6 +45,7 @@ func _gui_input(event: InputEvent) -> void:
 	if mouse_motion.position.distance_to(_drag_origin) < DRAG_THRESHOLD:
 		return
 	_drag_armed = false
+	_drag_in_progress = true
 	force_drag(drag_payload.duplicate(true), _create_drag_preview())
 	accept_event()
 
@@ -41,6 +54,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	if drag_payload.is_empty():
 		return null
 	_drag_armed = false
+	_drag_in_progress = true
 	set_drag_preview(_create_drag_preview())
 	return drag_payload.duplicate(true)
 

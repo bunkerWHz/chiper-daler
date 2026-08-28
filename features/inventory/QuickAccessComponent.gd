@@ -117,8 +117,12 @@ func assign_item(slot_index: int, item_id: StringName) -> bool:
 	if item == null or not item.usable_in_combat:
 		return false
 
-	for index in range(FIRST_CONFIGURABLE_SLOT, _slots.size()):
-		if index != slot_index and _slots[index].item_id == item_id:
+	for index in _slots.size():
+		if (
+			index != slot_index
+			and _slots[index].kind == QuickAccessSlot.Kind.ITEM
+			and _slots[index].item_id == item_id
+		):
 			return false
 
 	_slots[slot_index] = QuickAccessSlot.item_slot(item_id)

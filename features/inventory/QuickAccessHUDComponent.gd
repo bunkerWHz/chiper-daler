@@ -95,6 +95,7 @@ func _create_slot_views() -> void:
 		panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		panel.focus_mode = Control.FOCUS_NONE
 		panel.data_dropped.connect(_on_slot_data_dropped.bind(slot_index))
+		panel.drag_finished.connect(_on_slot_drag_finished.bind(slot_index))
 
 		var content := Control.new()
 		content.custom_minimum_size = ICON_SIZE
@@ -302,6 +303,22 @@ func _on_slot_data_dropped(data: Dictionary, slot_index: int) -> void:
 		_quick_access.swap_slots(
 			int(data.get("slot_index", -1)), slot_index
 		)
+	refresh()
+
+
+func _on_slot_drag_finished(
+	successful: bool,
+	pointer_position: Vector2,
+	slot_index: int
+) -> void:
+	if (
+		successful
+		or not _inventory_open
+		or slot_index < QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
+		or _slots_container.get_global_rect().has_point(pointer_position)
+	):
+		return
+	_quick_access.clear_slot(slot_index)
 	refresh()
 
 

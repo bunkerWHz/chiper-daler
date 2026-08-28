@@ -50,6 +50,13 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	assert_false(quick_access.is_slot_available(2))
 	assert_false(quick_access.assign_item(2, bomb.id))
 	assert_false(quick_access.assign_item(3, helmet.id))
+	var health_potion := _create_quick_item(
+		&"health_potion",
+		ItemData.Category.CONSUMABLE,
+		ItemData.CombatMode.NONE
+	)
+	inventory.add_item(health_potion, 2)
+	assert_false(quick_access.assign_item(3, health_potion.id))
 	assert_false(quick_access.activate_slot(4))
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	assert_eq(InputComponent.EQUIPMENT_ACTIONS[0], &"quick_slot_1")
