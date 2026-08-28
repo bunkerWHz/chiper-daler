@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/inventory/QuickAccessHUDComponent.gd" id="1_component"]
+
+[node name="QuickAccessHUDComponent" type="Node"]
+script = ExtResource("1_component")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="BottomMargin" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -96.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="Slots" type="HBoxContainer" parent="CanvasLayer/BottomMargin"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 5

@@ -38,6 +38,10 @@ splitting when a free cell exists, and quantity-confirmed dropping. Key items
 cannot be dropped. A confirmed multi-item drop creates one loot bag containing
 the selected quantity.
 
+The player HUD presents all eight quick-access slots at the bottom of the
+screen. It follows the active slot, weapon-set contents, item assignments,
+icons and stack quantities in real time, and dims empty or unavailable slots.
+
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
 
@@ -49,15 +53,15 @@ their configured maximum. Non-stackable items always occupy separate cells.
 4. Loot-bag and enemy-drop integration. *(implemented)*
 5. Paused inventory UI, item details, equipment, and quick assignment.
    *(first functional version implemented)*
+6. Reactive eight-slot quick-access HUD. *(implemented)*
 
 Press `I` to open or close the inventory. Opening it pauses the scene tree. The
-current functional UI shows all stacks, item details, both weapon sets, armor
-and accessory slots, and buttons for equipment and quick slots four through
-eight. `Drop One` removes one non-key item and creates an interactable loot bag
-at the player's position. The same multi-stack bag is used by enemy drop tables;
-collecting it transfers everything that fits and leaves any remainder on the
-ground. Visual styling, drag-and-drop, sorting, comparison, splitting, selling,
-and quantity confirmation remain later presentation/interaction work.
+current functional UI shows all stacks, item details and comparisons, both
+weapon sets, armor and accessory slots, and actions for using, equipping,
+splitting, quick-slot assignment, and quantity-confirmed dropping. The same
+multi-stack bag is used by enemy drop tables; collecting it transfers everything
+that fits and leaves any remainder on the ground. Visual styling, drag-and-drop,
+sorting, and selling remain later presentation/interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
