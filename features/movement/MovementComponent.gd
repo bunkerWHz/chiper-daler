@@ -16,6 +16,7 @@ var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
 var _dodge_component: DodgeComponent
 var _climbing_component: ClimbingComponent
+var _guard_component: GuardComponent
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _jump_count: int = 0
@@ -61,6 +62,11 @@ func on_initialize() -> void:
 	if _climbing_component != null and not _climbing_component.is_enabled:
 		_climbing_component = null
 
+	_guard_component = actor.get_component(GuardComponent) as GuardComponent
+
+	if _guard_component != null and not _guard_component.is_enabled:
+		_guard_component = null
+
 
 func _physics_process(delta: float) -> void:
 	if _dodge_component != null and _dodge_component.is_dodging():
@@ -83,6 +89,10 @@ func _physics_process(delta: float) -> void:
 		_body_component.move_and_slide()
 		_update_state()
 		return
+
+	if _guard_component != null and _guard_component.is_defending():
+		_apply_guard_stance(delta)
+		return
 	
 	_update_jump_buffer(delta)
 	_update_coyote_time(delta)
@@ -95,6 +105,18 @@ func _physics_process(delta: float) -> void:
 	_body_component.move_and_slide()
 	_update_state()
 	
+
+func _apply_guard_stance(delta: float) -> void:
+	_input_component.consume_jump_pressed()
+	_jump_buffer_timer = 0.0
+	_update_coyote_time(delta)
+	var velocity := _body_component.get_velocity()
+	velocity.x = 0.0
+	_body_component.set_velocity(velocity)
+	_update_gravity(delta)
+	_body_component.move_and_slide()
+	_update_state()
+
 
 func _update_gravity(delta: float) -> void:
 	if _body_component.is_on_floor():

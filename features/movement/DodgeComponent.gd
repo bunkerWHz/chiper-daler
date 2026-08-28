@@ -130,6 +130,12 @@ func try_start_dodge() -> bool:
 func can_dodge() -> bool:
 	if not is_enabled or is_dodging() or _cooldown_timer > 0.0:
 		return false
+	if (
+		_guard_component != null
+		and _guard_component.is_enabled
+		and _guard_component.is_defending()
+	):
+		return false
 
 	if (
 		_attack_component != null

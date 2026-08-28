@@ -38,6 +38,12 @@ active and the active weapon set has a melee weapon in its main hand. Removing
 that weapon cancels any of those actions already in progress. Every future
 equipment ability must follow the same ownership rule.
 
+Guard and its opening parry window form a grounded defensive stance. It can be
+entered only while standing on the floor, immediately stops horizontal motion,
+and suppresses running, jumping, and dodging until released. Horizontal input
+still updates facing, so the Actor can turn toward an incoming attack. Losing
+floor contact ends the stance.
+
 ## Implemented states
 
 | Layer | Actor state | Source of truth |

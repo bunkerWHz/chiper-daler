@@ -6,6 +6,20 @@ var _last_hit: HitData
 var _last_applied_damage: float = 0.0
 
 
+class GroundStateBodyComponent:
+	extends CharacterBodyComponent
+
+	var grounded: bool = true
+
+
+	func is_on_floor() -> bool:
+		return grounded
+
+
+	func move_and_slide() -> void:
+		pass
+
+
 func suite_name() -> String:
 	return "combat"
 
@@ -188,6 +202,58 @@ func test_attack_interrupts_guard_and_guard_resumes_after_attack() -> void:
 	attack._process(attack_config.active_duration)
 
 	assert_true(guard.start_guard())
+
+
+func test_guard_is_grounded_and_locks_locomotion() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var input := InputComponent.new()
+	var body_component := GroundStateBodyComponent.new()
+	var body := CharacterBody2D.new()
+	body.name = "CharacterBody2D"
+	body_component.add_child(body)
+	var facing := FacingComponent.new()
+	var movement := MovementComponent.new()
+	movement.config = MovementConfig.new()
+	var dodge := DodgeComponent.new()
+	dodge.config = DodgeConfig.new()
+	var guard := GuardComponent.new()
+	guard.config = GuardConfig.new()
+
+	for component: Component in [
+		input,
+		body_component,
+		facing,
+		movement,
+		dodge,
+		guard,
+	]:
+		container.add_child(component)
+
+	actor._collect_components()
+	body_component.set_velocity(Vector2(200.0, 0.0))
+	input._jump_pressed = true
+
+	assert_true(guard.start_guard())
+	assert_false(dodge.can_dodge())
+	movement._physics_process(0.0)
+	assert_eq(body_component.get_velocity(), Vector2.ZERO)
+	assert_eq(movement._jump_buffer_timer, 0.0)
+	assert_false(input._jump_pressed)
+
+	input._move_axis = -1.0
+	facing._physics_process(0.0)
+	assert_eq(facing.get_direction(), FacingComponent.Direction.LEFT)
+
+	input._guard_pressed = true
+	body_component.grounded = false
+	guard._process(0.0)
+	assert_false(guard.is_defending())
+	assert_false(guard.start_guard())
+	assert_false(guard.start_parry())
 
 
 func test_held_attack_becomes_heavy_and_restores_hitbox_damage() -> void:

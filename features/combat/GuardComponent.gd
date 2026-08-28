@@ -15,8 +15,10 @@ signal damage_blocked(hit: HitData, prevented_damage: float)
 @export var config: GuardConfig
 
 var _input_component: InputComponent
+var _body_component: CharacterBodyComponent
 var _facing_component: FacingComponent
 var _attack_component: AttackComponent
+var _dodge_component: DodgeComponent
 var _equipment_component: Component
 var _is_guarding: bool = false
 var _parry_timer: float = 0.0
@@ -40,8 +42,12 @@ func on_initialize() -> void:
 		return
 
 	_input_component = actor.get_component(InputComponent) as InputComponent
+	_body_component = (
+		actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+	)
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 	_attack_component = actor.get_component(AttackComponent) as AttackComponent
+	_dodge_component = actor.get_component(DodgeComponent) as DodgeComponent
 	_equipment_component = (
 		actor.get_component(EQUIPMENT_COMPONENT_SCRIPT) as Component
 	)
@@ -105,6 +111,10 @@ func _process(delta: float) -> void:
 		stop_guard()
 		_finish_parry()
 		return
+	if not _is_grounded():
+		stop_guard()
+		_finish_parry()
+		return
 
 	var attack_in_progress := (
 		_attack_component != null
@@ -158,6 +168,7 @@ func start_parry() -> bool:
 	if (
 		not is_enabled
 		or not _allows_melee_actions()
+		or not _can_enter_defense()
 		or is_parrying()
 		or _parry_cooldown_timer > 0.0
 	):
@@ -184,6 +195,7 @@ func start_guard() -> bool:
 	if (
 		not is_enabled
 		or not _allows_melee_actions()
+		or not _can_enter_defense()
 		or _is_guarding
 		or is_parrying()
 	):
@@ -220,6 +232,10 @@ func is_parrying() -> bool:
 	return _parry_timer > 0.0
 
 
+func is_defending() -> bool:
+	return is_guarding() or is_parrying()
+
+
 func disable() -> void:
 	stop_guard()
 	_finish_parry()
@@ -246,6 +262,21 @@ func _is_hit_from_front(hit: HitData) -> bool:
 		return true
 
 	return source_direction == float(_facing_component.get_direction())
+
+
+func _can_enter_defense() -> bool:
+	return (
+		_is_grounded()
+		and (
+			_dodge_component == null
+			or not _dodge_component.is_enabled
+			or not _dodge_component.is_dodging()
+		)
+	)
+
+
+func _is_grounded() -> bool:
+	return _body_component == null or _body_component.is_on_floor()
 
 
 func _on_attack_started() -> void:

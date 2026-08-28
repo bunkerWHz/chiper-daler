@@ -25,6 +25,8 @@ Light and heavy melee attacks, guard, and parry require a melee weapon in the
 active set's main hand. Dropping or otherwise removing that weapon immediately
 cancels any attack, guard, or parry already in progress and blocks new ones
 until another melee weapon is equipped in the active set.
+Guard can begin only on the ground. Its parry window and sustained block both
+hold the Actor in place while still allowing facing changes.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, three Health Potions, three Mana Potions, and two
