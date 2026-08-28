@@ -122,7 +122,7 @@ func _replace_actor_at_checkpoint() -> bool:
 func _capture_actor_runtime_state(source: Actor) -> Dictionary:
 	var result := {}
 	for component: Component in source.get_components():
-		var state := component.capture_runtime_state()
+		var state: Variant = component.capture_runtime_state()
 		if state != null:
 			result[String(component.name)] = state
 
