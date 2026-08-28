@@ -40,6 +40,27 @@ func test_switching_from_melee_cancels_attack_and_guard() -> void:
 	assert_false(guard.start_parry())
 
 
+func test_removing_last_active_weapon_disables_melee_actions() -> void:
+	var setup := _create_equipped_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var attack := setup.attack as AttackComponent
+	var guard := setup.guard as GuardComponent
+	var sword := setup.sword as ItemData
+
+	assert_true(equipment.allows_melee_actions())
+	assert_true(guard.start_guard())
+	guard.stop_guard()
+	assert_true(attack.attack())
+	assert_eq(inventory.remove_item(sword.id), 1)
+	assert_false(equipment.allows_melee_actions())
+	assert_false(attack.is_attacking())
+	assert_false(attack.attack())
+	assert_false(attack.heavy_attack())
+	assert_false(guard.start_guard())
+	assert_false(guard.start_parry())
+
+
 func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
@@ -122,6 +143,8 @@ func _create_equipped_actor() -> Dictionary:
 	actor.add_child(components)
 
 	var input := InputComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
 	var hitbox := HitboxComponent.new()
@@ -135,6 +158,7 @@ func _create_equipped_actor() -> Dictionary:
 
 	for component: Component in [
 		input,
+		inventory,
 		equipment,
 		facing,
 		hitbox,
@@ -144,13 +168,23 @@ func _create_equipped_actor() -> Dictionary:
 		components.add_child(component)
 
 	actor._collect_components()
+	var sword := _create_equippable(
+		&"equipped_test_sword", ItemData.EquipSlot.MAIN_HAND
+	)
+	sword.combat_mode = ItemData.CombatMode.MELEE
+	inventory.add_item(sword)
+	equipment.equip_inventory_item(
+		sword.id, ItemData.EquipSlot.MAIN_HAND
+	)
 	hitbox._ready()
 	attack._ready()
 
 	return {
 		"actor": actor,
 		"input": input,
+		"inventory": inventory,
 		"equipment": equipment,
+		"sword": sword,
 		"facing": facing,
 		"hitbox": hitbox,
 		"attack": attack,

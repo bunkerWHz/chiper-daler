@@ -21,6 +21,10 @@ Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
 back slot. Equipped entries reference items that remain visible in the main
 inventory. Removing the last copy of an item automatically unequips it.
+Light and heavy melee attacks, guard, and parry require a melee weapon in the
+active set's main hand. Dropping or otherwise removing that weapon immediately
+cancels any attack, guard, or parry already in progress and blocks new ones
+until another melee weapon is equipped in the active set.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, three Health Potions, three Mana Potions, and two

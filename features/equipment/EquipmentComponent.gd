@@ -95,7 +95,15 @@ func is_slot_active(slot: Slot) -> bool:
 
 
 func allows_melee_actions() -> bool:
-	return is_slot_active(Slot.MELEE)
+	if not is_slot_active(Slot.MELEE):
+		return false
+	if _inventory_component == null:
+		return true
+	var active_weapon := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	return (
+		active_weapon != null
+		and get_item_action_slot(active_weapon) == Slot.MELEE
+	)
 
 
 func equip_inventory_item(

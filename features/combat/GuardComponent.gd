@@ -74,6 +74,22 @@ func on_initialize() -> void:
 				&"equipment_changed",
 				_on_equipment_changed
 			)
+		if not _equipment_component.is_connected(
+			&"loadout_item_changed",
+			_on_loadout_item_changed
+		):
+			_equipment_component.connect(
+				&"loadout_item_changed",
+				_on_loadout_item_changed
+			)
+		if not _equipment_component.is_connected(
+			&"weapon_set_changed",
+			_on_weapon_set_changed
+		):
+			_equipment_component.connect(
+				&"weapon_set_changed",
+				_on_weapon_set_changed
+			)
 
 
 func _process(delta: float) -> void:
@@ -245,6 +261,24 @@ func _allows_melee_actions() -> bool:
 
 
 func _on_equipment_changed(_previous_slot: int, _current_slot: int) -> void:
+	_cancel_guard_if_melee_unavailable()
+
+
+func _on_loadout_item_changed(
+	_equip_slot: ItemData.EquipSlot,
+	_slot_index: int,
+	_weapon_set: int,
+	_previous_item_id: StringName,
+	_current_item_id: StringName
+) -> void:
+	_cancel_guard_if_melee_unavailable()
+
+
+func _on_weapon_set_changed(_previous_set: int, _current_set: int) -> void:
+	_cancel_guard_if_melee_unavailable()
+
+
+func _cancel_guard_if_melee_unavailable() -> void:
 	if not _allows_melee_actions():
 		stop_guard()
 		_finish_parry()

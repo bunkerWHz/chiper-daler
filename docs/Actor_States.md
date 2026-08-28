@@ -34,7 +34,9 @@ not implement abilities and must not duplicate their gameplay logic.
 
 `J` is the primary action and `K` is the secondary action of the active slot.
 Melee attack, parry, and block are available only while the melee slot is
-active. Every future equipment ability must follow the same ownership rule.
+active and the active weapon set has a melee weapon in its main hand. Removing
+that weapon cancels any of those actions already in progress. Every future
+equipment ability must follow the same ownership rule.
 
 ## Implemented states
 
