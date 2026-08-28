@@ -6,6 +6,17 @@ func suite_name() -> String:
 	return "quick_access_hud"
 
 
+func test_scene_places_hotbar_right_of_player_health() -> void:
+	var hud_scene := load(
+		"res://features/inventory/QuickAccessHUDComponent.tscn"
+	) as PackedScene
+	var hud := track(hud_scene.instantiate()) as QuickAccessHUDComponent
+	var margin := hud.get_node("CanvasLayer/TopMargin") as MarginContainer
+	assert_eq(margin.offset_left, 260.0)
+	assert_eq(margin.offset_top, 16.0)
+	assert_true(margin.offset_left > 248.0)
+
+
 func test_slot_display_tracks_assignments_quantities_and_weapon_sets() -> void:
 	var setup := _create_actor()
 	var inventory := setup.inventory as InventoryComponent

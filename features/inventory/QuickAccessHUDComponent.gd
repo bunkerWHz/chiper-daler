@@ -26,7 +26,7 @@ func on_initialize() -> void:
 
 func _ready() -> void:
 	_slots_container = get_node_or_null(
-		"CanvasLayer/BottomMargin/Slots"
+		"CanvasLayer/TopMargin/Slots"
 	) as HBoxContainer
 	if not is_enabled or _slots_container == null:
 		return
