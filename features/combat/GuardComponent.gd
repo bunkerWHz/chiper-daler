@@ -7,6 +7,9 @@ const EQUIPMENT_COMPONENT_SCRIPT := preload(
 const LOCOMOTION_CONSTRAINT := preload(
 	"res://features/movement/LocomotionConstraint.gd"
 )
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
 
 signal guard_started
 signal guard_finished
@@ -172,6 +175,7 @@ func start_parry() -> bool:
 		or not _can_enter_defense()
 		or is_parrying()
 		or _parry_cooldown_timer > 0.0
+		or BEHAVIOR_GATE.is_blocked(actor, self)
 	):
 		return false
 
@@ -199,6 +203,7 @@ func start_guard() -> bool:
 		or not _can_enter_defense()
 		or _is_guarding
 		or is_parrying()
+		or BEHAVIOR_GATE.is_blocked(actor, self)
 	):
 		return false
 
@@ -237,7 +242,7 @@ func is_defending() -> bool:
 	return is_guarding() or is_parrying()
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return is_defending()
 
 

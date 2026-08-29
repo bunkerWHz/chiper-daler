@@ -18,22 +18,22 @@ func test_throwing_runs_aim_action_and_recovery_states() -> void:
 	input._attack_pressed = true
 	throwing._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.THROWING_AIM)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.THROWING_AIM)
 
 	input._attack_pressed = false
 	input._attack_released = true
 	throwing._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.THROWING_ACTION)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.THROWING_ACTION)
 	assert_eq(throwing.get_remaining_charges(), 4)
 
 	throwing._process(throwing.config.action_duration)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.THROWING_RECOVERY)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.THROWING_RECOVERY)
 
 	throwing._process(throwing.config.recovery_duration)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_secondary_action_cancels_throwing_aim() -> void:

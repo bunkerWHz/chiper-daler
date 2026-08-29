@@ -131,7 +131,9 @@ func _append_actor_state_info(lines: PackedStringArray) -> void:
 
 	actor_state.refresh_state()
 	lines.append(
-		"States: %s" % " + ".join(actor_state.get_active_state_names())
+		"State: %s" % "  Status: ".join(
+			actor_state.get_active_state_names()
+		)
 	)
 
 

@@ -1,7 +1,7 @@
 extends RefCounted
-class_name PrimaryActionGate
+class_name ExclusiveBehaviorGate
 
-const CAPABILITY_METHOD: StringName = &"is_primary_action_active"
+const CAPABILITY_METHOD: StringName = &"is_exclusive_behavior_active"
 
 
 static func collect_providers(
@@ -18,7 +18,7 @@ static func collect_providers(
 	return providers
 
 
-static func has_active_action(providers: Array[Component]) -> bool:
+static func has_active_behavior(providers: Array[Component]) -> bool:
 	for provider: Component in providers:
 		if (
 			is_instance_valid(provider)
@@ -27,3 +27,7 @@ static func has_active_action(providers: Array[Component]) -> bool:
 		):
 			return true
 	return false
+
+
+static func is_blocked(actor: Actor, excluded_component: Component) -> bool:
+	return has_active_behavior(collect_providers(actor, excluded_component))

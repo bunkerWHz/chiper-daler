@@ -2,24 +2,72 @@
 
 ## Model
 
-Actor state is a layered read model, not one global mutually exclusive enum.
-An Actor can have one locomotion state, one primary action, and any number of
-conditions at the same time.
+Every Actor exposes exactly one active `ActorState.Behavior`. Movement and an
+action are never reported as simultaneous states. For example, pressing attack
+while falling changes `Fall` into `AirLightAttack`; when the attack ends, the
+Actor returns to `Jump` or `Fall` from its current vertical velocity.
 
-Example:
+`ActorStateComponent` is the transition coordinator and the single public
+source for the active behavior. Ability components still own their mechanics,
+timers, hitboxes, and fact signals. The coordinator resolves those facts by
+priority instead of duplicating their gameplay logic.
+
+Buffs and debuffs are not behavior states. They are independent
+`ActorState.Status` flags and may coexist with any behavior.
+
+## Behavior groups
+
+- Grounded locomotion: `Idle`, `Run`.
+- Airborne locomotion: `Jump`, `DoubleJump`, `WallJump`, `Fall`.
+- Traversal: `Dodge`, `ClimbIdle`, `ClimbUp`, `ClimbDown`.
+- Ground melee: `GroundAttackWindup`, `GroundLightAttack`,
+  `GroundHeavyAttack`, `GroundAttackRecovery`.
+- Air melee: `AirAttackWindup`, `AirLightAttack`, `AirHeavyAttack`.
+- Other actions: item use, throwing, ranged weapons, magic, guard, parry,
+  critical attacks, and interaction phases.
+- Interrupting behaviors: hit, stun, knockdown, death, respawn, level up, and
+  rest.
+
+## Melee transitions
 
 ```text
-Falling + LightAttack + Debuffed
+Idle / Run
+    -> GroundAttackWindup
+    -> GroundLightAttack or GroundHeavyAttack
+    -> Idle / Run
+
+Jump / Fall
+    -> AirAttackWindup
+    -> AirLightAttack or AirHeavyAttack
+    -> Jump / Fall
+
+AirAttackWindup / AirLightAttack / AirHeavyAttack
+    -> land before completion
+    -> GroundAttackRecovery
+    -> Idle / Run
 ```
 
-The layers are:
+A ground windup or attack immediately claims the exclusive behavior, stops
+horizontal locomotion, and blocks jump and dodge. An air windup or attack keeps
+normal horizontal air control and gravity, but blocks another jump and dodge.
+Landing recovery blocks horizontal movement, jump, and dodge for the configured
+recovery duration.
 
-- `ActorState.Locomotion`: physical traversal mode;
-- `ActorState.Action`: the primary action currently occupying the Actor;
-- `ActorState.Condition`: overlapping status flags.
+The input press starts a windup. Releasing it before the heavy threshold starts
+a light attack; holding it through the threshold starts a heavy attack. This
+keeps the state accurate even while the final attack type is not known yet.
 
-`ActorStateComponent` derives the snapshot from capability components. It does
-not implement abilities and must not duplicate their gameplay logic.
+## Exclusive behavior gate
+
+Components that can occupy the Actor expose
+`is_exclusive_behavior_active()`. Before beginning, they query
+`ExclusiveBehaviorGate` while excluding themselves. An already active behavior
+therefore rejects a conflicting command instead of creating combinations such
+as `Run + Attack`, `Guard + Attack`, or `Interact + ItemUse`.
+
+Movement restrictions are exposed separately through
+`get_locomotion_blocks()`. `MovementComponent` applies those generic flags and
+does not depend on concrete combat or interaction components.
 
 ## Contextual equipment controls
 
@@ -40,80 +88,55 @@ cancels an aim, charge, cast, or release phase that started from the previous
 context. Changing only an unrelated armour or inactive-set item does not cancel
 the action.
 
-Interaction is lower priority than combat actions. Pressing `R` during attack,
-guard, item use, throwing, ranged, or magic phases does nothing; interaction
-becomes available again after the active action finishes. It does not interrupt
-or cancel the combat action.
+Interaction is lower priority than combat actions. Pressing `R` during another
+exclusive behavior does nothing; interaction becomes available after that
+behavior finishes and never cancels it.
 
-Guard and its opening parry window form a grounded defensive stance. It can be
-entered only while standing on the floor, immediately stops horizontal motion,
-and suppresses running, jumping, and dodging until released. Horizontal input
-still updates facing, so the Actor can turn toward an incoming attack. Losing
-floor contact ends the stance. Guard exposes these restrictions through the
-generic locomotion-constraint capability; movement code does not depend on the
-concrete guard implementation.
+Guard and its opening parry window form a grounded defensive behavior. It can
+start only on the floor, stops horizontal motion, and blocks running, jumping,
+and dodging until released. Horizontal input may still update facing so the
+Actor can turn toward an incoming attack. Losing floor contact ends guard.
 
-## Implemented states
+## Implemented behavior mapping
 
-| Layer | Actor state | Source of truth |
-| --- | --- | --- |
-| Locomotion | `Idle` | `MovementComponent` or body velocity |
-| Locomotion | `Walking` | `MovementComponent.RUN` or grounded velocity |
-| Locomotion | `Jumping` | `MovementComponent.JUMP` or upward body velocity |
-| Locomotion | `DoubleJumping` | `MovementComponent.DOUBLE_JUMP` |
-| Locomotion | `WallJumping` | `MovementState.WALL_JUMP` |
-| Locomotion | `Dodging` | `DodgeComponent` through `MovementState.DODGE` |
-| Locomotion | `ClimbingIdle` | `ClimbingComponent` with no vertical input |
-| Locomotion | `ClimbingUp` | `ClimbingComponent` with upward input |
-| Locomotion | `ClimbingDown` | `ClimbingComponent` with downward input |
-| Locomotion | `Falling` | `MovementComponent.FALL` or downward body velocity |
-| Action | `LightAttack` | `AttackComponent.is_attacking()` |
-| Action | `HeavyAttack` | heavy charge or `AttackComponent.is_heavy_attacking()` |
-| Action | `UsingItem` | `ItemUseComponent.is_using_item()` |
-| Action | `ThrowingAim` | `ThrowingComponent.AIM` phase |
-| Action | `ThrowingAction` | `ThrowingComponent.ACTION` phase |
-| Action | `ThrowingRecovery` | `ThrowingComponent.RECOVERY` phase |
-| Action | `AimBow` | `RangedWeaponComponent.BOW_AIM` phase |
-| Action | `LooseArrow` | `RangedWeaponComponent.BOW_LOOSE` phase |
-| Action | `AimCrossbow` | `RangedWeaponComponent.CROSSBOW_AIM` phase |
-| Action | `FireCrossbow` | `RangedWeaponComponent.CROSSBOW_FIRE` phase |
-| Action | `MagicCharge` | `MagicComponent.CHARGE` phase |
-| Action | `MagicCast` | `MagicComponent.CAST` phase |
-| Action | `MagicRecovery` | `MagicComponent.RECOVERY` phase |
-| Action | `MagicChanneling` | `MagicComponent.CHANNELING` phase |
-| Action | `Blocking` | `GuardComponent.is_guarding()` |
-| Action | `Parrying` | `GuardComponent.is_parrying()` |
-| Action | `CriticalAttack` | successful backstab from `HitboxComponent` |
-| Action | `InteractingStart` | `InteractionComponent.START` phase |
-| Action | `InteractingProgress` | `InteractionComponent.PROGRESS` phase |
-| Action | `InteractingEnd` | `InteractionComponent.END` phase |
-| Condition | `Hit` | `HitReactionComponent.is_reacting()` |
-| Condition | `Stunned` | `HitStunComponent.is_stunned()` |
-| Condition | `KnockedDown` | strong impact through `HitStunComponent` |
-| Condition | `Dead` | `HealthComponent.is_dead()` |
-| Condition | `Respawning` | `PlayerRespawnComponent.is_restart_scheduled()` |
-| Condition | `Resting` | `RestComponent.is_resting()` |
-| Condition | `LevelUp` | `ProgressionComponent.is_leveling_up()` |
-| Condition | `Debuffed` | active negative `StatusEffect` |
-| Condition | `Buffed` | active positive `StatusEffect` |
+| Actor behavior | Source of truth |
+| --- | --- |
+| `Idle`, `Run` | `MovementComponent` or grounded body velocity |
+| `Jump`, `DoubleJump`, `WallJump`, `Fall` | `MovementComponent` or airborne body velocity |
+| `Dodge` | `DodgeComponent` through `MovementState.DODGE` |
+| `ClimbIdle`, `ClimbUp`, `ClimbDown` | `ClimbingComponent` through movement state |
+| Ground and air windup/light/heavy/recovery | `AttackComponent` phase and attack origin |
+| `UsingItem` | `ItemUseComponent` |
+| `ThrowingAim`, `ThrowingAction`, `ThrowingRecovery` | `ThrowingComponent` phase |
+| `AimBow`, `LooseArrow`, `AimCrossbow`, `FireCrossbow` | `RangedWeaponComponent` phase |
+| `MagicCharge`, `MagicCast`, `MagicRecovery`, `MagicChanneling` | `MagicComponent` phase |
+| `Blocking`, `Parrying` | `GuardComponent` |
+| `CriticalAttack` | successful backstab from `HitboxComponent` |
+| `InteractingStart`, `InteractingProgress`, `InteractingEnd` | `InteractionComponent` phase |
+| `Hit` | `HitReactionComponent` |
+| `Stunned`, `KnockedDown` | `HitStunComponent` |
+| `Dead` | `HealthComponent` |
+| `Respawning` | `PlayerRespawnComponent` |
+| `Resting` | `RestComponent` |
+| `LevelUp` | `ProgressionComponent` |
 
 ## Status effects
 
-Specific mechanics such as poison damage, bleeding, slowing, increased attack,
-or increased defence belong to their own effect implementations. `Debuffed`
-and `Buffed` remain summary condition flags reported by `StatusEffectComponent`.
+`ActorState.Status.DEBUFFED` and `ActorState.Status.BUFFED` are summary flags
+reported by `StatusEffectComponent`. Specific poison, bleeding, slow, attack,
+or defence effects remain in their own implementations and do not create a
+second behavior FSM.
 
 ## Extension rule
 
-When adding a state:
+When adding a behavior:
 
-1. Implement the ability or condition in its own component.
-2. Keep that component as the source of truth.
-3. Add a read-only mapping in `ActorStateComponent`.
-4. Add a transition test and a debug-overlay check.
-5. Never make unrelated components write directly into Actor state.
+1. Implement its mechanic in a focused component.
+2. Expose `is_exclusive_behavior_active()` while it occupies the Actor.
+3. Check `ExclusiveBehaviorGate` before starting the behavior.
+4. Expose locomotion blocks when the behavior restricts movement.
+5. Add its priority mapping to `ActorStateComponent`.
+6. Map its temporary animation in `AnimationComponent`.
+7. Add transition, conflict, and debug-state tests.
 
-## Completion
-
-All locomotion, action, and condition states in the current Actor taxonomy have
-an implemented gameplay source and are available through `ActorStateComponent`.
+Unrelated components never write directly into Actor state.

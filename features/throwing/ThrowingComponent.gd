@@ -12,6 +12,9 @@ signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal throwable_released(direction: float, remaining_charges: int)
 
 const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
 
 @export var config: ThrowingConfig
 
@@ -76,7 +79,10 @@ func _process(delta: float) -> void:
 		return
 
 	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
-		if _remaining_charges > 0:
+		if (
+			_remaining_charges > 0
+			and not BEHAVIOR_GATE.is_blocked(actor, self)
+		):
 			_set_phase(Phase.AIM, 0.0)
 	elif _phase == Phase.AIM:
 		if _input_component.consume_guard_just_pressed():
@@ -89,7 +95,7 @@ func get_phase() -> Phase:
 	return _phase
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return _phase != Phase.NONE
 
 

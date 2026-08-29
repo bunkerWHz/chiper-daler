@@ -114,13 +114,13 @@ func test_hit_reaction_changes_and_restores_visual() -> void:
 	assert_eq(health_bar.modulate, Color.WHITE)
 	assert_eq(health_bar.scale, Vector2.ONE)
 	actor_state.refresh_state()
-	assert_true(actor_state.has_condition(ActorState.Condition.HIT))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.HIT)
 
 	reaction._process(config.duration)
 	actor_state.refresh_state()
 
 	assert_false(reaction.is_reacting())
-	assert_false(actor_state.has_condition(ActorState.Condition.HIT))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 	assert_eq(body_visual.modulate, Color.WHITE)
 	assert_eq(body_visual.scale, Vector2.ONE)
 	assert_eq(health_bar.modulate, Color.WHITE)
@@ -171,7 +171,7 @@ func test_attack_can_be_driven_without_input_or_facing() -> void:
 	assert_true(attack.attack())
 
 
-func test_attack_interrupts_guard_and_guard_resumes_after_attack() -> void:
+func test_guard_blocks_attack_until_the_defensive_state_finishes() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
 	container.name = "_Components"
@@ -201,12 +201,12 @@ func test_attack_interrupts_guard_and_guard_resumes_after_attack() -> void:
 	attack._ready()
 
 	assert_true(guard.start_guard())
+	assert_false(attack.attack())
+	assert_true(guard.is_guarding())
+	guard.stop_guard()
 	assert_true(attack.attack())
-	assert_false(guard.is_guarding())
 	assert_false(guard.start_guard())
-
 	attack._process(attack_config.active_duration)
-
 	assert_true(guard.start_guard())
 
 
@@ -245,10 +245,11 @@ func test_guard_is_grounded_and_locks_locomotion() -> void:
 
 	assert_true(dodge.try_start_dodge())
 	assert_true(dodge.is_dodging())
-	assert_true(guard.start_guard())
-	dodge._physics_process(0.0)
+	assert_false(guard.start_guard())
+	dodge._physics_process(dodge.config.duration)
 	assert_false(dodge.is_dodging())
 	dodge._cooldown_timer = 0.0
+	assert_true(guard.start_guard())
 	assert_false(dodge.can_dodge())
 	movement._physics_process(0.0)
 	assert_eq(body_component.get_velocity(), Vector2.ZERO)
@@ -631,14 +632,14 @@ func test_hit_stun_suspends_and_restores_enemy_movement() -> void:
 	assert_true(hit_stun.is_stunned())
 	assert_false(movement.is_enabled)
 	actor_state.refresh_state()
-	assert_true(actor_state.has_condition(ActorState.Condition.STUNNED))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.STUNNED)
 
 	hit_stun._process(hit_stun_config.duration)
 	actor_state.refresh_state()
 
 	assert_false(hit_stun.is_stunned())
 	assert_true(movement.is_enabled)
-	assert_false(actor_state.has_condition(ActorState.Condition.STUNNED))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.FALL)
 
 	assert_true(hit_stun.apply_hit(HitData.new(10.0, null)))
 	assert_false(movement.is_enabled)
@@ -778,7 +779,7 @@ func test_strong_hit_knocks_actor_down() -> void:
 	assert_true(hit_stun.is_knocked_down())
 	assert_false(hit_stun.is_stunned())
 	assert_false(movement.is_enabled)
-	assert_true(actor_state.has_condition(ActorState.Condition.KNOCKED_DOWN))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.KNOCKED_DOWN)
 
 	knockback._finish_knockback()
 	assert_false(movement.is_enabled)
@@ -787,7 +788,7 @@ func test_strong_hit_knocks_actor_down() -> void:
 	actor_state.refresh_state()
 	assert_false(hit_stun.is_knocked_down())
 	assert_true(movement.is_enabled)
-	assert_false(actor_state.has_condition(ActorState.Condition.KNOCKED_DOWN))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.JUMP)
 
 
 func test_backstab_reports_critical_attack_state() -> void:
@@ -828,11 +829,11 @@ func test_backstab_reports_critical_attack_state() -> void:
 	assert_false(hitbox._is_backstab(target, -1.0))
 	attack._on_critical_hit_landed(null, 20.0)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.CRITICAL_ATTACK)
+	assert_eq(state.get_state(), ActorState.Behavior.CRITICAL_ATTACK)
 
 	attack._process(attack.config.critical_state_duration)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.NONE)
+	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_enemy_attack_telegraphs_before_attacking() -> void:

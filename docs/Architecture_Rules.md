@@ -62,9 +62,10 @@ Capability Gates and Action Coordination
 -   Consumers check capability gates when an action starts and react to source
     signals when an ongoing action must be cancelled. They do not copy the
     source state into a second flag.
--   Primary-action owners expose `is_primary_action_active()`. Interaction
-    checks that generic capability and waits while another primary action is
-    active; it never cancels the action it found.
+-   Components that occupy the Actor expose
+    `is_exclusive_behavior_active()`. `ExclusiveBehaviorGate` prevents another
+    behavior from starting until the active one finishes. A rejected command
+    never cancels the behavior it found.
 -   Dependencies remain directed. If component A already observes component B,
     B must not add a dependency back to A; use a signal or a focused capability
     contract instead.
@@ -128,10 +129,15 @@ State Machine
 -   State controls behavior.
 -   Components provide abilities.
 -   Avoid large if/else chains.
--   Actor state is layered into locomotion, primary action, and overlapping
-    conditions; see `docs/Actor_States.md`.
--   `ActorStateComponent` is a read model. Ability components remain the source
-    of truth and state names do not imply an implemented mechanic.
+-   An Actor exposes exactly one `ActorState.Behavior`; movement and actions are
+    mutually exclusive state names. Buff and debuff summaries are independent
+    `ActorState.Status` flags; see `docs/Actor_States.md`.
+-   `ActorStateComponent` coordinates and publishes behavior transitions.
+    Focused ability components remain the source of truth for mechanics,
+    timers, hitboxes, and fact signals.
+-   `AnimationComponent`, debug UI, and other presentation consumers read the
+    coordinated Actor behavior instead of reconstructing parallel state from
+    several components.
 
 Commands
 

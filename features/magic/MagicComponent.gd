@@ -3,6 +3,10 @@ class_name MagicComponent
 
 enum Phase { NONE, CHARGE, CAST, RECOVERY, CHANNELING }
 
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
+
 signal phase_changed(previous_phase: Phase, current_phase: Phase)
 
 @export var config: MagicConfig
@@ -67,9 +71,17 @@ func _process(delta: float) -> void:
 	if not _equipment.is_slot_active(EquipmentComponent.Slot.MAGIC):
 		return
 	if _phase == Phase.NONE:
-		if _input.consume_attack_pressed() and _mana >= config.cast_mana_cost:
+		if (
+			_input.consume_attack_pressed()
+			and _mana >= config.cast_mana_cost
+			and not BEHAVIOR_GATE.is_blocked(actor, self)
+		):
 			_set_phase(Phase.CHARGE, config.charge_time)
-		elif _input.consume_guard_just_pressed() and _mana > 0.0:
+		elif (
+			_input.consume_guard_just_pressed()
+			and _mana > 0.0
+			and not BEHAVIOR_GATE.is_blocked(actor, self)
+		):
 			_set_phase(Phase.CHANNELING, 0.0)
 	elif _phase == Phase.CHARGE and _input.consume_attack_released():
 		_cast_spell()
@@ -83,7 +95,7 @@ func get_phase() -> Phase:
 	return _phase
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return _phase != Phase.NONE
 
 

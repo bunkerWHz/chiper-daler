@@ -1,8 +1,8 @@
 extends Component
 class_name InteractionComponent
 
-const PRIMARY_ACTION_GATE := preload(
-	"res://features/state/PrimaryActionGate.gd"
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
 )
 
 enum Phase {
@@ -26,7 +26,7 @@ var _phase: Phase = Phase.NONE
 
 var input_component: InputComponent
 var current_target: InteractableComponent = null
-var _action_providers: Array[Component] = []
+var _behavior_providers: Array[Component] = []
 
 
 
@@ -49,7 +49,7 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_action_providers = PRIMARY_ACTION_GATE.collect_providers(actor, self)
+	_behavior_providers = BEHAVIOR_GATE.collect_providers(actor, self)
 
 
 func _process(delta: float) -> void:
@@ -94,7 +94,7 @@ func interact() -> bool:
 	if (
 		cooldown_timer > 0.0
 		or is_interacting()
-		or PRIMARY_ACTION_GATE.has_active_action(_action_providers)
+		or BEHAVIOR_GATE.has_active_behavior(_behavior_providers)
 	):
 		return false
 
@@ -106,6 +106,8 @@ func interact() -> bool:
 
 	current_target.interact(actor)
 	cooldown_timer = interaction_cooldown
+	if BEHAVIOR_GATE.has_active_behavior(_behavior_providers):
+		return true
 	_set_phase(Phase.START, start_duration)
 	return true
 
@@ -126,7 +128,7 @@ func is_interacting() -> bool:
 	return _phase != Phase.NONE
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return is_interacting()
 
 

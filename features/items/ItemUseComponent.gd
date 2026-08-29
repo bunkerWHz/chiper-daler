@@ -1,6 +1,10 @@
 extends Component
 class_name ItemUseComponent
 
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
+
 signal item_use_started
 signal item_used(restored_health: float, remaining_charges: int)
 signal item_use_cancelled
@@ -137,6 +141,7 @@ func can_use_item() -> bool:
 		and not is_using_item()
 		and _cooldown_timer <= 0.0
 		and _health_component.is_alive()
+		and not BEHAVIOR_GATE.is_blocked(actor, self)
 	)
 	if not base_conditions:
 		return false
@@ -161,7 +166,7 @@ func is_using_item() -> bool:
 	return _use_timer > 0.0
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return is_using_item()
 
 

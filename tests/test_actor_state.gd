@@ -6,37 +6,52 @@ const WALL_JUMP_CALCULATOR := preload(
 )
 
 
+class GroundStateBodyComponent:
+	extends CharacterBodyComponent
+
+	var grounded: bool = true
+
+
+	func is_on_floor() -> bool:
+		return grounded
+
+
+	func move_and_slide() -> void:
+		pass
+
+
 func suite_name() -> String:
 	return "actor_state"
 
 
-func test_actor_state_taxonomy_contains_planned_layers() -> void:
+func test_actor_state_taxonomy_contains_exclusive_behaviors() -> void:
 	assert_eq(
-		ActorState.get_locomotion_name(ActorState.Locomotion.DOUBLE_JUMPING),
-		"DoubleJumping"
+		ActorState.get_behavior_name(ActorState.Behavior.DOUBLE_JUMP),
+		"DoubleJump"
 	)
 	assert_eq(
-		ActorState.get_action_name(ActorState.Action.MAGIC_CHANNELING),
+		ActorState.get_behavior_name(ActorState.Behavior.MAGIC_CHANNELING),
 		"MagicChanneling"
 	)
-
-
-func test_actor_state_conditions_can_overlap() -> void:
-	var conditions := (
-		ActorState.Condition.STUNNED
-		| ActorState.Condition.DEBUFFED
+	assert_eq(
+		ActorState.get_behavior_name(ActorState.Behavior.AIR_LIGHT_ATTACK),
+		"AirLightAttack"
 	)
 
+
+func test_actor_statuses_can_overlap_without_creating_extra_states() -> void:
+	var statuses := ActorState.Status.DEBUFFED | ActorState.Status.BUFFED
+
 	assert_true(
-		ActorState.has_condition(conditions, ActorState.Condition.STUNNED)
+		ActorState.has_status(statuses, ActorState.Status.DEBUFFED)
 	)
 	assert_true(
-		ActorState.has_condition(conditions, ActorState.Condition.DEBUFFED)
+		ActorState.has_status(statuses, ActorState.Status.BUFFED)
 	)
 	assert_false(
-		ActorState.has_condition(conditions, ActorState.Condition.BUFFED)
+		ActorState.has_status(statuses, ActorState.Status.NONE)
 	)
-	assert_eq(ActorState.get_condition_names(conditions).size(), 2)
+	assert_eq(ActorState.get_status_names(statuses).size(), 2)
 
 
 func test_actor_state_component_maps_existing_movement_states() -> void:
@@ -60,52 +75,22 @@ func test_actor_state_component_maps_existing_movement_states() -> void:
 	components.add_child(actor_state)
 	actor._collect_components()
 
-	movement._set_state(MovementState.Type.RUN)
-	actor_state.refresh_state()
-	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.WALKING)
-
-	movement._set_state(MovementState.Type.JUMP)
-	actor_state.refresh_state()
-	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.JUMPING)
-
-	movement._set_state(MovementState.Type.DOUBLE_JUMP)
-	actor_state.refresh_state()
-	assert_eq(
-		actor_state.get_locomotion(),
-		ActorState.Locomotion.DOUBLE_JUMPING
-	)
-
-	movement._set_state(MovementState.Type.WALL_JUMP)
-	actor_state.refresh_state()
-	assert_eq(
-		actor_state.get_locomotion(),
-		ActorState.Locomotion.WALL_JUMPING
-	)
-
-	movement._set_state(MovementState.Type.DODGE)
-	actor_state.refresh_state()
-	assert_eq(
-		actor_state.get_locomotion(),
-		ActorState.Locomotion.DODGING
-	)
-
-	var climb_mappings := {
-		MovementState.Type.CLIMB_IDLE: ActorState.Locomotion.CLIMBING_IDLE,
-		MovementState.Type.CLIMB_UP: ActorState.Locomotion.CLIMBING_UP,
-		MovementState.Type.CLIMB_DOWN: ActorState.Locomotion.CLIMBING_DOWN,
+	var mappings := {
+		MovementState.Type.RUN: ActorState.Behavior.RUN,
+		MovementState.Type.JUMP: ActorState.Behavior.JUMP,
+		MovementState.Type.DOUBLE_JUMP: ActorState.Behavior.DOUBLE_JUMP,
+		MovementState.Type.WALL_JUMP: ActorState.Behavior.WALL_JUMP,
+		MovementState.Type.DODGE: ActorState.Behavior.DODGE,
+		MovementState.Type.CLIMB_IDLE: ActorState.Behavior.CLIMB_IDLE,
+		MovementState.Type.CLIMB_UP: ActorState.Behavior.CLIMB_UP,
+		MovementState.Type.CLIMB_DOWN: ActorState.Behavior.CLIMB_DOWN,
+		MovementState.Type.FALL: ActorState.Behavior.FALL,
 	}
 
-	for movement_state: MovementState.Type in climb_mappings:
+	for movement_state: MovementState.Type in mappings:
 		movement._set_state(movement_state)
 		actor_state.refresh_state()
-		assert_eq(
-			actor_state.get_locomotion(),
-			climb_mappings[movement_state]
-		)
-
-	movement._set_state(MovementState.Type.FALL)
-	actor_state.refresh_state()
-	assert_eq(actor_state.get_locomotion(), ActorState.Locomotion.FALLING)
+		assert_eq(actor_state.get_state(), mappings[movement_state])
 
 
 func test_actor_state_component_survives_death_and_reports_it() -> void:
@@ -135,14 +120,14 @@ func test_actor_state_component_survives_death_and_reports_it() -> void:
 	actor_state.refresh_state()
 
 	assert_true(actor_state.is_enabled)
-	assert_true(actor_state.has_condition(ActorState.Condition.DEAD))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.DEAD)
 
 	var overlay := DebugOverlayComponent.new()
 	overlay.actor = actor
 	var lines := PackedStringArray()
 	overlay._append_actor_state_info(lines)
 
-	assert_true(lines.has("States: Idle + Dead"))
+	assert_true(lines.has("State: Dead"))
 	assert_false(overlay.should_disable_on_actor_death())
 
 
@@ -182,16 +167,88 @@ func test_actor_state_maps_heavy_attack_and_parry() -> void:
 	input._attack_pressed = true
 	attack._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.HEAVY_ATTACK)
+	assert_eq(
+		actor_state.get_state(),
+		ActorState.Behavior.GROUND_ATTACK_WINDUP
+	)
 
 	assert_true(attack.heavy_attack())
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.HEAVY_ATTACK)
+	assert_eq(
+		actor_state.get_state(),
+		ActorState.Behavior.GROUND_HEAVY_ATTACK
+	)
 
 	attack._process(attack.config.heavy_active_duration)
 	assert_true(guard.start_parry())
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.PARRYING)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.PARRYING)
+
+
+func test_ground_attack_is_exclusive_and_stops_horizontal_movement() -> void:
+	var setup := _create_attack_state_actor()
+	var body := setup.body as GroundStateBodyComponent
+	var movement := setup.movement as MovementComponent
+	var attack := setup.attack as AttackComponent
+	var state := setup.state as ActorStateComponent
+	body.grounded = true
+	body.set_velocity(Vector2(180.0, 0.0))
+
+	assert_true(attack.attack())
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.GROUND_LIGHT_ATTACK)
+	movement._physics_process(0.0)
+	assert_eq(body.get_velocity().x, 0.0)
+
+	attack._process(attack.config.active_duration)
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
+
+
+func test_air_attacks_return_to_air_motion_or_landing_recovery() -> void:
+	var setup := _create_attack_state_actor()
+	var input := setup.input as InputComponent
+	var body := setup.body as GroundStateBodyComponent
+	var movement := setup.movement as MovementComponent
+	var attack := setup.attack as AttackComponent
+	var state := setup.state as ActorStateComponent
+	body.grounded = false
+	body.set_velocity(Vector2(100.0, -100.0))
+	movement._set_state(MovementState.Type.JUMP)
+
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	attack._process(0.0)
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.AIR_ATTACK_WINDUP)
+	input._attack_pressed = false
+	input._attack_released = true
+	attack._process(0.0)
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.AIR_LIGHT_ATTACK)
+	attack._process(attack.config.active_duration)
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.JUMP)
+
+	attack._process(attack.config.cooldown)
+	body.set_velocity(Vector2(100.0, 100.0))
+	movement._set_state(MovementState.Type.FALL)
+	assert_true(attack.heavy_attack())
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.AIR_HEAVY_ATTACK)
+
+	body.grounded = true
+	attack._process(0.0)
+	state.refresh_state()
+	assert_eq(
+		state.get_state(),
+		ActorState.Behavior.GROUND_ATTACK_RECOVERY
+	)
+	movement._physics_process(0.0)
+	assert_eq(body.get_velocity().x, 0.0)
+	attack._process(attack.config.landing_recovery_duration)
+	state.refresh_state()
+	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_movement_consumes_exactly_one_air_jump() -> void:
@@ -258,3 +315,44 @@ func _create_fresh_movement_component() -> Variant:
 		ResourceLoader.CACHE_MODE_IGNORE
 	) as GDScript
 	return movement_script.new()
+
+
+func _create_attack_state_actor() -> Dictionary:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var body := GroundStateBodyComponent.new()
+	var character_body := CharacterBody2D.new()
+	character_body.name = "CharacterBody2D"
+	body.add_child(character_body)
+	var movement := MovementComponent.new()
+	movement.config = MovementConfig.new()
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	var attack := AttackComponent.new()
+	attack.config = AttackConfig.new()
+	var state := ActorStateComponent.new()
+	for component: Component in [
+		input,
+		body,
+		movement,
+		hitbox,
+		attack,
+		state,
+	]:
+		components.add_child(component)
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+	return {
+		"actor": actor,
+		"input": input,
+		"body": body,
+		"movement": movement,
+		"attack": attack,
+		"state": state,
+	}

@@ -17,14 +17,14 @@ func test_item_heals_after_use_duration_and_reports_actor_state() -> void:
 
 	assert_true(item_use.use_item())
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.USING_ITEM)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.USING_ITEM)
 	assert_eq(health.get_current_health(), 50.0)
 
 	item_use._process(item_use.config.use_duration)
 	actor_state.refresh_state()
 	assert_eq(health.get_current_health(), 85.0)
 	assert_eq(item_use.get_remaining_charges(), 2)
-	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_switching_slot_cancels_item_without_spending_charge() -> void:

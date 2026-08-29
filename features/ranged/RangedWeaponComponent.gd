@@ -13,6 +13,9 @@ signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal projectile_fired(phase: Phase, remaining_ammo: int)
 
 const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
 
 @export var config: RangedWeaponConfig
 
@@ -102,7 +105,7 @@ func get_phase() -> Phase:
 	return _phase
 
 
-func is_primary_action_active() -> bool:
+func is_exclusive_behavior_active() -> bool:
 	return _phase != Phase.NONE
 
 
@@ -159,7 +162,11 @@ func disable() -> void:
 
 func _process_bow_input() -> void:
 	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
-		if _arrows > 0 and _cooldown_timer <= 0.0:
+		if (
+			_arrows > 0
+			and _cooldown_timer <= 0.0
+			and not BEHAVIOR_GATE.is_blocked(actor, self)
+		):
 			_set_phase(Phase.BOW_AIM, 0.0)
 	elif _phase == Phase.BOW_AIM:
 		if _input_component.consume_guard_just_pressed():
@@ -174,7 +181,11 @@ func _process_bow_input() -> void:
 
 func _process_crossbow_input() -> void:
 	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
-		if _bolts > 0 and _cooldown_timer <= 0.0:
+		if (
+			_bolts > 0
+			and _cooldown_timer <= 0.0
+			and not BEHAVIOR_GATE.is_blocked(actor, self)
+		):
 			_set_phase(Phase.CROSSBOW_AIM, 0.0)
 	elif _phase == Phase.CROSSBOW_AIM:
 		if _input_component.consume_guard_just_pressed():

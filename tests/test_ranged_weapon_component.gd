@@ -17,18 +17,18 @@ func test_bow_aims_and_looses_arrow_on_primary_release() -> void:
 	input._attack_pressed = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.AIM_BOW)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.AIM_BOW)
 
 	input._attack_pressed = false
 	input._attack_released = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.LOOSE_ARROW)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.LOOSE_ARROW)
 	assert_eq(ranged.get_arrow_count(), 19)
 
 	ranged._process(ranged.config.release_duration)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_crossbow_aims_with_primary_and_fires_with_secondary() -> void:
@@ -41,12 +41,12 @@ func test_crossbow_aims_with_primary_and_fires_with_secondary() -> void:
 	input._attack_just_pressed = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.AIM_CROSSBOW)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.AIM_CROSSBOW)
 
 	input._guard_just_pressed = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.FIRE_CROSSBOW)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.FIRE_CROSSBOW)
 	assert_eq(ranged.get_bolt_count(), 11)
 
 

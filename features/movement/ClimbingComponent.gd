@@ -1,6 +1,10 @@
 extends Component
 class_name ClimbingComponent
 
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
+
 signal climbing_started(climbable: ClimbableArea)
 signal climbing_finished
 
@@ -152,6 +156,7 @@ func can_start_climbing() -> bool:
 		or _is_climbing
 		or _exit_control_timer > 0.0
 		or _available_climbables.is_empty()
+		or BEHAVIOR_GATE.is_blocked(actor, self)
 	):
 		return false
 
@@ -174,6 +179,10 @@ func apply_velocity() -> void:
 
 func is_climbing() -> bool:
 	return _is_climbing
+
+
+func is_exclusive_behavior_active() -> bool:
+	return is_climbing()
 
 
 func is_exiting_climb() -> bool:

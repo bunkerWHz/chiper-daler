@@ -27,22 +27,22 @@ func test_magic_charge_cast_recovery_and_channeling_states() -> void:
 	input._attack_pressed = true
 	magic._process(0.0)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.MAGIC_CHARGE)
+	assert_eq(state.get_state(), ActorState.Behavior.MAGIC_CHARGE)
 	input._attack_pressed = false
 	input._attack_released = true
 	magic._process(0.0)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.MAGIC_CAST)
+	assert_eq(state.get_state(), ActorState.Behavior.MAGIC_CAST)
 	assert_eq(magic.get_mana(), 80.0)
 	magic._process(magic.config.cast_duration)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.MAGIC_RECOVERY)
+	assert_eq(state.get_state(), ActorState.Behavior.MAGIC_RECOVERY)
 	magic._process(magic.config.recovery_duration)
 	input._guard_just_pressed = true
 	input._guard_pressed = true
 	magic._process(0.0)
 	state.refresh_state()
-	assert_eq(state.get_action(), ActorState.Action.MAGIC_CHANNELING)
+	assert_eq(state.get_state(), ActorState.Behavior.MAGIC_CHANNELING)
 	assert_eq(_phase_events.size(), 5)
 	assert_eq(
 		_phase_events[0],

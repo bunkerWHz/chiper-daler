@@ -1,15 +1,11 @@
 extends Component
 class_name ActorStateComponent
 
-signal locomotion_changed(
-	previous_state: ActorState.Locomotion,
-	current_state: ActorState.Locomotion
+signal state_changed(
+	previous_state: ActorState.Behavior,
+	current_state: ActorState.Behavior
 )
-signal action_changed(
-	previous_state: ActorState.Action,
-	current_state: ActorState.Action
-)
-signal conditions_changed(previous_conditions: int, current_conditions: int)
+signal statuses_changed(previous_statuses: int, current_statuses: int)
 
 var _movement_component: MovementComponent
 var _body_component: CharacterBodyComponent
@@ -28,57 +24,27 @@ var _rest_component: RestComponent
 var _progression_component: ProgressionComponent
 var _status_effect_component: StatusEffectComponent
 
-var _locomotion: ActorState.Locomotion = ActorState.Locomotion.IDLE
-var _action: ActorState.Action = ActorState.Action.NONE
-var _conditions: int = ActorState.Condition.NONE
+var _state: ActorState.Behavior = ActorState.Behavior.IDLE
+var _statuses: int = ActorState.Status.NONE
 
 
 func on_initialize() -> void:
-	_movement_component = (
-		actor.get_component(MovementComponent) as MovementComponent
-	)
-	_body_component = (
-		actor.get_component(CharacterBodyComponent)
-		as CharacterBodyComponent
-	)
-	_attack_component = (
-		actor.get_component(AttackComponent) as AttackComponent
-	)
+	_movement_component = actor.get_component(MovementComponent) as MovementComponent
+	_body_component = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+	_attack_component = actor.get_component(AttackComponent) as AttackComponent
 	_guard_component = actor.get_component(GuardComponent) as GuardComponent
-	_interaction_component = (
-		actor.get_component(InteractionComponent) as InteractionComponent
-	)
-	_item_use_component = (
-		actor.get_component(ItemUseComponent) as ItemUseComponent
-	)
-	_throwing_component = (
-		actor.get_component(ThrowingComponent) as ThrowingComponent
-	)
-	_ranged_weapon_component = (
-		actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
-	)
+	_interaction_component = actor.get_component(InteractionComponent) as InteractionComponent
+	_item_use_component = actor.get_component(ItemUseComponent) as ItemUseComponent
+	_throwing_component = actor.get_component(ThrowingComponent) as ThrowingComponent
+	_ranged_weapon_component = actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	_magic_component = actor.get_component(MagicComponent) as MagicComponent
-	_hit_reaction_component = (
-		actor.get_component(HitReactionComponent)
-		as HitReactionComponent
-	)
-	_hit_stun_component = (
-		actor.get_component(HitStunComponent) as HitStunComponent
-	)
-	_health_component = (
-		actor.get_component(HealthComponent) as HealthComponent
-	)
-	_respawn_component = (
-		actor.get_component(PlayerRespawnComponent)
-		as PlayerRespawnComponent
-	)
+	_hit_reaction_component = actor.get_component(HitReactionComponent) as HitReactionComponent
+	_hit_stun_component = actor.get_component(HitStunComponent) as HitStunComponent
+	_health_component = actor.get_component(HealthComponent) as HealthComponent
+	_respawn_component = actor.get_component(PlayerRespawnComponent) as PlayerRespawnComponent
 	_rest_component = actor.get_component(RestComponent) as RestComponent
-	_progression_component = (
-		actor.get_component(ProgressionComponent) as ProgressionComponent
-	)
-	_status_effect_component = (
-		actor.get_component(StatusEffectComponent) as StatusEffectComponent
-	)
+	_progression_component = actor.get_component(ProgressionComponent) as ProgressionComponent
+	_status_effect_component = actor.get_component(StatusEffectComponent) as StatusEffectComponent
 	refresh_state()
 
 
@@ -87,36 +53,25 @@ func _process(_delta: float) -> void:
 
 
 func refresh_state() -> void:
-	_set_locomotion(_resolve_locomotion())
-	_set_action(_resolve_action())
-	_set_conditions(_resolve_conditions())
+	_set_state(_resolve_state())
+	_set_statuses(_resolve_statuses())
 
 
-func get_locomotion() -> ActorState.Locomotion:
-	return _locomotion
+func get_state() -> ActorState.Behavior:
+	return _state
 
 
-func get_action() -> ActorState.Action:
-	return _action
+func get_statuses() -> int:
+	return _statuses
 
 
-func get_conditions() -> int:
-	return _conditions
-
-
-func has_condition(condition: ActorState.Condition) -> bool:
-	return ActorState.has_condition(_conditions, condition)
+func has_status(status: ActorState.Status) -> bool:
+	return ActorState.has_status(_statuses, status)
 
 
 func get_active_state_names() -> PackedStringArray:
-	var names := PackedStringArray([
-		ActorState.get_locomotion_name(_locomotion),
-	])
-
-	if _action != ActorState.Action.NONE:
-		names.append(ActorState.get_action_name(_action))
-
-	names.append_array(ActorState.get_condition_names(_conditions))
+	var names := PackedStringArray([ActorState.get_behavior_name(_state)])
+	names.append_array(ActorState.get_status_names(_statuses))
 	return names
 
 
@@ -124,222 +79,153 @@ func should_disable_on_actor_death() -> bool:
 	return false
 
 
-func _resolve_locomotion() -> ActorState.Locomotion:
-	if _movement_component != null and _movement_component.is_enabled:
-		match _movement_component.get_state():
-			MovementState.Type.RUN:
-				return ActorState.Locomotion.WALKING
-			MovementState.Type.JUMP:
-				return ActorState.Locomotion.JUMPING
-			MovementState.Type.DOUBLE_JUMP:
-				return ActorState.Locomotion.DOUBLE_JUMPING
-			MovementState.Type.WALL_JUMP:
-				return ActorState.Locomotion.WALL_JUMPING
-			MovementState.Type.DODGE:
-				return ActorState.Locomotion.DODGING
-			MovementState.Type.CLIMB_IDLE:
-				return ActorState.Locomotion.CLIMBING_IDLE
-			MovementState.Type.CLIMB_UP:
-				return ActorState.Locomotion.CLIMBING_UP
-			MovementState.Type.CLIMB_DOWN:
-				return ActorState.Locomotion.CLIMBING_DOWN
-			MovementState.Type.FALL:
-				return ActorState.Locomotion.FALLING
-			_:
-				return ActorState.Locomotion.IDLE
-
-	if _body_component == null or not _body_component.is_enabled:
-		return ActorState.Locomotion.IDLE
-
-	var velocity := _body_component.get_velocity()
-
-	if not _body_component.is_on_floor():
-		return (
-			ActorState.Locomotion.JUMPING
-			if velocity.y < 0.0
-			else ActorState.Locomotion.FALLING
-		)
-
-	if not is_zero_approx(velocity.x):
-		return ActorState.Locomotion.WALKING
-
-	return ActorState.Locomotion.IDLE
-
-
-func _resolve_action() -> ActorState.Action:
-	if (
-		_attack_component != null
-		and _attack_component.is_enabled
-		and _attack_component.is_critical_attacking()
-	):
-		return ActorState.Action.CRITICAL_ATTACK
-
-	if (
-		_attack_component != null
-		and _attack_component.is_enabled
-		and (
-			_attack_component.is_heavy_attacking()
-			or _attack_component.is_charging_heavy_attack()
-		)
-	):
-		return ActorState.Action.HEAVY_ATTACK
-
-	if (
-		_attack_component != null
-		and _attack_component.is_enabled
-		and _attack_component.is_attacking()
-	):
-		return ActorState.Action.LIGHT_ATTACK
-
-	if (
-		_guard_component != null
-		and _guard_component.is_enabled
-		and _guard_component.is_parrying()
-	):
-		return ActorState.Action.PARRYING
-
-	if (
-		_guard_component != null
-		and _guard_component.is_enabled
-		and _guard_component.is_guarding()
-	):
-		return ActorState.Action.BLOCKING
-
-	if (
-		_item_use_component != null
-		and _item_use_component.is_enabled
-		and _item_use_component.is_using_item()
-	):
-		return ActorState.Action.USING_ITEM
-
-	if _throwing_component != null and _throwing_component.is_enabled:
-		match _throwing_component.get_phase():
-			ThrowingComponent.Phase.AIM:
-				return ActorState.Action.THROWING_AIM
-			ThrowingComponent.Phase.ACTION:
-				return ActorState.Action.THROWING_ACTION
-			ThrowingComponent.Phase.RECOVERY:
-				return ActorState.Action.THROWING_RECOVERY
-
-	if _ranged_weapon_component != null and _ranged_weapon_component.is_enabled:
-		match _ranged_weapon_component.get_phase():
-			RangedWeaponComponent.Phase.BOW_AIM:
-				return ActorState.Action.AIM_BOW
-			RangedWeaponComponent.Phase.BOW_LOOSE:
-				return ActorState.Action.LOOSE_ARROW
-			RangedWeaponComponent.Phase.CROSSBOW_AIM:
-				return ActorState.Action.AIM_CROSSBOW
-			RangedWeaponComponent.Phase.CROSSBOW_FIRE:
-				return ActorState.Action.FIRE_CROSSBOW
-
-	if _magic_component != null and _magic_component.is_enabled:
-		match _magic_component.get_phase():
-			MagicComponent.Phase.CHARGE:
-				return ActorState.Action.MAGIC_CHARGE
-			MagicComponent.Phase.CAST:
-				return ActorState.Action.MAGIC_CAST
-			MagicComponent.Phase.RECOVERY:
-				return ActorState.Action.MAGIC_RECOVERY
-			MagicComponent.Phase.CHANNELING:
-				return ActorState.Action.MAGIC_CHANNELING
-
-	if (
-		_interaction_component != null
-		and _interaction_component.is_enabled
-	):
-		match _interaction_component.get_phase():
-			InteractionComponent.Phase.START:
-				return ActorState.Action.INTERACTING_START
-			InteractionComponent.Phase.PROGRESS:
-				return ActorState.Action.INTERACTING_PROGRESS
-			InteractionComponent.Phase.END:
-				return ActorState.Action.INTERACTING_END
-
-	return ActorState.Action.NONE
-
-
-func _resolve_conditions() -> int:
-	var result := ActorState.Condition.NONE
-
-	if (
-		_hit_reaction_component != null
-		and _hit_reaction_component.is_enabled
-		and _hit_reaction_component.is_reacting()
-	):
-		result |= ActorState.Condition.HIT
-
-	if (
-		_hit_stun_component != null
-		and _hit_stun_component.is_enabled
-		and _hit_stun_component.is_stunned()
-	):
-		result |= ActorState.Condition.STUNNED
-
-	if (
-		_hit_stun_component != null
-		and _hit_stun_component.is_enabled
-		and _hit_stun_component.is_knocked_down()
-	):
-		result |= ActorState.Condition.KNOCKED_DOWN
-
-	if _health_component != null and _health_component.is_dead():
-		result |= ActorState.Condition.DEAD
-
+func _resolve_state() -> ActorState.Behavior:
 	if (
 		_respawn_component != null
 		and _respawn_component.is_enabled
 		and _respawn_component.is_restart_scheduled()
 	):
-		result |= ActorState.Condition.RESPAWNING
+		return ActorState.Behavior.RESPAWNING
+	if _health_component != null and _health_component.is_dead():
+		return ActorState.Behavior.DEAD
+	if _hit_stun_component != null and _hit_stun_component.is_enabled:
+		if _hit_stun_component.is_knocked_down():
+			return ActorState.Behavior.KNOCKED_DOWN
+		if _hit_stun_component.is_stunned():
+			return ActorState.Behavior.STUNNED
+	if _rest_component != null and _rest_component.is_enabled:
+		if _rest_component.is_resting():
+			return ActorState.Behavior.RESTING
+	if _attack_component != null and _attack_component.is_enabled:
+		if _attack_component.is_critical_attacking():
+			return ActorState.Behavior.CRITICAL_ATTACK
+		if _attack_component.is_landing_recovery():
+			return ActorState.Behavior.GROUND_ATTACK_RECOVERY
+		if _attack_component.is_charging_heavy_attack():
+			return (
+				ActorState.Behavior.AIR_ATTACK_WINDUP
+				if _attack_component.is_air_attack()
+				else ActorState.Behavior.GROUND_ATTACK_WINDUP
+			)
+		if _attack_component.is_attacking():
+			if _attack_component.is_air_attack():
+				return (
+					ActorState.Behavior.AIR_HEAVY_ATTACK
+					if _attack_component.is_heavy_attacking()
+					else ActorState.Behavior.AIR_LIGHT_ATTACK
+				)
+			return (
+				ActorState.Behavior.GROUND_HEAVY_ATTACK
+				if _attack_component.is_heavy_attacking()
+				else ActorState.Behavior.GROUND_LIGHT_ATTACK
+			)
+	if _guard_component != null and _guard_component.is_enabled:
+		if _guard_component.is_parrying():
+			return ActorState.Behavior.PARRYING
+		if _guard_component.is_guarding():
+			return ActorState.Behavior.BLOCKING
+	if _item_use_component != null and _item_use_component.is_enabled:
+		if _item_use_component.is_using_item():
+			return ActorState.Behavior.USING_ITEM
+	if _throwing_component != null and _throwing_component.is_enabled:
+		match _throwing_component.get_phase():
+			ThrowingComponent.Phase.AIM:
+				return ActorState.Behavior.THROWING_AIM
+			ThrowingComponent.Phase.ACTION:
+				return ActorState.Behavior.THROWING_ACTION
+			ThrowingComponent.Phase.RECOVERY:
+				return ActorState.Behavior.THROWING_RECOVERY
+	if _ranged_weapon_component != null and _ranged_weapon_component.is_enabled:
+		match _ranged_weapon_component.get_phase():
+			RangedWeaponComponent.Phase.BOW_AIM:
+				return ActorState.Behavior.AIM_BOW
+			RangedWeaponComponent.Phase.BOW_LOOSE:
+				return ActorState.Behavior.LOOSE_ARROW
+			RangedWeaponComponent.Phase.CROSSBOW_AIM:
+				return ActorState.Behavior.AIM_CROSSBOW
+			RangedWeaponComponent.Phase.CROSSBOW_FIRE:
+				return ActorState.Behavior.FIRE_CROSSBOW
+	if _magic_component != null and _magic_component.is_enabled:
+		match _magic_component.get_phase():
+			MagicComponent.Phase.CHARGE:
+				return ActorState.Behavior.MAGIC_CHARGE
+			MagicComponent.Phase.CAST:
+				return ActorState.Behavior.MAGIC_CAST
+			MagicComponent.Phase.RECOVERY:
+				return ActorState.Behavior.MAGIC_RECOVERY
+			MagicComponent.Phase.CHANNELING:
+				return ActorState.Behavior.MAGIC_CHANNELING
+	if _interaction_component != null and _interaction_component.is_enabled:
+		match _interaction_component.get_phase():
+			InteractionComponent.Phase.START:
+				return ActorState.Behavior.INTERACTING_START
+			InteractionComponent.Phase.PROGRESS:
+				return ActorState.Behavior.INTERACTING_PROGRESS
+			InteractionComponent.Phase.END:
+				return ActorState.Behavior.INTERACTING_END
+	if _progression_component != null and _progression_component.is_enabled:
+		if _progression_component.is_leveling_up():
+			return ActorState.Behavior.LEVEL_UP
+	if _hit_reaction_component != null and _hit_reaction_component.is_enabled:
+		if _hit_reaction_component.is_reacting():
+			return ActorState.Behavior.HIT
+	return _resolve_movement_state()
 
-	if (
-		_rest_component != null
-		and _rest_component.is_enabled
-		and _rest_component.is_resting()
-	):
-		result |= ActorState.Condition.RESTING
 
-	if (
-		_progression_component != null
-		and _progression_component.is_enabled
-		and _progression_component.is_leveling_up()
-	):
-		result |= ActorState.Condition.LEVEL_UP
+func _resolve_movement_state() -> ActorState.Behavior:
+	if _movement_component != null and _movement_component.is_enabled:
+		match _movement_component.get_state():
+			MovementState.Type.RUN:
+				return ActorState.Behavior.RUN
+			MovementState.Type.JUMP:
+				return ActorState.Behavior.JUMP
+			MovementState.Type.DOUBLE_JUMP:
+				return ActorState.Behavior.DOUBLE_JUMP
+			MovementState.Type.WALL_JUMP:
+				return ActorState.Behavior.WALL_JUMP
+			MovementState.Type.DODGE:
+				return ActorState.Behavior.DODGE
+			MovementState.Type.CLIMB_IDLE:
+				return ActorState.Behavior.CLIMB_IDLE
+			MovementState.Type.CLIMB_UP:
+				return ActorState.Behavior.CLIMB_UP
+			MovementState.Type.CLIMB_DOWN:
+				return ActorState.Behavior.CLIMB_DOWN
+			MovementState.Type.FALL:
+				return ActorState.Behavior.FALL
+			_:
+				return ActorState.Behavior.IDLE
+	if _body_component == null or not _body_component.is_enabled:
+		return ActorState.Behavior.IDLE
+	var velocity := _body_component.get_velocity()
+	if not _body_component.is_on_floor():
+		return ActorState.Behavior.JUMP if velocity.y < 0.0 else ActorState.Behavior.FALL
+	if not is_zero_approx(velocity.x):
+		return ActorState.Behavior.RUN
+	return ActorState.Behavior.IDLE
 
-	if (
-		_status_effect_component != null
-		and _status_effect_component.is_enabled
-	):
+
+func _resolve_statuses() -> int:
+	var result := ActorState.Status.NONE
+	if _status_effect_component != null and _status_effect_component.is_enabled:
 		if _status_effect_component.has_debuff():
-			result |= ActorState.Condition.DEBUFFED
+			result |= ActorState.Status.DEBUFFED
 		if _status_effect_component.has_buff():
-			result |= ActorState.Condition.BUFFED
-
+			result |= ActorState.Status.BUFFED
 	return result
 
 
-func _set_locomotion(new_state: ActorState.Locomotion) -> void:
-	if new_state == _locomotion:
+func _set_state(new_state: ActorState.Behavior) -> void:
+	if new_state == _state:
 		return
+	var previous_state := _state
+	_state = new_state
+	state_changed.emit(previous_state, _state)
 
-	var previous_state := _locomotion
-	_locomotion = new_state
-	locomotion_changed.emit(previous_state, _locomotion)
 
-
-func _set_action(new_state: ActorState.Action) -> void:
-	if new_state == _action:
+func _set_statuses(new_statuses: int) -> void:
+	if new_statuses == _statuses:
 		return
-
-	var previous_state := _action
-	_action = new_state
-	action_changed.emit(previous_state, _action)
-
-
-func _set_conditions(new_conditions: int) -> void:
-	if new_conditions == _conditions:
-		return
-
-	var previous_conditions := _conditions
-	_conditions = new_conditions
-	conditions_changed.emit(previous_conditions, _conditions)
+	var previous_statuses := _statuses
+	_statuses = new_statuses
+	statuses_changed.emit(previous_statuses, _statuses)

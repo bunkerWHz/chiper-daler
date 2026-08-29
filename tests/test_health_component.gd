@@ -120,11 +120,10 @@ func test_player_respawn_is_scheduled_once() -> void:
 	assert_true(respawn.is_restart_scheduled())
 	assert_eq(_respawn_schedule_count, 1)
 	actor_state.refresh_state()
-	assert_true(actor_state.has_condition(ActorState.Condition.DEAD))
-	assert_true(actor_state.has_condition(ActorState.Condition.RESPAWNING))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.RESPAWNING)
 	respawn.disable()
 	actor_state.refresh_state()
-	assert_false(actor_state.has_condition(ActorState.Condition.RESPAWNING))
+	assert_eq(actor_state.get_state(), ActorState.Behavior.DEAD)
 
 
 func test_player_respawn_stores_checkpoint_position() -> void:

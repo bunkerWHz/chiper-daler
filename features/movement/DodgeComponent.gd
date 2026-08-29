@@ -4,6 +4,9 @@ class_name DodgeComponent
 const LOCOMOTION_CONSTRAINT := preload(
 	"res://features/movement/LocomotionConstraint.gd"
 )
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
 
 signal dodge_started(direction: float)
 signal dodge_finished
@@ -137,6 +140,8 @@ func try_start_dodge() -> bool:
 func can_dodge() -> bool:
 	if not is_enabled or is_dodging() or _cooldown_timer > 0.0:
 		return false
+	if BEHAVIOR_GATE.is_blocked(actor, self):
+		return false
 	if _is_dodge_blocked():
 		return false
 
@@ -165,6 +170,10 @@ func apply_velocity() -> void:
 
 func is_dodging() -> bool:
 	return _active_timer > 0.0
+
+
+func is_exclusive_behavior_active() -> bool:
+	return is_dodging()
 
 
 func get_direction() -> float:

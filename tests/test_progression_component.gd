@@ -27,12 +27,12 @@ func test_experience_can_gain_multiple_levels_and_reports_state() -> void:
 	assert_eq(progression.get_experience(), 10)
 	assert_eq(progression.get_experience_required(), 225)
 	state.refresh_state()
-	assert_true(state.has_condition(ActorState.Condition.LEVEL_UP))
+	assert_eq(state.get_state(), ActorState.Behavior.LEVEL_UP)
 
 	progression._process(config.level_up_state_duration)
 	state.refresh_state()
 	assert_false(progression.is_leveling_up())
-	assert_false(state.has_condition(ActorState.Condition.LEVEL_UP))
+	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
 
 	var overlay := DebugOverlayComponent.new()
 	overlay.actor = actor

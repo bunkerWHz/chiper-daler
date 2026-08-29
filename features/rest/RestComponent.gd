@@ -1,6 +1,13 @@
 extends Component
 class_name RestComponent
 
+const LOCOMOTION_CONSTRAINT := preload(
+	"res://features/movement/LocomotionConstraint.gd"
+)
+const BEHAVIOR_GATE := preload(
+	"res://features/state/ExclusiveBehaviorGate.gd"
+)
+
 signal rest_started
 signal rest_finished
 
@@ -43,6 +50,7 @@ func start_rest() -> bool:
 		or is_resting()
 		or _health == null
 		or _health.is_dead()
+		or BEHAVIOR_GATE.is_blocked(actor, self)
 	):
 		return false
 
@@ -56,6 +64,20 @@ func start_rest() -> bool:
 
 func is_resting() -> bool:
 	return _timer > 0.0
+
+
+func is_exclusive_behavior_active() -> bool:
+	return is_resting()
+
+
+func get_locomotion_blocks() -> int:
+	if not is_resting():
+		return LOCOMOTION_CONSTRAINT.Block.NONE
+	return (
+		LOCOMOTION_CONSTRAINT.Block.HORIZONTAL
+		| LOCOMOTION_CONSTRAINT.Block.JUMP
+		| LOCOMOTION_CONSTRAINT.Block.DODGE
+	)
 
 
 func disable() -> void:

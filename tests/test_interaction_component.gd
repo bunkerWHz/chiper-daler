@@ -4,13 +4,13 @@ extends McpTestSuite
 var _interaction_count: int = 0
 
 
-class PrimaryActionStub:
+class BehaviorStub:
 	extends Component
 
 	var active: bool = false
 
 
-	func is_primary_action_active() -> bool:
+	func is_exclusive_behavior_active() -> bool:
 		return active
 
 
@@ -59,36 +59,36 @@ func test_actor_state_maps_all_interaction_phases() -> void:
 	assert_true(interaction.interact())
 	actor_state.refresh_state()
 	assert_eq(
-		actor_state.get_action(),
-		ActorState.Action.INTERACTING_START
+		actor_state.get_state(),
+		ActorState.Behavior.INTERACTING_START
 	)
 
 	interaction._update_interaction_phase(interaction.start_duration)
 	actor_state.refresh_state()
 	assert_eq(
-		actor_state.get_action(),
-		ActorState.Action.INTERACTING_PROGRESS
+		actor_state.get_state(),
+		ActorState.Behavior.INTERACTING_PROGRESS
 	)
 
 	interaction._update_interaction_phase(interaction.progress_duration)
 	actor_state.refresh_state()
 	assert_eq(
-		actor_state.get_action(),
-		ActorState.Action.INTERACTING_END
+		actor_state.get_state(),
+		ActorState.Behavior.INTERACTING_END
 	)
 
 	interaction._update_interaction_phase(interaction.end_duration)
 	actor_state.refresh_state()
-	assert_eq(actor_state.get_action(), ActorState.Action.NONE)
+	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 
 
-func test_interaction_waits_for_an_active_primary_action() -> void:
+func test_interaction_waits_for_an_active_exclusive_behavior() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
-	var action := PrimaryActionStub.new()
+	var action := BehaviorStub.new()
 	var interaction := InteractionComponent.new()
 	components.add_child(input)
 	components.add_child(action)
@@ -116,7 +116,7 @@ func test_interaction_waits_for_an_active_primary_action() -> void:
 	assert_eq(interaction.get_phase(), InteractionComponent.Phase.START)
 
 
-func test_all_combat_actions_publish_the_primary_action_capability() -> void:
+func test_all_actor_actions_publish_the_exclusive_behavior_capability() -> void:
 	var providers: Array[Component] = [
 		track(AttackComponent.new()) as AttackComponent,
 		track(GuardComponent.new()) as GuardComponent,
@@ -124,10 +124,41 @@ func test_all_combat_actions_publish_the_primary_action_capability() -> void:
 		track(ThrowingComponent.new()) as ThrowingComponent,
 		track(RangedWeaponComponent.new()) as RangedWeaponComponent,
 		track(MagicComponent.new()) as MagicComponent,
+		track(DodgeComponent.new()) as DodgeComponent,
+		track(ClimbingComponent.new()) as ClimbingComponent,
+		track(RestComponent.new()) as RestComponent,
 	]
 
 	for provider: Component in providers:
-		assert_true(provider.has_method(&"is_primary_action_active"))
+		assert_true(provider.has_method(&"is_exclusive_behavior_active"))
+
+
+func test_interaction_hands_off_to_a_behavior_started_by_the_target() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var behavior := BehaviorStub.new()
+	var interaction := InteractionComponent.new()
+	components.add_child(input)
+	components.add_child(behavior)
+	components.add_child(interaction)
+	actor._collect_components()
+
+	var target := track(Actor.new()) as Actor
+	var target_components := Node2D.new()
+	target_components.name = "_Components"
+	target.add_child(target_components)
+	var interactable := InteractableComponent.new()
+	target_components.add_child(interactable)
+	target._collect_components()
+	interactable.interacted.connect(_activate_behavior.bind(behavior))
+	interaction.current_target = interactable
+
+	assert_true(interaction.interact())
+	assert_true(behavior.active)
+	assert_eq(interaction.get_phase(), InteractionComponent.Phase.NONE)
 
 
 func _create_interaction_setup(include_actor_state: bool) -> Dictionary:
@@ -168,3 +199,7 @@ func _create_interaction_setup(include_actor_state: bool) -> Dictionary:
 
 func _on_interacted() -> void:
 	_interaction_count += 1
+
+
+func _activate_behavior(behavior: BehaviorStub) -> void:
+	behavior.active = true

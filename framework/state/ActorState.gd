@@ -1,23 +1,24 @@
 extends RefCounted
 class_name ActorState
 
-enum Locomotion {
+enum Behavior {
 	IDLE,
-	WALKING,
-	JUMPING,
-	DOUBLE_JUMPING,
-	WALL_JUMPING,
-	FALLING,
-	DODGING,
-	CLIMBING_IDLE,
-	CLIMBING_UP,
-	CLIMBING_DOWN,
-}
-
-enum Action {
-	NONE,
-	LIGHT_ATTACK,
-	HEAVY_ATTACK,
+	RUN,
+	JUMP,
+	DOUBLE_JUMP,
+	WALL_JUMP,
+	FALL,
+	DODGE,
+	CLIMB_IDLE,
+	CLIMB_UP,
+	CLIMB_DOWN,
+	GROUND_ATTACK_WINDUP,
+	GROUND_LIGHT_ATTACK,
+	GROUND_HEAVY_ATTACK,
+	AIR_ATTACK_WINDUP,
+	AIR_LIGHT_ATTACK,
+	AIR_HEAVY_ATTACK,
+	GROUND_ATTACK_RECOVERY,
 	USING_ITEM,
 	THROWING_AIM,
 	THROWING_ACTION,
@@ -36,44 +37,37 @@ enum Action {
 	INTERACTING_START,
 	INTERACTING_PROGRESS,
 	INTERACTING_END,
+	HIT,
+	STUNNED,
+	KNOCKED_DOWN,
+	DEAD,
+	RESPAWNING,
+	LEVEL_UP,
+	RESTING,
 }
 
-enum Condition {
+enum Status {
 	NONE = 0,
-	HIT = 1 << 0,
-	STUNNED = 1 << 1,
-	KNOCKED_DOWN = 1 << 2,
-	DEAD = 1 << 3,
-	RESPAWNING = 1 << 4,
-	LEVEL_UP = 1 << 5,
-	RESTING = 1 << 6,
-	DEBUFFED = 1 << 7,
-	BUFFED = 1 << 8,
+	DEBUFFED = 1 << 0,
+	BUFFED = 1 << 1,
 }
 
 
-static func get_locomotion_name(state: Locomotion) -> String:
-	return _format_enum_name(Locomotion.keys()[state])
+static func get_behavior_name(state: Behavior) -> String:
+	return _format_enum_name(Behavior.keys()[state])
 
 
-static func get_action_name(state: Action) -> String:
-	return _format_enum_name(Action.keys()[state])
-
-
-static func get_condition_names(mask: int) -> PackedStringArray:
+static func get_status_names(mask: int) -> PackedStringArray:
 	var names := PackedStringArray()
-
-	for condition_name: String in Condition.keys():
-		var condition_value: int = Condition[condition_name]
-
-		if condition_value != Condition.NONE and mask & condition_value:
-			names.append(_format_enum_name(condition_name))
-
+	for status_name: String in Status.keys():
+		var status_value: int = Status[status_name]
+		if status_value != Status.NONE and mask & status_value:
+			names.append(_format_enum_name(status_name))
 	return names
 
 
-static func has_condition(mask: int, condition: Condition) -> bool:
-	return condition != Condition.NONE and bool(mask & condition)
+static func has_status(mask: int, status: Status) -> bool:
+	return status != Status.NONE and bool(mask & status)
 
 
 static func _format_enum_name(value: String) -> String:

@@ -4,6 +4,14 @@ extends McpTestSuite
 var _rest_finished_count: int = 0
 
 
+class ActiveBehaviorComponent:
+	extends Component
+
+
+	func is_exclusive_behavior_active() -> bool:
+		return true
+
+
 func suite_name() -> String:
 	return "rest"
 
@@ -55,13 +63,13 @@ func test_rest_point_heals_and_reports_resting_state() -> void:
 		point.global_position + point.spawn_offset
 	)
 	assert_true(rest.is_resting())
-	assert_true(state.has_condition(ActorState.Condition.RESTING))
+	assert_eq(state.get_state(), ActorState.Behavior.RESTING)
 	assert_false(rest.start_rest())
 
 	rest._process(rest.config.duration)
 	state.refresh_state()
 	assert_false(rest.is_resting())
-	assert_false(state.has_condition(ActorState.Condition.RESTING))
+	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
 
 
 func test_disabling_rest_finishes_the_active_condition_once() -> void:
@@ -85,6 +93,25 @@ func test_disabling_rest_finishes_the_active_condition_once() -> void:
 	assert_eq(_rest_finished_count, 1)
 	rest.disable()
 	assert_eq(_rest_finished_count, 1)
+
+
+func test_rest_does_not_start_during_another_exclusive_behavior() -> void:
+	var player := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	player.add_child(components)
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var active_behavior := ActiveBehaviorComponent.new()
+	var rest := RestComponent.new()
+	rest.config = RestConfig.new()
+	components.add_child(health)
+	components.add_child(active_behavior)
+	components.add_child(rest)
+	player._collect_components()
+
+	assert_false(rest.start_rest())
+	assert_false(rest.is_resting())
 
 
 func _on_rest_finished() -> void:
