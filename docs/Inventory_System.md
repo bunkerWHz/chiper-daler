@@ -13,9 +13,11 @@ and future combat-ready item types. Weapon sets are not hotbar entries.
 
 All eight number keys address real quick-access slots. `Q` and `E` cycle
 backward and forward through available slots, wrapping around and skipping
-empty ones. Interaction uses `R`; there are no hidden legacy combat-mode
-fallbacks. `Tab` cycles the two weapon sets separately, like changing combat
-stance, and activates the combat mode of the new main-hand weapon.
+empty ones. `R` is contextual: a nearby world target has priority; otherwise it
+uses the active hotbar item. Consumables activate on press, while throwables aim
+until `R` is released. `Tab` cycles the two weapon sets separately, like
+changing combat stance, and activates the combat mode of the new main-hand
+weapon. `J` and `K` remain the primary and secondary weapon actions.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one

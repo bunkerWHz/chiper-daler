@@ -31,6 +31,7 @@ var _vertical_axis: float = 0.0
 var _jump_pressed: bool = false
 var _jump_released: bool = false
 var _interact_pressed: bool = false
+var _interact_released: bool = false
 var _attack_just_pressed: bool = false
 var _attack_pressed: bool = false
 var _attack_released: bool = false
@@ -74,6 +75,14 @@ func consume_interact_pressed() -> bool:
 		return false
 
 	_interact_pressed = false
+	return true
+
+
+func consume_interact_released() -> bool:
+	if not _interact_released:
+		return false
+
+	_interact_released = false
 	return true
 
 
@@ -146,6 +155,7 @@ func consume_inventory_pressed() -> bool:
 func _process(_delta: float) -> void:
 	_inventory_pressed = Input.is_action_just_pressed(INVENTORY_ACTION)
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
+	_interact_released = Input.is_action_just_released(INTERACT_ACTION)
 	_attack_just_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
 	_attack_pressed = Input.is_action_pressed(ATTACK_ACTION)
 	_attack_released = Input.is_action_just_released(ATTACK_ACTION)

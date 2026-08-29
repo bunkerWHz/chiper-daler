@@ -18,6 +18,10 @@ func consume_interact_pressed() -> bool:
 	return false
 
 
+func consume_interact_released() -> bool:
+	return false
+
+
 func consume_attack_pressed() -> bool:
 	return false
 

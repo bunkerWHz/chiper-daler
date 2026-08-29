@@ -14,14 +14,12 @@ func test_throwing_runs_aim_action_and_recovery_states() -> void:
 	var actor_state := setup.actor_state as ActorStateComponent
 	equipment.equip(EquipmentComponent.Slot.THROWABLE)
 
-	input._attack_just_pressed = true
-	input._attack_pressed = true
+	input._interact_pressed = true
 	throwing._process(0.0)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_state(), ActorState.Behavior.THROWING_AIM)
 
-	input._attack_pressed = false
-	input._attack_released = true
+	input._interact_released = true
 	throwing._process(0.0)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_state(), ActorState.Behavior.THROWING_ACTION)
@@ -43,7 +41,7 @@ func test_secondary_action_cancels_throwing_aim() -> void:
 	var equipment := setup.equipment as EquipmentComponent
 	var throwing := setup.throwing as ThrowingComponent
 	equipment.equip(EquipmentComponent.Slot.THROWABLE)
-	input._attack_just_pressed = true
+	input._interact_pressed = true
 	throwing._process(0.0)
 	assert_eq(throwing.get_phase(), ThrowingComponent.Phase.AIM)
 

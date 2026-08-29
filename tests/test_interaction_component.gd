@@ -116,6 +116,26 @@ func test_interaction_waits_for_an_active_exclusive_behavior() -> void:
 	assert_eq(interaction.get_phase(), InteractionComponent.Phase.START)
 
 
+func test_context_action_is_left_for_hotbar_without_a_world_target() -> void:
+	var setup := _create_interaction_setup(false)
+	var interaction := setup.interaction as InteractionComponent
+	var interactable := setup.interactable as InteractableComponent
+	var input := interaction.input_component
+	interactable.interacted.connect(_on_interacted)
+
+	interaction.current_target = null
+	input._interact_pressed = true
+	interaction._process_context_action()
+	assert_true(input.consume_interact_pressed())
+	assert_eq(_interaction_count, 0)
+
+	interaction.current_target = interactable
+	input._interact_pressed = true
+	interaction._process_context_action()
+	assert_false(input.consume_interact_pressed())
+	assert_eq(_interaction_count, 1)
+
+
 func test_all_actor_actions_publish_the_exclusive_behavior_capability() -> void:
 	var providers: Array[Component] = [
 		track(AttackComponent.new()) as AttackComponent,

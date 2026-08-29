@@ -4,6 +4,7 @@ class_name InteractionComponent
 const BEHAVIOR_GATE := preload(
 	"res://features/state/ExclusiveBehaviorGate.gd"
 )
+const INTERACTION_PROCESS_PRIORITY := -85
 
 enum Phase {
 	NONE,
@@ -52,6 +53,10 @@ func on_initialize() -> void:
 	_behavior_providers = BEHAVIOR_GATE.collect_providers(actor, self)
 
 
+func _ready() -> void:
+	process_priority = INTERACTION_PROCESS_PRIORITY
+
+
 func _process(delta: float) -> void:
 	if cooldown_timer > 0.0:
 		cooldown_timer = max(cooldown_timer - delta, 0.0)
@@ -59,8 +64,14 @@ func _process(delta: float) -> void:
 	_update_interaction_phase(delta)
 		
 	_update_target()
+	_process_context_action()
 
-	if input_component.consume_interact_pressed():
+
+func _process_context_action() -> void:
+	if (
+		(current_target != null or is_interacting())
+		and input_component.consume_interact_pressed()
+	):
 		interact()
 
 

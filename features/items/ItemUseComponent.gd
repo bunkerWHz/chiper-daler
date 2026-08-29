@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 	if not _equipment_component.is_slot_active(EquipmentComponent.Slot.ITEM):
 		return
 
-	if _input_component.consume_attack_pressed():
+	if _input_component.consume_interact_pressed():
 		use_item()
 
 

@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
 	if not _equipment_component.is_slot_active(EquipmentComponent.Slot.THROWABLE):
 		return
 
-	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
+	if _phase == Phase.NONE and _input_component.consume_interact_pressed():
 		if (
 			_remaining_charges > 0
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
 	elif _phase == Phase.AIM:
 		if _input_component.consume_guard_just_pressed():
 			_set_phase(Phase.NONE, 0.0)
-		elif _input_component.consume_attack_released():
+		elif _input_component.consume_interact_released():
 			_release_throwable()
 
 

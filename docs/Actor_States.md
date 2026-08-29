@@ -76,11 +76,12 @@ from the active main-hand item. `Tab` switches between the two weapon sets.
 Number keys `1` through `8` address item hotbar slots; `Q` and `E` cycle through
 non-empty hotbar slots. Hotbar selection does not change weapon stance.
 
-`J` is the primary action and `K` is the secondary action of the active slot.
-Melee attack, parry, and block are available only while the melee slot is
-active and the active weapon set has a melee weapon in its main hand. Removing
-that weapon cancels any of those actions already in progress. Every future
-equipment ability must follow the same ownership rule.
+`J` is the primary weapon action and `K` is its secondary action. `R` interacts
+with a nearby world target when one is available; otherwise it uses the active
+hotbar item. Melee attack, parry, and block are available only while the melee
+slot is active and the active weapon set has a melee weapon in its main hand.
+Removing that weapon cancels any of those actions already in progress. Every
+future equipment ability must follow the same ownership rule.
 
 Equipment-driven actions also observe changes inside their active context.
 Changing the active ranged or magic main-hand item, or switching weapon sets,
