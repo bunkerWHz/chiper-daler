@@ -4,6 +4,9 @@ class_name ItemUseComponent
 const BEHAVIOR_GATE := preload(
 	"res://features/state/ExclusiveBehaviorGate.gd"
 )
+const LOCOMOTION_CONSTRAINT := preload(
+	"res://features/movement/LocomotionConstraint.gd"
+)
 
 signal item_use_started
 signal item_used(restored_health: float, remaining_charges: int)
@@ -13,6 +16,7 @@ signal inventory_item_used(item: ItemData, applied_value: float, remaining: int)
 @export var config: ItemUseConfig
 
 var _input_component: InputComponent
+var _body_component: CharacterBodyComponent
 var _equipment_component: EquipmentComponent
 var _health_component: HealthComponent
 var _inventory_component: InventoryComponent
@@ -42,6 +46,9 @@ func on_initialize() -> void:
 		return
 
 	_input_component = actor.get_component(InputComponent) as InputComponent
+	_body_component = (
+		actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
+	)
 	_equipment_component = (
 		actor.get_component(EquipmentComponent) as EquipmentComponent
 	)
@@ -59,6 +66,10 @@ func on_initialize() -> void:
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("ItemUseComponent requires an enabled InputComponent")
+		disable()
+		return
+	if _body_component == null or not _body_component.is_enabled:
+		push_error("ItemUseComponent requires an enabled CharacterBodyComponent")
 		disable()
 		return
 
@@ -83,10 +94,13 @@ func _process(delta: float) -> void:
 	_cooldown_timer = maxf(_cooldown_timer - delta, 0.0)
 
 	if _use_timer > 0.0:
-		_use_timer = maxf(_use_timer - delta, 0.0)
+		if not _body_component.is_on_floor():
+			cancel_item_use()
+		else:
+			_use_timer = maxf(_use_timer - delta, 0.0)
 
-		if _use_timer == 0.0:
-			_finish_item_use()
+			if _use_timer == 0.0:
+				_finish_item_use()
 
 	if (
 		_is_item_use_context_selected()
@@ -127,6 +141,7 @@ func can_use_inventory_item_now(item_id: StringName) -> bool:
 	if (
 		not is_enabled
 		or is_using_item()
+		or not _body_component.is_on_floor()
 		or _inventory_component == null
 		or not _inventory_component.has_item(item_id)
 	):
@@ -138,6 +153,7 @@ func can_use_item() -> bool:
 	var base_conditions := (
 		is_enabled
 		and not is_using_item()
+		and _body_component.is_on_floor()
 		and _cooldown_timer <= 0.0
 		and _health_component.is_alive()
 		and not BEHAVIOR_GATE.is_blocked(actor, self)
@@ -167,6 +183,16 @@ func is_using_item() -> bool:
 
 func is_exclusive_behavior_active() -> bool:
 	return is_using_item()
+
+
+func get_locomotion_blocks() -> int:
+	if not is_using_item():
+		return LOCOMOTION_CONSTRAINT.Block.NONE
+	return (
+		LOCOMOTION_CONSTRAINT.Block.HORIZONTAL
+		| LOCOMOTION_CONSTRAINT.Block.JUMP
+		| LOCOMOTION_CONSTRAINT.Block.DODGE
+	)
 
 
 func get_remaining_charges() -> int:

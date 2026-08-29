@@ -2,6 +2,24 @@
 extends McpTestSuite
 
 
+class GroundedBodyComponent:
+	extends CharacterBodyComponent
+
+	var grounded: bool = true
+
+
+	func on_initialize() -> void:
+		pass
+
+
+	func is_on_floor() -> bool:
+		return grounded
+
+
+	func get_velocity() -> Vector2:
+		return Vector2.ZERO
+
+
 func suite_name() -> String:
 	return "item_use"
 
@@ -47,12 +65,48 @@ func test_switching_slot_cancels_item_without_spending_charge() -> void:
 	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
 
 
+func test_item_use_requires_ground_and_blocks_locomotion() -> void:
+	var setup := _create_item_actor(false)
+	var body := setup.body as GroundedBodyComponent
+	var item_use := setup.item_use as ItemUseComponent
+	var health := setup.health as HealthComponent
+	health.take_damage(20.0)
+	body.grounded = false
+
+	assert_false(item_use.use_item())
+	body.grounded = true
+	assert_true(item_use.use_item())
+	var blocks := item_use.get_locomotion_blocks()
+	assert_true(
+		LocomotionConstraint.has_block(
+			blocks, LocomotionConstraint.Block.HORIZONTAL
+		)
+	)
+	assert_true(
+		LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.JUMP)
+	)
+	assert_true(
+		LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.DODGE)
+	)
+
+	body.grounded = false
+	item_use._process(0.0)
+	assert_false(item_use.is_using_item())
+	assert_eq(item_use.get_remaining_charges(), 3)
+	assert_eq(health.get_current_health(), 80.0)
+	assert_eq(
+		item_use.get_locomotion_blocks(),
+		LocomotionConstraint.Block.NONE
+	)
+
+
 func test_quick_health_potion_consumes_inventory_stack() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
+	var body := GroundedBodyComponent.new()
 	var equipment := EquipmentComponent.new()
 	var health := HealthComponent.new()
 	health.config = HealthConfig.new()
@@ -64,6 +118,7 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	quick_access.config = QuickAccessConfig.new()
 	for component: Component in [
 		input,
+		body,
 		equipment,
 		health,
 		item_use,
@@ -96,6 +151,10 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	assert_eq(item_use.get_remaining_charges(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	health.take_damage(15.0)
+	body.grounded = false
+	assert_false(item_use.use_inventory_item_now(potion.id))
+	assert_eq(inventory.get_quantity(potion.id), 1)
+	body.grounded = true
 	assert_true(item_use.use_inventory_item_now(potion.id))
 	assert_eq(health.get_current_health(), 100.0)
 	assert_eq(inventory.get_quantity(potion.id), 0)
@@ -108,6 +167,7 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 	actor.add_child(components)
 
 	var input := InputComponent.new()
+	var body := GroundedBodyComponent.new()
 	var equipment := EquipmentComponent.new()
 	var health := HealthComponent.new()
 	health.config = HealthConfig.new()
@@ -116,6 +176,7 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 	var actor_state: ActorStateComponent
 
 	components.add_child(input)
+	components.add_child(body)
 	components.add_child(equipment)
 	components.add_child(health)
 	components.add_child(item_use)
@@ -128,6 +189,7 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 
 	return {
 		"actor": actor,
+		"body": body,
 		"input": input,
 		"equipment": equipment,
 		"health": health,

@@ -2,6 +2,18 @@
 extends McpTestSuite
 
 
+class GroundedBodyComponent:
+	extends CharacterBodyComponent
+
+
+	func on_initialize() -> void:
+		pass
+
+
+	func is_on_floor() -> bool:
+		return true
+
+
 func suite_name() -> String:
 	return "inventory_menu"
 
@@ -15,6 +27,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	actor.add_child(components)
 
 	var input := InputComponent.new()
+	var body := GroundedBodyComponent.new()
 	var attributes := CharacterAttributesComponent.new()
 	attributes.dexterity = 1
 	var health := HealthComponent.new()
@@ -41,6 +54,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq(menu_panel.anchor_bottom, 0.75)
 	for component: Component in [
 		input,
+		body,
 		attributes,
 		health,
 		inventory,

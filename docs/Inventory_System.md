@@ -20,6 +20,9 @@ changing combat stance, and activates the combat mode of the new main-hand
 weapon. `J` and `K` remain the primary and secondary weapon actions.
 The fixed Health Potion slot is active and usable immediately after the Player
 spawns; selecting a consumable never changes the active weapon mode.
+Consumables can be used only while grounded. Using one holds the Player in
+place and blocks jumping and dodging until the action completes; leaving the
+ground cancels the action without spending the item.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one

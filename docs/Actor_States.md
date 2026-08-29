@@ -100,6 +100,11 @@ start only on the floor, stops horizontal motion, and blocks running, jumping,
 and dodging until released. Horizontal input may still update facing so the
 Actor can turn toward an incoming attack. Losing floor contact ends guard.
 
+Consumable use is also grounded. `UsingItem` stops horizontal motion and blocks
+jump and dodge until the use completes. If the Actor loses floor contact from
+an external effect, the use is cancelled without consuming the item. Facing
+may still change while the Actor is using it.
+
 ## Implemented behavior mapping
 
 | Actor behavior | Source of truth |
