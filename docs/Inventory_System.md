@@ -18,6 +18,8 @@ uses the active hotbar item. Consumables activate on press, while throwables aim
 until `R` is released. `Tab` cycles the two weapon sets separately, like
 changing combat stance, and activates the combat mode of the new main-hand
 weapon. `J` and `K` remain the primary and secondary weapon actions.
+The fixed Health Potion slot is active and usable immediately after the Player
+spawns; selecting a consumable never changes the active weapon mode.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one

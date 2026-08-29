@@ -231,14 +231,11 @@ func _create_default_slots() -> void:
 
 
 func _activate_item(item_id: StringName) -> bool:
-	if item_id == config.health_item_id:
-		return _equipment.equip(EquipmentComponent.Slot.ITEM) or (
-			_equipment.get_current_slot() == EquipmentComponent.Slot.ITEM
-		)
-
 	var item := _inventory.get_item_data(item_id)
 	if item == null or not item.usable_in_combat:
 		return false
+	if item.category == ItemData.Category.CONSUMABLE:
+		return true
 	var action_slot := _equipment.get_item_action_slot(item)
 	return _equipment.equip(action_slot) or (
 		_equipment.get_current_slot() == action_slot

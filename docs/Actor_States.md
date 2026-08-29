@@ -75,6 +75,8 @@ does not depend on concrete combat or interaction components.
 from the active main-hand item. `Tab` switches between the two weapon sets.
 Number keys `1` through `8` address item hotbar slots; `Q` and `E` cycle through
 non-empty hotbar slots. Hotbar selection does not change weapon stance.
+The default Health Potion slot is usable immediately without first reselecting
+it through a number key or hotbar cycling.
 
 `J` is the primary weapon action and `K` is its secondary action. `R` interacts
 with a nearby world target when one is available; otherwise it uses the active

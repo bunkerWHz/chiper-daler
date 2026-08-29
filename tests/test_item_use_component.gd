@@ -84,7 +84,8 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	potion.use_value = 35.0
 	inventory.add_item(potion, 2)
 	health.take_damage(50.0)
-	assert_true(quick_access.activate_slot(0))
+	assert_eq(quick_access.get_active_slot(), 0)
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	input._interact_pressed = true
 	item_use._process(0.0)
 	assert_true(item_use.is_using_item())
@@ -93,6 +94,7 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	assert_eq(health.get_current_health(), 85.0)
 	assert_eq(inventory.get_quantity(potion.id), 1)
 	assert_eq(item_use.get_remaining_charges(), 1)
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	health.take_damage(15.0)
 	assert_true(item_use.use_inventory_item_now(potion.id))
 	assert_eq(health.get_current_health(), 100.0)

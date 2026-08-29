@@ -49,6 +49,8 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	assert_false(quick_access.assign_item(1, health_potion.id))
 	assert_false(quick_access.activate_slot(1))
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
+	assert_true(quick_access.activate_slot(0))
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	assert_eq(InputComponent.QUICK_SLOT_ACTIONS[0], &"quick_slot_1")
 	assert_eq(InputComponent.QUICK_SLOT_ACTIONS[5], &"quick_slot_6")
 	assert_eq(InputComponent.QUICK_SLOT_PREVIOUS_ACTION, &"quick_slot_previous")

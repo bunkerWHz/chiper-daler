@@ -88,10 +88,10 @@ func _process(delta: float) -> void:
 		if _use_timer == 0.0:
 			_finish_item_use()
 
-	if not _equipment_component.is_slot_active(EquipmentComponent.Slot.ITEM):
-		return
-
-	if _input_component.consume_interact_pressed():
+	if (
+		_is_item_use_context_selected()
+		and _input_component.consume_interact_pressed()
+	):
 		use_item()
 
 
@@ -137,7 +137,6 @@ func can_use_inventory_item_now(item_id: StringName) -> bool:
 func can_use_item() -> bool:
 	var base_conditions := (
 		is_enabled
-		and _equipment_component.is_slot_active(EquipmentComponent.Slot.ITEM)
 		and not is_using_item()
 		and _cooldown_timer <= 0.0
 		and _health_component.is_alive()
@@ -246,6 +245,14 @@ func _get_selected_inventory_item_id() -> StringName:
 	):
 		return &""
 	return _quick_access_component.get_active_item_id()
+
+
+func _is_item_use_context_selected() -> bool:
+	var item_id := _get_selected_inventory_item_id()
+	if item_id.is_empty():
+		return true
+	var item := _inventory_component.get_item_data(item_id)
+	return item != null and item.category == ItemData.Category.CONSUMABLE
 
 
 func _can_apply_inventory_item(item: ItemData) -> bool:

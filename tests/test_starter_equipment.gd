@@ -70,7 +70,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
 	assert_eq(equipment.get_total_defense(), 0.0)
 	assert_true(quick_access.activate_slot(0))
-	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.ITEM)
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
 
 
 func test_replacing_active_main_hand_changes_combat_mode() -> void:
