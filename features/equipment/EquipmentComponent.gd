@@ -314,6 +314,8 @@ func get_slot_capacity(target_slot: ItemData.EquipSlot) -> int:
 	match target_slot:
 		ItemData.EquipSlot.RING:
 			return 4
+		ItemData.EquipSlot.RUNE:
+			return 3
 		ItemData.EquipSlot.EARRING:
 			return 2
 		ItemData.EquipSlot.NONE:
@@ -444,12 +446,17 @@ func _get_effective_equipped_items() -> Array[ItemData]:
 		ItemData.EquipSlot.AMULET,
 		ItemData.EquipSlot.BELT,
 		ItemData.EquipSlot.FEET,
+		ItemData.EquipSlot.SHOULDER,
+		ItemData.EquipSlot.ARTIFACT,
+		ItemData.EquipSlot.BROOCH,
 	]:
 		_append_equipped_item(result, slot)
 	for index in 4:
 		_append_equipped_item(result, ItemData.EquipSlot.RING, index)
 	for index in 2:
 		_append_equipped_item(result, ItemData.EquipSlot.EARRING, index)
+	for index in 3:
+		_append_equipped_item(result, ItemData.EquipSlot.RUNE, index)
 	return result
 
 

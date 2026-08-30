@@ -30,6 +30,10 @@ enum EquipSlot {
 	AMULET,
 	BELT,
 	FEET,
+	SHOULDER,
+	ARTIFACT,
+	BROOCH,
+	RUNE,
 }
 
 enum Rarity {

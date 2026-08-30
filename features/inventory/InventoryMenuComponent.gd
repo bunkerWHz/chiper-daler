@@ -452,8 +452,11 @@ func _rebuild_equipment_slots() -> void:
 	_clear_dynamic_children(_equipment_slots)
 	var active_set := _equipment.get_active_weapon_set()
 	var layout: Array[Dictionary] = [
-		{"label": "Earring 1", "slot": ItemData.EquipSlot.EARRING, "index": 0},
+		{"label": "Shoulder", "slot": ItemData.EquipSlot.SHOULDER},
 		{"label": "Helmet", "slot": ItemData.EquipSlot.HEAD},
+		{"label": "Artifact", "slot": ItemData.EquipSlot.ARTIFACT},
+		{"label": "Earring 1", "slot": ItemData.EquipSlot.EARRING, "index": 0},
+		{"label": "Amulet", "slot": ItemData.EquipSlot.AMULET},
 		{"label": "Earring 2", "slot": ItemData.EquipSlot.EARRING, "index": 1},
 		{
 			"label": "Main Hand",
@@ -461,20 +464,23 @@ func _rebuild_equipment_slots() -> void:
 			"weapon_set": active_set,
 		},
 		{"label": "Armor", "slot": ItemData.EquipSlot.CHEST},
+		{"label": "Brooch", "slot": ItemData.EquipSlot.BROOCH},
+		{"label": "Gloves", "slot": ItemData.EquipSlot.HANDS},
+		{"label": "Belt", "slot": ItemData.EquipSlot.BELT},
 		{
 			"label": "Off Hand",
 			"slot": ItemData.EquipSlot.OFF_HAND,
 			"weapon_set": active_set,
 		},
-		{"label": "Gloves", "slot": ItemData.EquipSlot.HANDS},
-		{"label": "Belt", "slot": ItemData.EquipSlot.BELT},
-		{"label": "Amulet", "slot": ItemData.EquipSlot.AMULET},
 		{"label": "Ring 1", "slot": ItemData.EquipSlot.RING, "index": 0},
 		{"label": "Pants", "slot": ItemData.EquipSlot.LEGS},
 		{"label": "Ring 2", "slot": ItemData.EquipSlot.RING, "index": 1},
 		{"label": "Ring 3", "slot": ItemData.EquipSlot.RING, "index": 2},
 		{"label": "Boots", "slot": ItemData.EquipSlot.FEET},
 		{"label": "Ring 4", "slot": ItemData.EquipSlot.RING, "index": 3},
+		{"label": "Rune 1", "slot": ItemData.EquipSlot.RUNE, "index": 0},
+		{"label": "Rune 2", "slot": ItemData.EquipSlot.RUNE, "index": 1},
+		{"label": "Rune 3", "slot": ItemData.EquipSlot.RUNE, "index": 2},
 	]
 	for entry: Dictionary in layout:
 		_add_equipment_slot_button(

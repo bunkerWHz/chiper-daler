@@ -121,6 +121,14 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	var ring := _create_equippable(&"copper_ring", ItemData.EquipSlot.RING)
 	var belt := _create_equippable(&"leather_belt", ItemData.EquipSlot.BELT)
 	var boots := _create_equippable(&"leather_boots", ItemData.EquipSlot.FEET)
+	var shoulder := _create_equippable(
+		&"iron_shoulder", ItemData.EquipSlot.SHOULDER
+	)
+	var artifact := _create_equippable(
+		&"old_artifact", ItemData.EquipSlot.ARTIFACT
+	)
+	var brooch := _create_equippable(&"silver_brooch", ItemData.EquipSlot.BROOCH)
+	var rune := _create_equippable(&"minor_rune", ItemData.EquipSlot.RUNE)
 	assert_eq(inventory.add_item(sword), 1)
 	assert_eq(inventory.add_item(bow), 1)
 	assert_eq(inventory.add_item(shield), 1)
@@ -128,6 +136,10 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	assert_eq(inventory.add_item(ring, 4), 4)
 	assert_eq(inventory.add_item(belt), 1)
 	assert_eq(inventory.add_item(boots), 1)
+	assert_eq(inventory.add_item(shoulder), 1)
+	assert_eq(inventory.add_item(artifact), 1)
+	assert_eq(inventory.add_item(brooch), 1)
+	assert_eq(inventory.add_item(rune, 3), 3)
 
 	assert_true(equipment.equip_inventory_item(
 		sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
@@ -161,6 +173,22 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	))
 	assert_true(equipment.equip_inventory_item(
 		boots.id, ItemData.EquipSlot.FEET
+	))
+	assert_true(equipment.equip_inventory_item(
+		shoulder.id, ItemData.EquipSlot.SHOULDER
+	))
+	assert_true(equipment.equip_inventory_item(
+		artifact.id, ItemData.EquipSlot.ARTIFACT
+	))
+	assert_true(equipment.equip_inventory_item(
+		brooch.id, ItemData.EquipSlot.BROOCH
+	))
+	for rune_index in 3:
+		assert_true(equipment.equip_inventory_item(
+			rune.id, ItemData.EquipSlot.RUNE, rune_index
+		))
+	assert_false(equipment.equip_inventory_item(
+		rune.id, ItemData.EquipSlot.RUNE, 3
 	))
 	assert_false(equipment.equip_inventory_item(
 		helmet.id, ItemData.EquipSlot.OFF_HAND
