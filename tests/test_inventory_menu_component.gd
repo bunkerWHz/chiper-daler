@@ -85,6 +85,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var grid := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
+	assert_eq(grid.columns, 5)
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	assert_eq((grid.get_child(0) as Button).text, "")
@@ -229,8 +230,12 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._on_category_selected(0)
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	var equipment_slots := menu.get_node(
-		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentMargin/EquipmentSlots"
 	) as GridContainer
+	var equipment_margin := equipment_slots.get_parent() as MarginContainer
+	assert_eq(
+		equipment_margin.get_theme_constant("margin_right"), 16
+	)
 	assert_eq(equipment_slots.columns, 3)
 	assert_eq(equipment_slots.get_child_count(), 21)
 	var expected_slots: Array[int] = [

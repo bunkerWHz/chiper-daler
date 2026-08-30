@@ -104,7 +104,7 @@ func _ready() -> void:
 		"CanvasLayer/DropDialog/Content/Quantity"
 	) as SpinBox
 	_equipment_slots = get_node_or_null(
-		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentMargin/EquipmentSlots"
 	) as GridContainer
 	_weapon_set_buttons = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Equipment/WeaponSets"
@@ -218,7 +218,7 @@ func _rebuild_grid() -> void:
 	var stacks := _get_visible_stacks()
 	for stack: InventoryStack in stacks:
 		var button := InventoryDragButton.new()
-		button.custom_minimum_size = Vector2(72.0, 72.0)
+		button.custom_minimum_size = Vector2(68.0, 68.0)
 		button.text = ""
 		button.icon = stack.item.get_display_icon()
 		button.add_theme_constant_override("icon_max_width", 64)
@@ -239,7 +239,7 @@ func _rebuild_grid() -> void:
 	if _selected_category == ALL_CATEGORIES:
 		for _empty_index in _inventory.get_capacity() - stacks.size():
 			var empty_cell := InventoryDragButton.new()
-			empty_cell.custom_minimum_size = Vector2(72.0, 72.0)
+			empty_cell.custom_minimum_size = Vector2(68.0, 68.0)
 			empty_cell.text = ""
 			empty_cell.icon = ItemData.PLACEHOLDER_ICON
 			empty_cell.add_theme_constant_override("icon_max_width", 64)
