@@ -559,13 +559,25 @@ func _refresh_weapon_set_buttons() -> void:
 	var active_set := _equipment.get_active_weapon_set()
 	var set_index := 0
 	for button: Button in _weapon_set_buttons.get_children():
-		button.text = "Weapon Set %d%s" % [
-			set_index + 1,
-			" • Active" if set_index == active_set else "",
-		]
-		button.disabled = (
-			set_index == active_set
+		button.text = "Set %d" % (set_index + 1)
+		button.tooltip_text = (
+			"Active weapon set"
+			if set_index == active_set
+			else "Switch to weapon set %d" % (set_index + 1)
 		)
+		button.remove_theme_stylebox_override("normal")
+		button.remove_theme_stylebox_override("hover")
+		button.remove_theme_stylebox_override("pressed")
+		button.remove_theme_color_override("font_color")
+		if set_index == active_set:
+			var active_style := _active_weapon_set_style()
+			button.add_theme_stylebox_override("normal", active_style)
+			button.add_theme_stylebox_override("hover", active_style)
+			button.add_theme_stylebox_override("pressed", active_style)
+			button.add_theme_color_override(
+				"font_color", Color(1.0, 0.82, 0.34)
+			)
+		button.disabled = false
 		set_index += 1
 
 
@@ -654,6 +666,21 @@ func _selected_item_style() -> StyleBoxFlat:
 	style.border_width_right = 2
 	style.border_width_bottom = 2
 	style.border_color = Color(0.96, 0.72, 0.22, 1.0)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_right = 4
+	style.corner_radius_bottom_left = 4
+	return style
+
+
+func _active_weapon_set_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.16, 0.13, 0.06, 0.98)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.96, 0.68, 0.18, 1.0)
 	style.corner_radius_top_left = 4
 	style.corner_radius_top_right = 4
 	style.corner_radius_bottom_right = 4

@@ -28,8 +28,10 @@ Paper-doll equipment currently supports two independent main/off-hand weapon
 sets; head, shoulder, chest, hands, belt, legs, and feet armor; four rings; two
 earrings; an amulet, artifact, and brooch; and three runes. The menu presents the
 active weapon set and wearable slots as a three-column, seven-row paper doll;
-the set buttons switch which hand
-slots are shown. Equipped copies appear only in the equipment area and are excluded
+the compact `Set 1` and `Set 2` buttons switch which hand slots are shown. The
+active set uses an amber background and border instead of an extra text label,
+keeping the equipment column and its scrollbar tight to the item grid. Equipped
+copies appear only in the equipment area and are excluded
 from the main bag grid and its visible weight/slot summary. The inventory
 component remains the single owner of item data while equipment reserves the
 equipped quantity. Unequipping returns that copy to the main grid; removing the

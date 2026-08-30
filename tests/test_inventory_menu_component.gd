@@ -261,6 +261,16 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 			equipment_slots.get_child(index) as InventoryDragButton
 		)
 		assert_eq(int(equipment_button.target_equip_slot), expected_slots[index])
+	var weapon_sets := menu.get_node(
+		"CanvasLayer/Panel/Main/Content/Equipment/WeaponSets"
+	) as HBoxContainer
+	var set_one_button := weapon_sets.get_child(0) as Button
+	var set_two_button := weapon_sets.get_child(1) as Button
+	assert_eq(set_one_button.text, "Set 1")
+	assert_eq(set_two_button.text, "Set 2")
+	assert_false(set_one_button.text.contains("Active"))
+	assert_true(set_one_button.has_theme_stylebox_override("normal"))
+	assert_false(set_two_button.has_theme_stylebox_override("normal"))
 	var first_equipped_button := (
 		equipment_slots.get_child(6) as InventoryDragButton
 	)
@@ -283,6 +293,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(equip_button.disabled)
 	menu._activate_weapon_set(1)
 	assert_eq(equipment.get_active_weapon_set(), 1)
+	assert_false(set_one_button.has_theme_stylebox_override("normal"))
+	assert_true(set_two_button.has_theme_stylebox_override("normal"))
 	menu._select_item(sword.id)
 	menu._equip_selected_item()
 	assert_false(equipment.is_item_equipped(sword.id))
