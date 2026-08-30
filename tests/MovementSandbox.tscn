@@ -25,7 +25,7 @@ position = Vector2(384, 388)
 shape = SubResource("RectangleShape2D_floor")
 
 [node name="Floor3" type="StaticBody2D" parent="." unique_id=2020015755]
-position = Vector2(-23, 346)
+position = Vector2(-29, 371)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor3" unique_id=661873606]
 shape = SubResource("RectangleShape2D_floor")
@@ -39,7 +39,7 @@ shape = SubResource("RectangleShape2D_floor")
 [node name="TestInteractable" parent="." unique_id=1068066335 instance=ExtResource("2_2noc4")]
 position = Vector2(322, 373)
 
-[node name="RestPoint" parent="." instance=ExtResource("8_rest_point")]
+[node name="RestPoint" parent="." unique_id=1874341117 instance=ExtResource("8_rest_point")]
 position = Vector2(270, 373)
 
 [node name="TestInteractable2" parent="." unique_id=1678913942 instance=ExtResource("2_2noc4")]
@@ -61,7 +61,7 @@ offset_bottom = 222.0
 size_flags_horizontal = 4
 text = "Interact"
 
-[node name="HealthBarView" parent="UI/CanvasLayer" instance=ExtResource("6_health_bar")]
+[node name="HealthBarView" parent="UI/CanvasLayer" unique_id=38653314 instance=ExtResource("6_health_bar")]
 actor_path = NodePath("../../../Player")
 
 [node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
@@ -73,8 +73,8 @@ position = Vector2(161, 323)
 [node name="Enemy" parent="." unique_id=492946956 instance=ExtResource("5_6luox")]
 position = Vector2(534, 337)
 
-[node name="LevelExit" parent="." instance=ExtResource("9_level_exit")]
+[node name="LevelExit" parent="." unique_id=268007414 instance=ExtResource("9_level_exit")]
 position = Vector2(778, 403)
 
-[node name="TestLadder" parent="." instance=ExtResource("7_climbable")]
+[node name="TestLadder" parent="." unique_id=1275535152 instance=ExtResource("7_climbable")]
 position = Vector2(690, 338)
