@@ -232,6 +232,8 @@ func _rebuild_grid() -> void:
 		button.pressed.connect(_select_item.bind(stack.item.id))
 		button.mouse_entered.connect(show_item_details.bind(stack.item.id))
 		button.mouse_exited.connect(hide_hover_details)
+		button.focus_entered.connect(show_item_details.bind(stack.item.id))
+		button.focus_exited.connect(hide_hover_details)
 		_grid.add_child(button)
 
 	if _selected_category == ALL_CATEGORIES:
@@ -333,8 +335,16 @@ func _get_item_details(item: ItemData) -> String:
 		ItemData.Category.keys()[item.category].capitalize(),
 	])
 	detail_lines.append(item.description)
-	detail_lines.append("Qty: %d  Weight: %.2f  Sell: %d" % [
-		_inventory.get_quantity(item.id),
+	var owned_quantity := _inventory.get_quantity(item.id)
+	var equipped_quantity := _equipment.get_equipped_item_count(item.id)
+	if equipped_quantity > 0:
+		detail_lines.append("Bag: %d  Equipped: %d" % [
+			maxi(owned_quantity - equipped_quantity, 0),
+			equipped_quantity,
+		])
+	else:
+		detail_lines.append("Qty: %d" % owned_quantity)
+	detail_lines.append("Weight: %.2f  Sell: %d" % [
 		item.weight,
 		item.sell_price,
 	])
@@ -490,22 +500,22 @@ func _add_equipment_slot_button(
 ) -> void:
 	var item := _equipment.get_equipped_item(slot, index, weapon_set)
 	var button := InventoryDragButton.new()
-	button.custom_minimum_size = Vector2(132.0, 54.0)
-	button.text = "%s\n%s" % [
-		label,
-		item.display_name if item != null else "—",
-	]
-	button.icon = item.get_display_icon() if item != null else ItemData.PLACEHOLDER_ICON
-	button.add_theme_constant_override("icon_max_width", 24)
+	button.custom_minimum_size = Vector2(72.0, 72.0)
+	button.text = ""
+	button.icon = item.get_display_icon() if item != null else null
+	button.add_theme_constant_override("icon_max_width", 64)
 	button.expand_icon = true
+	button.tooltip_text = (
+		"%s: %s" % [label, item.display_name]
+		if item != null
+		else "%s: Empty" % label
+	)
 	button.drop_target = InventoryDragButton.TARGET_EQUIPMENT
 	button.target_equip_slot = slot
 	button.data_dropped.connect(
 		_on_equipment_data_dropped.bind(slot, index, weapon_set)
 	)
 	if item != null:
-		button.tooltip_text = item.description
-		button.add_theme_color_override("font_color", _rarity_color(item.rarity))
 		button.drag_payload = {
 			"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
 			"item_id": item.id,
@@ -517,6 +527,10 @@ func _add_equipment_slot_button(
 		button.pressed.connect(
 			_select_equipped_slot.bind(slot, index, weapon_set)
 		)
+		button.mouse_entered.connect(show_item_details.bind(item.id))
+		button.mouse_exited.connect(hide_hover_details)
+		button.focus_entered.connect(show_item_details.bind(item.id))
+		button.focus_exited.connect(hide_hover_details)
 	_equipment_slots.add_child(button)
 
 
@@ -531,7 +545,7 @@ func _select_equipped_slot(
 
 
 func _activate_weapon_set(set_index: int) -> void:
-	_quick_access.activate_slot(set_index)
+	_equipment.switch_weapon_set(set_index)
 	_rebuild()
 
 
@@ -545,28 +559,52 @@ func _refresh_weapon_set_buttons() -> void:
 		]
 		button.disabled = (
 			set_index == active_set
-			or not _quick_access.is_slot_available(set_index)
 		)
 		set_index += 1
 
 
 func _rebuild_inventory_summary() -> void:
-	_inventory_summary.text = "Slots %d / %d    Weight %.2f" % [
-		_inventory.get_used_slots(),
+	var visible_stacks := _get_unequipped_stacks()
+	var visible_weight := 0.0
+	for stack: InventoryStack in visible_stacks:
+		visible_weight += stack.item.weight * stack.quantity
+	_inventory_summary.text = "Bag slots %d / %d    Weight %.2f" % [
+		visible_stacks.size(),
 		_inventory.get_capacity(),
-		_inventory.get_total_weight(),
+		visible_weight,
 	]
 
 
 func _get_visible_stacks() -> Array[InventoryStack]:
 	var result: Array[InventoryStack] = []
-	for stack: InventoryStack in _inventory.get_stacks():
+	for stack: InventoryStack in _get_unequipped_stacks():
 		if (
 			_selected_category == ALL_CATEGORIES
 			or stack.item.category == _selected_category
 		):
 			result.append(stack)
 	result.sort_custom(_is_stack_before)
+	return result
+
+
+func _get_unequipped_stacks() -> Array[InventoryStack]:
+	var result: Array[InventoryStack] = []
+	var remaining_equipped: Dictionary = {}
+	for stack: InventoryStack in _inventory.get_stacks():
+		var item_id := stack.item.id
+		if not remaining_equipped.has(item_id):
+			remaining_equipped[item_id] = (
+				_equipment.get_equipped_item_count(item_id)
+			)
+		var hidden_quantity := mini(
+			stack.quantity, int(remaining_equipped[item_id])
+		)
+		remaining_equipped[item_id] = (
+			int(remaining_equipped[item_id]) - hidden_quantity
+		)
+		var visible_quantity := stack.quantity - hidden_quantity
+		if visible_quantity > 0:
+			result.append(InventoryStack.new(stack.item, visible_quantity))
 	return result
 
 
@@ -656,30 +694,81 @@ func _on_equipment_data_dropped(
 	index: int,
 	weapon_set: int
 ) -> void:
-	if StringName(data.get("kind", &"")) != InventoryDragButton.KIND_INVENTORY_ITEM:
-		return
-	_equipment.equip_inventory_item(
-		StringName(data.get("item_id", &"")), slot, index, weapon_set
-	)
+	var kind := StringName(data.get("kind", &""))
+	if kind == InventoryDragButton.KIND_INVENTORY_ITEM:
+		_equipment.equip_inventory_item(
+			StringName(data.get("item_id", &"")), slot, index, weapon_set
+		)
+	elif kind == InventoryDragButton.KIND_EQUIPPED_ITEM:
+		_move_equipped_item(data, slot, index, weapon_set)
 	_rebuild()
 
 
+func _move_equipped_item(
+	data: Dictionary,
+	target_slot: ItemData.EquipSlot,
+	target_index: int,
+	target_weapon_set: int
+) -> void:
+	var source_slot := int(
+		data.get("equip_slot", ItemData.EquipSlot.NONE)
+	) as ItemData.EquipSlot
+	var source_index := int(data.get("slot_index", 0))
+	var source_weapon_set := int(data.get("weapon_set", -1))
+	if (
+		source_slot == target_slot
+		and source_index == target_index
+		and source_weapon_set == target_weapon_set
+	):
+		return
+	var source_item_id := _equipment.get_equipped_item_id(
+		source_slot, source_index, source_weapon_set
+	)
+	if source_item_id.is_empty():
+		return
+	var displaced_item_id := _equipment.get_equipped_item_id(
+		target_slot, target_index, target_weapon_set
+	)
+	_equipment.unequip_item(target_slot, target_index, target_weapon_set)
+	_equipment.unequip_item(source_slot, source_index, source_weapon_set)
+	if not _equipment.equip_inventory_item(
+		source_item_id, target_slot, target_index, target_weapon_set
+	):
+		_equipment.equip_inventory_item(
+			source_item_id, source_slot, source_index, source_weapon_set
+		)
+		if not displaced_item_id.is_empty():
+			_equipment.equip_inventory_item(
+				displaced_item_id,
+				target_slot,
+				target_index,
+				target_weapon_set
+			)
+		return
+	if displaced_item_id.is_empty():
+		return
+	var displaced_item := _inventory.get_item_data(displaced_item_id)
+	if displaced_item != null and displaced_item.can_equip_in(source_slot):
+		_equipment.equip_inventory_item(
+			displaced_item_id, source_slot, source_index, source_weapon_set
+		)
+
+
 func _rebuild_equipment_text() -> void:
-	var lines := PackedStringArray()
 	var attributes := (
 		actor.get_component(CharacterAttributesComponent)
 		as CharacterAttributesComponent
 	)
+	var strength := 0
+	var dexterity := 0
 	if attributes != null:
-		lines.append("STR: %d  DEX: %d" % [
-			attributes.strength,
-			attributes.dexterity,
-		])
-	lines.append("Total Defense: %.1f" % _equipment.get_total_defense())
-	lines.append("Active weapon set: %d" % (
-		_equipment.get_active_weapon_set() + 1
-	))
-	_equipment_text.text = "\n".join(lines)
+		strength = attributes.strength
+		dexterity = attributes.dexterity
+	_equipment_text.text = "STR %d  DEX %d    Defense %.1f" % [
+		strength,
+		dexterity,
+		_equipment.get_total_defense(),
+	]
 
 
 func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:

@@ -71,7 +71,8 @@ text = "Equipment"
 
 [node name="EquipmentText" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
-text = "Equipment slots"
+theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
+text = "STR 0  DEX 0    Defense 0.0"
 
 [node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Equipment"]
 layout_mode = 2
@@ -84,7 +85,7 @@ size_flags_vertical = 3
 [node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 1
+columns = 2
 
 [node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
 layout_mode = 2

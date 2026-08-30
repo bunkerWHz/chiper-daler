@@ -102,7 +102,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var summary := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Inventory/Summary"
 	) as Label
-	assert_true(summary.text.contains("Slots 1 / 40"))
+	assert_true(summary.text.contains("Bag slots 1 / 40"))
 
 	menu._select_item(potion.id)
 	menu._use_selected_item()
@@ -154,6 +154,9 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	sword.sell_price = 25
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(sword.id, sword.equip_slot)
+	menu._rebuild()
+	assert_eq(menu._get_unequipped_stacks().size(), 1)
+	assert_eq(equipment.get_equipped_item_count(sword.id), 1)
 	var sword_payload := menu._inventory_item_payload(sword)
 	var equipment_drop_target := track(
 		InventoryDragButton.new()
@@ -163,6 +166,17 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(equipment_drop_target._can_drop_data(Vector2.ZERO, sword_payload))
 	equipment_drop_target.target_equip_slot = ItemData.EquipSlot.RING
 	assert_false(equipment_drop_target._can_drop_data(Vector2.ZERO, sword_payload))
+	var equipped_sword_payload := {
+		"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
+		"item_id": sword.id,
+		"equip_slot": ItemData.EquipSlot.MAIN_HAND,
+		"slot_index": 0,
+		"weapon_set": 0,
+	}
+	equipment_drop_target.target_equip_slot = ItemData.EquipSlot.MAIN_HAND
+	assert_true(equipment_drop_target._can_drop_data(
+		Vector2.ZERO, equipped_sword_payload
+	))
 	menu._on_inventory_data_dropped({
 		"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
 		"equip_slot": ItemData.EquipSlot.MAIN_HAND,
@@ -170,12 +184,27 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"weapon_set": 0,
 	})
 	assert_false(equipment.is_item_equipped(sword.id))
+	assert_eq(menu._get_unequipped_stacks().size(), 2)
 	menu._on_equipment_data_dropped(
 		sword_payload, ItemData.EquipSlot.MAIN_HAND, 0, 1
 	)
 	assert_eq(
 		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 1),
 		sword.id
+	)
+	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND, 0, 1)
+	equipment.equip_inventory_item(sword.id, sword.equip_slot, 0, 0)
+	menu._on_equipment_data_dropped(
+		equipped_sword_payload, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 1),
+		sword.id
+	)
+	assert_true(
+		equipment.get_equipped_item_id(
+			ItemData.EquipSlot.MAIN_HAND, 0, 0
+		).is_empty()
 	)
 	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND, 0, 1)
 	equipment.equip_inventory_item(sword.id, sword.equip_slot, 0, 0)
@@ -190,7 +219,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	crossbow.sell_price = 100
 	inventory.add_item(crossbow)
 	menu._on_category_selected(ItemData.Category.WEAPON + 1)
-	assert_eq(grid.get_child_count(), 2)
+	assert_eq(grid.get_child_count(), 1)
 	menu._on_sort_selected(InventoryMenuComponent.SortMode.VALUE)
 	assert_eq(
 		(grid.get_child(0) as InventoryDragButton).drag_payload.item_id,
@@ -202,8 +231,15 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
 	assert_eq(equipment_slots.get_child_count(), 14)
-	menu._activate_weapon_set(1)
-	assert_eq(equipment.get_active_weapon_set(), 0)
+	var first_equipped_button := (
+		equipment_slots.get_child(0) as InventoryDragButton
+	)
+	assert_eq(first_equipped_button.text, "")
+	assert_eq(first_equipped_button.icon, ItemData.PLACEHOLDER_ICON)
+	first_equipped_button.focus_entered.emit()
+	assert_true(detail_popup.visible)
+	assert_true(menu._details_text.text.contains("Test Sword"))
+	first_equipped_button.focus_exited.emit()
 	menu._select_item(crossbow.id)
 	var details := menu.get_node(
 		"CanvasLayer/DetailPopup/Margin/Details"
@@ -215,6 +251,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(details.text.contains("Compared with Test Sword"))
 	assert_true(details.text.contains("Damage +7.0"))
 	assert_true(equip_button.disabled)
+	menu._activate_weapon_set(1)
+	assert_eq(equipment.get_active_weapon_set(), 1)
 	menu._select_item(sword.id)
 	menu._equip_selected_item()
 	assert_false(equipment.is_item_equipped(sword.id))

@@ -76,7 +76,7 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 			return kind == KIND_EQUIPPED_ITEM or kind == KIND_QUICK_SLOT
 		TARGET_EQUIPMENT:
 			return (
-				kind == KIND_INVENTORY_ITEM
+				(kind == KIND_INVENTORY_ITEM or kind == KIND_EQUIPPED_ITEM)
 				and int(payload.get("equip_slot", ItemData.EquipSlot.NONE))
 				== target_equip_slot
 			)

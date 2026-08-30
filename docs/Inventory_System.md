@@ -26,8 +26,11 @@ ground cancels the action without spending the item.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
-back slot. Equipped entries reference items that remain visible in the main
-inventory. Removing the last copy of an item automatically unequips it.
+back slot. Equipped copies appear only in the equipment area and are excluded
+from the main bag grid and its visible weight/slot summary. The inventory
+component remains the single owner of item data while equipment reserves the
+equipped quantity. Unequipping returns that copy to the main grid; removing the
+last owned copy automatically clears its equipment slot.
 Light and heavy melee attacks, guard, and parry require a melee weapon in the
 active set's main hand. Dropping or otherwise removing that weapon immediately
 cancels any attack, guard, or parry already in progress and blocks new ones
@@ -99,7 +102,11 @@ available for assignment. The inventory grid uses icon-only 64-pixel cells. A
 temporary item card appears on hover; clicking an item selects it and pins the
 card with its description, quantity, weight, value, requirements, stats, and
 equipment comparison. The panel also shows both weapon sets, armor and accessory
-slots, and actions for using, equipping,
+slots as icon-only cells. Hovering, focusing with the keyboard, or selecting an
+equipped icon uses the same item card as the main grid. Compatible items can be
+dragged from the bag into equipment, while dragging an equipped item back to the
+bag unequips it. Equipment cells also accept compatible equipped items for moving
+or swapping between slots. The panel includes actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
 that fits and leaves any remainder on the ground. The item grid can be filtered

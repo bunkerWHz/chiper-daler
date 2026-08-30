@@ -183,6 +183,12 @@ func is_item_equipped(item_id: StringName) -> bool:
 	return not item_id.is_empty() and _equipped_items.values().has(item_id)
 
 
+func get_equipped_item_count(item_id: StringName) -> int:
+	if item_id.is_empty():
+		return 0
+	return _count_equipped_item(item_id)
+
+
 func unequip_inventory_item(item_id: StringName) -> bool:
 	if item_id.is_empty():
 		return false
