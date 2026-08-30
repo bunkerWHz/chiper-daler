@@ -49,9 +49,10 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var menu := menu_scene.instantiate() as InventoryMenuComponent
 	var menu_panel := menu.get_node("CanvasLayer/Panel") as Control
 	assert_eq(menu_panel.anchor_left, 0.25)
-	assert_eq(menu_panel.anchor_top, 0.25)
+	assert_eq(menu_panel.anchor_top, 0.0)
 	assert_eq(menu_panel.anchor_right, 0.75)
-	assert_eq(menu_panel.anchor_bottom, 0.75)
+	assert_true(is_equal_approx(menu_panel.anchor_bottom, 0.95))
+	assert_eq(menu_panel.offset_top, 92.0)
 	for component: Component in [
 		input,
 		body,
