@@ -65,6 +65,23 @@ func test_switching_slot_cancels_item_without_spending_charge() -> void:
 	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
 
 
+func test_damage_cancels_item_before_effect_or_charge_is_applied() -> void:
+	var setup := _create_item_actor(false)
+	var item_use := setup.item_use as ItemUseComponent
+	var health := setup.health as HealthComponent
+	health.take_damage(20.0)
+
+	assert_true(item_use.use_item())
+	assert_true(item_use.is_using_item())
+	health.take_damage(10.0)
+
+	assert_false(item_use.is_using_item())
+	assert_eq(health.get_current_health(), 70.0)
+	assert_eq(item_use.get_remaining_charges(), 3)
+	item_use._process(item_use.config.use_duration)
+	assert_eq(health.get_current_health(), 70.0)
+
+
 func test_item_use_requires_ground_and_blocks_locomotion() -> void:
 	var setup := _create_item_actor(false)
 	var body := setup.body as GroundedBodyComponent
@@ -151,13 +168,78 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 	assert_eq(item_use.get_remaining_charges(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 	health.take_damage(15.0)
+	item_use._process(item_use.config.cooldown)
 	body.grounded = false
-	assert_false(item_use.use_inventory_item_now(potion.id))
+	assert_false(item_use.begin_inventory_item_use(potion.id))
 	assert_eq(inventory.get_quantity(potion.id), 1)
 	body.grounded = true
-	assert_true(item_use.use_inventory_item_now(potion.id))
+	assert_true(item_use.begin_inventory_item_use(potion.id))
+	assert_true(item_use.is_using_item())
+	assert_eq(health.get_current_health(), 70.0)
+	assert_eq(inventory.get_quantity(potion.id), 1)
+	item_use._process(item_use.config.use_duration)
 	assert_eq(health.get_current_health(), 100.0)
 	assert_eq(inventory.get_quantity(potion.id), 0)
+
+
+func test_mana_and_rage_apply_only_after_use_duration() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var body := GroundedBodyComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var equipment := EquipmentComponent.new()
+	var facing := FacingComponent.new()
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var magic := MagicComponent.new()
+	magic.config = MagicConfig.new()
+	var status_effects := StatusEffectComponent.new()
+	var quick_access := QuickAccessComponent.new()
+	quick_access.config = QuickAccessConfig.new()
+	var item_use := ItemUseComponent.new()
+	item_use.config = ItemUseConfig.new()
+	for component: Component in [
+		input,
+		body,
+		inventory,
+		equipment,
+		facing,
+		health,
+		magic,
+		status_effects,
+		quick_access,
+		item_use,
+	]:
+		components.add_child(component)
+	actor._collect_components()
+	var mana_potion := load(
+		"res://features/inventory/items/ManaPotion.tres"
+	) as ItemData
+	var rage_potion := load(
+		"res://features/inventory/items/RagePotion.tres"
+	) as ItemData
+	inventory.add_item(mana_potion)
+	inventory.add_item(rage_potion)
+	magic.restore_runtime_state(50.0)
+
+	assert_true(item_use.begin_inventory_item_use(mana_potion.id))
+	assert_eq(magic.get_mana(), 50.0)
+	assert_eq(inventory.get_quantity(mana_potion.id), 1)
+	item_use._process(item_use.config.use_duration)
+	assert_eq(magic.get_mana(), 80.0)
+	assert_eq(inventory.get_quantity(mana_potion.id), 0)
+
+	item_use._process(item_use.config.cooldown)
+	assert_true(item_use.begin_inventory_item_use(rage_potion.id))
+	assert_false(status_effects.has_effect(&"rage"))
+	assert_eq(inventory.get_quantity(rage_potion.id), 1)
+	item_use._process(item_use.config.use_duration)
+	assert_true(status_effects.has_effect(&"rage"))
+	assert_eq(inventory.get_quantity(rage_potion.id), 0)
 
 
 func _create_item_actor(include_actor_state: bool) -> Dictionary:

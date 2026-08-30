@@ -108,8 +108,14 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 
 	menu._select_item(potion.id)
 	menu._use_selected_item()
+	assert_false(menu.is_open())
+	assert_true(item_use.is_using_item())
+	assert_eq(health.get_current_health(), 50.0)
+	assert_eq(inventory.get_quantity(potion.id), 3)
+	item_use._process(item_use.config.use_duration)
 	assert_eq(health.get_current_health(), 85.0)
 	assert_eq(inventory.get_quantity(potion.id), 2)
+	menu.open_inventory()
 	menu._request_drop_selected_item()
 	assert_eq(menu._drop_quantity.max_value, 2.0)
 	menu._drop_quantity.value = 2

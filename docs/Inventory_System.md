@@ -44,11 +44,12 @@ Guard can begin only on the ground. Its parry window and sustained block both
 hold the Actor in place while still allowing facing changes.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
-Crossbow, Apprentice Focus, three Health Potions, three Mana Potions, and two
-Experience Tonics. The last two are temporary functional items for testing
-quick-access assignment and item use. Weapon set one starts as sword and shield;
-set two starts with the bow. Crossbow and focus remain in the inventory and can
-replace a main-hand weapon through the equipment menu.
+Crossbow, Apprentice Focus, temporary Training Spear, three Health Potions,
+three Mana Potions, three Rage Potions, and two Experience Tonics. These are
+functional test items for quick-access, item-use, and visual-profile checks.
+Weapon set one starts as sword and shield; set two starts with the bow. The
+crossbow, focus, and spear remain in the inventory and can replace a main-hand
+weapon through the equipment menu.
 
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
@@ -58,8 +59,11 @@ equipping an item until the Actor has the required attributes. The inventory
 details panel shows these values and compares an item with the active equipped
 item in the same slot.
 
-The functional menu supports immediate consumable use while paused,
-equip/unequip toggling, manual quick-slot assignment and clearing, stack
+The functional menu can begin consumable use while paused, then closes and
+resumes the game so the full use action must complete. Health, mana, and rage
+are applied only at the end of that action. Taking damage, leaving the ground,
+or changing action context cancels it without consuming the item. The menu also
+supports equip/unequip toggling, manual quick-slot assignment and clearing, stack
 splitting when a free cell exists, and quantity-confirmed dropping. Key items
 cannot be dropped. A confirmed multi-item drop creates one loot bag containing
 the selected quantity. Dropping the only copy of an item skips the quantity
@@ -127,3 +131,17 @@ ordering and selling remain later interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
+
+## Temporary player visuals
+
+`TemporaryPlayerVisualComponent` isolates the current test art from the generic
+animation architecture. A main-hand item's `visual_archetype` selects warrior,
+archer, or lancer sprite sheets; the bow and crossbow also fall back to archer.
+Switching the active weapon set refreshes the profile immediately.
+
+Item effects use an `AnimatedSprite2D` overlay above the character. Health,
+mana, and rage play their own animation for exactly the configured item-use
+duration. Successful rage use applies the provisional `rage` buff status. A
+second overlay plays the shared buff animation whenever any buff is applied,
+allowing both layers to coexist. These profiles and assets are deliberately
+temporary and can be replaced without changing equipment or item-use rules.

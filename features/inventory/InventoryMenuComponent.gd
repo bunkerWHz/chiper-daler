@@ -283,7 +283,7 @@ func _rebuild_details() -> void:
 	_drop_button.disabled = item.is_key_item
 	_use_button.disabled = (
 		_item_use == null
-		or not _item_use.can_use_inventory_item_now(item.id)
+		or not _item_use.can_begin_inventory_item_use(item.id)
 	)
 	_split_button.disabled = not _inventory.can_split_stack(item.id)
 
@@ -412,8 +412,8 @@ func _confirm_drop_selected_item() -> void:
 
 
 func _use_selected_item() -> void:
-	if _item_use != null and _item_use.use_inventory_item_now(_selected_item_id):
-		_rebuild()
+	if _item_use != null and _item_use.begin_inventory_item_use(_selected_item_id):
+		close_inventory()
 
 
 func _split_selected_stack() -> void:

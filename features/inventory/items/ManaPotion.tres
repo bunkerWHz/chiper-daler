@@ -14,4 +14,5 @@ weight = 0.25
 usable_in_combat = true
 use_effect = 2
 use_value = 30.0
+use_visual_effect = 2
 sell_price = 8

@@ -148,3 +148,8 @@ When adding a behavior:
 7. Add transition, conflict, and debug-state tests.
 
 Unrelated components never write directly into Actor state.
+
+Item use remains `UsingItem` until its configured duration completes. Healing,
+mana restoration, and buffs are committed only on successful completion;
+damage or another cancellation condition returns the Actor to its resolved
+locomotion state without consuming the item.

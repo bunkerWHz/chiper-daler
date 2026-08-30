@@ -8,7 +8,7 @@ const LOCOMOTION_CONSTRAINT := preload(
 	"res://features/movement/LocomotionConstraint.gd"
 )
 
-signal item_use_started
+signal item_use_started(item: ItemData)
 signal item_used(restored_health: float, remaining_charges: int)
 signal item_use_cancelled
 signal inventory_item_used(item: ItemData, applied_value: float, remaining: int)
@@ -23,6 +23,7 @@ var _inventory_component: InventoryComponent
 var _quick_access_component: QuickAccessComponent
 var _magic_component: MagicComponent
 var _progression_component: ProgressionComponent
+var _status_effect_component: StatusEffectComponent
 var _use_timer: float = 0.0
 var _cooldown_timer: float = 0.0
 var _remaining_charges: int = 0
@@ -63,6 +64,9 @@ func on_initialize() -> void:
 	_progression_component = (
 		actor.get_component(ProgressionComponent) as ProgressionComponent
 	)
+	_status_effect_component = (
+		actor.get_component(StatusEffectComponent) as StatusEffectComponent
+	)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("ItemUseComponent requires an enabled InputComponent")
@@ -88,6 +92,8 @@ func on_initialize() -> void:
 		_on_equipment_changed
 	):
 		_equipment_component.equipment_changed.connect(_on_equipment_changed)
+	if not _health_component.damaged.is_connected(_on_health_damaged):
+		_health_component.damaged.connect(_on_health_damaged)
 
 
 func _process(delta: float) -> void:
@@ -115,33 +121,32 @@ func use_item() -> bool:
 
 	_active_inventory_item_id = _get_selected_inventory_item_id()
 	_use_timer = config.use_duration
-	item_use_started.emit()
+	item_use_started.emit(
+		_inventory_component.get_item_data(_active_inventory_item_id)
+		if not _active_inventory_item_id.is_empty()
+		else null
+	)
 	return true
 
 
-func use_inventory_item_now(item_id: StringName) -> bool:
-	if not can_use_inventory_item_now(item_id):
+func begin_inventory_item_use(item_id: StringName) -> bool:
+	if not can_begin_inventory_item_use(item_id):
 		return false
 	var item := _inventory_component.get_item_data(item_id)
-	var applied_value := _apply_inventory_item(item)
-	if item == null or applied_value <= 0.0:
-		return false
-	_inventory_component.remove_item(item.id, 1)
-	_cooldown_timer = config.cooldown
-	var remaining := _inventory_component.get_quantity(item.id)
-	item_used.emit(
-		applied_value if item.use_effect == ItemData.UseEffect.HEAL else 0.0,
-		remaining
-	)
-	inventory_item_used.emit(item, applied_value, remaining)
+	_active_inventory_item_id = item_id
+	_use_timer = config.use_duration
+	item_use_started.emit(item)
 	return true
 
 
-func can_use_inventory_item_now(item_id: StringName) -> bool:
+func can_begin_inventory_item_use(item_id: StringName) -> bool:
 	if (
 		not is_enabled
 		or is_using_item()
 		or not _body_component.is_on_floor()
+		or _cooldown_timer > 0.0
+		or not _health_component.is_alive()
+		or BEHAVIOR_GATE.is_blocked(actor, self)
 		or _inventory_component == null
 		or not _inventory_component.has_item(item_id)
 	):
@@ -300,6 +305,12 @@ func _can_apply_inventory_item(item: ItemData) -> bool:
 			)
 		ItemData.UseEffect.GRANT_EXPERIENCE:
 			return item.use_value > 0.0 and _progression_component != null
+		ItemData.UseEffect.APPLY_BUFF:
+			return (
+				item.status_effect != null
+				and item.status_effect.is_valid()
+				and _status_effect_component != null
+			)
 
 	return false
 
@@ -316,6 +327,12 @@ func _apply_inventory_item(item: ItemData) -> float:
 		ItemData.UseEffect.GRANT_EXPERIENCE:
 			_progression_component.gain_experience(roundi(item.use_value))
 			return item.use_value
+		ItemData.UseEffect.APPLY_BUFF:
+			return (
+				item.use_value
+				if _status_effect_component.apply_effect(item.status_effect)
+				else 0.0
+			)
 
 	return 0.0
 
@@ -326,3 +343,7 @@ func _on_equipment_changed(
 ) -> void:
 	if current_slot != EquipmentComponent.Slot.ITEM:
 		cancel_item_use()
+
+
+func _on_health_damaged(_amount: float, _current_health: float) -> void:
+	cancel_item_use()

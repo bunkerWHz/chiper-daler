@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b7twfe0a5fcbt" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
 [ext_resource type="Script" uid="uid://b8d0ic1ruenbv" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
 [ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
-[ext_resource type="PackedScene" uid="uid://42qrwi3e4pef" path="res://framework/components/AnimationComponent.tscn" id="6_lg056"]
+[ext_resource type="PackedScene" path="res://game/player/TemporaryPlayerVisualComponent.tscn" id="6_lg056"]
 [ext_resource type="PackedScene" uid="uid://bw1a5wx3lqx60" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
 [ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
 [ext_resource type="Script" uid="uid://bcwnhbaqj47sg" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
@@ -388,9 +388,18 @@ z_index = -10
 script = ExtResource("28_jump_preview")
 
 [node name="_Visual" type="Node2D" parent="." unique_id=1989155464]
+texture_filter = 1
 position = Vector2(3, -22)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=1165928745]
 sprite_frames = SubResource("SpriteFrames_wcm5h")
 animation = &"jump"
 autoplay = "idle"
+
+[node name="ItemEffectSprite" type="AnimatedSprite2D" parent="_Visual"]
+visible = false
+z_index = 1
+
+[node name="BuffEffectSprite" type="AnimatedSprite2D" parent="_Visual"]
+visible = false
+z_index = 2

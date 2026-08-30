@@ -35,12 +35,19 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"short_bow",
 		&"light_crossbow",
 		&"apprentice_focus",
+		&"training_spear",
 	]:
 		assert_eq(inventory.get_quantity(item_id), 1)
 	assert_eq(inventory.get_quantity(&"health_potion"), 3)
 	assert_eq(inventory.get_quantity(&"mana_potion"), 3)
+	assert_eq(inventory.get_quantity(&"rage_potion"), 3)
 	assert_eq(inventory.get_quantity(&"experience_tonic"), 2)
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
+	assert_true(inventory.get_item_data(&"rage_potion").usable_in_combat)
+	assert_eq(
+		inventory.get_item_data(&"training_spear").visual_archetype,
+		ItemData.VisualArchetype.LANCER
+	)
 	assert_true(inventory.get_item_data(&"experience_tonic").usable_in_combat)
 	assert_eq(
 		equipment.get_equipped_item_id(

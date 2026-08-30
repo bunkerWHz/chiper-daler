@@ -20,5 +20,6 @@ max_stack_size = 1
 weight = 2.0
 equip_slot = 1
 combat_mode = 3
+visual_archetype = 2
 stats = SubResource("ItemStats_bow")
 sell_price = 30

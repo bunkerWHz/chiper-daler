@@ -138,6 +138,10 @@ State Machine
 -   `AnimationComponent`, debug UI, and other presentation consumers read the
     coordinated Actor behavior instead of reconstructing parallel state from
     several components.
+-   Actor-specific or temporary art belongs in a presentation subclass such as
+    `TemporaryPlayerVisualComponent`. It may react to equipment and gameplay
+    fact signals, but it never owns damage, healing, inventory consumption, or
+    status-effect timing.
 
 Commands
 

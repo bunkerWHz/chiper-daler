@@ -58,6 +58,21 @@ enum UseEffect {
 	HEAL,
 	RESTORE_MANA,
 	GRANT_EXPERIENCE,
+	APPLY_BUFF,
+}
+
+enum VisualArchetype {
+	DEFAULT,
+	WARRIOR,
+	ARCHER,
+	LANCER,
+}
+
+enum UseVisualEffect {
+	NONE,
+	HEAL,
+	MANA,
+	RAGE,
 }
 
 @export var id: StringName
@@ -72,6 +87,9 @@ enum UseEffect {
 @export var combat_mode: CombatMode = CombatMode.NONE
 @export var use_effect: UseEffect = UseEffect.NONE
 @export var use_value: float = 0.0
+@export var use_visual_effect: UseVisualEffect = UseVisualEffect.NONE
+@export var status_effect: StatusEffect
+@export var visual_archetype: VisualArchetype = VisualArchetype.DEFAULT
 @export var stats: ItemStats
 @export var rarity: Rarity = Rarity.COMMON
 @export_range(0, 1000000, 1) var sell_price: int = 0

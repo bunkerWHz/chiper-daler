@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/status/StatusEffect.gd" id="2_status"]
+
+[sub_resource type="Resource" id="StatusEffect_rage"]
+script = ExtResource("2_status")
+effect_id = &"rage"
+polarity = 0
+duration = 10.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"rage_potion"
+display_name = "Rage Potion"
+description = "Applies a temporary rage buff. Its combat bonus is provisional."
+category = 4
+stackable = true
+max_stack_size = 10
+weight = 0.25
+use_effect = 4
+use_value = 1.0
+use_visual_effect = 3
+status_effect = SubResource("StatusEffect_rage")
+sell_price = 12
+usable_in_combat = true

@@ -14,3 +14,4 @@ weight = 0.25
 usable_in_combat = true
 use_effect = 1
 use_value = 35.0
+use_visual_effect = 1
