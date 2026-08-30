@@ -119,11 +119,15 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	var shield := _create_equippable(&"wood_shield", ItemData.EquipSlot.OFF_HAND)
 	var helmet := _create_equippable(&"iron_helmet", ItemData.EquipSlot.HEAD)
 	var ring := _create_equippable(&"copper_ring", ItemData.EquipSlot.RING)
+	var belt := _create_equippable(&"leather_belt", ItemData.EquipSlot.BELT)
+	var boots := _create_equippable(&"leather_boots", ItemData.EquipSlot.FEET)
 	assert_eq(inventory.add_item(sword), 1)
 	assert_eq(inventory.add_item(bow), 1)
 	assert_eq(inventory.add_item(shield), 1)
 	assert_eq(inventory.add_item(helmet), 1)
-	assert_eq(inventory.add_item(ring, 2), 2)
+	assert_eq(inventory.add_item(ring, 4), 4)
+	assert_eq(inventory.add_item(belt), 1)
+	assert_eq(inventory.add_item(boots), 1)
 
 	assert_true(equipment.equip_inventory_item(
 		sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
@@ -143,8 +147,20 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	assert_true(equipment.equip_inventory_item(
 		ring.id, ItemData.EquipSlot.RING, 1
 	))
-	assert_false(equipment.equip_inventory_item(
+	assert_true(equipment.equip_inventory_item(
 		ring.id, ItemData.EquipSlot.RING, 2
+	))
+	assert_true(equipment.equip_inventory_item(
+		ring.id, ItemData.EquipSlot.RING, 3
+	))
+	assert_false(equipment.equip_inventory_item(
+		ring.id, ItemData.EquipSlot.RING, 4
+	))
+	assert_true(equipment.equip_inventory_item(
+		belt.id, ItemData.EquipSlot.BELT
+	))
+	assert_true(equipment.equip_inventory_item(
+		boots.id, ItemData.EquipSlot.FEET
 	))
 	assert_false(equipment.equip_inventory_item(
 		helmet.id, ItemData.EquipSlot.OFF_HAND

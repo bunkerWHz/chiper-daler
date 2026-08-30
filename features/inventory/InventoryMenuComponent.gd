@@ -450,38 +450,38 @@ func _create_weapon_set_buttons() -> void:
 
 func _rebuild_equipment_slots() -> void:
 	_clear_dynamic_children(_equipment_slots)
-
-	for set_index in EquipmentComponent.WEAPON_SET_COUNT:
+	var active_set := _equipment.get_active_weapon_set()
+	var layout: Array[Dictionary] = [
+		{"label": "Earring 1", "slot": ItemData.EquipSlot.EARRING, "index": 0},
+		{"label": "Helmet", "slot": ItemData.EquipSlot.HEAD},
+		{"label": "Earring 2", "slot": ItemData.EquipSlot.EARRING, "index": 1},
+		{
+			"label": "Main Hand",
+			"slot": ItemData.EquipSlot.MAIN_HAND,
+			"weapon_set": active_set,
+		},
+		{"label": "Armor", "slot": ItemData.EquipSlot.CHEST},
+		{
+			"label": "Off Hand",
+			"slot": ItemData.EquipSlot.OFF_HAND,
+			"weapon_set": active_set,
+		},
+		{"label": "Gloves", "slot": ItemData.EquipSlot.HANDS},
+		{"label": "Belt", "slot": ItemData.EquipSlot.BELT},
+		{"label": "Amulet", "slot": ItemData.EquipSlot.AMULET},
+		{"label": "Ring 1", "slot": ItemData.EquipSlot.RING, "index": 0},
+		{"label": "Pants", "slot": ItemData.EquipSlot.LEGS},
+		{"label": "Ring 2", "slot": ItemData.EquipSlot.RING, "index": 1},
+		{"label": "Ring 3", "slot": ItemData.EquipSlot.RING, "index": 2},
+		{"label": "Boots", "slot": ItemData.EquipSlot.FEET},
+		{"label": "Ring 4", "slot": ItemData.EquipSlot.RING, "index": 3},
+	]
+	for entry: Dictionary in layout:
 		_add_equipment_slot_button(
-			"Set %d Main" % (set_index + 1),
-			ItemData.EquipSlot.MAIN_HAND,
-			0,
-			set_index
-		)
-		_add_equipment_slot_button(
-			"Set %d Off" % (set_index + 1),
-			ItemData.EquipSlot.OFF_HAND,
-			0,
-			set_index
-		)
-
-	for slot: ItemData.EquipSlot in [
-		ItemData.EquipSlot.HEAD,
-		ItemData.EquipSlot.CHEST,
-		ItemData.EquipSlot.HANDS,
-		ItemData.EquipSlot.LEGS,
-		ItemData.EquipSlot.AMULET,
-		ItemData.EquipSlot.BACK,
-	]:
-		_add_equipment_slot_button(
-			ItemData.EquipSlot.keys()[slot].capitalize(), slot
-		)
-	for index in 2:
-		_add_equipment_slot_button(
-			"Ring %d" % (index + 1), ItemData.EquipSlot.RING, index
-		)
-		_add_equipment_slot_button(
-			"Earring %d" % (index + 1), ItemData.EquipSlot.EARRING, index
+			String(entry["label"]),
+			int(entry["slot"]) as ItemData.EquipSlot,
+			int(entry.get("index", 0)),
+			int(entry.get("weapon_set", -1))
 		)
 	_refresh_weapon_set_buttons()
 

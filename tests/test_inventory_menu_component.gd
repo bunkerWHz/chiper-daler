@@ -230,9 +230,32 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var equipment_slots := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
-	assert_eq(equipment_slots.get_child_count(), 14)
+	assert_eq(equipment_slots.columns, 3)
+	assert_eq(equipment_slots.get_child_count(), 15)
+	var expected_slots: Array[int] = [
+		ItemData.EquipSlot.EARRING,
+		ItemData.EquipSlot.HEAD,
+		ItemData.EquipSlot.EARRING,
+		ItemData.EquipSlot.MAIN_HAND,
+		ItemData.EquipSlot.CHEST,
+		ItemData.EquipSlot.OFF_HAND,
+		ItemData.EquipSlot.HANDS,
+		ItemData.EquipSlot.BELT,
+		ItemData.EquipSlot.AMULET,
+		ItemData.EquipSlot.RING,
+		ItemData.EquipSlot.LEGS,
+		ItemData.EquipSlot.RING,
+		ItemData.EquipSlot.RING,
+		ItemData.EquipSlot.FEET,
+		ItemData.EquipSlot.RING,
+	]
+	for index in expected_slots.size():
+		var equipment_button := (
+			equipment_slots.get_child(index) as InventoryDragButton
+		)
+		assert_eq(int(equipment_button.target_equip_slot), expected_slots[index])
 	var first_equipped_button := (
-		equipment_slots.get_child(0) as InventoryDragButton
+		equipment_slots.get_child(3) as InventoryDragButton
 	)
 	assert_eq(first_equipped_button.text, "")
 	assert_eq(first_equipped_button.icon, ItemData.PLACEHOLDER_ICON)

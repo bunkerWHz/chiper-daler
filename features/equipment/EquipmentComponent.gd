@@ -312,7 +312,9 @@ func get_item_action_slot(item: ItemData) -> Slot:
 
 func get_slot_capacity(target_slot: ItemData.EquipSlot) -> int:
 	match target_slot:
-		ItemData.EquipSlot.RING, ItemData.EquipSlot.EARRING:
+		ItemData.EquipSlot.RING:
+			return 4
+		ItemData.EquipSlot.EARRING:
 			return 2
 		ItemData.EquipSlot.NONE:
 			return 0
@@ -440,11 +442,13 @@ func _get_effective_equipped_items() -> Array[ItemData]:
 		ItemData.EquipSlot.HANDS,
 		ItemData.EquipSlot.LEGS,
 		ItemData.EquipSlot.AMULET,
-		ItemData.EquipSlot.BACK,
+		ItemData.EquipSlot.BELT,
+		ItemData.EquipSlot.FEET,
 	]:
 		_append_equipped_item(result, slot)
-	for index in 2:
+	for index in 4:
 		_append_equipped_item(result, ItemData.EquipSlot.RING, index)
+	for index in 2:
 		_append_equipped_item(result, ItemData.EquipSlot.EARRING, index)
 	return result
 

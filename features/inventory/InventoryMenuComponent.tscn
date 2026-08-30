@@ -85,7 +85,7 @@ size_flags_vertical = 3
 [node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 2
+columns = 3
 
 [node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
 layout_mode = 2

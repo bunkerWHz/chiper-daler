@@ -25,8 +25,10 @@ place and blocks jumping and dodging until the action completes; leaving the
 ground cancels the action without spending the item.
 
 Paper-doll equipment currently supports two independent main/off-hand weapon
-sets, head, chest, hands, legs, two rings, two earrings, one amulet, and one
-back slot. Equipped copies appear only in the equipment area and are excluded
+sets; head, chest, hands, belt, legs, and feet armor; four rings; two earrings;
+and one amulet. The menu presents the active weapon set and wearable
+slots as a three-column, five-row paper doll; the set buttons switch which hand
+slots are shown. Equipped copies appear only in the equipment area and are excluded
 from the main bag grid and its visible weight/slot summary. The inventory
 component remains the single owner of item data while equipment reserves the
 equipped quantity. Unequipping returns that copy to the main grid; removing the

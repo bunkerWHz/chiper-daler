@@ -28,7 +28,8 @@ enum EquipSlot {
 	RING,
 	EARRING,
 	AMULET,
-	BACK,
+	BELT,
+	FEET,
 }
 
 enum Rarity {
