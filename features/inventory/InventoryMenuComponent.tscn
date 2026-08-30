@@ -63,7 +63,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(232, 0)
 layout_mode = 2
 
 [node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
@@ -83,11 +83,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="EquipmentMargin" type="MarginContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
-layout_mode = 2
-theme_override_constants/margin_right = 16
-
-[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentMargin"]
+[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 3

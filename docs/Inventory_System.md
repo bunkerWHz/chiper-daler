@@ -106,8 +106,9 @@ HUD, and extends to 95 percent of the viewport height so five percent remains
 visible beneath it. It has no fullscreen overlay. The separate HUD hotbar
 reveals all eight quick-access cells, including empty cells
 available for assignment. The inventory grid uses five columns of icon-only
-64-pixel items. The equipment scroll area reserves a right gutter so its
-scrollbar never covers the third paper-doll column. A
+64-pixel items. The equipment column reserves enough fixed width for its three
+paper-doll cells and vertical scrollbar without adding scrollable padding. This
+keeps both scrollbars adjacent to their grids without covering an item. A
 temporary item card appears on hover; clicking an item selects it and pins the
 card with its description, quantity, weight, value, requirements, stats, and
 equipment comparison. The panel also shows both weapon sets, armor and accessory

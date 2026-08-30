@@ -104,7 +104,7 @@ func _ready() -> void:
 		"CanvasLayer/DropDialog/Content/Quantity"
 	) as SpinBox
 	_equipment_slots = get_node_or_null(
-		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentMargin/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
 	_weapon_set_buttons = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Equipment/WeaponSets"

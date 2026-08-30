@@ -230,12 +230,10 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._on_category_selected(0)
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	var equipment_slots := menu.get_node(
-		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentMargin/EquipmentSlots"
+		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
-	var equipment_margin := equipment_slots.get_parent() as MarginContainer
-	assert_eq(
-		equipment_margin.get_theme_constant("margin_right"), 16
-	)
+	var equipment_column := equipment_slots.get_parent().get_parent() as VBoxContainer
+	assert_eq(equipment_column.custom_minimum_size.x, 232.0)
 	assert_eq(equipment_slots.columns, 3)
 	assert_eq(equipment_slots.get_child_count(), 21)
 	var expected_slots: Array[int] = [
