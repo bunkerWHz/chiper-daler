@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="2_consumable"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemFlaskProfile.gd" id="2_consumable"]
 
-[sub_resource type="Resource" id="ItemConsumableProfile_mana"]
+[sub_resource type="Resource" id="ItemFlaskProfile_mana"]
 script = ExtResource("2_consumable")
 use_effect = 2
 use_value = 30.0
@@ -13,11 +13,11 @@ use_visual_effect = 2
 script = ExtResource("1_item")
 id = &"mana_potion"
 display_name = "Mana Potion"
-description = "Restores 30 mana. A test consumable for quick-access slots."
+description = "A refillable flask that restores 30 mana. Sanctuary rest restores its charges."
 category = 4
-stackable = true
-max_stack_size = 10
+stackable = false
+max_stack_size = 1
 weight = 0.25
 usable_in_combat = true
-consumable_profile = SubResource("ItemConsumableProfile_mana")
+consumable_profile = SubResource("ItemFlaskProfile_mana")
 sell_price = 8

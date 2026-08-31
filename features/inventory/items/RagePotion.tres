@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" path="res://features/status/StatusEffect.gd" id="2_status"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="3_consumable"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemFlaskProfile.gd" id="3_consumable"]
 
 [sub_resource type="Resource" id="StatusEffect_rage"]
 script = ExtResource("2_status")
@@ -10,7 +10,7 @@ effect_id = &"rage"
 polarity = 0
 duration = 10.0
 
-[sub_resource type="Resource" id="ItemConsumableProfile_rage"]
+[sub_resource type="Resource" id="ItemFlaskProfile_rage"]
 script = ExtResource("3_consumable")
 use_effect = 4
 use_value = 1.0
@@ -21,11 +21,11 @@ status_effect = SubResource("StatusEffect_rage")
 script = ExtResource("1_item")
 id = &"rage_potion"
 display_name = "Rage Potion"
-description = "Applies a temporary rage buff. Its combat bonus is provisional."
+description = "A refillable flask that applies a temporary rage buff. Sanctuary rest restores its charges."
 category = 4
-stackable = true
-max_stack_size = 10
+stackable = false
+max_stack_size = 1
 weight = 0.25
-consumable_profile = SubResource("ItemConsumableProfile_rage")
+consumable_profile = SubResource("ItemFlaskProfile_rage")
 sell_price = 12
 usable_in_combat = true

@@ -131,6 +131,9 @@ Data
 -   Equipment has no durability. Failed enhancement consumes its configured
     currency and materials but never lowers the enhancement level and never
     destroys the item.
+-   Refillable flasks are permanent inventory capabilities. Their shared
+    `ItemData` defines maximum charges and effect; `FlaskChargesComponent`
+    owns per-Actor current charges, persistence, spending, and sanctuary refill.
 
 State Machine
 

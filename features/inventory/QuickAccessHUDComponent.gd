@@ -8,6 +8,7 @@ const SLOT_SIZE := Vector2(68.0, 68.0)
 var _quick_access: QuickAccessComponent
 var _inventory: InventoryComponent
 var _inventory_menu: InventoryMenuComponent
+var _flask_charges: FlaskChargesComponent
 var _slot_views: Array[InventoryDragButton] = []
 var _key_labels: Array[Label] = []
 var _quantity_labels: Array[Label] = []
@@ -21,6 +22,9 @@ func on_initialize() -> void:
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_inventory_menu = (
 		actor.get_component(InventoryMenuComponent) as InventoryMenuComponent
+	)
+	_flask_charges = (
+		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
 	)
 	if _quick_access == null or _inventory == null:
 		push_error("QuickAccessHUDComponent requires quick access and inventory")
@@ -55,6 +59,7 @@ func get_slot_display(slot_index: int) -> Dictionary:
 		"quantity": "",
 		"icon": ItemData.PLACEHOLDER_ICON,
 		"available": false,
+		"ready": false,
 		"active": slot_index == _quick_access.get_active_slot(),
 	}
 	var slot := _quick_access.get_slot(slot_index)
@@ -152,6 +157,13 @@ func _connect_signals() -> void:
 	_quick_access.active_slot_changed.connect(_on_quick_access_changed)
 	_quick_access.slot_assignment_changed.connect(_on_slot_assignment_changed)
 	_inventory.inventory_changed.connect(_on_inventory_changed)
+	if (
+		_flask_charges != null
+		and not _flask_charges.charges_changed.is_connected(
+			_on_flask_charges_changed
+		)
+	):
+		_flask_charges.charges_changed.connect(_on_flask_charges_changed)
 	if _inventory_menu != null:
 		_inventory_open = _inventory_menu.is_open()
 		_inventory_menu.open_state_changed.connect(_on_inventory_open_changed)
@@ -169,7 +181,7 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 	quantity_label.text = String(display.quantity)
 	icon.texture = display.icon as Texture2D
 	panel.visible = _inventory_open or bool(display.available)
-	panel.modulate = Color.WHITE if bool(display.available) else Color(0.55, 0.55, 0.55, 0.75)
+	panel.modulate = Color.WHITE if bool(display.ready) else Color(0.55, 0.55, 0.55, 0.75)
 	var configurable := (
 		slot_index >= QuickAccessComponent.FIRST_CONFIGURABLE_SLOT
 	)
@@ -201,7 +213,7 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 		"normal",
 		_create_panel_style(
 			bool(display.active),
-			bool(display.available)
+			bool(display.ready)
 		)
 	)
 
@@ -209,15 +221,23 @@ func _update_slot_view(slot_index: int, display: Dictionary) -> void:
 func _apply_item_display(result: Dictionary, item_id: StringName) -> void:
 	var item := _inventory.get_item_data(item_id)
 	var quantity := _inventory.get_quantity(item_id)
-	result.quantity = "x%d" % quantity
 	if item == null:
+		result.quantity = "x0"
 		result.title = String(item_id).capitalize() if not item_id.is_empty() else "Empty"
 		result.detail = "Unavailable" if not item_id.is_empty() else ""
 		return
+	if item.is_flask():
+		quantity = (
+			_flask_charges.get_charges(item_id)
+			if _flask_charges != null
+			else 0
+		)
+	result.quantity = "x%d" % quantity
 	result.title = item.display_name
 	result.icon = item.get_display_icon()
-	result.available = quantity > 0
-	result.detail = "Ready" if quantity > 0 else "Unavailable"
+	result.available = _inventory.has_item(item_id)
+	result.ready = quantity > 0
+	result.detail = "Ready" if quantity > 0 else "Empty"
 
 
 func _create_panel_style(
@@ -298,6 +318,14 @@ func _on_slot_drag_finished(
 
 
 func _on_inventory_changed() -> void:
+	refresh()
+
+
+func _on_flask_charges_changed(
+	_item_id: StringName,
+	_current: int,
+	_maximum: int
+) -> void:
 	refresh()
 
 

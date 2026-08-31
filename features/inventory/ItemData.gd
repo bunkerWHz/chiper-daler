@@ -177,5 +177,17 @@ func get_status_effect() -> StatusEffect:
 	)
 
 
+func is_flask() -> bool:
+	return consumable_profile is ItemFlaskProfile
+
+
+func get_flask_max_charges() -> int:
+	return (
+		(consumable_profile as ItemFlaskProfile).max_charges
+		if is_flask()
+		else 0
+	)
+
+
 func get_display_icon() -> Texture2D:
 	return icon if icon != null else PLACEHOLDER_ICON

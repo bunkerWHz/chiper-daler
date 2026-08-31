@@ -12,6 +12,7 @@ const FIRST_CONFIGURABLE_SLOT := 1
 var _input: InputComponent
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
+var _flask_charges: FlaskChargesComponent
 var _slots: Array[QuickAccessSlot] = []
 var _active_slot: int = 0
 
@@ -25,6 +26,9 @@ func on_initialize() -> void:
 	_input = actor.get_component(InputComponent) as InputComponent
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
+	_flask_charges = (
+		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
+	)
 	if (
 		_input == null
 		or not _input.is_enabled
@@ -96,10 +100,12 @@ func is_slot_available(slot_index: int) -> bool:
 	var slot := _slots[slot_index]
 	match slot.kind:
 		QuickAccessSlot.Kind.ITEM:
-			return (
-				not slot.item_id.is_empty()
-				and _inventory.get_quantity(slot.item_id) > 0
-			)
+			if slot.item_id.is_empty():
+				return false
+			var item := _inventory.get_item_data(slot.item_id)
+			if item != null and item.is_flask():
+				return _inventory.has_item(slot.item_id)
+			return _inventory.get_quantity(slot.item_id) > 0
 	return false
 
 
@@ -186,7 +192,12 @@ func get_active_item_id() -> StringName:
 
 func get_active_item_quantity() -> int:
 	var item_id := get_active_item_id()
-	return _inventory.get_quantity(item_id) if not item_id.is_empty() else 0
+	if item_id.is_empty():
+		return 0
+	var item := _inventory.get_item_data(item_id)
+	if item != null and item.is_flask():
+		return _flask_charges.get_charges(item_id) if _flask_charges != null else 0
+	return _inventory.get_quantity(item_id)
 
 
 func capture_runtime_state() -> Variant:

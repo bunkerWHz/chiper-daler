@@ -50,6 +50,7 @@
 [ext_resource type="PackedScene" path="res://features/stats/CharacterAttributesComponent.tscn" id="44_attributes"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentDefenseComponent.tscn" id="45_equipment_defense"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessHUDComponent.tscn" id="46_quick_hud"]
+[ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -351,8 +352,6 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
 [node name="EquipmentDefenseComponent" parent="_Components" instance=ExtResource("45_equipment_defense")]
 
-[node name="ItemUseComponent" parent="_Components" instance=ExtResource("33_item_use")]
-
 [node name="ThrowingComponent" parent="_Components" instance=ExtResource("34_throwing")]
 
 [node name="RangedWeaponComponent" parent="_Components" instance=ExtResource("35_ranged")]
@@ -367,9 +366,13 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
 [node name="InventoryComponent" parent="_Components" instance=ExtResource("40_inventory")]
 
+[node name="FlaskChargesComponent" parent="_Components" instance=ExtResource("47_flasks")]
+
 [node name="InventoryDropComponent" parent="_Components" instance=ExtResource("43_inventory_drop")]
 
 [node name="QuickAccessComponent" parent="_Components" instance=ExtResource("41_quick_access")]
+
+[node name="ItemUseComponent" parent="_Components" instance=ExtResource("33_item_use")]
 
 [node name="InventoryMenuComponent" parent="_Components" instance=ExtResource("42_inventory_menu")]
 

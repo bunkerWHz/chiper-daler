@@ -19,7 +19,7 @@ func drop_item(item_id: StringName, quantity: int = 1) -> LootBag:
 	if not is_enabled or item_id.is_empty() or quantity <= 0:
 		return null
 	var item := _inventory.get_item_data(item_id)
-	if item == null or item.is_key_item:
+	if item == null or item.is_key_item or item.is_flask():
 		return null
 	var parent := actor.get_parent()
 	var bag := loot_bag_scene.instantiate() as LootBag

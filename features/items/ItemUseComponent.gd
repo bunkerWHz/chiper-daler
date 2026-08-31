@@ -24,9 +24,9 @@ var _quick_access_component: QuickAccessComponent
 var _magic_component: MagicComponent
 var _progression_component: ProgressionComponent
 var _status_effect_component: StatusEffectComponent
+var _flask_charges_component: FlaskChargesComponent
 var _use_timer: float = 0.0
 var _cooldown_timer: float = 0.0
-var _remaining_charges: int = 0
 var _active_inventory_item_id: StringName
 
 
@@ -39,8 +39,6 @@ func on_initialize() -> void:
 	if (
 		config.use_duration <= 0.0
 		or config.cooldown < 0.0
-		or config.heal_amount <= 0.0
-		or config.max_charges < 0
 	):
 		push_error("ItemUseComponent has an invalid config")
 		disable()
@@ -67,6 +65,9 @@ func on_initialize() -> void:
 	_status_effect_component = (
 		actor.get_component(StatusEffectComponent) as StatusEffectComponent
 	)
+	_flask_charges_component = (
+		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
+	)
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("ItemUseComponent requires an enabled InputComponent")
@@ -86,8 +87,16 @@ func on_initialize() -> void:
 		push_error("ItemUseComponent requires an enabled HealthComponent")
 		disable()
 		return
+	if (
+		_inventory_component == null
+		or not _inventory_component.is_enabled
+		or _quick_access_component == null
+		or not _quick_access_component.is_enabled
+	):
+		push_error("ItemUseComponent requires enabled inventory and quick access")
+		disable()
+		return
 
-	_remaining_charges = config.max_charges
 	if not _equipment_component.equipment_changed.is_connected(
 		_on_equipment_changed
 	):
@@ -172,14 +181,11 @@ func can_use_item() -> bool:
 		return (
 			item != null
 			and _inventory_component.has_item(item_id)
+			and _has_available_charge(item)
 			and _can_apply_inventory_item(item)
 		)
 
-	return (
-		_remaining_charges > 0
-		and _health_component.get_current_health()
-			< _health_component.get_max_health()
-	)
+	return false
 
 
 func is_using_item() -> bool:
@@ -203,25 +209,15 @@ func get_locomotion_blocks() -> int:
 func get_remaining_charges() -> int:
 	var item_id := _get_selected_inventory_item_id()
 	if not item_id.is_empty():
+		var item := _inventory_component.get_item_data(item_id)
+		if item != null and item.is_flask():
+			return (
+				_flask_charges_component.get_charges(item_id)
+				if _flask_charges_component != null
+				else 0
+			)
 		return _inventory_component.get_quantity(item_id)
-	return _remaining_charges
-
-
-func add_charges(amount: int) -> int:
-	if not is_enabled or amount <= 0:
-		return 0
-
-	var previous := _remaining_charges
-	_remaining_charges = mini(_remaining_charges + amount, config.max_charges)
-	return _remaining_charges - previous
-
-
-func capture_runtime_state() -> Variant:
-	return _remaining_charges
-
-
-func restore_runtime_state(state: Variant) -> void:
-	_remaining_charges = clampi(int(state), 0, config.max_charges)
+	return 0
 
 
 func cancel_item_use() -> void:
@@ -239,14 +235,7 @@ func disable() -> void:
 
 
 func _finish_item_use() -> void:
-	if not _active_inventory_item_id.is_empty():
-		_finish_inventory_item_use()
-		return
-
-	_remaining_charges -= 1
-	_cooldown_timer = config.cooldown
-	var restored_health := _health_component.heal(config.heal_amount)
-	item_used.emit(restored_health, _remaining_charges)
+	_finish_inventory_item_use()
 
 
 func _finish_inventory_item_use() -> void:
@@ -256,9 +245,21 @@ func _finish_inventory_item_use() -> void:
 		_active_inventory_item_id = &""
 		return
 
-	_inventory_component.remove_item(item.id, 1)
+	if item.is_flask():
+		if (
+			_flask_charges_component == null
+			or not _flask_charges_component.spend_charge(item.id)
+		):
+			_active_inventory_item_id = &""
+			return
+	else:
+		_inventory_component.remove_item(item.id, 1)
 	_cooldown_timer = config.cooldown
-	var remaining := _inventory_component.get_quantity(item.id)
+	var remaining := (
+		_flask_charges_component.get_charges(item.id)
+		if item.is_flask()
+		else _inventory_component.get_quantity(item.id)
+	)
 	item_used.emit(
 		applied_value
 			if item.get_use_effect() == ItemData.UseEffect.HEAL
@@ -291,6 +292,8 @@ func _is_item_use_context_selected() -> bool:
 func _can_apply_inventory_item(item: ItemData) -> bool:
 	if item == null or item.category != ItemData.Category.CONSUMABLE:
 		return false
+	if not _has_available_charge(item):
+		return false
 
 	var use_value := item.get_use_value()
 	var status_effect := item.get_status_effect()
@@ -317,6 +320,15 @@ func _can_apply_inventory_item(item: ItemData) -> bool:
 			)
 
 	return false
+
+
+func _has_available_charge(item: ItemData) -> bool:
+	if item == null or not item.is_flask():
+		return true
+	return (
+		_flask_charges_component != null
+		and _flask_charges_component.can_spend_charge(item.id)
+	)
 
 
 func _apply_inventory_item(item: ItemData) -> float:

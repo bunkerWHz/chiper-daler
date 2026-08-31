@@ -20,6 +20,7 @@ var _quick_access: QuickAccessComponent
 var _inventory_drop: InventoryDropComponent
 var _attributes: CharacterAttributesComponent
 var _item_use: ItemUseComponent
+var _flask_charges: FlaskChargesComponent
 var _panel: Control
 var _grid: GridContainer
 var _equipment_text: Label
@@ -56,6 +57,9 @@ func on_initialize() -> void:
 		as CharacterAttributesComponent
 	)
 	_item_use = actor.get_component(ItemUseComponent) as ItemUseComponent
+	_flask_charges = (
+		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
+	)
 	if (
 		_input == null
 		or _inventory == null
@@ -281,7 +285,7 @@ func _rebuild_details() -> void:
 		equip_slot == ItemData.EquipSlot.NONE
 		or (not equipped and not _equipment.meets_item_requirements(item))
 	)
-	_drop_button.disabled = item.is_key_item
+	_drop_button.disabled = item.is_key_item or item.is_flask()
 	_use_button.disabled = (
 		_item_use == null
 		or not _item_use.can_begin_inventory_item_use(item.id)
@@ -338,7 +342,17 @@ func _get_item_details(item: ItemData) -> String:
 	detail_lines.append(item.description)
 	var owned_quantity := _inventory.get_quantity(item.id)
 	var equipped_quantity := _equipment.get_equipped_item_count(item.id)
-	if equipped_quantity > 0:
+	if item.is_flask():
+		var current_charges := (
+			_flask_charges.get_charges(item.id)
+			if _flask_charges != null
+			else 0
+		)
+		detail_lines.append("Charges: %d / %d" % [
+			current_charges,
+			item.get_flask_max_charges(),
+		])
+	elif equipped_quantity > 0:
 		detail_lines.append("Bag: %d  Equipped: %d" % [
 			maxi(owned_quantity - equipped_quantity, 0),
 			equipped_quantity,

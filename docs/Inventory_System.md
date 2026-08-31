@@ -44,8 +44,8 @@ Guard can begin only on the ground. Its parry window and sustained block both
 hold the Actor in place while still allowing facing changes.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
-Crossbow, Apprentice Focus, temporary Training Spear, three Health Potions,
-three Mana Potions, three Rage Potions, and two Experience Tonics. These are
+Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
+and rage flasks with three charges each, and two Experience Tonics. These are
 functional test items for quick-access, item-use, and visual-profile checks.
 Weapon set one starts as sword and shield; set two starts with the bow. The
 crossbow, focus, and spear remain in the inventory and can replace a main-hand
@@ -115,10 +115,12 @@ mutation of shared `ItemData`. A failed enhancement attempt spends the required
 currency and materials, but does not reduce the enhancement level and cannot
 damage or destroy the item.
 
-Health, mana, and rage flasks are a separate upcoming persistent-charge system,
-not ordinary disappearing consumable stacks. At zero charges their item and
-hotbar binding remain visible, they cannot be used, dropped, or transferred,
-and sanctuary rest refills their charges.
+Health, mana, and rage flasks use persistent charges instead of disappearing
+inventory stacks. `FlaskChargesComponent` owns current charges for each Actor.
+At zero charges the item and hotbar binding remain visible and selectable, but
+use is disabled. Flasks cannot be stacked, removed, dropped, or transferred;
+sanctuary rest refills every owned flask. Their runtime charge state is saved
+independently from inventory ownership.
 
 ## Implementation stages
 

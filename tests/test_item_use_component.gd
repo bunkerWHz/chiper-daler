@@ -138,9 +138,9 @@ func test_quick_health_potion_consumes_inventory_stack() -> void:
 		body,
 		equipment,
 		health,
-		item_use,
 		inventory,
 		quick_access,
+		item_use,
 	]:
 		components.add_child(component)
 	actor._collect_components()
@@ -198,6 +198,7 @@ func test_mana_and_rage_apply_only_after_use_duration() -> void:
 	var magic := MagicComponent.new()
 	magic.config = MagicConfig.new()
 	var status_effects := StatusEffectComponent.new()
+	var flasks := FlaskChargesComponent.new()
 	var quick_access := QuickAccessComponent.new()
 	quick_access.config = QuickAccessConfig.new()
 	var item_use := ItemUseComponent.new()
@@ -211,6 +212,7 @@ func test_mana_and_rage_apply_only_after_use_duration() -> void:
 		health,
 		magic,
 		status_effects,
+		flasks,
 		quick_access,
 		item_use,
 	]:
@@ -231,7 +233,8 @@ func test_mana_and_rage_apply_only_after_use_duration() -> void:
 	assert_eq(inventory.get_quantity(mana_potion.id), 1)
 	item_use._process(item_use.config.use_duration)
 	assert_eq(magic.get_mana(), 80.0)
-	assert_eq(inventory.get_quantity(mana_potion.id), 0)
+	assert_eq(inventory.get_quantity(mana_potion.id), 1)
+	assert_eq(flasks.get_charges(mana_potion.id), 2)
 
 	item_use._process(item_use.config.cooldown)
 	assert_true(item_use.begin_inventory_item_use(rage_potion.id))
@@ -239,7 +242,8 @@ func test_mana_and_rage_apply_only_after_use_duration() -> void:
 	assert_eq(inventory.get_quantity(rage_potion.id), 1)
 	item_use._process(item_use.config.use_duration)
 	assert_true(status_effects.has_effect(&"rage"))
-	assert_eq(inventory.get_quantity(rage_potion.id), 0)
+	assert_eq(inventory.get_quantity(rage_potion.id), 1)
+	assert_eq(flasks.get_charges(rage_potion.id), 2)
 
 
 func _create_item_actor(include_actor_state: bool) -> Dictionary:
@@ -253,6 +257,11 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 	var equipment := EquipmentComponent.new()
 	var health := HealthComponent.new()
 	health.config = HealthConfig.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var flasks := FlaskChargesComponent.new()
+	var quick_access := QuickAccessComponent.new()
+	quick_access.config = QuickAccessConfig.new()
 	var item_use := ItemUseComponent.new()
 	item_use.config = ItemUseConfig.new()
 	var actor_state: ActorStateComponent
@@ -261,6 +270,9 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 	components.add_child(body)
 	components.add_child(equipment)
 	components.add_child(health)
+	components.add_child(inventory)
+	components.add_child(flasks)
+	components.add_child(quick_access)
 	components.add_child(item_use)
 
 	if include_actor_state:
@@ -268,6 +280,10 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 		components.add_child(actor_state)
 
 	actor._collect_components()
+	var health_flask := load(
+		"res://features/inventory/items/HealthPotion.tres"
+	) as ItemData
+	inventory.add_item(health_flask)
 
 	return {
 		"actor": actor,

@@ -17,7 +17,7 @@
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
 starting_items = Array[ExtResource("4_item_data")]([ExtResource("5_sword"), ExtResource("6_shield"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("9_focus"), ExtResource("12_training_spear"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
-starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 3, 3, 3, 2])
+starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")

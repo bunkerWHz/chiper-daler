@@ -23,6 +23,10 @@ func on_initialize() -> void:
 func add_item(item: ItemData, quantity: int = 1) -> int:
 	if not is_enabled or item == null or not item.is_valid() or quantity <= 0:
 		return 0
+	if item.is_flask():
+		if has_item(item.id):
+			return 0
+		quantity = 1
 
 	var remaining := quantity
 	if item.stackable:
@@ -49,6 +53,9 @@ func add_item(item: ItemData, quantity: int = 1) -> int:
 
 func remove_item(item_id: StringName, quantity: int = 1) -> int:
 	if not is_enabled or item_id.is_empty() or quantity <= 0:
+		return 0
+	var item := get_item_data(item_id)
+	if item != null and item.is_flask():
 		return 0
 
 	var remaining := quantity

@@ -20,11 +20,14 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		"res://features/inventory/InventoryComponent.tscn"
 	) as PackedScene
 	var inventory := inventory_scene.instantiate() as InventoryComponent
+	var flasks := FlaskChargesComponent.new()
 	var quick_scene := load(
 		"res://features/inventory/QuickAccessComponent.tscn"
 	) as PackedScene
 	var quick_access := quick_scene.instantiate() as QuickAccessComponent
-	for component: Component in [input, equipment, inventory, quick_access]:
+	for component: Component in [
+		input, equipment, inventory, flasks, quick_access
+	]:
 		components.add_child(component)
 	actor._collect_components()
 	equipment._ready()
@@ -38,9 +41,12 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"training_spear",
 	]:
 		assert_eq(inventory.get_quantity(item_id), 1)
-	assert_eq(inventory.get_quantity(&"health_potion"), 3)
-	assert_eq(inventory.get_quantity(&"mana_potion"), 3)
-	assert_eq(inventory.get_quantity(&"rage_potion"), 3)
+	assert_eq(inventory.get_quantity(&"health_potion"), 1)
+	assert_eq(inventory.get_quantity(&"mana_potion"), 1)
+	assert_eq(inventory.get_quantity(&"rage_potion"), 1)
+	assert_eq(flasks.get_charges(&"health_potion"), 3)
+	assert_eq(flasks.get_charges(&"mana_potion"), 3)
+	assert_eq(flasks.get_charges(&"rage_potion"), 3)
 	assert_eq(inventory.get_quantity(&"experience_tonic"), 2)
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
 	assert_true(inventory.get_item_data(&"rage_potion").usable_in_combat)
