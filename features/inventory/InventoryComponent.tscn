@@ -31,11 +31,18 @@
 [ext_resource type="Resource" path="res://features/inventory/items/ScoutLeatherMantle.tres" id="33"]
 [ext_resource type="Resource" path="res://features/inventory/items/KnightPlatePauldrons.tres" id="34"]
 [ext_resource type="Resource" path="res://features/inventory/items/ScholarMantle.tres" id="35"]
+[ext_resource type="Resource" path="res://features/inventory/items/ScoutLeatherGloves.tres" id="36"]
+[ext_resource type="Resource" path="res://features/inventory/items/KnightPlateGauntlets.tres" id="37"]
+[ext_resource type="Resource" path="res://features/inventory/items/ScholarHandwraps.tres" id="38"]
+[ext_resource type="Resource" path="res://features/inventory/items/ScoutUtilityBelt.tres" id="39"]
+[ext_resource type="Resource" path="res://features/inventory/items/KnightWarBelt.tres" id="40"]
+[ext_resource type="Resource" path="res://features/inventory/items/ScholarSash.tres" id="41"]
 
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
-starting_items = Array[ExtResource("4_item_data")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("25"), ExtResource("26"), ExtResource("27"), ExtResource("28"), ExtResource("29"), ExtResource("30"), ExtResource("31"), ExtResource("32"), ExtResource("33"), ExtResource("34"), ExtResource("35"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
-starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+capacity = 60
+starting_items = Array[ExtResource("4_item_data")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("25"), ExtResource("26"), ExtResource("27"), ExtResource("28"), ExtResource("29"), ExtResource("30"), ExtResource("31"), ExtResource("32"), ExtResource("33"), ExtResource("34"), ExtResource("35"), ExtResource("36"), ExtResource("37"), ExtResource("38"), ExtResource("39"), ExtResource("40"), ExtResource("41"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
+starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")

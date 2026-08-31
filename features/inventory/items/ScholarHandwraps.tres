@@ -1,0 +1,29 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+defense = 1.0
+intelligence_requirement = 5
+wisdom_requirement = 4
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("3")
+allowed_slots = Array[int]([5])
+stats = SubResource("stats")
+[sub_resource type="Resource" id="armor"]
+script = ExtResource("4")
+armor_class = 2
+set_id = &"scholar_robe"
+poise = 0.1
+[resource]
+script = ExtResource("1")
+id = &"scholar_handwraps"
+display_name = "Scholar Handwraps"
+description = "Thin enchanted wraps that leave the hands free for casting."
+category = 1
+weight = 0.4
+equipment_profile = SubResource("equipment")
+armor_profile = SubResource("armor")
+sell_price = 22

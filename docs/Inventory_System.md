@@ -106,14 +106,17 @@ Each armor class now also has a head item in the same set: scout leather hood,
 knight plate helm, and scholar hood.
 The same three sets include shoulder items: scout leather mantle, knight plate
 pauldrons, and scholar mantle.
+Hands and belt slots now follow the same three-class comparison: scout leather
+gloves and utility belt, knight plate gauntlets and war belt, scholar handwraps
+and sash. The test player's inventory scene has 60 cells so the growing item
+catalog fits during development; the reusable inventory default remains 40.
 
-The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
-Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
-and rage flasks with three charges each, and two Experience Tonics. These are
-functional test items for quick-access, item-use, and visual-profile checks.
-Weapon set one starts as sword and shield; set two starts with the bow. The
-crossbow, focus, and spear remain in the inventory and can replace a main-hand
-weapon through the equipment menu.
+The starting inventory contains the current training weapon/offhand catalog,
+the growing light/heavy/robe armor sets, legacy Short Bow and Light Crossbow,
+permanent health, mana, and rage flasks with three charges each, and two
+Experience Tonics. These are functional test items for equipment, quick-access,
+item-use, and visual-profile checks. Weapon set one starts with a katana and
+buckler; set two starts with the bow.
 
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the

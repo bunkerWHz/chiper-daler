@@ -223,3 +223,19 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 	]:
 		var shoulder := load(path) as ItemData
 		assert_true(shoulder.can_equip_in(ItemData.EquipSlot.SHOULDER))
+	for path: String in [
+		"res://features/inventory/items/ScoutLeatherGloves.tres",
+		"res://features/inventory/items/KnightPlateGauntlets.tres",
+		"res://features/inventory/items/ScholarHandwraps.tres",
+	]:
+		var hands := load(path) as ItemData
+		assert_true(hands.can_equip_in(ItemData.EquipSlot.HANDS))
+		assert_false(hands.armor_profile.set_id.is_empty())
+	for path: String in [
+		"res://features/inventory/items/ScoutUtilityBelt.tres",
+		"res://features/inventory/items/KnightWarBelt.tres",
+		"res://features/inventory/items/ScholarSash.tres",
+	]:
+		var belt := load(path) as ItemData
+		assert_true(belt.can_equip_in(ItemData.EquipSlot.BELT))
+		assert_false(belt.armor_profile.set_id.is_empty())
