@@ -260,7 +260,9 @@ func _finish_inventory_item_use() -> void:
 	_cooldown_timer = config.cooldown
 	var remaining := _inventory_component.get_quantity(item.id)
 	item_used.emit(
-		applied_value if item.use_effect == ItemData.UseEffect.HEAL else 0.0,
+		applied_value
+			if item.get_use_effect() == ItemData.UseEffect.HEAL
+			else 0.0,
 		remaining
 	)
 	inventory_item_used.emit(item, applied_value, remaining)
@@ -290,25 +292,27 @@ func _can_apply_inventory_item(item: ItemData) -> bool:
 	if item == null or item.category != ItemData.Category.CONSUMABLE:
 		return false
 
-	match item.use_effect:
+	var use_value := item.get_use_value()
+	var status_effect := item.get_status_effect()
+	match item.get_use_effect():
 		ItemData.UseEffect.HEAL:
 			return (
-				item.use_value > 0.0
+				use_value > 0.0
 				and _health_component.get_current_health()
 					< _health_component.get_max_health()
 			)
 		ItemData.UseEffect.RESTORE_MANA:
 			return (
-				item.use_value > 0.0
+				use_value > 0.0
 				and _magic_component != null
 				and _magic_component.get_mana() < _magic_component.config.max_mana
 			)
 		ItemData.UseEffect.GRANT_EXPERIENCE:
-			return item.use_value > 0.0 and _progression_component != null
+			return use_value > 0.0 and _progression_component != null
 		ItemData.UseEffect.APPLY_BUFF:
 			return (
-				item.status_effect != null
-				and item.status_effect.is_valid()
+				status_effect != null
+				and status_effect.is_valid()
 				and _status_effect_component != null
 			)
 
@@ -319,18 +323,20 @@ func _apply_inventory_item(item: ItemData) -> float:
 	if not _can_apply_inventory_item(item):
 		return 0.0
 
-	match item.use_effect:
+	var use_value := item.get_use_value()
+	var status_effect := item.get_status_effect()
+	match item.get_use_effect():
 		ItemData.UseEffect.HEAL:
-			return _health_component.heal(item.use_value)
+			return _health_component.heal(use_value)
 		ItemData.UseEffect.RESTORE_MANA:
-			return _magic_component.restore_mana(item.use_value)
+			return _magic_component.restore_mana(use_value)
 		ItemData.UseEffect.GRANT_EXPERIENCE:
-			_progression_component.gain_experience(roundi(item.use_value))
-			return item.use_value
+			_progression_component.gain_experience(roundi(use_value))
+			return use_value
 		ItemData.UseEffect.APPLY_BUFF:
 			return (
-				item.use_value
-				if _status_effect_component.apply_effect(item.status_effect)
+				use_value
+				if _status_effect_component.apply_effect(status_effect)
 				else 0.0
 			)
 

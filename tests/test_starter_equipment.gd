@@ -45,7 +45,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
 	assert_true(inventory.get_item_data(&"rage_potion").usable_in_combat)
 	assert_eq(
-		inventory.get_item_data(&"training_spear").visual_archetype,
+		inventory.get_item_data(&"training_spear").get_visual_archetype(),
 		ItemData.VisualArchetype.LANCER
 	)
 	assert_true(inventory.get_item_data(&"experience_tonic").usable_in_combat)

@@ -8,22 +8,24 @@ signal attributes_changed(strength: int, dexterity: int)
 
 
 func meets_item_requirements(item: ItemData) -> bool:
-	if item == null or item.stats == null:
+	var item_stats := item.get_equipment_stats() if item != null else null
+	if item_stats == null:
 		return true
 	return (
-		strength >= item.stats.strength_requirement
-		and dexterity >= item.stats.dexterity_requirement
+		strength >= item_stats.strength_requirement
+		and dexterity >= item_stats.dexterity_requirement
 	)
 
 
 func get_requirement_failure(item: ItemData) -> String:
-	if item == null or item.stats == null:
+	var item_stats := item.get_equipment_stats() if item != null else null
+	if item_stats == null:
 		return ""
 	var missing := PackedStringArray()
-	if strength < item.stats.strength_requirement:
-		missing.append("STR %d" % item.stats.strength_requirement)
-	if dexterity < item.stats.dexterity_requirement:
-		missing.append("DEX %d" % item.stats.dexterity_requirement)
+	if strength < item_stats.strength_requirement:
+		missing.append("STR %d" % item_stats.strength_requirement)
+	if dexterity < item_stats.dexterity_requirement:
+		missing.append("DEX %d" % item_stats.dexterity_requirement)
 	return ", ".join(missing)
 
 

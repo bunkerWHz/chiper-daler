@@ -275,9 +275,10 @@ func _rebuild_details() -> void:
 		_position_detail_popup()
 		_pinned_detail_position = _detail_popup.position
 	var equipped := _equipment.is_item_equipped(item.id)
+	var equip_slot := item.get_primary_equip_slot()
 	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
-		item.equip_slot == ItemData.EquipSlot.NONE
+		equip_slot == ItemData.EquipSlot.NONE
 		or (not equipped and not _equipment.meets_item_requirements(item))
 	)
 	_drop_button.disabled = item.is_key_item
@@ -369,7 +370,12 @@ func _position_detail_popup() -> void:
 
 func _equip_selected_item() -> void:
 	var item := _inventory.get_item_data(_selected_item_id)
-	if item == null or item.equip_slot == ItemData.EquipSlot.NONE:
+	var equip_slot := (
+		item.get_primary_equip_slot()
+		if item != null
+		else ItemData.EquipSlot.NONE
+	)
+	if item == null or equip_slot == ItemData.EquipSlot.NONE:
 		return
 	if _equipment.is_item_equipped(item.id):
 		_equipment.unequip_inventory_item(item.id)
@@ -377,12 +383,12 @@ func _equip_selected_item() -> void:
 		return
 
 	var slot_index := 0
-	var capacity := _equipment.get_slot_capacity(item.equip_slot)
+	var capacity := _equipment.get_slot_capacity(equip_slot)
 	for index in capacity:
-		if _equipment.get_equipped_item_id(item.equip_slot, index).is_empty():
+		if _equipment.get_equipped_item_id(equip_slot, index).is_empty():
 			slot_index = index
 			break
-	_equipment.equip_inventory_item(item.id, item.equip_slot, slot_index)
+	_equipment.equip_inventory_item(item.id, equip_slot, slot_index)
 	_rebuild()
 
 
@@ -702,7 +708,7 @@ func _inventory_item_payload(item: ItemData) -> Dictionary:
 	return {
 		"kind": InventoryDragButton.KIND_INVENTORY_ITEM,
 		"item_id": item.id,
-		"equip_slot": item.equip_slot,
+		"equip_slot": item.get_primary_equip_slot(),
 		"usable": item.usable_in_combat,
 		"display_name": item.display_name,
 	}
@@ -805,32 +811,37 @@ func _rebuild_equipment_text() -> void:
 
 
 func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
-	if item.stats == null:
+	var item_stats := item.get_equipment_stats()
+	if item_stats == null:
 		return
 	lines.append("Damage: %.1f  Defense: %.1f" % [
-		item.stats.damage,
-		item.stats.defense,
+		item_stats.damage,
+		item_stats.defense,
 	])
 	if (
-		item.stats.strength_requirement > 0
-		or item.stats.dexterity_requirement > 0
+		item_stats.strength_requirement > 0
+		or item_stats.dexterity_requirement > 0
 	):
 		lines.append("Requires STR %d / DEX %d" % [
-			item.stats.strength_requirement,
-			item.stats.dexterity_requirement,
+			item_stats.strength_requirement,
+			item_stats.dexterity_requirement,
 		])
 	var failure := _equipment.get_requirement_failure(item)
 	if not failure.is_empty():
 		lines.append("Requirements not met: %s" % failure)
-	if item.equip_slot == ItemData.EquipSlot.NONE:
+	var equip_slot := item.get_primary_equip_slot()
+	if equip_slot == ItemData.EquipSlot.NONE:
 		return
-	var equipped := _equipment.get_equipped_item(item.equip_slot)
-	if equipped == null or equipped.id == item.id or equipped.stats == null:
+	var equipped := _equipment.get_equipped_item(equip_slot)
+	var equipped_stats := (
+		equipped.get_equipment_stats() if equipped != null else null
+	)
+	if equipped == null or equipped.id == item.id or equipped_stats == null:
 		return
 	lines.append("Compared with %s: Damage %+.1f / Defense %+.1f" % [
 		equipped.display_name,
-		item.stats.damage - equipped.stats.damage,
-		item.stats.defense - equipped.stats.defense,
+		item_stats.damage - equipped_stats.damage,
+		item_stats.defense - equipped_stats.defense,
 	])
 
 

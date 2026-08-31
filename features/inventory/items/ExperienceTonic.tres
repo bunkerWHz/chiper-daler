@@ -1,6 +1,12 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="2_consumable"]
+
+[sub_resource type="Resource" id="ItemConsumableProfile_experience"]
+script = ExtResource("2_consumable")
+use_effect = 3
+use_value = 25.0
 
 [resource]
 script = ExtResource("1_item")
@@ -12,6 +18,5 @@ stackable = true
 max_stack_size = 10
 weight = 0.2
 usable_in_combat = true
-use_effect = 3
-use_value = 25.0
+consumable_profile = SubResource("ItemConsumableProfile_experience")
 sell_price = 10

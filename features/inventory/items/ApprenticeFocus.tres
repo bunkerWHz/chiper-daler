@@ -1,14 +1,24 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_focus"]
 script = ExtResource("2_stats")
 damage = 7.0
-durability = 60.0
 buff_type = &"magic_power"
 buff_value = 1.0
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_focus"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_focus")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_focus"]
+script = ExtResource("4_weapon")
+combat_mode = 5
 
 [resource]
 script = ExtResource("1_item")
@@ -19,7 +29,6 @@ category = 0
 stackable = false
 max_stack_size = 1
 weight = 1.5
-equip_slot = 1
-combat_mode = 5
-stats = SubResource("ItemStats_focus")
+equipment_profile = SubResource("ItemEquipmentProfile_focus")
+weapon_profile = SubResource("ItemWeaponProfile_focus")
 sell_price = 35

@@ -123,6 +123,14 @@ Data
 
 -   Store balancing/configuration in resources.
 -   Never hardcode gameplay values unless truly constant.
+-   `ItemData` owns identity and shared presentation. Optional focused profiles
+    own equipment, weapon, and consumable configuration; systems read them
+    through `ItemData` query methods instead of coupling to profile storage.
+-   Runtime changes never mutate shared `ItemData`. Unique equipment state such
+    as enhancement level belongs to a future item instance.
+-   Equipment has no durability. Failed enhancement consumes its configured
+    currency and materials but never lowers the enhancement level and never
+    destroys the item.
 
 State Machine
 

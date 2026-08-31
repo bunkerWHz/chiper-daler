@@ -246,11 +246,11 @@ func _refresh_visual_profile() -> void:
 	var item := _equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
 	var profile := ItemData.VisualArchetype.WARRIOR
 	if item != null:
-		profile = item.visual_archetype
+		profile = item.get_visual_archetype()
 		if profile == ItemData.VisualArchetype.DEFAULT:
 			profile = (
 				ItemData.VisualArchetype.ARCHER
-				if item.combat_mode in [
+				if item.get_combat_mode() in [
 					ItemData.CombatMode.BOW,
 					ItemData.CombatMode.CROSSBOW,
 				]
@@ -281,7 +281,7 @@ func _on_weapon_set_changed(_previous: int, _current: int) -> void:
 
 func _on_item_use_started(item: ItemData) -> void:
 	var visual_effect := (
-		item.use_visual_effect
+		item.get_use_visual_effect()
 		if item != null
 		else ItemData.UseVisualEffect.HEAL
 	)

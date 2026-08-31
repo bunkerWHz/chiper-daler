@@ -42,7 +42,7 @@ func test_item_and_buff_effects_render_on_separate_overlays() -> void:
 	assert_true(_effect_atlas_path(visual).ends_with("Mana_Effect.png"))
 	item_use.item_use_started.emit(rage)
 	assert_true(_effect_atlas_path(visual).ends_with("Rage_effect.png"))
-	assert_true(status_effects.apply_effect(rage.status_effect))
+	assert_true(status_effects.apply_effect(rage.get_status_effect()))
 	assert_true(visual.get_buff_effect_sprite().visible)
 
 

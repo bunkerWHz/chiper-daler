@@ -92,6 +92,34 @@ inventory is open.
 Every item occupies one inventory cell. Stackable items share a cell up to
 their configured maximum. Non-stackable items always occupy separate cells.
 
+## Item data model
+
+`ItemData` contains identity, presentation, category, economy, and stacking
+rules. Optional focused resources contain behavior for a particular item
+family:
+
+- `ItemEquipmentProfile` declares every compatible equipment slot and stat
+  requirements/modifiers;
+- `ItemWeaponProfile` declares combat mode and the temporary visual archetype;
+- `ItemConsumableProfile` declares the current use effect, value, status, and
+  presentation effect.
+
+Gameplay systems use the `ItemData` query methods, so a profile can replace the
+legacy flat fields without changing every consumer at once. The flat fields
+remain serialized fallbacks during migration of older resources and saves.
+Production test items already use profiles. Durability is not part of the game
+and is not stored in item stats.
+
+Equipment enhancement will be runtime state on a unique item instance, never a
+mutation of shared `ItemData`. A failed enhancement attempt spends the required
+currency and materials, but does not reduce the enhancement level and cannot
+damage or destroy the item.
+
+Health, mana, and rage flasks are a separate upcoming persistent-charge system,
+not ordinary disappearing consumable stacks. At zero charges their item and
+hotbar binding remain visible, they cannot be used, dropped, or transferred,
+and sanctuary rest refills their charges.
+
 ## Implementation stages
 
 1. `ItemData`, stacks, and inventory storage.

@@ -1,12 +1,23 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_sword"]
 script = ExtResource("2_stats")
 damage = 10.0
-durability = 50.0
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_sword"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_sword")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_sword"]
+script = ExtResource("4_weapon")
+combat_mode = 1
+visual_archetype = 1
 
 [resource]
 script = ExtResource("1_item")
@@ -17,8 +28,6 @@ category = 0
 stackable = false
 max_stack_size = 1
 weight = 4.0
-equip_slot = 1
-combat_mode = 1
-visual_archetype = 1
-stats = SubResource("ItemStats_sword")
+equipment_profile = SubResource("ItemEquipmentProfile_sword")
+weapon_profile = SubResource("ItemWeaponProfile_sword")
 sell_price = 25

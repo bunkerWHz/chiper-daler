@@ -264,14 +264,16 @@ func get_requirement_failure(item: ItemData) -> String:
 
 func get_active_weapon_damage() -> float:
 	var item := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
-	return item.stats.damage if item != null and item.stats != null else 0.0
+	var item_stats := item.get_equipment_stats() if item != null else null
+	return item_stats.damage if item_stats != null else 0.0
 
 
 func get_total_defense() -> float:
 	var total := 0.0
 	for item: ItemData in _get_effective_equipped_items():
-		if item.stats != null:
-			total += item.stats.defense
+		var item_stats := item.get_equipment_stats()
+		if item_stats != null:
+			total += item_stats.defense
 	return total
 
 
@@ -280,15 +282,16 @@ func get_total_buff_value(buff_type: StringName) -> float:
 		return 0.0
 	var total := 0.0
 	for item: ItemData in _get_effective_equipped_items():
-		if item.stats != null and item.stats.buff_type == buff_type:
-			total += item.stats.buff_value
+		var item_stats := item.get_equipment_stats()
+		if item_stats != null and item_stats.buff_type == buff_type:
+			total += item_stats.buff_value
 	return total
 
 
 func get_item_action_slot(item: ItemData) -> Slot:
 	if item == null:
 		return Slot.MELEE
-	match item.combat_mode:
+	match item.get_combat_mode():
 		ItemData.CombatMode.THROWABLE:
 			return Slot.THROWABLE
 		ItemData.CombatMode.BOW:
