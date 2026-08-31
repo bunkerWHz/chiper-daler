@@ -1,0 +1,41 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+
+[sub_resource type="Resource" id="ItemStats_wand"]
+script = ExtResource("2_stats")
+damage = 7.0
+intelligence_requirement = 4
+wisdom_requirement = 3
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_wand"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_wand")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_wand"]
+script = ExtResource("4_weapon")
+combat_mode = 5
+family = 12
+primary_damage_type = 4
+moveset_id = &"wand_basic"
+available_actions = 384
+attack_speed_multiplier = 1.1
+stagger_power = 0.25
+intelligence_scaling = 1.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"training_wand"
+display_name = "Training Wand"
+description = "A light one-handed catalyst for fast spellcasting."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 1.2
+equipment_profile = SubResource("ItemEquipmentProfile_wand")
+weapon_profile = SubResource("ItemWeaponProfile_wand")
+sell_price = 38

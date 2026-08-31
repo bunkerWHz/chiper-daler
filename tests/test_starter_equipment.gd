@@ -46,6 +46,11 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"training_buckler",
 		&"training_greatshield",
 		&"training_parrying_dagger",
+		&"training_sword",
+		&"training_longspear",
+		&"training_wand",
+		&"training_bow",
+		&"training_crossbow",
 		&"scout_leather_armor",
 		&"knight_plate_armor",
 		&"scholar_robe",
@@ -67,13 +72,16 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"scout_leather_boots",
 		&"knight_plate_greaves",
 		&"scholar_shoes",
-		&"short_bow",
-		&"light_crossbow",
 	]:
 		assert_eq(inventory.get_quantity(item_id), 1)
 	assert_eq(inventory.get_capacity(), 60)
 	for removed_id: StringName in [
-		&"rusty_sword", &"wooden_shield", &"apprentice_focus", &"training_spear"
+		&"rusty_sword",
+		&"wooden_shield",
+		&"apprentice_focus",
+		&"training_spear",
+		&"short_bow",
+		&"light_crossbow",
 	]:
 		assert_eq(inventory.get_quantity(removed_id), 0)
 	assert_eq(inventory.get_quantity(&"health_potion"), 1)
@@ -106,7 +114,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		equipment.get_equipped_item_id(
 			ItemData.EquipSlot.MAIN_HAND, 0, 1
 		),
-		&"short_bow"
+		&"training_bow"
 	)
 
 	assert_eq(quick_access.get_slot(0).item_id, &"health_potion")
@@ -135,7 +143,7 @@ func test_replacing_active_main_hand_changes_combat_mode() -> void:
 	actor._collect_components()
 
 	var crossbow := load(
-		"res://features/inventory/items/LightCrossbow.tres"
+		"res://features/inventory/items/TrainingCrossbow.tres"
 	) as ItemData
 	inventory.add_item(crossbow)
 	assert_true(equipment.equip_inventory_item(

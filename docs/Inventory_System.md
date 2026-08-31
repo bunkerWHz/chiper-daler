@@ -115,12 +115,18 @@ leather pants and boots, knight plate leggings and greaves, and scholar trousers
 and shoes. Chest resources are explicitly covered by slot tests alongside every
 other core armor piece.
 
-The starting inventory contains the current training weapon/offhand catalog,
-the growing light/heavy/robe armor sets, legacy Short Bow and Light Crossbow,
+The starting inventory contains the complete training weapon/offhand catalog,
+the growing light/heavy/robe armor sets, training bow and crossbow,
 permanent health, mana, and rage flasks with three charges each, and two
 Experience Tonics. These are functional test items for equipment, quick-access,
 item-use, and visual-profile checks. Weapon set one starts with a katana and
 buckler; set two starts with the bow.
+
+The training weapon catalog now covers sword, rapier, katana, dagger, axe,
+mace, greatsword, great hammer, spear, halberd, scythe, wand, staff, bow, and
+crossbow. The original Rusty Sword, Training Spear, Apprentice Focus, Short Bow,
+and Light Crossbow resources remain loadable for save compatibility but are no
+longer included in the starting inventory or weapon sets.
 
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the

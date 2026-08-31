@@ -130,6 +130,31 @@ func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 	assert_true(dagger.weapon_profile.dexterity_scaling > rapier.weapon_profile.dexterity_scaling)
 
 
+func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
+	var sword := load("res://features/inventory/items/TrainingSword.tres") as ItemData
+	var spear := load("res://features/inventory/items/TrainingLongspear.tres") as ItemData
+	var wand := load("res://features/inventory/items/TrainingWand.tres") as ItemData
+	var bow := load("res://features/inventory/items/TrainingBow.tres") as ItemData
+	var crossbow := load("res://features/inventory/items/TrainingCrossbow.tres") as ItemData
+	assert_eq(sword.weapon_profile.family, ItemWeaponProfile.Family.SWORD)
+	assert_false(sword.is_two_handed_weapon())
+	assert_true(sword.has_weapon_action(ItemWeaponProfile.Action.PARRY))
+	assert_eq(spear.weapon_profile.family, ItemWeaponProfile.Family.SPEAR)
+	assert_true(spear.is_two_handed_weapon())
+	assert_eq(spear.get_visual_archetype(), ItemData.VisualArchetype.LANCER)
+	assert_eq(wand.weapon_profile.family, ItemWeaponProfile.Family.WAND)
+	assert_true(wand.has_weapon_action(ItemWeaponProfile.Action.CAST))
+	assert_true(wand.has_weapon_action(ItemWeaponProfile.Action.CHANNEL))
+	assert_false(wand.is_two_handed_weapon())
+	assert_eq(bow.weapon_profile.family, ItemWeaponProfile.Family.BOW)
+	assert_eq(bow.weapon_profile.ammunition_type, &"arrow")
+	assert_true(bow.is_two_handed_weapon())
+	assert_eq(crossbow.weapon_profile.family, ItemWeaponProfile.Family.CROSSBOW)
+	assert_eq(crossbow.weapon_profile.ammunition_type, &"bolt")
+	assert_true(crossbow.has_weapon_action(ItemWeaponProfile.Action.RELOAD))
+	assert_true(crossbow.get_equipment_stats().damage > bow.get_equipment_stats().damage)
+
+
 func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:
 	var axe := load(
 		"res://features/inventory/items/TrainingBattleAxe.tres"

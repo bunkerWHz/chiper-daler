@@ -4,8 +4,8 @@
 [ext_resource type="Script" path="res://features/inventory/InventoryConfig.gd" id="2_config"]
 [ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_health_potion"]
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="4_item_data"]
-[ext_resource type="Resource" path="res://features/inventory/items/ShortBow.tres" id="7_bow"]
-[ext_resource type="Resource" path="res://features/inventory/items/LightCrossbow.tres" id="8_crossbow"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingBow.tres" id="7_bow"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingCrossbow.tres" id="8_crossbow"]
 [ext_resource type="Resource" path="res://features/inventory/items/ManaPotion.tres" id="10_mana_potion"]
 [ext_resource type="Resource" path="res://features/inventory/items/ExperienceTonic.tres" id="11_experience_tonic"]
 [ext_resource type="Resource" path="res://features/inventory/items/RagePotion.tres" id="13_rage_potion"]
@@ -43,12 +43,15 @@
 [ext_resource type="Resource" path="res://features/inventory/items/ScoutLeatherBoots.tres" id="45"]
 [ext_resource type="Resource" path="res://features/inventory/items/KnightPlateGreaves.tres" id="46"]
 [ext_resource type="Resource" path="res://features/inventory/items/ScholarShoes.tres" id="47"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingSword.tres" id="48"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingLongspear.tres" id="49"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingWand.tres" id="50"]
 
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
 capacity = 60
-starting_items = Array[ExtResource("4_item_data")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("25"), ExtResource("26"), ExtResource("27"), ExtResource("28"), ExtResource("29"), ExtResource("30"), ExtResource("31"), ExtResource("32"), ExtResource("33"), ExtResource("34"), ExtResource("35"), ExtResource("36"), ExtResource("37"), ExtResource("38"), ExtResource("39"), ExtResource("40"), ExtResource("41"), ExtResource("42"), ExtResource("43"), ExtResource("44"), ExtResource("45"), ExtResource("46"), ExtResource("47"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
-starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+starting_items = Array[ExtResource("4_item_data")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("25"), ExtResource("26"), ExtResource("48"), ExtResource("49"), ExtResource("50"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("27"), ExtResource("28"), ExtResource("29"), ExtResource("30"), ExtResource("31"), ExtResource("32"), ExtResource("33"), ExtResource("34"), ExtResource("35"), ExtResource("36"), ExtResource("37"), ExtResource("38"), ExtResource("39"), ExtResource("40"), ExtResource("41"), ExtResource("42"), ExtResource("43"), ExtResource("44"), ExtResource("45"), ExtResource("46"), ExtResource("47"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
+starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")
