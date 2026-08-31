@@ -61,6 +61,40 @@ func test_removing_last_active_weapon_disables_melee_actions() -> void:
 	assert_false(guard.start_parry())
 
 
+func test_weapon_and_offhand_profiles_gate_combat_actions() -> void:
+	var setup := _create_equipped_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var attack := setup.attack as AttackComponent
+	var guard := setup.guard as GuardComponent
+	var sword := setup.sword as ItemData
+	var weapon_profile := ItemWeaponProfile.new()
+	weapon_profile.combat_mode = ItemData.CombatMode.MELEE
+	weapon_profile.available_actions = ItemWeaponProfile.Action.LIGHT_ATTACK
+	sword.weapon_profile = weapon_profile
+	var shield := _create_equippable(
+		&"action_test_shield", ItemData.EquipSlot.OFF_HAND
+	)
+	var offhand_profile := ItemOffhandProfile.new()
+	offhand_profile.available_actions = ItemOffhandProfile.Action.GUARD
+	shield.offhand_profile = offhand_profile
+	inventory.add_item(shield)
+	assert_true(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND
+	))
+
+	assert_true(equipment.allows_light_attack())
+	assert_false(equipment.allows_heavy_attack())
+	assert_true(equipment.allows_guard())
+	assert_false(equipment.allows_parry())
+	assert_false(attack.heavy_attack())
+	assert_true(attack.attack())
+	attack._process(attack.config.active_duration + attack.config.cooldown)
+	assert_true(guard.start_guard())
+	guard.stop_guard()
+	assert_false(guard.start_parry())
+
+
 func test_disabled_equipment_is_safe_for_scripted_combat() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

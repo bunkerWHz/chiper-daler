@@ -111,6 +111,28 @@ func allows_melee_actions() -> bool:
 	)
 
 
+func allows_light_attack() -> bool:
+	return _allows_weapon_action(ItemWeaponProfile.Action.LIGHT_ATTACK)
+
+
+func allows_heavy_attack() -> bool:
+	return _allows_weapon_action(ItemWeaponProfile.Action.HEAVY_ATTACK)
+
+
+func allows_guard() -> bool:
+	return _allows_defensive_action(
+		ItemWeaponProfile.Action.GUARD,
+		ItemOffhandProfile.Action.GUARD
+	)
+
+
+func allows_parry() -> bool:
+	return _allows_defensive_action(
+		ItemWeaponProfile.Action.PARRY,
+		ItemOffhandProfile.Action.PARRY
+	)
+
+
 func equip_inventory_item(
 	item_id: StringName,
 	target_slot: ItemData.EquipSlot,
@@ -399,6 +421,38 @@ func _resolve_weapon_set(
 	):
 		return _active_weapon_set if requested_set < 0 else requested_set
 	return -1
+
+
+func _allows_weapon_action(action: ItemWeaponProfile.Action) -> bool:
+	if not allows_melee_actions():
+		return false
+	var main_hand := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	return (
+		main_hand.weapon_profile == null
+		or main_hand.has_weapon_action(action)
+	)
+
+
+func _allows_defensive_action(
+	weapon_action: ItemWeaponProfile.Action,
+	offhand_action: ItemOffhandProfile.Action
+) -> bool:
+	if not allows_melee_actions():
+		return false
+	var main_hand := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	if (
+		main_hand.weapon_profile == null
+		or main_hand.has_weapon_action(weapon_action)
+	):
+		return true
+	var off_hand := get_equipped_item(ItemData.EquipSlot.OFF_HAND)
+	return (
+		off_hand != null
+		and (
+			off_hand.offhand_profile == null
+			or off_hand.has_offhand_action(offhand_action)
+		)
+	)
 
 
 func _is_valid_slot_index(

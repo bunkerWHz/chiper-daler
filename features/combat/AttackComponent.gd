@@ -159,7 +159,7 @@ func heavy_attack() -> bool:
 func can_attack() -> bool:
 	return (
 		is_enabled
-		and _allows_melee_actions()
+		and _allows_any_attack_action()
 		and _cooldown_timer <= 0.0
 		and _active_timer <= 0.0
 		and not is_landing_recovery()
@@ -287,7 +287,7 @@ func _update_attack_input(delta: float) -> void:
 
 
 func _start_attack(heavy: bool, started_airborne: bool) -> bool:
-	if not can_attack():
+	if not can_attack() or not _allows_attack_action(heavy):
 		return false
 
 	_is_charging = false
@@ -362,6 +362,17 @@ func _allows_melee_actions() -> bool:
 	)
 
 
+func _allows_any_attack_action() -> bool:
+	return _allows_attack_action(false) or _allows_attack_action(true)
+
+
+func _allows_attack_action(heavy: bool) -> bool:
+	if _equipment_component == null:
+		return true
+	var method := &"allows_heavy_attack" if heavy else &"allows_light_attack"
+	return bool(_equipment_component.call(method))
+
+
 func _on_equipment_changed(_previous_slot: int, _current_slot: int) -> void:
 	_cancel_attack_if_melee_unavailable()
 
@@ -381,7 +392,12 @@ func _on_weapon_set_changed(_previous_set: int, _current_set: int) -> void:
 
 
 func _cancel_attack_if_melee_unavailable() -> void:
-	if _allows_melee_actions():
+	var action_is_available := (
+		_allows_attack_action(_is_heavy_attack)
+		if is_attacking()
+		else _allows_any_attack_action()
+	)
+	if action_is_available:
 		return
 
 	var was_attacking := is_attacking()

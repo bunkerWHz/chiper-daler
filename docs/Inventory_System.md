@@ -52,6 +52,10 @@ clears the offhand of that weapon set, and an offhand cannot be equipped while
 that main weapon remains active. The other weapon set is independent. Moveset
 execution and final scaling formulas will consume this metadata in later tasks;
 they are intentionally not hard-coded into item resources.
+Light/heavy attacks, guard, and parry now consult those action flags. Defensive
+actions may come from either the main-hand weapon or the equipped offhand tool;
+legacy items without a specialized profile retain their previous behavior while
+the remaining item resources are migrated.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

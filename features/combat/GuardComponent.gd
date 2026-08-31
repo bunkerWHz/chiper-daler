@@ -111,9 +111,11 @@ func _process(delta: float) -> void:
 		if _parry_timer == 0.0:
 			parry_finished.emit()
 
-	if not _allows_melee_actions():
+	if not _allows_guard():
 		stop_guard()
+	if not _allows_parry():
 		_finish_parry()
+	if not _allows_guard() and not _allows_parry():
 		return
 	if not _is_grounded():
 		stop_guard()
@@ -171,7 +173,7 @@ func allows_hit_reactions(hit: HitData) -> bool:
 func start_parry() -> bool:
 	if (
 		not is_enabled
-		or not _allows_melee_actions()
+		or not _allows_parry()
 		or not _can_enter_defense()
 		or is_parrying()
 		or _parry_cooldown_timer > 0.0
@@ -199,7 +201,7 @@ func start_parry() -> bool:
 func start_guard() -> bool:
 	if (
 		not is_enabled
-		or not _allows_melee_actions()
+		or not _allows_guard()
 		or not _can_enter_defense()
 		or _is_guarding
 		or is_parrying()
@@ -297,10 +299,17 @@ func _on_attack_started() -> void:
 	_finish_parry()
 
 
-func _allows_melee_actions() -> bool:
+func _allows_guard() -> bool:
 	return (
 		_equipment_component == null
-		or bool(_equipment_component.call("allows_melee_actions"))
+		or bool(_equipment_component.call("allows_guard"))
+	)
+
+
+func _allows_parry() -> bool:
+	return (
+		_equipment_component == null
+		or bool(_equipment_component.call("allows_parry"))
 	)
 
 
@@ -323,6 +332,7 @@ func _on_weapon_set_changed(_previous_set: int, _current_set: int) -> void:
 
 
 func _cancel_guard_if_melee_unavailable() -> void:
-	if not _allows_melee_actions():
+	if not _allows_guard():
 		stop_guard()
+	if not _allows_parry():
 		_finish_parry()
