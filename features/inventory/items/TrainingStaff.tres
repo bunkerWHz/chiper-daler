@@ -1,0 +1,43 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+
+[sub_resource type="Resource" id="ItemStats_staff"]
+script = ExtResource("2_stats")
+damage = 10.0
+intelligence_requirement = 6
+wisdom_requirement = 3
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_staff"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_staff")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_staff"]
+script = ExtResource("4_weapon")
+combat_mode = 5
+family = 13
+handedness = 1
+primary_damage_type = 4
+moveset_id = &"staff_basic"
+available_actions = 384
+attack_speed_multiplier = 0.8
+reach_multiplier = 1.2
+stagger_power = 0.5
+intelligence_scaling = 1.1
+
+[resource]
+script = ExtResource("1_item")
+id = &"training_staff"
+display_name = "Training Staff"
+description = "A two-handed focus for testing casting and channeling magic."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 4.0
+equipment_profile = SubResource("ItemEquipmentProfile_staff")
+weapon_profile = SubResource("ItemWeaponProfile_staff")
+sell_price = 46

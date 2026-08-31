@@ -1,0 +1,46 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+
+[sub_resource type="Resource" id="ItemStats_scythe"]
+script = ExtResource("2_stats")
+damage = 13.0
+strength_requirement = 4
+dexterity_requirement = 6
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_scythe"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_scythe")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_scythe"]
+script = ExtResource("4_weapon")
+combat_mode = 1
+visual_archetype = 3
+family = 11
+handedness = 1
+primary_damage_type = 1
+moveset_id = &"scythe_basic"
+available_actions = 7
+attack_speed_multiplier = 0.85
+reach_multiplier = 1.5
+stagger_power = 1.0
+critical_damage_multiplier = 2.5
+strength_scaling = 0.4
+dexterity_scaling = 0.8
+
+[resource]
+script = ExtResource("1_item")
+id = &"training_scythe"
+display_name = "Training Scythe"
+description = "A sweeping dexterity polearm with elevated critical damage."
+category = 0
+stackable = false
+max_stack_size = 1
+weight = 6.0
+equipment_profile = SubResource("ItemEquipmentProfile_scythe")
+weapon_profile = SubResource("ItemWeaponProfile_scythe")
+sell_price = 45

@@ -151,3 +151,31 @@ func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:
 	assert_eq(greatsword.weapon_profile.family, ItemWeaponProfile.Family.GREAT_SWORD)
 	assert_true(greatsword.weapon_profile.reach_multiplier > hammer.weapon_profile.reach_multiplier)
 	assert_true(hammer.weapon_profile.stagger_power > axe.weapon_profile.stagger_power)
+
+
+func test_specialized_two_handed_weapon_batch_has_expected_roles() -> void:
+	var great_hammer := load(
+		"res://features/inventory/items/TrainingGreatHammer.tres"
+	) as ItemData
+	var staff := load(
+		"res://features/inventory/items/TrainingStaff.tres"
+	) as ItemData
+	var halberd := load(
+		"res://features/inventory/items/TrainingHalberd.tres"
+	) as ItemData
+	var scythe := load(
+		"res://features/inventory/items/TrainingScythe.tres"
+	) as ItemData
+
+	for item: ItemData in [great_hammer, staff, halberd, scythe]:
+		assert_true(item.is_two_handed_weapon())
+	assert_eq(great_hammer.weapon_profile.family, ItemWeaponProfile.Family.GREAT_HAMMER)
+	assert_eq(great_hammer.weapon_profile.stagger_power, 3.0)
+	assert_eq(staff.weapon_profile.family, ItemWeaponProfile.Family.STAFF)
+	assert_true(staff.has_weapon_action(ItemWeaponProfile.Action.CAST))
+	assert_true(staff.has_weapon_action(ItemWeaponProfile.Action.CHANNEL))
+	assert_false(staff.has_weapon_action(ItemWeaponProfile.Action.LIGHT_ATTACK))
+	assert_eq(halberd.weapon_profile.family, ItemWeaponProfile.Family.POLEARM)
+	assert_eq(halberd.weapon_profile.reach_multiplier, 1.6)
+	assert_eq(scythe.weapon_profile.family, ItemWeaponProfile.Family.SCYTHE)
+	assert_eq(scythe.weapon_profile.critical_damage_multiplier, 2.5)

@@ -84,6 +84,10 @@ The first strength-focused batch adds training battle axe, war hammer, and
 greatsword resources. All are two-handed and therefore reserve their weapon
 set's offhand, while their slash/strike type, speed, reach, stagger, weight,
 requirements, and scaling remain independent data.
+The remaining two-handed batch adds training great hammer, staff, halberd, and
+scythe. The staff exposes cast/channel actions and intelligence scaling; the
+great hammer leads stagger and weight; the halberd leads reach; the scythe
+leans toward dexterity and critical damage.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
