@@ -27,7 +27,7 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	var view := track(PlayerResourceBarsView.new()) as PlayerResourceBarsView
 	view.bind_components(magic, progression, status_effects)
 
-	assert_eq(view.get_displayed_mana(), magic.config.max_mana)
+	assert_eq(view.get_displayed_mana(), magic.get_max_mana())
 	magic.restore_runtime_state(40.0)
 	assert_eq(view.get_displayed_mana(), 40.0)
 	progression.gain_experience(25)

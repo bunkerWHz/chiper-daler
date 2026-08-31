@@ -64,7 +64,7 @@ func bind_components(
 	_progression.experience_changed.connect(_on_experience_changed)
 	_status_effects.effect_applied.connect(_on_effect_applied)
 	_status_effects.effect_removed.connect(_on_effect_removed)
-	_on_mana_changed(_magic.get_mana(), _magic.config.max_mana)
+	_on_mana_changed(_magic.get_mana(), _magic.get_max_mana())
 	_on_experience_changed(
 		_progression.get_experience(),
 		_progression.get_experience_required()

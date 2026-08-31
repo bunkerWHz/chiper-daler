@@ -37,6 +37,15 @@ func get_max_equip_load() -> float:
 	)
 
 
+func get_wisdom_mana_bonus() -> float:
+	if derived_stats_config == null:
+		return 0.0
+	return (
+		float(wisdom - derived_stats_config.reference_wisdom)
+		* derived_stats_config.mana_per_wisdom
+	)
+
+
 func meets_item_requirements(item: ItemData) -> bool:
 	var item_stats := item.get_equipment_stats() if item != null else null
 	if item_stats == null:

@@ -70,6 +70,9 @@ by 10 and load by 3. Inventory weight remains informational and item pickup is
 limited by bag cells, not kilograms. Equipment load counts armor, accessories,
 and weapons in both weapon sets. Its ratio is exposed for later movement and
 dodge tiers but does not affect locomotion yet.
+Wisdom increases maximum mana through the same derived-stat resource. At the
+reference value of 5 Wisdom, base mana is unchanged; each Wisdom point changes
+maximum mana by 10. Mana restoration and the HUD use the derived maximum.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

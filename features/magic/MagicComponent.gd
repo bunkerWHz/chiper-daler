@@ -18,6 +18,8 @@ var _facing: FacingComponent
 var _phase: Phase = Phase.NONE
 var _timer: float = 0.0
 var _mana: float = 0.0
+var _max_mana: float = 1.0
+var _attributes: CharacterAttributesComponent
 
 
 func on_initialize() -> void:
@@ -54,8 +56,20 @@ func on_initialize() -> void:
 		)
 		disable()
 		return
-	_mana = config.max_mana
-	mana_changed.emit(_mana, config.max_mana)
+	_attributes = (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	if _attributes != null and _attributes.is_enabled:
+		if not _attributes.attributes_changed.is_connected(
+			_on_attributes_changed
+		):
+			_attributes.attributes_changed.connect(_on_attributes_changed)
+	else:
+		_attributes = null
+	_max_mana = _calculate_max_mana()
+	_mana = _max_mana
+	mana_changed.emit(_mana, _max_mana)
 	if not _equipment.equipment_changed.is_connected(_on_equipment_changed):
 		_equipment.equipment_changed.connect(_on_equipment_changed)
 	if not _equipment.loadout_item_changed.is_connected(
@@ -108,6 +122,10 @@ func is_exclusive_behavior_active() -> bool:
 
 func get_mana() -> float:
 	return _mana
+
+
+func get_max_mana() -> float:
+	return _max_mana
 
 
 func restore_mana(amount: float) -> float:
@@ -171,11 +189,35 @@ func _set_phase(value: Phase, duration: float) -> void:
 
 
 func _set_mana(value: float) -> void:
-	var resolved := clampf(value, 0.0, config.max_mana)
+	var resolved := clampf(value, 0.0, _max_mana)
 	if is_equal_approx(resolved, _mana):
 		return
 	_mana = resolved
-	mana_changed.emit(_mana, config.max_mana)
+	mana_changed.emit(_mana, _max_mana)
+
+
+func _calculate_max_mana() -> float:
+	var wisdom_bonus := (
+		_attributes.get_wisdom_mana_bonus()
+		if _attributes != null
+		else 0.0
+	)
+	return maxf(float(config.max_mana) + wisdom_bonus, 1.0)
+
+
+func _on_attributes_changed(
+	_strength: int,
+	_dexterity: int,
+	_intelligence: int,
+	_endurance: int,
+	_wisdom: int
+) -> void:
+	var previous_max := _max_mana
+	_max_mana = _calculate_max_mana()
+	if _max_mana > previous_max:
+		_mana += _max_mana - previous_max
+	_mana = clampf(_mana, 0.0, _max_mana)
+	mana_changed.emit(_mana, _max_mana)
 
 
 func _on_equipment_changed(

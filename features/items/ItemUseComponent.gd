@@ -308,7 +308,7 @@ func _can_apply_inventory_item(item: ItemData) -> bool:
 			return (
 				use_value > 0.0
 				and _magic_component != null
-				and _magic_component.get_mana() < _magic_component.config.max_mana
+				and _magic_component.get_mana() < _magic_component.get_max_mana()
 			)
 		ItemData.UseEffect.GRANT_EXPERIENCE:
 			return use_value > 0.0 and _progression_component != null

@@ -140,6 +140,9 @@ Data
     derived maximum from the attributes component, while equipment exposes total
     equipped weight, maximum load, and load ratio. Bag weight never gates item
     pickup; future locomotion systems may consume the equipment-load ratio.
+-   Wisdom-derived maximum mana is calculated by the attributes component and
+    consumed through `MagicComponent.get_max_mana()`. UI and item-use systems
+    never read `MagicConfig.max_mana` as the runtime maximum.
 -   Runtime changes never mutate shared `ItemData`. Unique equipment state such
     as enhancement level belongs to a future item instance.
 -   Equipment has no durability. Failed enhancement consumes its configured

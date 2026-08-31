@@ -136,6 +136,35 @@ func test_magic_profile_separates_cast_and_channel_actions() -> void:
 	assert_eq(magic.get_mana(), 80.0)
 
 
+func test_wisdom_changes_runtime_maximum_mana() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var attributes := CharacterAttributesComponent.new()
+	var equipment := EquipmentComponent.new()
+	var facing := FacingComponent.new()
+	var magic := MagicComponent.new()
+	magic.config = MagicConfig.new()
+	for component: Component in [
+		input, attributes, equipment, facing, magic
+	]:
+		components.add_child(component)
+	actor._collect_components()
+
+	assert_eq(magic.get_max_mana(), 100.0)
+	assert_eq(magic.get_mana(), 100.0)
+	magic._set_mana(70.0)
+	attributes.set_wisdom(7)
+	assert_eq(magic.get_max_mana(), 120.0)
+	assert_eq(magic.get_mana(), 90.0)
+	attributes.set_wisdom(0)
+	assert_eq(magic.get_max_mana(), 50.0)
+	assert_eq(magic.get_mana(), 50.0)
+	assert_eq(magic.restore_mana(100.0), 0.0)
+
+
 func _on_magic_phase_changed(
 	previous_phase: MagicComponent.Phase,
 	current_phase: MagicComponent.Phase
