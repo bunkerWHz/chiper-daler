@@ -14,6 +14,27 @@ signal attributes_changed(
 @export_range(0, 999, 1) var intelligence: int = 5
 @export_range(0, 999, 1) var endurance: int = 5
 @export_range(0, 999, 1) var wisdom: int = 5
+@export var derived_stats_config := CharacterDerivedStatsConfig.new()
+
+
+func get_endurance_health_bonus() -> float:
+	if derived_stats_config == null:
+		return 0.0
+	return (
+		float(endurance - derived_stats_config.reference_endurance)
+		* derived_stats_config.health_per_endurance
+	)
+
+
+func get_max_equip_load() -> float:
+	if derived_stats_config == null:
+		return 1.0
+	return maxf(
+		derived_stats_config.base_max_equip_load
+		+ float(endurance - derived_stats_config.reference_endurance)
+		* derived_stats_config.equip_load_per_endurance,
+		1.0
+	)
 
 
 func meets_item_requirements(item: ItemData) -> bool:

@@ -1,8 +1,16 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://features/stats/CharacterAttributesComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/stats/CharacterDerivedStatsConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="CharacterDerivedStatsConfig_default"]
+script = ExtResource("2_config")
 
 [node name="CharacterAttributesComponent" type="Node"]
 script = ExtResource("1_component")
 strength = 5
 dexterity = 5
+intelligence = 5
+endurance = 5
+wisdom = 5
+derived_stats_config = SubResource("CharacterDerivedStatsConfig_default")

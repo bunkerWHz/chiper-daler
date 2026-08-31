@@ -826,15 +826,19 @@ func _rebuild_equipment_text() -> void:
 		endurance = attributes.endurance
 		wisdom = attributes.wisdom
 	_equipment_text.text = (
-		"STR %d  DEX %d  INT %d\nEND %d  WIS %d  Defense %.1f" % [
+		"STR %d  DEX %d  INT %d\n"
+		+ "END %d  WIS %d  Defense %.1f\nLoad %.1f / %.1f (%.0f%%)"
+	) % [
 		strength,
 		dexterity,
 		intelligence,
 		endurance,
 		wisdom,
 		_equipment.get_total_defense(),
+		_equipment.get_total_equipped_weight(),
+		_equipment.get_max_equip_load(),
+		_equipment.get_equip_load_ratio() * 100.0,
 	]
-	)
 
 
 func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:

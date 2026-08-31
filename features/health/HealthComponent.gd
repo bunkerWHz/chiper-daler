@@ -8,6 +8,8 @@ signal died
 @export var config: HealthConfig
 
 var _current_health: float = 0.0
+var _max_health: float = 1.0
+var _attributes: CharacterAttributesComponent
 
 
 func on_initialize() -> void:
@@ -21,7 +23,19 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_current_health = config.max_health
+	_attributes = (
+		actor.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	if _attributes != null and _attributes.is_enabled:
+		if not _attributes.attributes_changed.is_connected(
+			_on_attributes_changed
+		):
+			_attributes.attributes_changed.connect(_on_attributes_changed)
+	else:
+		_attributes = null
+	_max_health = _calculate_max_health()
+	_current_health = _max_health
 
 
 func get_current_health() -> float:
@@ -29,11 +43,11 @@ func get_current_health() -> float:
 
 
 func get_max_health() -> float:
-	return config.max_health
+	return _max_health
 
 
 func get_health_ratio() -> float:
-	return _current_health / config.max_health
+	return _current_health / _max_health
 
 
 func is_alive() -> bool:
@@ -66,10 +80,35 @@ func heal(amount: float) -> float:
 		return 0.0
 
 	var previous_health := _current_health
-	_current_health = minf(_current_health + amount, config.max_health)
+	_current_health = minf(_current_health + amount, _max_health)
 	var restored_health := _current_health - previous_health
 
 	if restored_health > 0.0:
 		health_changed.emit(previous_health, _current_health)
 
 	return restored_health
+
+
+func _calculate_max_health() -> float:
+	var endurance_bonus := (
+		_attributes.get_endurance_health_bonus()
+		if _attributes != null
+		else 0.0
+	)
+	return maxf(config.max_health + endurance_bonus, 1.0)
+
+
+func _on_attributes_changed(
+	_strength: int,
+	_dexterity: int,
+	_intelligence: int,
+	_endurance: int,
+	_wisdom: int
+) -> void:
+	var previous_health := _current_health
+	var previous_max := _max_health
+	_max_health = _calculate_max_health()
+	if _current_health > 0.0 and _max_health > previous_max:
+		_current_health += _max_health - previous_max
+	_current_health = clampf(_current_health, 0.0, _max_health)
+	health_changed.emit(previous_health, _current_health)

@@ -63,6 +63,14 @@ The inventory item card exposes weapon family, grip, damage type, moveset,
 actions, scaling, timing/reach values, ammunition, and shield/offhand defense
 data. The bag and equipped paper doll continue to show icons only.
 
+Endurance increases maximum health and equipment load through a configurable
+derived-stat resource. At the reference value of 5 Endurance, base health is
+unchanged and maximum equipment load is 25; each Endurance point changes health
+by 10 and load by 3. Inventory weight remains informational and item pickup is
+limited by bag cells, not kilograms. Equipment load counts armor, accessories,
+and weapons in both weapon sets. Its ratio is exposed for later movement and
+dodge tiers but does not affect locomotion yet.
+
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
 and rage flasks with three charges each, and two Experience Tonics. These are

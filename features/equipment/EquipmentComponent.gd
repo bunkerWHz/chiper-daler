@@ -19,6 +19,11 @@ signal loadout_item_changed(
 	previous_item_id: StringName,
 	current_item_id: StringName
 )
+signal equipment_load_changed(
+	current_weight: float,
+	maximum_weight: float,
+	load_ratio: float
+)
 
 const EQUIPMENT_PROCESS_PRIORITY := -90
 const WEAPON_SET_COUNT := 2
@@ -218,6 +223,7 @@ func equip_inventory_item(
 		previous,
 		item_id
 	)
+	_emit_equipment_load_changed()
 	if (
 		target_slot == ItemData.EquipSlot.MAIN_HAND
 		and resolved_set == _active_weapon_set
@@ -245,6 +251,7 @@ func unequip_item(
 		previous,
 		&""
 	)
+	_emit_equipment_load_changed()
 	return true
 
 
@@ -358,6 +365,31 @@ func get_total_defense() -> float:
 	return total
 
 
+func get_total_equipped_weight() -> float:
+	if _inventory_component == null:
+		return 0.0
+	var total := 0.0
+	for equipped_id: Variant in _equipped_items.values():
+		var item := _inventory_component.get_item_data(
+			StringName(equipped_id)
+		)
+		if item != null:
+			total += item.weight
+	return total
+
+
+func get_max_equip_load() -> float:
+	return (
+		_attributes_component.get_max_equip_load()
+		if _attributes_component != null
+		else 1.0
+	)
+
+
+func get_equip_load_ratio() -> float:
+	return get_total_equipped_weight() / get_max_equip_load()
+
+
 func get_total_buff_value(buff_type: StringName) -> float:
 	if buff_type.is_empty():
 		return 0.0
@@ -445,6 +477,7 @@ func restore_runtime_state(state: Variant) -> void:
 			):
 				_equipped_items[String(key)] = item_id
 	_normalize_weapon_sets()
+	_emit_equipment_load_changed()
 
 
 func _resolve_weapon_set(
@@ -634,6 +667,7 @@ func _on_attributes_changed(
 		if item == null or not meets_item_requirements(item):
 			_remove_equipped_key(key)
 	_update_mode_after_active_weapon_removal(previous_active_main)
+	_emit_equipment_load_changed()
 
 
 func _update_mode_after_active_weapon_removal(
@@ -660,4 +694,13 @@ func _remove_equipped_key(key: Variant) -> void:
 		int(parts[2]),
 		previous,
 		&""
+	)
+	_emit_equipment_load_changed()
+
+
+func _emit_equipment_load_changed() -> void:
+	equipment_load_changed.emit(
+		get_total_equipped_weight(),
+		get_max_equip_load(),
+		get_equip_load_ratio()
 	)

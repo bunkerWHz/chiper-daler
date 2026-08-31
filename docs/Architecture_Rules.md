@@ -136,6 +136,10 @@ Data
     owns health and carrying-capacity growth; Wisdom owns mana growth. Derived
     values subscribe to `CharacterAttributesComponent` rather than duplicating
     base attributes in their own resources.
+-   Endurance formulas live in `CharacterDerivedStatsConfig`. Health reads its
+    derived maximum from the attributes component, while equipment exposes total
+    equipped weight, maximum load, and load ratio. Bag weight never gates item
+    pickup; future locomotion systems may consume the equipment-load ratio.
 -   Runtime changes never mutate shared `ItemData`. Unique equipment state such
     as enhancement level belongs to a future item instance.
 -   Equipment has no durability. Failed enhancement consumes its configured

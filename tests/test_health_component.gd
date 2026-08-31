@@ -63,6 +63,34 @@ func test_healing_is_clamped_to_maximum() -> void:
 	assert_eq(health.get_current_health(), 100.0)
 
 
+func test_endurance_changes_max_health_without_resurrecting() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var attributes := CharacterAttributesComponent.new()
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	components.add_child(attributes)
+	components.add_child(health)
+	actor._collect_components()
+
+	assert_eq(health.get_max_health(), 100.0)
+	attributes.set_endurance(7)
+	assert_eq(health.get_max_health(), 120.0)
+	assert_eq(health.get_current_health(), 120.0)
+	health.take_damage(30.0)
+	attributes.set_endurance(8)
+	assert_eq(health.get_max_health(), 130.0)
+	assert_eq(health.get_current_health(), 100.0)
+	attributes.set_endurance(0)
+	assert_eq(health.get_max_health(), 50.0)
+	assert_eq(health.get_current_health(), 50.0)
+	health.take_damage(50.0)
+	attributes.set_endurance(10)
+	assert_eq(health.get_current_health(), 0.0)
+
+
 func test_death_component_disables_other_components() -> void:
 	var target := _create_death_target(false)
 

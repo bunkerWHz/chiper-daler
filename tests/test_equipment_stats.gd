@@ -139,6 +139,42 @@ func test_equipment_defense_reduces_incoming_damage() -> void:
 	assert_eq(health.get_current_health(), 150.0)
 
 
+func test_endurance_controls_load_from_all_equipped_weapon_sets() -> void:
+	var setup := _create_equipment_actor()
+	var attributes := setup.attributes as CharacterAttributesComponent
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var sword := _create_stat_item(
+		&"load_sword", ItemData.EquipSlot.MAIN_HAND, 0.0, 0.0
+	)
+	sword.weight = 4.0
+	var bow := _create_stat_item(
+		&"load_bow", ItemData.EquipSlot.MAIN_HAND, 0.0, 0.0
+	)
+	bow.weight = 2.0
+	var armor := _create_stat_item(
+		&"load_armor", ItemData.EquipSlot.CHEST, 0.0, 0.0
+	)
+	armor.weight = 3.0
+	for item: ItemData in [sword, bow, armor]:
+		inventory.add_item(item)
+	equipment.equip_inventory_item(
+		sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	)
+	equipment.equip_inventory_item(
+		bow.id, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	)
+	equipment.equip_inventory_item(armor.id, ItemData.EquipSlot.CHEST)
+
+	assert_eq(equipment.get_total_equipped_weight(), 9.0)
+	assert_eq(equipment.get_max_equip_load(), 25.0)
+	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 0.36))
+	attributes.set_endurance(10)
+	assert_eq(equipment.get_max_equip_load(), 40.0)
+	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 0.225))
+	assert_eq(inventory.get_total_weight(), 9.0)
+
+
 func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	var world := track(Node2D.new()) as Node2D
 	var actor := Actor.new()
