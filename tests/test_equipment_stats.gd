@@ -35,6 +35,51 @@ func test_attribute_requirements_gate_equipping() -> void:
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
 
 
+func test_all_five_attributes_persist_and_gate_requirements() -> void:
+	var attributes := track(
+		CharacterAttributesComponent.new()
+	) as CharacterAttributesComponent
+	attributes.set_strength(1)
+	attributes.set_dexterity(2)
+	attributes.set_intelligence(3)
+	attributes.set_endurance(4)
+	attributes.set_wisdom(5)
+	var state := attributes.capture_runtime_state() as Dictionary
+	assert_eq(state, {
+		"strength": 1,
+		"dexterity": 2,
+		"intelligence": 3,
+		"endurance": 4,
+		"wisdom": 5,
+	})
+
+	var item := _create_stat_item(
+		&"five_attribute_item", ItemData.EquipSlot.HEAD, 0.0, 0.0
+	)
+	item.stats.strength_requirement = 2
+	item.stats.dexterity_requirement = 3
+	item.stats.intelligence_requirement = 4
+	item.stats.endurance_requirement = 5
+	item.stats.wisdom_requirement = 6
+	assert_false(attributes.meets_item_requirements(item))
+	assert_eq(
+		attributes.get_requirement_failure(item),
+		"STR 2, DEX 3, INT 4, END 5, WIS 6"
+	)
+
+	attributes.restore_runtime_state({
+		"strength": 6,
+		"dexterity": 6,
+		"intelligence": 6,
+		"endurance": 6,
+		"wisdom": 6,
+	})
+	assert_true(attributes.meets_item_requirements(item))
+	assert_eq(attributes.intelligence, 6)
+	assert_eq(attributes.endurance, 6)
+	assert_eq(attributes.wisdom, 6)
+
+
 func test_weapon_damage_applies_before_heavy_multiplier() -> void:
 	var setup := _create_equipment_actor(true)
 	var inventory := setup.inventory as InventoryComponent

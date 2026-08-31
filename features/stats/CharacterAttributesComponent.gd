@@ -1,10 +1,19 @@
 extends Component
 class_name CharacterAttributesComponent
 
-signal attributes_changed(strength: int, dexterity: int)
+signal attributes_changed(
+	strength: int,
+	dexterity: int,
+	intelligence: int,
+	endurance: int,
+	wisdom: int
+)
 
 @export_range(0, 999, 1) var strength: int = 5
 @export_range(0, 999, 1) var dexterity: int = 5
+@export_range(0, 999, 1) var intelligence: int = 5
+@export_range(0, 999, 1) var endurance: int = 5
+@export_range(0, 999, 1) var wisdom: int = 5
 
 
 func meets_item_requirements(item: ItemData) -> bool:
@@ -14,6 +23,9 @@ func meets_item_requirements(item: ItemData) -> bool:
 	return (
 		strength >= item_stats.strength_requirement
 		and dexterity >= item_stats.dexterity_requirement
+		and intelligence >= item_stats.intelligence_requirement
+		and endurance >= item_stats.endurance_requirement
+		and wisdom >= item_stats.wisdom_requirement
 	)
 
 
@@ -26,6 +38,12 @@ func get_requirement_failure(item: ItemData) -> String:
 		missing.append("STR %d" % item_stats.strength_requirement)
 	if dexterity < item_stats.dexterity_requirement:
 		missing.append("DEX %d" % item_stats.dexterity_requirement)
+	if intelligence < item_stats.intelligence_requirement:
+		missing.append("INT %d" % item_stats.intelligence_requirement)
+	if endurance < item_stats.endurance_requirement:
+		missing.append("END %d" % item_stats.endurance_requirement)
+	if wisdom < item_stats.wisdom_requirement:
+		missing.append("WIS %d" % item_stats.wisdom_requirement)
 	return ", ".join(missing)
 
 
@@ -34,7 +52,7 @@ func set_strength(value: int) -> void:
 	if resolved == strength:
 		return
 	strength = resolved
-	attributes_changed.emit(strength, dexterity)
+	_emit_attributes_changed()
 
 
 func set_dexterity(value: int) -> void:
@@ -42,13 +60,40 @@ func set_dexterity(value: int) -> void:
 	if resolved == dexterity:
 		return
 	dexterity = resolved
-	attributes_changed.emit(strength, dexterity)
+	_emit_attributes_changed()
+
+
+func set_intelligence(value: int) -> void:
+	var resolved := maxi(value, 0)
+	if resolved == intelligence:
+		return
+	intelligence = resolved
+	_emit_attributes_changed()
+
+
+func set_endurance(value: int) -> void:
+	var resolved := maxi(value, 0)
+	if resolved == endurance:
+		return
+	endurance = resolved
+	_emit_attributes_changed()
+
+
+func set_wisdom(value: int) -> void:
+	var resolved := maxi(value, 0)
+	if resolved == wisdom:
+		return
+	wisdom = resolved
+	_emit_attributes_changed()
 
 
 func capture_runtime_state() -> Variant:
 	return {
 		"strength": strength,
 		"dexterity": dexterity,
+		"intelligence": intelligence,
+		"endurance": endurance,
+		"wisdom": wisdom,
 	}
 
 
@@ -57,8 +102,21 @@ func restore_runtime_state(state: Variant) -> void:
 		return
 	strength = maxi(int(state.get("strength", strength)), 0)
 	dexterity = maxi(int(state.get("dexterity", dexterity)), 0)
-	attributes_changed.emit(strength, dexterity)
+	intelligence = maxi(int(state.get("intelligence", intelligence)), 0)
+	endurance = maxi(int(state.get("endurance", endurance)), 0)
+	wisdom = maxi(int(state.get("wisdom", wisdom)), 0)
+	_emit_attributes_changed()
 
 
 func get_runtime_state_restore_priority() -> int:
 	return -50
+
+
+func _emit_attributes_changed() -> void:
+	attributes_changed.emit(
+		strength,
+		dexterity,
+		intelligence,
+		endurance,
+		wisdom
+	)

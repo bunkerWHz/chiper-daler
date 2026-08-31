@@ -131,6 +131,11 @@ Data
     and ammunition. `ItemOffhandProfile` independently describes shields and
     other offhand tools. Combat systems consume these profiles and should not
     branch on concrete item resource paths.
+-   Character base attributes are Strength, Dexterity, Intelligence, Endurance,
+    and Wisdom. Intelligence is the magic-damage scaling attribute; Endurance
+    owns health and carrying-capacity growth; Wisdom owns mana growth. Derived
+    values subscribe to `CharacterAttributesComponent` rather than duplicating
+    base attributes in their own resources.
 -   Runtime changes never mutate shared `ItemData`. Unique equipment state such
     as enhancement level belongs to a future item instance.
 -   Equipment has no durability. Failed enhancement consumes its configured

@@ -97,7 +97,7 @@ func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
 	assert_eq(bow.weapon_profile.ammunition_type, &"arrow")
 	assert_true(bow.is_two_handed_weapon())
 	assert_true(crossbow.has_weapon_action(ItemWeaponProfile.Action.RELOAD))
-	assert_eq(focus.weapon_profile.magic_scaling, 1.0)
+	assert_eq(focus.weapon_profile.intelligence_scaling, 1.0)
 	assert_eq(shield.weapon_profile, null)
 	assert_eq(
 		shield.offhand_profile.family,

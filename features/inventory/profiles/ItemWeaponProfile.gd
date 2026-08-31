@@ -69,7 +69,7 @@ enum Action {
 @export_range(0.0, 10.0, 0.05) var stagger_power: float = 1.0
 @export_range(0.0, 2.0, 0.05) var strength_scaling: float = 0.0
 @export_range(0.0, 2.0, 0.05) var dexterity_scaling: float = 0.0
-@export_range(0.0, 2.0, 0.05) var magic_scaling: float = 0.0
+@export_range(0.0, 2.0, 0.05) var intelligence_scaling: float = 0.0
 @export var ammunition_type: StringName
 
 

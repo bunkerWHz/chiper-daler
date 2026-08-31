@@ -74,8 +74,9 @@ weapon through the equipment menu.
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
 active weapon set, armor, and accessories reduces incoming damage with
-`damage * 100 / (100 + defense)`. Strength and dexterity requirements prevent
-equipping an item until the Actor has the required attributes. The inventory
+`damage * 100 / (100 + defense)`. Strength, dexterity, intelligence, endurance,
+and wisdom requirements prevent equipping an item until the Actor has the
+required attributes. The inventory
 details panel shows these values and compares an item with the active equipped
 item in the same slot.
 

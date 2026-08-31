@@ -615,7 +615,13 @@ func _append_equipped_item(
 		result.append(item)
 
 
-func _on_attributes_changed(_strength: int, _dexterity: int) -> void:
+func _on_attributes_changed(
+	_strength: int,
+	_dexterity: int,
+	_intelligence: int,
+	_endurance: int,
+	_wisdom: int
+) -> void:
 	if _inventory_component == null:
 		return
 	var previous_active_main := get_equipped_item_id(

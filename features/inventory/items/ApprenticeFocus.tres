@@ -23,7 +23,7 @@ family = 12
 primary_damage_type = 4
 moveset_id = &"wand_basic"
 available_actions = 128
-magic_scaling = 1.0
+intelligence_scaling = 1.0
 
 [resource]
 script = ExtResource("1_item")

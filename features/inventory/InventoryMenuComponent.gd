@@ -816,14 +816,25 @@ func _rebuild_equipment_text() -> void:
 	)
 	var strength := 0
 	var dexterity := 0
+	var intelligence := 0
+	var endurance := 0
+	var wisdom := 0
 	if attributes != null:
 		strength = attributes.strength
 		dexterity = attributes.dexterity
-	_equipment_text.text = "STR %d  DEX %d    Defense %.1f" % [
+		intelligence = attributes.intelligence
+		endurance = attributes.endurance
+		wisdom = attributes.wisdom
+	_equipment_text.text = (
+		"STR %d  DEX %d  INT %d\nEND %d  WIS %d  Defense %.1f" % [
 		strength,
 		dexterity,
+		intelligence,
+		endurance,
+		wisdom,
 		_equipment.get_total_defense(),
 	]
+	)
 
 
 func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
@@ -834,14 +845,19 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 		item_stats.damage,
 		item_stats.defense,
 	])
-	if (
-		item_stats.strength_requirement > 0
-		or item_stats.dexterity_requirement > 0
-	):
-		lines.append("Requires STR %d / DEX %d" % [
-			item_stats.strength_requirement,
-			item_stats.dexterity_requirement,
-		])
+	var requirements := PackedStringArray()
+	if item_stats.strength_requirement > 0:
+		requirements.append("STR %d" % item_stats.strength_requirement)
+	if item_stats.dexterity_requirement > 0:
+		requirements.append("DEX %d" % item_stats.dexterity_requirement)
+	if item_stats.intelligence_requirement > 0:
+		requirements.append("INT %d" % item_stats.intelligence_requirement)
+	if item_stats.endurance_requirement > 0:
+		requirements.append("END %d" % item_stats.endurance_requirement)
+	if item_stats.wisdom_requirement > 0:
+		requirements.append("WIS %d" % item_stats.wisdom_requirement)
+	if not requirements.is_empty():
+		lines.append("Requires %s" % " / ".join(requirements))
 	var failure := _equipment.get_requirement_failure(item)
 	if not failure.is_empty():
 		lines.append("Requirements not met: %s" % failure)
@@ -897,8 +913,8 @@ func _append_weapon_profile(
 		scaling.append("STR %.2f" % profile.strength_scaling)
 	if profile.dexterity_scaling > 0.0:
 		scaling.append("DEX %.2f" % profile.dexterity_scaling)
-	if profile.magic_scaling > 0.0:
-		scaling.append("MAG %.2f" % profile.magic_scaling)
+	if profile.intelligence_scaling > 0.0:
+		scaling.append("INT %.2f" % profile.intelligence_scaling)
 	if not scaling.is_empty():
 		lines.append("Scaling: %s" % " / ".join(scaling))
 	lines.append("Speed x%.2f  Reach x%.2f  Stagger %.2f" % [
@@ -958,7 +974,13 @@ func _on_loadout_changed(
 		_rebuild()
 
 
-func _on_attributes_changed(_strength: int, _dexterity: int) -> void:
+func _on_attributes_changed(
+	_strength: int,
+	_dexterity: int,
+	_intelligence: int,
+	_endurance: int,
+	_wisdom: int
+) -> void:
 	if is_open():
 		_rebuild()
 
