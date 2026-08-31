@@ -13,8 +13,8 @@ instance after its configured delay. The level scene is not reloaded, so its
 current state remains intact. The replacement Player is a fresh instance with
 all components, collisions, resources, and visuals reset to their scene
 defaults. Stateful components restore earned progression, the equipped slot,
-remaining consumables and ammunition, and current mana. Temporary combat and
-status phases are intentionally cleared by death.
+flask charges, remaining consumables and ammunition, and current mana.
+Temporary combat and status phases are intentionally cleared by death.
 
 If replacing the Player scene is impossible, respawn safely falls back to the
 previous full-scene reload behavior.
@@ -32,12 +32,20 @@ and one enemy can grant its reward only once.
 ## Loot drops
 
 Enemy death creates an interactable `LootBag` at the enemy position. The
-default enemy puts one Health Potion into that bag, which transfers its contents
-to the player's real inventory when collected with `E`. A full inventory leaves
-the unaccepted remainder in the bag.
+default enemy puts one Experience Tonic into that bag, which transfers its
+contents to the player's real inventory when collected with `E`. A full
+inventory leaves the unaccepted remainder in the bag.
 
 `LootDropComponent`, `LootBag`, inventory, equipment, and quick-access slots
 reference the same reusable `ItemData` assets.
+
+## Temporary player resource HUD
+
+The sandbox HUD keeps the green health bar at the top left and places three
+temporary bars directly below it: blue mana, white experience toward the next
+level, and orange remaining duration of the provisional `rage` buff. The view
+observes the owning gameplay components and contains no resource or combat
+logic. It is intentionally replaceable when the final interface is designed.
 
 ## Level completion
 

@@ -8,6 +8,7 @@ const BEHAVIOR_GATE := preload(
 )
 
 signal phase_changed(previous_phase: Phase, current_phase: Phase)
+signal mana_changed(current: float, maximum: float)
 
 @export var config: MagicConfig
 
@@ -54,6 +55,7 @@ func on_initialize() -> void:
 		disable()
 		return
 	_mana = config.max_mana
+	mana_changed.emit(_mana, config.max_mana)
 	if not _equipment.equipment_changed.is_connected(_on_equipment_changed):
 		_equipment.equipment_changed.connect(_on_equipment_changed)
 	if not _equipment.loadout_item_changed.is_connected(
@@ -86,7 +88,7 @@ func _process(delta: float) -> void:
 	elif _phase == Phase.CHARGE and _input.consume_attack_released():
 		_cast_spell()
 	elif _phase == Phase.CHANNELING:
-		_mana = maxf(_mana - config.channel_mana_per_second * delta, 0.0)
+		_set_mana(_mana - config.channel_mana_per_second * delta)
 		if not _input.is_guard_pressed() or _mana == 0.0:
 			_set_phase(Phase.NONE, 0.0)
 
@@ -108,7 +110,7 @@ func restore_mana(amount: float) -> float:
 		return 0.0
 
 	var previous := _mana
-	_mana = minf(_mana + amount, config.max_mana)
+	_set_mana(_mana + amount)
 	return _mana - previous
 
 
@@ -117,7 +119,7 @@ func capture_runtime_state() -> Variant:
 
 
 func restore_runtime_state(state: Variant) -> void:
-	_mana = clampf(float(state), 0.0, config.max_mana)
+	_set_mana(float(state))
 
 
 func disable() -> void:
@@ -126,7 +128,7 @@ func disable() -> void:
 
 
 func _cast_spell() -> void:
-	_mana -= config.cast_mana_cost
+	_set_mana(_mana - config.cast_mana_cost)
 	var parent := actor.get_parent()
 	if parent != null:
 		var projectile := preload("res://features/throwing/ThrownProjectile.tscn").instantiate() as ThrownProjectile
@@ -161,6 +163,14 @@ func _set_phase(value: Phase, duration: float) -> void:
 	_phase = value
 	_timer = duration
 	phase_changed.emit(previous_phase, _phase)
+
+
+func _set_mana(value: float) -> void:
+	var resolved := clampf(value, 0.0, config.max_mana)
+	if is_equal_approx(resolved, _mana):
+		return
+	_mana = resolved
+	mana_changed.emit(_mana, config.max_mana)
 
 
 func _on_equipment_changed(

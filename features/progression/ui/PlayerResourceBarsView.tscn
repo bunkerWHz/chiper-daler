@@ -1,0 +1,151 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://features/progression/ui/PlayerResourceBarsView.gd" id="1_view"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.055, 0.065, 0.085, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.5, 0.6, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="BarBackground"]
+bg_color = Color(0.12, 0.13, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="ManaFill"]
+bg_color = Color(0.12, 0.42, 0.95, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="ExperienceFill"]
+bg_color = Color(0.94, 0.94, 0.98, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="RageFill"]
+bg_color = Color(1, 0.45, 0.08, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="PlayerResourceBarsView" type="PanelContainer"]
+offset_left = 16.0
+offset_top = 82.0
+offset_right = 248.0
+offset_bottom = 207.0
+theme_override_styles/panel = SubResource("PanelStyle")
+script = ExtResource("1_view")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 7
+
+[node name="Bars" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Mana" type="VBoxContainer" parent="MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Bars/Mana"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/Bars/Mana/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.68, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "MANA"
+
+[node name="ManaValue" type="Label" parent="MarginContainer/Bars/Mana/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "100 / 100"
+
+[node name="ManaBar" type="ProgressBar" parent="MarginContainer/Bars/Mana"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("ManaFill")
+value = 100.0
+show_percentage = false
+
+[node name="Experience" type="VBoxContainer" parent="MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Bars/Experience"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/Bars/Experience/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "EXPERIENCE"
+
+[node name="ExperienceValue" type="Label" parent="MarginContainer/Bars/Experience/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "0 / 100"
+
+[node name="ExperienceBar" type="ProgressBar" parent="MarginContainer/Bars/Experience"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("ExperienceFill")
+show_percentage = false
+
+[node name="Rage" type="VBoxContainer" parent="MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Bars/Rage"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/Bars/Rage/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.68, 0.35, 1)
+theme_override_font_sizes/font_size = 11
+text = "RAGE"
+
+[node name="RageValue" type="Label" parent="MarginContainer/Bars/Rage/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "0.0 / 10.0"
+
+[node name="RageBar" type="ProgressBar" parent="MarginContainer/Bars/Rage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("RageFill")
+max_value = 10.0
+show_percentage = false

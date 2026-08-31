@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://features/movement/ClimbableArea.tscn" id="7_climbable"]
 [ext_resource type="PackedScene" path="res://features/rest/RestPoint.tscn" id="8_rest_point"]
 [ext_resource type="PackedScene" path="res://features/level/LevelExit.tscn" id="9_level_exit"]
+[ext_resource type="PackedScene" path="res://features/progression/ui/PlayerResourceBarsView.tscn" id="10_resource_bars"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 10)
@@ -62,6 +63,9 @@ size_flags_horizontal = 4
 text = "Interact"
 
 [node name="HealthBarView" parent="UI/CanvasLayer" unique_id=38653314 instance=ExtResource("6_health_bar")]
+actor_path = NodePath("../../../Player")
+
+[node name="PlayerResourceBarsView" parent="UI/CanvasLayer" instance=ExtResource("10_resource_bars")]
 actor_path = NodePath("../../../Player")
 
 [node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
