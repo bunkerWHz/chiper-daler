@@ -921,10 +921,11 @@ func _append_weapon_profile(
 		scaling.append("INT %.2f" % profile.intelligence_scaling)
 	if not scaling.is_empty():
 		lines.append("Scaling: %s" % " / ".join(scaling))
-	lines.append("Speed x%.2f  Reach x%.2f  Stagger %.2f" % [
+	lines.append("Speed x%.2f  Reach x%.2f  Stagger %.2f  Critical x%.2f" % [
 		profile.attack_speed_multiplier,
 		profile.reach_multiplier,
 		profile.stagger_power,
+		profile.critical_damage_multiplier,
 	])
 	if not profile.ammunition_type.is_empty():
 		lines.append("Ammunition: %s" % _enum_label(profile.ammunition_type))

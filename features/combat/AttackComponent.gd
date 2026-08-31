@@ -32,6 +32,7 @@ var _is_heavy_attack: bool = false
 var _base_damage: float = 0.0
 var _base_horizontal_knockback: float = 0.0
 var _base_vertical_knockback: float = 0.0
+var _base_critical_damage_multiplier: float = 2.0
 var _critical_timer: float = 0.0
 var _attack_started_airborne: bool = false
 var _landing_recovery_timer: float = 0.0
@@ -76,6 +77,9 @@ func on_initialize() -> void:
 	_base_damage = _hitbox_component.damage
 	_base_horizontal_knockback = _hitbox_component.horizontal_knockback
 	_base_vertical_knockback = _hitbox_component.vertical_knockback
+	_base_critical_damage_multiplier = (
+		_hitbox_component.critical_damage_multiplier
+	)
 	if not _hitbox_component.critical_hit_landed.is_connected(
 		_on_critical_hit_landed
 	):
@@ -300,6 +304,9 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
 	var equipped_damage := _get_equipped_melee_damage()
 	_hitbox_component.damage = equipped_damage
+	_hitbox_component.critical_damage_multiplier = (
+		_get_equipped_critical_multiplier()
+	)
 
 	if heavy:
 		_hitbox_component.damage = (
@@ -341,6 +348,9 @@ func _restore_hitbox_damage() -> void:
 		_hitbox_component.damage = _get_equipped_melee_damage()
 		_hitbox_component.horizontal_knockback = _base_horizontal_knockback
 		_hitbox_component.vertical_knockback = _base_vertical_knockback
+		_hitbox_component.critical_damage_multiplier = (
+			_get_equipped_critical_multiplier()
+		)
 
 	_is_heavy_attack = false
 
@@ -353,6 +363,20 @@ func _get_equipped_melee_damage() -> float:
 	):
 		result += float(_equipment_component.call("get_active_weapon_damage"))
 	return result
+
+
+func _get_equipped_critical_multiplier() -> float:
+	if (
+		_equipment_component != null
+		and _equipment_component.has_method(
+			"get_active_weapon_critical_multiplier"
+		)
+	):
+		return float(_equipment_component.call(
+			"get_active_weapon_critical_multiplier",
+			_base_critical_damage_multiplier
+		))
+	return _base_critical_damage_multiplier
 
 
 func _allows_melee_actions() -> bool:

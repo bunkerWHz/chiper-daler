@@ -101,6 +101,24 @@ func test_weapon_damage_applies_before_heavy_multiplier() -> void:
 	assert_eq(hitbox.damage, 40.0)
 
 
+func test_active_weapon_controls_critical_damage_multiplier() -> void:
+	var setup := _create_equipment_actor(true)
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var hitbox := setup.hitbox as HitboxComponent
+	var attack := setup.attack as AttackComponent
+	var dagger := load(
+		"res://features/inventory/items/TrainingDagger.tres"
+	) as ItemData
+	inventory.add_item(dagger)
+	equipment.equip_inventory_item(dagger.id, ItemData.EquipSlot.MAIN_HAND)
+	hitbox._ready()
+	attack._ready()
+
+	assert_true(attack.attack())
+	assert_eq(hitbox.critical_damage_multiplier, 3.0)
+
+
 func test_equipment_defense_reduces_incoming_damage() -> void:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

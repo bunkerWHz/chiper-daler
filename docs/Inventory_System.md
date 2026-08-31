@@ -74,6 +74,13 @@ Wisdom increases maximum mana through the same derived-stat resource. At the
 reference value of 5 Wisdom, base mana is unchanged; each Wisdom point changes
 maximum mana by 10. Mana restoration and the HUD use the derived maximum.
 
+The first one-handed content batch adds training rapier, katana, and dagger
+resources without adding them to the starting inventory. They share the
+temporary warrior visual but have distinct thrust/slash profiles, moveset IDs,
+actions, speed, reach, stagger, requirements, weight, and scaling. Critical
+damage is weapon data and is applied to the active melee hitbox; the dagger has
+the strongest critical multiplier in this batch.
+
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
 and rage flasks with three charges each, and two Experience Tonics. These are

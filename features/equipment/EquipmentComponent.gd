@@ -356,6 +356,15 @@ func get_active_weapon_damage() -> float:
 	return item_stats.damage if item_stats != null else 0.0
 
 
+func get_active_weapon_critical_multiplier(fallback: float = 2.0) -> float:
+	var item := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	return (
+		item.weapon_profile.critical_damage_multiplier
+		if item != null and item.weapon_profile != null
+		else fallback
+	)
+
+
 func get_total_defense() -> float:
 	var total := 0.0
 	for item: ItemData in _get_effective_equipped_items():

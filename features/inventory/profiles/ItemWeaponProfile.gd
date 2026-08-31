@@ -67,6 +67,7 @@ enum Action {
 @export_range(0.1, 3.0, 0.05) var attack_speed_multiplier: float = 1.0
 @export_range(0.1, 5.0, 0.05) var reach_multiplier: float = 1.0
 @export_range(0.0, 10.0, 0.05) var stagger_power: float = 1.0
+@export_range(1.0, 10.0, 0.05) var critical_damage_multiplier: float = 2.0
 @export_range(0.0, 2.0, 0.05) var strength_scaling: float = 0.0
 @export_range(0.0, 2.0, 0.05) var dexterity_scaling: float = 0.0
 @export_range(0.0, 2.0, 0.05) var intelligence_scaling: float = 0.0

@@ -104,3 +104,27 @@ func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
 		ItemOffhandProfile.Family.MEDIUM_SHIELD
 	)
 	assert_true(shield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
+
+
+func test_one_handed_training_weapons_have_distinct_profiles() -> void:
+	var rapier := load(
+		"res://features/inventory/items/TrainingRapier.tres"
+	) as ItemData
+	var katana := load(
+		"res://features/inventory/items/TrainingKatana.tres"
+	) as ItemData
+	var dagger := load(
+		"res://features/inventory/items/TrainingDagger.tres"
+	) as ItemData
+
+	assert_eq(rapier.weapon_profile.family, ItemWeaponProfile.Family.RAPIER)
+	assert_eq(rapier.weapon_profile.primary_damage_type, ItemWeaponProfile.DamageType.PIERCE)
+	assert_true(rapier.has_weapon_action(ItemWeaponProfile.Action.PARRY))
+	assert_false(rapier.has_weapon_action(ItemWeaponProfile.Action.GUARD))
+	assert_eq(katana.weapon_profile.family, ItemWeaponProfile.Family.KATANA)
+	assert_true(katana.has_weapon_action(ItemWeaponProfile.Action.GUARD))
+	assert_eq(dagger.weapon_profile.family, ItemWeaponProfile.Family.DAGGER)
+	assert_eq(dagger.weapon_profile.attack_speed_multiplier, 1.4)
+	assert_eq(dagger.weapon_profile.reach_multiplier, 0.7)
+	assert_eq(dagger.weapon_profile.critical_damage_multiplier, 3.0)
+	assert_true(dagger.weapon_profile.dexterity_scaling > rapier.weapon_profile.dexterity_scaling)
