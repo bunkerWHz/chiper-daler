@@ -5,24 +5,25 @@
 [ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
-defense = 8.0
-dexterity_requirement = 3
-endurance_requirement = 3
+defense = 2.0
+intelligence_requirement = 5
+wisdom_requirement = 4
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")
-allowed_slots = Array[int]([4])
+allowed_slots = Array[int]([6])
 stats = SubResource("stats")
 [sub_resource type="Resource" id="armor"]
 script = ExtResource("4")
-set_id = &"scout_leather"
-poise = 2.0
+armor_class = 2
+set_id = &"scholar_robe"
+poise = 0.2
 [resource]
 script = ExtResource("1")
-id = &"scout_leather_armor"
-display_name = "Scout Leather Armor"
-description = "Light armor offering mobility-friendly protection."
+id = &"scholar_trousers"
+display_name = "Scholar Trousers"
+description = "Light ceremonial trousers woven with arcane thread."
 category = 1
-weight = 5.0
+weight = 1.4
 equipment_profile = SubResource("equipment")
 armor_profile = SubResource("armor")
-sell_price = 35
+sell_price = 32

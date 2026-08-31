@@ -110,6 +110,10 @@ Hands and belt slots now follow the same three-class comparison: scout leather
 gloves and utility belt, knight plate gauntlets and war belt, scholar handwraps
 and sash. The test player's inventory scene has 60 cells so the growing item
 catalog fits during development; the reusable inventory default remains 40.
+The same comparison sets are complete for the core armor slots with scout
+leather pants and boots, knight plate leggings and greaves, and scholar trousers
+and shoes. Chest resources are explicitly covered by slot tests alongside every
+other core armor piece.
 
 The starting inventory contains the current training weapon/offhand catalog,
 the growing light/heavy/robe armor sets, legacy Short Bow and Light Crossbow,

@@ -5,24 +5,25 @@
 [ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
-defense = 8.0
-dexterity_requirement = 3
-endurance_requirement = 3
+defense = 6.0
+strength_requirement = 5
+endurance_requirement = 7
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")
-allowed_slots = Array[int]([4])
+allowed_slots = Array[int]([11])
 stats = SubResource("stats")
 [sub_resource type="Resource" id="armor"]
 script = ExtResource("4")
-set_id = &"scout_leather"
-poise = 2.0
+armor_class = 1
+set_id = &"knight_plate"
+poise = 2.5
 [resource]
 script = ExtResource("1")
-id = &"scout_leather_armor"
-display_name = "Scout Leather Armor"
-description = "Light armor offering mobility-friendly protection."
+id = &"knight_plate_greaves"
+display_name = "Knight Plate Greaves"
+description = "Heavy steel greaves protecting the lower legs and feet."
 category = 1
-weight = 5.0
+weight = 4.0
 equipment_profile = SubResource("equipment")
 armor_profile = SubResource("armor")
-sell_price = 35
+sell_price = 36

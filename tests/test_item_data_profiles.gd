@@ -208,6 +208,9 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 	assert_true(heavy.armor_profile.poise > light.armor_profile.poise)
 	assert_true(light.weight > robe.weight)
 	assert_eq(robe.get_equipment_stats().intelligence_requirement, 5)
+	for chest: ItemData in [light, heavy, robe]:
+		assert_true(chest.can_equip_in(ItemData.EquipSlot.CHEST))
+		assert_false(chest.can_equip_in(ItemData.EquipSlot.HANDS))
 	for path: String in [
 		"res://features/inventory/items/ScoutLeatherHood.tres",
 		"res://features/inventory/items/KnightPlateHelm.tres",
@@ -239,3 +242,19 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 		var belt := load(path) as ItemData
 		assert_true(belt.can_equip_in(ItemData.EquipSlot.BELT))
 		assert_false(belt.armor_profile.set_id.is_empty())
+	for path: String in [
+		"res://features/inventory/items/ScoutLeatherPants.tres",
+		"res://features/inventory/items/KnightPlateLeggings.tres",
+		"res://features/inventory/items/ScholarTrousers.tres",
+	]:
+		var legs := load(path) as ItemData
+		assert_true(legs.can_equip_in(ItemData.EquipSlot.LEGS))
+		assert_false(legs.armor_profile.set_id.is_empty())
+	for path: String in [
+		"res://features/inventory/items/ScoutLeatherBoots.tres",
+		"res://features/inventory/items/KnightPlateGreaves.tres",
+		"res://features/inventory/items/ScholarShoes.tres",
+	]:
+		var feet := load(path) as ItemData
+		assert_true(feet.can_equip_in(ItemData.EquipSlot.FEET))
+		assert_false(feet.armor_profile.set_id.is_empty())

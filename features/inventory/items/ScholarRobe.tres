@@ -10,7 +10,7 @@ intelligence_requirement = 5
 wisdom_requirement = 4
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")
-allowed_slots = Array[int]([5])
+allowed_slots = Array[int]([4])
 stats = SubResource("stats")
 [sub_resource type="Resource" id="armor"]
 script = ExtResource("4")
