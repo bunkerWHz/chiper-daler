@@ -56,6 +56,9 @@ Light/heavy attacks, guard, and parry now consult those action flags. Defensive
 actions may come from either the main-hand weapon or the equipped offhand tool;
 legacy items without a specialized profile retain their previous behavior while
 the remaining item resources are migrated.
+Bow and crossbow aiming/firing and magic casting/channeling use the same action
+gate. `Reload` is already represented in weapon data but will become mandatory
+only when a real crossbow reload phase exists.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

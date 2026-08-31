@@ -164,6 +164,7 @@ func _process_bow_input() -> void:
 	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
 		if (
 			_arrows > 0
+			and _equipment_component.allows_bow_aim()
 			and _cooldown_timer <= 0.0
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
@@ -172,6 +173,9 @@ func _process_bow_input() -> void:
 		if _input_component.consume_guard_just_pressed():
 			cancel_aim()
 		elif _input_component.consume_attack_released():
+			if not _equipment_component.allows_bow_fire():
+				cancel_aim()
+				return
 			_arrows -= 1
 			_spawn_projectile(config.arrow_speed, config.arrow_damage)
 			projectile_fired.emit(Phase.BOW_LOOSE, _arrows)
@@ -183,12 +187,16 @@ func _process_crossbow_input() -> void:
 	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
 		if (
 			_bolts > 0
+			and _equipment_component.allows_crossbow_aim()
 			and _cooldown_timer <= 0.0
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
 			_set_phase(Phase.CROSSBOW_AIM, 0.0)
 	elif _phase == Phase.CROSSBOW_AIM:
 		if _input_component.consume_guard_just_pressed():
+			if not _equipment_component.allows_crossbow_fire():
+				cancel_aim()
+				return
 			_bolts -= 1
 			_spawn_projectile(config.bolt_speed, config.bolt_damage)
 			projectile_fired.emit(Phase.CROSSBOW_FIRE, _bolts)

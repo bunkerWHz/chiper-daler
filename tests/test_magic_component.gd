@@ -93,6 +93,49 @@ func test_magic_cancels_on_active_loadout_and_weapon_set_changes() -> void:
 	assert_eq(equipment.weapon_set_changed.get_connections().size(), 1)
 
 
+func test_magic_profile_separates_cast_and_channel_actions() -> void:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var equipment := EquipmentComponent.new()
+	var facing := FacingComponent.new()
+	var magic := MagicComponent.new()
+	magic.config = MagicConfig.new()
+	for component: Component in [
+		input, inventory, equipment, facing, magic
+	]:
+		components.add_child(component)
+	actor._collect_components()
+	var focus := ItemData.new()
+	focus.id = &"restricted_focus"
+	focus.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	focus.weapon_profile = ItemWeaponProfile.new()
+	focus.weapon_profile.combat_mode = ItemData.CombatMode.MAGIC
+	focus.weapon_profile.available_actions = ItemWeaponProfile.Action.CAST
+	inventory.add_item(focus)
+	assert_true(equipment.equip_inventory_item(
+		focus.id, ItemData.EquipSlot.MAIN_HAND
+	))
+
+	input._guard_just_pressed = true
+	input._guard_pressed = true
+	magic._process(0.0)
+	assert_eq(magic.get_phase(), MagicComponent.Phase.NONE)
+	input._attack_just_pressed = true
+	input._attack_pressed = true
+	magic._process(0.0)
+	assert_eq(magic.get_phase(), MagicComponent.Phase.CHARGE)
+	input._attack_pressed = false
+	input._attack_released = true
+	magic._process(0.0)
+	assert_eq(magic.get_phase(), MagicComponent.Phase.CAST)
+	assert_eq(magic.get_mana(), 80.0)
+
+
 func _on_magic_phase_changed(
 	previous_phase: MagicComponent.Phase,
 	current_phase: MagicComponent.Phase

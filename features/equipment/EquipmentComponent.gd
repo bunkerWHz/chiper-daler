@@ -133,6 +133,42 @@ func allows_parry() -> bool:
 	)
 
 
+func allows_bow_aim() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.BOW, ItemWeaponProfile.Action.AIM
+	)
+
+
+func allows_bow_fire() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.BOW, ItemWeaponProfile.Action.FIRE
+	)
+
+
+func allows_crossbow_aim() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.CROSSBOW, ItemWeaponProfile.Action.AIM
+	)
+
+
+func allows_crossbow_fire() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.CROSSBOW, ItemWeaponProfile.Action.FIRE
+	)
+
+
+func allows_magic_cast() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.MAGIC, ItemWeaponProfile.Action.CAST
+	)
+
+
+func allows_magic_channel() -> bool:
+	return _allows_mode_weapon_action(
+		Slot.MAGIC, ItemWeaponProfile.Action.CHANNEL
+	)
+
+
 func equip_inventory_item(
 	item_id: StringName,
 	target_slot: ItemData.EquipSlot,
@@ -451,6 +487,24 @@ func _allows_defensive_action(
 		and (
 			off_hand.offhand_profile == null
 			or off_hand.has_offhand_action(offhand_action)
+		)
+	)
+
+
+func _allows_mode_weapon_action(
+	mode: Slot,
+	action: ItemWeaponProfile.Action
+) -> bool:
+	if not is_slot_active(mode):
+		return false
+	var main_hand := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	if main_hand == null:
+		return true
+	return (
+		get_item_action_slot(main_hand) == mode
+		and (
+			main_hand.weapon_profile == null
+			or main_hand.has_weapon_action(action)
 		)
 	)
 

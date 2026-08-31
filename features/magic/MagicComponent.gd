@@ -75,18 +75,23 @@ func _process(delta: float) -> void:
 	if _phase == Phase.NONE:
 		if (
 			_input.consume_attack_pressed()
+			and _equipment.allows_magic_cast()
 			and _mana >= config.cast_mana_cost
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
 			_set_phase(Phase.CHARGE, config.charge_time)
 		elif (
 			_input.consume_guard_just_pressed()
+			and _equipment.allows_magic_channel()
 			and _mana > 0.0
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
 			_set_phase(Phase.CHANNELING, 0.0)
 	elif _phase == Phase.CHARGE and _input.consume_attack_released():
-		_cast_spell()
+		if _equipment.allows_magic_cast():
+			_cast_spell()
+		else:
+			_set_phase(Phase.NONE, 0.0)
 	elif _phase == Phase.CHANNELING:
 		_set_mana(_mana - config.channel_mana_per_second * delta)
 		if not _input.is_guard_pressed() or _mana == 0.0:

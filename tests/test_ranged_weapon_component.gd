@@ -82,25 +82,64 @@ func test_ranged_aim_cancels_when_active_weapon_context_changes() -> void:
 	assert_eq(equipment.weapon_set_changed.get_connections().size(), 1)
 
 
+func test_bow_profile_requires_aim_and_fire_actions() -> void:
+	var setup := _create_ranged_actor()
+	var input := setup.input as InputComponent
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var ranged := setup.ranged as RangedWeaponComponent
+	var bow := ItemData.new()
+	bow.id = &"restricted_bow"
+	bow.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	bow.weapon_profile = ItemWeaponProfile.new()
+	bow.weapon_profile.combat_mode = ItemData.CombatMode.BOW
+	bow.weapon_profile.available_actions = ItemWeaponProfile.Action.AIM
+	inventory.add_item(bow)
+	assert_true(equipment.equip_inventory_item(
+		bow.id, ItemData.EquipSlot.MAIN_HAND
+	))
+
+	input._attack_just_pressed = true
+	ranged._process(0.0)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.BOW_AIM)
+	input._attack_released = true
+	ranged._process(0.0)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
+	assert_eq(ranged.get_arrow_count(), ranged.config.arrow_count)
+
+	bow.weapon_profile.available_actions |= ItemWeaponProfile.Action.FIRE
+	input._attack_just_pressed = true
+	ranged._process(0.0)
+	input._attack_released = true
+	ranged._process(0.0)
+	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.BOW_LOOSE)
+	assert_eq(ranged.get_arrow_count(), ranged.config.arrow_count - 1)
+
+
 func _create_ranged_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
 	var ranged := RangedWeaponComponent.new()
 	ranged.config = RangedWeaponConfig.new()
 	var actor_state := ActorStateComponent.new()
 
-	for component: Component in [input, equipment, facing, ranged, actor_state]:
+	for component: Component in [
+		input, inventory, equipment, facing, ranged, actor_state
+	]:
 		components.add_child(component)
 
 	actor._collect_components()
 	return {
 		"actor": actor,
 		"input": input,
+		"inventory": inventory,
 		"equipment": equipment,
 		"facing": facing,
 		"ranged": ranged,
