@@ -49,6 +49,9 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"scout_leather_armor",
 		&"knight_plate_armor",
 		&"scholar_robe",
+		&"scout_leather_hood",
+		&"knight_plate_helm",
+		&"scholar_hood",
 		&"short_bow",
 		&"light_crossbow",
 	]:

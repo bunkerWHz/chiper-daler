@@ -208,3 +208,11 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 	assert_true(heavy.armor_profile.poise > light.armor_profile.poise)
 	assert_true(light.weight > robe.weight)
 	assert_eq(robe.get_equipment_stats().intelligence_requirement, 5)
+	for path: String in [
+		"res://features/inventory/items/ScoutLeatherHood.tres",
+		"res://features/inventory/items/KnightPlateHelm.tres",
+		"res://features/inventory/items/ScholarHood.tres",
+	]:
+		var head := load(path) as ItemData
+		assert_true(head.can_equip_in(ItemData.EquipSlot.HEAD))
+		assert_false(head.armor_profile.set_id.is_empty())
