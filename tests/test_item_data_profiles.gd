@@ -128,3 +128,26 @@ func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 	assert_eq(dagger.weapon_profile.reach_multiplier, 0.7)
 	assert_eq(dagger.weapon_profile.critical_damage_multiplier, 3.0)
 	assert_true(dagger.weapon_profile.dexterity_scaling > rapier.weapon_profile.dexterity_scaling)
+
+
+func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:
+	var axe := load(
+		"res://features/inventory/items/TrainingBattleAxe.tres"
+	) as ItemData
+	var hammer := load(
+		"res://features/inventory/items/TrainingWarHammer.tres"
+	) as ItemData
+	var greatsword := load(
+		"res://features/inventory/items/TrainingGreatsword.tres"
+	) as ItemData
+
+	assert_true(axe.is_two_handed_weapon())
+	assert_true(hammer.is_two_handed_weapon())
+	assert_true(greatsword.is_two_handed_weapon())
+	assert_eq(axe.weapon_profile.family, ItemWeaponProfile.Family.AXE)
+	assert_eq(axe.weapon_profile.primary_damage_type, ItemWeaponProfile.DamageType.SLASH)
+	assert_eq(hammer.weapon_profile.family, ItemWeaponProfile.Family.MACE)
+	assert_eq(hammer.weapon_profile.primary_damage_type, ItemWeaponProfile.DamageType.STRIKE)
+	assert_eq(greatsword.weapon_profile.family, ItemWeaponProfile.Family.GREAT_SWORD)
+	assert_true(greatsword.weapon_profile.reach_multiplier > hammer.weapon_profile.reach_multiplier)
+	assert_true(hammer.weapon_profile.stagger_power > axe.weapon_profile.stagger_power)

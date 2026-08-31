@@ -80,6 +80,10 @@ temporary warrior visual but have distinct thrust/slash profiles, moveset IDs,
 actions, speed, reach, stagger, requirements, weight, and scaling. Critical
 damage is weapon data and is applied to the active melee hitbox; the dagger has
 the strongest critical multiplier in this batch.
+The first strength-focused batch adds training battle axe, war hammer, and
+greatsword resources. All are two-handed and therefore reserve their weapon
+set's offhand, while their slash/strike type, speed, reach, stagger, weight,
+requirements, and scaling remain independent data.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
