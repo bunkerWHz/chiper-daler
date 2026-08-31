@@ -219,6 +219,83 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	)
 
 
+func test_two_handed_weapon_reserves_both_hands_in_its_set() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var sword := _create_equippable(&"sword", ItemData.EquipSlot.MAIN_HAND)
+	var spear := _create_equippable(&"spear", ItemData.EquipSlot.MAIN_HAND)
+	var spear_profile := ItemWeaponProfile.new()
+	spear_profile.handedness = ItemWeaponProfile.Handedness.TWO_HANDED
+	spear.weapon_profile = spear_profile
+	var shield := _create_equippable(&"shield", ItemData.EquipSlot.OFF_HAND)
+	inventory.add_item(sword)
+	inventory.add_item(spear)
+	inventory.add_item(shield, 2)
+
+	assert_true(equipment.equip_inventory_item(
+		sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	))
+	assert_true(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND, 0, 0
+	))
+	assert_true(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND, 0, 1
+	))
+	assert_true(equipment.equip_inventory_item(
+		spear.id, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	))
+
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND, 0, 0),
+		&""
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND, 0, 1),
+		shield.id
+	)
+	assert_false(equipment.is_off_hand_available(0))
+	assert_true(equipment.is_off_hand_available(1))
+	assert_false(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND, 0, 0
+	))
+
+
+func test_restored_two_handed_set_discards_incompatible_offhand() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var spear := _create_equippable(&"restored_spear", ItemData.EquipSlot.MAIN_HAND)
+	var spear_profile := ItemWeaponProfile.new()
+	spear_profile.handedness = ItemWeaponProfile.Handedness.TWO_HANDED
+	spear.weapon_profile = spear_profile
+	var shield := _create_equippable(
+		&"restored_shield", ItemData.EquipSlot.OFF_HAND
+	)
+	inventory.add_item(spear)
+	inventory.add_item(shield)
+	var main_key := equipment._make_equipment_key(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0
+	)
+	var off_key := equipment._make_equipment_key(
+		ItemData.EquipSlot.OFF_HAND, 0, 0
+	)
+	equipment.restore_runtime_state({
+		"active_weapon_set": 0,
+		"equipped_items": {
+			main_key: spear.id,
+			off_key: shield.id,
+		},
+	})
+
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND), spear.id
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND), &""
+	)
+
+
 func _create_equipped_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()
@@ -272,6 +349,25 @@ func _create_equipped_actor() -> Dictionary:
 		"hitbox": hitbox,
 		"attack": attack,
 		"guard": guard,
+	}
+
+
+func _create_equipment_only_actor() -> Dictionary:
+	var actor := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+	var input := InputComponent.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var equipment := EquipmentComponent.new()
+	components.add_child(input)
+	components.add_child(inventory)
+	components.add_child(equipment)
+	actor._collect_components()
+	return {
+		"inventory": inventory,
+		"equipment": equipment,
 	}
 
 

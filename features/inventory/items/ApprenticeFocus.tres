@@ -19,6 +19,11 @@ stats = SubResource("ItemStats_focus")
 [sub_resource type="Resource" id="ItemWeaponProfile_focus"]
 script = ExtResource("4_weapon")
 combat_mode = 5
+family = 12
+primary_damage_type = 4
+moveset_id = &"wand_basic"
+available_actions = 128
+magic_scaling = 1.0
 
 [resource]
 script = ExtResource("1_item")

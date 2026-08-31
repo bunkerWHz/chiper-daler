@@ -18,6 +18,14 @@ stats = SubResource("ItemStats_spear")
 script = ExtResource("4_weapon")
 combat_mode = 1
 visual_archetype = 3
+family = 9
+handedness = 1
+primary_damage_type = 2
+moveset_id = &"spear_basic"
+available_actions = 7
+reach_multiplier = 1.45
+strength_scaling = 0.4
+dexterity_scaling = 0.7
 
 [resource]
 script = ExtResource("1_item")

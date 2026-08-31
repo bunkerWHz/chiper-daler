@@ -126,6 +126,11 @@ Data
 -   `ItemData` owns identity and shared presentation. Optional focused profiles
     own equipment, weapon, and consumable configuration; systems read them
     through `ItemData` query methods instead of coupling to profile storage.
+-   Weapon families are data, not `ItemData` subclasses. `ItemWeaponProfile`
+    describes grip, damage, moveset, actions, timing, reach, stagger, scaling,
+    and ammunition. `ItemOffhandProfile` independently describes shields and
+    other offhand tools. Combat systems consume these profiles and should not
+    branch on concrete item resource paths.
 -   Runtime changes never mutate shared `ItemData`. Unique equipment state such
     as enhancement level belongs to a future item instance.
 -   Equipment has no durability. Failed enhancement consumes its configured

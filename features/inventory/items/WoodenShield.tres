@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
 [ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemOffhandProfile.gd" id="4_offhand"]
 
 [sub_resource type="Resource" id="ItemStats_shield"]
 script = ExtResource("2_stats")
@@ -14,9 +14,12 @@ script = ExtResource("3_equipment")
 allowed_slots = Array[int]([2])
 stats = SubResource("ItemStats_shield")
 
-[sub_resource type="Resource" id="ItemWeaponProfile_shield"]
-script = ExtResource("4_weapon")
-combat_mode = 1
+[sub_resource type="Resource" id="ItemOffhandProfile_shield"]
+script = ExtResource("4_offhand")
+family = 2
+available_actions = 3
+block_damage_reduction = 0.5
+guard_stability = 1.0
 
 [resource]
 script = ExtResource("1_item")
@@ -28,5 +31,5 @@ stackable = false
 max_stack_size = 1
 weight = 3.0
 equipment_profile = SubResource("ItemEquipmentProfile_shield")
-weapon_profile = SubResource("ItemWeaponProfile_shield")
+offhand_profile = SubResource("ItemOffhandProfile_shield")
 sell_price = 18

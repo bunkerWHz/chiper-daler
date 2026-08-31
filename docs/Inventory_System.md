@@ -43,6 +43,16 @@ until another melee weapon is equipped in the active set.
 Guard can begin only on the ground. Its parry window and sustained block both
 hold the Actor in place while still allowing facing changes.
 
+Weapons define a family, one- or two-handed grip, primary damage type, moveset,
+available actions, attack speed, reach, stagger, attribute scaling, and optional
+ammunition type in `ItemWeaponProfile`. Offhand tools use a separate
+`ItemOffhandProfile` for shield/catalyst family, actions, block reduction, guard
+stability, and parry timing. Equipping a two-handed main weapon automatically
+clears the offhand of that weapon set, and an offhand cannot be equipped while
+that main weapon remains active. The other weapon set is independent. Moveset
+execution and final scaling formulas will consume this metadata in later tasks;
+they are intentionally not hard-coded into item resources.
+
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
 and rage flasks with three charges each, and two Experience Tonics. These are

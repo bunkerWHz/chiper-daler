@@ -19,6 +19,14 @@ stats = SubResource("ItemStats_crossbow")
 script = ExtResource("4_weapon")
 combat_mode = 4
 visual_archetype = 2
+family = 15
+handedness = 1
+primary_damage_type = 2
+moveset_id = &"crossbow_basic"
+available_actions = 112
+attack_speed_multiplier = 0.75
+dexterity_scaling = 0.8
+ammunition_type = &"bolt"
 
 [resource]
 script = ExtResource("1_item")

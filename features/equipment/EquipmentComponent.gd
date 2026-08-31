@@ -140,6 +140,17 @@ func equip_inventory_item(
 		return false
 	if _count_equipped_item(item_id) >= _inventory_component.get_quantity(item_id):
 		return false
+	if (
+		target_slot == ItemData.EquipSlot.OFF_HAND
+		and not is_off_hand_available(resolved_set)
+	):
+		return false
+
+	if (
+		target_slot == ItemData.EquipSlot.MAIN_HAND
+		and item.is_two_handed_weapon()
+	):
+		unequip_item(ItemData.EquipSlot.OFF_HAND, 0, resolved_set)
 
 	_equipped_items[key] = item_id
 	loadout_item_changed.emit(
@@ -247,6 +258,18 @@ func cycle_weapon_set() -> int:
 
 func get_active_weapon_set() -> int:
 	return _active_weapon_set
+
+
+func is_off_hand_available(weapon_set: int = -1) -> bool:
+	var resolved_set := (
+		_active_weapon_set if weapon_set < 0 else weapon_set
+	)
+	if resolved_set < 0 or resolved_set >= WEAPON_SET_COUNT:
+		return false
+	var main_hand := get_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, resolved_set
+	)
+	return main_hand == null or not main_hand.is_two_handed_weapon()
 
 
 func meets_item_requirements(item: ItemData) -> bool:
@@ -363,6 +386,7 @@ func restore_runtime_state(state: Variant) -> void:
 				and meets_item_requirements(item)
 			):
 				_equipped_items[String(key)] = item_id
+	_normalize_weapon_sets()
 
 
 func _resolve_weapon_set(
@@ -431,6 +455,15 @@ func _equip_starting_weapon_sets() -> void:
 				equip_inventory_item(
 					off_id, ItemData.EquipSlot.OFF_HAND, 0, set_index
 				)
+
+
+func _normalize_weapon_sets() -> void:
+	for set_index in WEAPON_SET_COUNT:
+		var main_hand := get_equipped_item(
+			ItemData.EquipSlot.MAIN_HAND, 0, set_index
+		)
+		if main_hand != null and main_hand.is_two_handed_weapon():
+			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, set_index)
 
 
 func _get_effective_equipped_items() -> Array[ItemData]:

@@ -19,6 +19,13 @@ stats = SubResource("ItemStats_bow")
 script = ExtResource("4_weapon")
 combat_mode = 3
 visual_archetype = 2
+family = 14
+handedness = 1
+primary_damage_type = 2
+moveset_id = &"bow_basic"
+available_actions = 48
+dexterity_scaling = 1.0
+ammunition_type = &"arrow"
 
 [resource]
 script = ExtResource("1_item")

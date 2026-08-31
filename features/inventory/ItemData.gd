@@ -91,6 +91,7 @@ enum UseVisualEffect {
 @export_group("Profiles")
 @export var equipment_profile: ItemEquipmentProfile
 @export var weapon_profile: ItemWeaponProfile
+@export var offhand_profile: ItemOffhandProfile
 @export var consumable_profile: ItemConsumableProfile
 
 # Kept as serialized fallback data while old resources and saves are migrated.
@@ -143,6 +144,18 @@ func get_visual_archetype() -> VisualArchetype:
 		if weapon_profile != null
 		else visual_archetype
 	)
+
+
+func is_two_handed_weapon() -> bool:
+	return weapon_profile != null and weapon_profile.is_two_handed()
+
+
+func has_weapon_action(action: ItemWeaponProfile.Action) -> bool:
+	return weapon_profile != null and weapon_profile.has_action(action)
+
+
+func has_offhand_action(action: ItemOffhandProfile.Action) -> bool:
+	return offhand_profile != null and offhand_profile.has_action(action)
 
 
 func get_use_effect() -> UseEffect:
