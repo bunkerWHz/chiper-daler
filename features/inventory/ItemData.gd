@@ -94,6 +94,7 @@ enum UseVisualEffect {
 @export var offhand_profile: ItemOffhandProfile
 @export var armor_profile: ItemArmorProfile
 @export var consumable_profile: ItemConsumableProfile
+@export var ammunition_profile: ItemAmmunitionProfile
 
 # Kept as serialized fallback data while old resources and saves are migrated.
 @export_storage var equip_slot: EquipSlot = EquipSlot.NONE
@@ -145,6 +146,14 @@ func get_visual_archetype() -> VisualArchetype:
 		if weapon_profile != null
 		else visual_archetype
 	)
+
+
+func get_ammunition_type() -> StringName:
+	if ammunition_profile != null:
+		return ammunition_profile.ammunition_type
+	if weapon_profile != null:
+		return weapon_profile.ammunition_type
+	return &""
 
 
 func is_two_handed_weapon() -> bool:

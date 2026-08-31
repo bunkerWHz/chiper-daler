@@ -153,6 +153,16 @@ func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
 	assert_eq(crossbow.weapon_profile.ammunition_type, &"bolt")
 	assert_true(crossbow.has_weapon_action(ItemWeaponProfile.Action.RELOAD))
 	assert_true(crossbow.get_equipment_stats().damage > bow.get_equipment_stats().damage)
+	var arrows := load(
+		"res://features/inventory/items/TrainingArrows.tres"
+	) as ItemData
+	var bolts := load(
+		"res://features/inventory/items/TrainingBolts.tres"
+	) as ItemData
+	assert_eq(arrows.category, ItemData.Category.AMMUNITION)
+	assert_true(arrows.can_equip_in(ItemData.EquipSlot.OFF_HAND))
+	assert_eq(arrows.get_ammunition_type(), bow.get_ammunition_type())
+	assert_eq(bolts.get_ammunition_type(), crossbow.get_ammunition_type())
 
 
 func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:

@@ -196,6 +196,12 @@ func equip_inventory_item(
 		return false
 	if not _is_valid_slot_index(target_slot, slot_index):
 		return false
+	if (
+		target_slot == ItemData.EquipSlot.OFF_HAND
+		and item.category == ItemData.Category.AMMUNITION
+		and not is_ammunition_compatible(item, resolved_set)
+	):
+		return false
 
 	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
 	var previous := StringName(_equipped_items.get(key, &""))
@@ -206,6 +212,10 @@ func equip_inventory_item(
 	if (
 		target_slot == ItemData.EquipSlot.OFF_HAND
 		and not is_off_hand_available(resolved_set)
+		and not (
+			item.category == ItemData.Category.AMMUNITION
+			and is_ammunition_compatible(item, resolved_set)
+		)
 	):
 		return false
 
@@ -223,6 +233,8 @@ func equip_inventory_item(
 		previous,
 		item_id
 	)
+	if target_slot == ItemData.EquipSlot.MAIN_HAND:
+		_sync_ammunition_for_weapon(item, resolved_set)
 	_emit_equipment_load_changed()
 	if (
 		target_slot == ItemData.EquipSlot.MAIN_HAND
@@ -241,6 +253,12 @@ func unequip_item(
 	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
 	if not _equipped_items.has(key):
 		return false
+	if target_slot == ItemData.EquipSlot.MAIN_HAND:
+		var off_hand := get_equipped_item(
+			ItemData.EquipSlot.OFF_HAND, 0, resolved_set
+		)
+		if off_hand != null and off_hand.category == ItemData.Category.AMMUNITION:
+			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, resolved_set)
 
 	var previous := StringName(_equipped_items[key])
 	_equipped_items.erase(key)
@@ -335,6 +353,25 @@ func is_off_hand_available(weapon_set: int = -1) -> bool:
 		ItemData.EquipSlot.MAIN_HAND, 0, resolved_set
 	)
 	return main_hand == null or not main_hand.is_two_handed_weapon()
+
+
+func is_ammunition_compatible(
+	ammunition: ItemData,
+	weapon_set: int = -1
+) -> bool:
+	if ammunition == null or ammunition.category != ItemData.Category.AMMUNITION:
+		return false
+	var resolved_set := _active_weapon_set if weapon_set < 0 else weapon_set
+	if resolved_set < 0 or resolved_set >= WEAPON_SET_COUNT:
+		return false
+	var main_hand := get_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, resolved_set
+	)
+	return (
+		main_hand != null
+		and not main_hand.get_ammunition_type().is_empty()
+		and main_hand.get_ammunition_type() == ammunition.get_ammunition_type()
+	)
 
 
 func meets_item_requirements(item: ItemData) -> bool:
@@ -640,6 +677,7 @@ func _normalize_weapon_sets() -> void:
 		)
 		if main_hand != null and main_hand.is_two_handed_weapon():
 			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, set_index)
+		_sync_ammunition_for_weapon(main_hand, set_index)
 
 
 func _get_effective_equipped_items() -> Array[ItemData]:
@@ -723,14 +761,63 @@ func _remove_equipped_key(key: Variant) -> void:
 	_equipped_items.erase(key)
 	if parts.size() != 3:
 		return
+	var removed_slot := int(parts[0]) as ItemData.EquipSlot
+	var removed_set := int(parts[2])
 	loadout_item_changed.emit(
-		int(parts[0]) as ItemData.EquipSlot,
+		removed_slot,
 		int(parts[1]),
-		int(parts[2]),
+		removed_set,
 		previous,
 		&""
 	)
+	if removed_slot == ItemData.EquipSlot.MAIN_HAND:
+		var off_hand := get_equipped_item(
+			ItemData.EquipSlot.OFF_HAND, 0, removed_set
+		)
+		if off_hand != null and off_hand.category == ItemData.Category.AMMUNITION:
+			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, removed_set)
 	_emit_equipment_load_changed()
+
+
+func _sync_ammunition_for_weapon(item: ItemData, weapon_set: int) -> void:
+	var required_type := item.get_ammunition_type() if item != null else &""
+	var equipped_ammunition := get_equipped_item(
+		ItemData.EquipSlot.OFF_HAND, 0, weapon_set
+	)
+	if (
+		equipped_ammunition != null
+		and equipped_ammunition.get_ammunition_type() == required_type
+		and not required_type.is_empty()
+	):
+		return
+	if required_type.is_empty():
+		if (
+			equipped_ammunition != null
+			and equipped_ammunition.category == ItemData.Category.AMMUNITION
+		):
+			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
+		return
+	unequip_item(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
+	if _inventory_component == null:
+		return
+	for stack: InventoryStack in _inventory_component.get_stacks():
+		var ammunition := stack.item
+		if (
+			ammunition.category != ItemData.Category.AMMUNITION
+			or ammunition.get_ammunition_type() != required_type
+			or not ammunition.can_equip_in(ItemData.EquipSlot.OFF_HAND)
+			or not meets_item_requirements(ammunition)
+			or _count_equipped_item(ammunition.id)
+			>= _inventory_component.get_quantity(ammunition.id)
+		):
+			continue
+		equip_inventory_item(
+			ammunition.id,
+			ItemData.EquipSlot.OFF_HAND,
+			0,
+			weapon_set
+		)
+		return
 
 
 func _emit_equipment_load_changed() -> void:

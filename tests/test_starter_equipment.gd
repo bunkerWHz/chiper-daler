@@ -91,6 +91,8 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_eq(flasks.get_charges(&"mana_potion"), 3)
 	assert_eq(flasks.get_charges(&"rage_potion"), 3)
 	assert_eq(inventory.get_quantity(&"experience_tonic"), 2)
+	assert_eq(inventory.get_quantity(&"training_arrows"), 20)
+	assert_eq(inventory.get_quantity(&"training_bolts"), 12)
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
 	assert_true(inventory.get_item_data(&"rage_potion").usable_in_combat)
 	assert_eq(
@@ -115,6 +117,12 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 			ItemData.EquipSlot.MAIN_HAND, 0, 1
 		),
 		&"training_bow"
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(
+			ItemData.EquipSlot.OFF_HAND, 0, 1
+		),
+		&"training_arrows"
 	)
 
 	assert_eq(quick_access.get_slot(0).item_id, &"health_potion")

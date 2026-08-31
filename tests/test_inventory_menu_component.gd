@@ -126,6 +126,18 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(dropped_bag.try_collect(actor))
 	assert_eq(inventory.get_quantity(potion.id), 2)
 	var potion_payload := menu._inventory_item_payload(potion)
+	var double_click_button := InventoryDragButton.new()
+	world.add_child(double_click_button)
+	var double_click_calls: Array[int] = [0]
+	double_click_button.double_clicked.connect(
+		func() -> void: double_click_calls[0] += 1
+	)
+	var double_click_event := InputEventMouseButton.new()
+	double_click_event.button_index = MOUSE_BUTTON_LEFT
+	double_click_event.pressed = true
+	double_click_event.double_click = true
+	double_click_button._gui_input(double_click_event)
+	assert_eq(double_click_calls[0], 1)
 	var quick_drop_target := track(
 		InventoryDragButton.new()
 	) as InventoryDragButton
@@ -335,5 +347,37 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	menu._select_item(sword.id)
 	menu._equip_selected_item()
 	assert_false(equipment.is_item_equipped(sword.id))
+	var boots_one := _create_equipment_item(
+		&"boots_one", "Boots One", ItemData.EquipSlot.FEET
+	)
+	var boots_two := _create_equipment_item(
+		&"boots_two", "Boots Two", ItemData.EquipSlot.FEET
+	)
+	inventory.add_item(boots_one)
+	inventory.add_item(boots_two)
+	menu._equip_item_by_double_click(boots_one.id)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.FEET),
+		boots_one.id
+	)
+	menu._equip_item_by_double_click(boots_two.id)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.FEET),
+		boots_two.id
+	)
 	menu.close_inventory()
 	assert_false(menu.is_open())
+
+
+func _create_equipment_item(
+	item_id: StringName,
+	display_name: String,
+	slot: ItemData.EquipSlot
+) -> ItemData:
+	var item := ItemData.new()
+	item.id = item_id
+	item.display_name = display_name
+	item.category = ItemData.Category.ARMOR
+	item.equip_slot = slot
+	item.stats = ItemStats.new()
+	return item

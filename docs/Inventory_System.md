@@ -128,6 +128,14 @@ crossbow. The original Rusty Sword, Training Spear, Apprentice Focus, Short Bow,
 and Light Crossbow resources remain loadable for save compatibility but are no
 longer included in the starting inventory or weapon sets.
 
+Inventory icons support double-click equipment. The action fills the first free
+compatible slot and replaces slot zero when every compatible slot is occupied.
+Equipping a two-handed weapon replaces both hands. Bows and crossbows then put
+the first compatible ammunition stack into the active set's offhand: arrows for
+bows and bolts for crossbows. Without compatible ammunition, the ranged weapon
+still equips and offhand remains empty. Non-ammunition offhands remain invalid
+while a two-handed weapon is active.
+
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
 active weapon set, armor, and accessories reduces incoming damage with

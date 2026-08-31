@@ -295,6 +295,59 @@ func test_two_handed_weapon_reserves_both_hands_in_its_set() -> void:
 	))
 
 
+func test_ranged_two_handed_weapon_replaces_offhand_with_matching_ammo() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var sword := _create_equippable(&"sword", ItemData.EquipSlot.MAIN_HAND)
+	var shield := _create_equippable(&"shield", ItemData.EquipSlot.OFF_HAND)
+	var bow := _create_equippable(&"bow", ItemData.EquipSlot.MAIN_HAND)
+	bow.weapon_profile = ItemWeaponProfile.new()
+	bow.weapon_profile.family = ItemWeaponProfile.Family.BOW
+	bow.weapon_profile.handedness = ItemWeaponProfile.Handedness.TWO_HANDED
+	bow.weapon_profile.ammunition_type = &"arrow"
+	var arrows := _create_equippable(
+		&"arrows", ItemData.EquipSlot.OFF_HAND
+	)
+	arrows.category = ItemData.Category.AMMUNITION
+	arrows.stackable = true
+	arrows.max_stack_size = 99
+	arrows.ammunition_profile = ItemAmmunitionProfile.new()
+	arrows.ammunition_profile.ammunition_type = &"arrow"
+	var bolts := _create_equippable(&"bolts", ItemData.EquipSlot.OFF_HAND)
+	bolts.category = ItemData.Category.AMMUNITION
+	bolts.ammunition_profile = ItemAmmunitionProfile.new()
+	bolts.ammunition_profile.ammunition_type = &"bolt"
+	for item: ItemData in [sword, shield, bow, arrows, bolts]:
+		inventory.add_item(item, 10 if item == arrows else 1)
+	assert_true(equipment.equip_inventory_item(
+		sword.id, ItemData.EquipSlot.MAIN_HAND
+	))
+	assert_true(equipment.equip_inventory_item(
+		shield.id, ItemData.EquipSlot.OFF_HAND
+	))
+	assert_true(equipment.equip_inventory_item(
+		bow.id, ItemData.EquipSlot.MAIN_HAND
+	))
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND),
+		bow.id
+	)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND),
+		arrows.id
+	)
+	assert_false(equipment.is_item_equipped(sword.id))
+	assert_false(equipment.is_item_equipped(shield.id))
+	assert_false(equipment.equip_inventory_item(
+		bolts.id, ItemData.EquipSlot.OFF_HAND
+	))
+	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND)
+	assert_true(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND).is_empty()
+	)
+
+
 func test_restored_two_handed_set_discards_incompatible_offhand() -> void:
 	var setup := _create_equipment_only_actor()
 	var inventory := setup.inventory as InventoryComponent

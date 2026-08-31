@@ -234,6 +234,9 @@ func _rebuild_grid() -> void:
 		button.drop_target = InventoryDragButton.TARGET_INVENTORY
 		button.data_dropped.connect(_on_inventory_data_dropped)
 		button.pressed.connect(_select_item.bind(stack.item.id))
+		button.double_clicked.connect(
+			_equip_item_by_double_click.bind(stack.item.id)
+		)
 		button.mouse_entered.connect(show_item_details.bind(stack.item.id))
 		button.mouse_exited.connect(hide_hover_details)
 		button.focus_entered.connect(show_item_details.bind(stack.item.id))
@@ -366,6 +369,10 @@ func _get_item_details(item: ItemData) -> String:
 	_append_weapon_profile(detail_lines, item.weapon_profile)
 	_append_offhand_profile(detail_lines, item.offhand_profile)
 	_append_armor_profile(detail_lines, item.armor_profile)
+	if item.ammunition_profile != null:
+		detail_lines.append(
+			"Ammunition: %s" % _enum_label(item.get_ammunition_type())
+		)
 	_append_item_stats(detail_lines, item)
 	return "\n".join(detail_lines)
 
@@ -402,6 +409,25 @@ func _equip_selected_item() -> void:
 	var slot_index := 0
 	var capacity := _equipment.get_slot_capacity(equip_slot)
 	for index in capacity:
+		if _equipment.get_equipped_item_id(equip_slot, index).is_empty():
+			slot_index = index
+			break
+	_equipment.equip_inventory_item(item.id, equip_slot, slot_index)
+	_rebuild()
+
+
+func _equip_item_by_double_click(item_id: StringName) -> void:
+	var item := _inventory.get_item_data(item_id)
+	if (
+		item == null
+		or item.get_primary_equip_slot() == ItemData.EquipSlot.NONE
+		or not _equipment.meets_item_requirements(item)
+	):
+		return
+	_selected_item_id = item_id
+	var equip_slot := item.get_primary_equip_slot()
+	var slot_index := 0
+	for index in _equipment.get_slot_capacity(equip_slot):
 		if _equipment.get_equipped_item_id(equip_slot, index).is_empty():
 			slot_index = index
 			break
