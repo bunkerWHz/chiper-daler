@@ -4,20 +4,29 @@
 [ext_resource type="Script" path="res://features/inventory/InventoryConfig.gd" id="2_config"]
 [ext_resource type="Resource" path="res://features/inventory/items/HealthPotion.tres" id="3_health_potion"]
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="4_item_data"]
-[ext_resource type="Resource" path="res://features/inventory/items/RustySword.tres" id="5_sword"]
-[ext_resource type="Resource" path="res://features/inventory/items/WoodenShield.tres" id="6_shield"]
 [ext_resource type="Resource" path="res://features/inventory/items/ShortBow.tres" id="7_bow"]
 [ext_resource type="Resource" path="res://features/inventory/items/LightCrossbow.tres" id="8_crossbow"]
-[ext_resource type="Resource" path="res://features/inventory/items/ApprenticeFocus.tres" id="9_focus"]
 [ext_resource type="Resource" path="res://features/inventory/items/ManaPotion.tres" id="10_mana_potion"]
 [ext_resource type="Resource" path="res://features/inventory/items/ExperienceTonic.tres" id="11_experience_tonic"]
-[ext_resource type="Resource" path="res://features/inventory/items/TrainingSpear.tres" id="12_training_spear"]
 [ext_resource type="Resource" path="res://features/inventory/items/RagePotion.tres" id="13_rage_potion"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingRapier.tres" id="14"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingKatana.tres" id="15"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingDagger.tres" id="16"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingBattleAxe.tres" id="17"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingWarHammer.tres" id="18"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingGreatsword.tres" id="19"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingGreatHammer.tres" id="20"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingStaff.tres" id="21"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingHalberd.tres" id="22"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingScythe.tres" id="23"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingBuckler.tres" id="24"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingGreatshield.tres" id="25"]
+[ext_resource type="Resource" path="res://features/inventory/items/TrainingParryingDagger.tres" id="26"]
 
 [sub_resource type="Resource" id="InventoryConfig_default"]
 script = ExtResource("2_config")
-starting_items = Array[ExtResource("4_item_data")]([ExtResource("5_sword"), ExtResource("6_shield"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("9_focus"), ExtResource("12_training_spear"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
-starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+starting_items = Array[ExtResource("4_item_data")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("25"), ExtResource("26"), ExtResource("7_bow"), ExtResource("8_crossbow"), ExtResource("3_health_potion"), ExtResource("10_mana_potion"), ExtResource("13_rage_potion"), ExtResource("11_experience_tonic")])
+starting_quantities = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
 
 [node name="InventoryComponent" type="Node"]
 script = ExtResource("1_component")

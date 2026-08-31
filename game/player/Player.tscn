@@ -51,6 +51,7 @@
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentDefenseComponent.tscn" id="45_equipment_defense"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessHUDComponent.tscn" id="46_quick_hud"]
 [ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
+[ext_resource type="PackedScene" path="res://features/stamina/StaminaComponent.tscn" id="48_stamina"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -357,6 +358,8 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="RangedWeaponComponent" parent="_Components" instance=ExtResource("35_ranged")]
 
 [node name="MagicComponent" parent="_Components" instance=ExtResource("36_magic")]
+
+[node name="StaminaComponent" parent="_Components" instance=ExtResource("48_stamina")]
 
 [node name="RestComponent" parent="_Components" instance=ExtResource("37_rest")]
 

@@ -4,5 +4,5 @@
 
 [node name="EquipmentComponent" type="Node"]
 script = ExtResource("1_component")
-starting_main_hand_ids = Array[StringName]([&"rusty_sword", &"short_bow"])
-starting_off_hand_ids = Array[StringName]([&"wooden_shield", &""])
+starting_main_hand_ids = Array[StringName]([&"training_katana", &"short_bow"])
+starting_off_hand_ids = Array[StringName]([&"training_buckler", &""])

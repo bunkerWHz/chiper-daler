@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://features/progression/ui/PlayerResourceBarsView.gd" id="1_view"]
 
@@ -28,6 +28,13 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="StaminaFill"]
+bg_color = Color(0.2, 0.75, 0.3, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="ExperienceFill"]
 bg_color = Color(0.94, 0.94, 0.98, 1)
 corner_radius_top_left = 3
@@ -46,7 +53,7 @@ corner_radius_bottom_left = 3
 offset_left = 16.0
 offset_top = 82.0
 offset_right = 248.0
-offset_bottom = 207.0
+offset_bottom = 239.0
 theme_override_styles/panel = SubResource("PanelStyle")
 script = ExtResource("1_view")
 
@@ -88,6 +95,35 @@ custom_minimum_size = Vector2(210, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("BarBackground")
 theme_override_styles/fill = SubResource("ManaFill")
+value = 100.0
+show_percentage = false
+
+[node name="Stamina" type="VBoxContainer" parent="MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Bars/Stamina"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/Bars/Stamina/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.65, 1, 0.7, 1)
+theme_override_font_sizes/font_size = 11
+text = "STAMINA"
+
+[node name="StaminaValue" type="Label" parent="MarginContainer/Bars/Stamina/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "100 / 100"
+
+[node name="StaminaBar" type="ProgressBar" parent="MarginContainer/Bars/Stamina"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("StaminaFill")
 value = 100.0
 show_percentage = false
 

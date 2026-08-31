@@ -92,6 +92,12 @@ The first offhand batch adds buckler, greatshield, and parrying dagger. Shield
 block reduction and parry-window multipliers now affect `GuardComponent`;
 stability remains reserved for the future stamina/poise system.
 
+The Player now owns a minimal stamina resource with spending, delayed
+regeneration, restoration, save-state support, and a temporary green HUD bar.
+Combat actions do not consume stamina yet. The starting inventory replaces the
+old sword, shield, focus, and spear with the new weapon/offhand batches; the
+legacy bow and crossbow remain only until their replacement resources exist.
+
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
 and rage flasks with three charges each, and two Experience Tonics. These are

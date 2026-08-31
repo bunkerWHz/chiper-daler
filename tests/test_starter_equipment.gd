@@ -33,14 +33,27 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	equipment._ready()
 
 	for item_id: StringName in [
-		&"rusty_sword",
-		&"wooden_shield",
+		&"training_rapier",
+		&"training_katana",
+		&"training_dagger",
+		&"training_battle_axe",
+		&"training_war_hammer",
+		&"training_greatsword",
+		&"training_great_hammer",
+		&"training_staff",
+		&"training_halberd",
+		&"training_scythe",
+		&"training_buckler",
+		&"training_greatshield",
+		&"training_parrying_dagger",
 		&"short_bow",
 		&"light_crossbow",
-		&"apprentice_focus",
-		&"training_spear",
 	]:
 		assert_eq(inventory.get_quantity(item_id), 1)
+	for removed_id: StringName in [
+		&"rusty_sword", &"wooden_shield", &"apprentice_focus", &"training_spear"
+	]:
+		assert_eq(inventory.get_quantity(removed_id), 0)
 	assert_eq(inventory.get_quantity(&"health_potion"), 1)
 	assert_eq(inventory.get_quantity(&"mana_potion"), 1)
 	assert_eq(inventory.get_quantity(&"rage_potion"), 1)
@@ -51,7 +64,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
 	assert_true(inventory.get_item_data(&"rage_potion").usable_in_combat)
 	assert_eq(
-		inventory.get_item_data(&"training_spear").get_visual_archetype(),
+		inventory.get_item_data(&"training_halberd").get_visual_archetype(),
 		ItemData.VisualArchetype.LANCER
 	)
 	assert_true(inventory.get_item_data(&"experience_tonic").usable_in_combat)
@@ -59,13 +72,13 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		equipment.get_equipped_item_id(
 			ItemData.EquipSlot.MAIN_HAND, 0, 0
 		),
-		&"rusty_sword"
+		&"training_katana"
 	)
 	assert_eq(
 		equipment.get_equipped_item_id(
 			ItemData.EquipSlot.OFF_HAND, 0, 0
 		),
-		&"wooden_shield"
+		&"training_buckler"
 	)
 	assert_eq(
 		equipment.get_equipped_item_id(

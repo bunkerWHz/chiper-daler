@@ -6,10 +6,13 @@ class_name PlayerResourceBarsView
 @export_range(0.1, 3600.0, 0.1) var fallback_rage_duration: float = 10.0
 
 var _magic: MagicComponent
+var _stamina: StaminaComponent
 var _progression: ProgressionComponent
 var _status_effects: StatusEffectComponent
 var _displayed_mana: float = 0.0
 var _displayed_max_mana: float = 1.0
+var _displayed_stamina: float = 0.0
+var _displayed_max_stamina: float = 1.0
 var _displayed_experience: int = 0
 var _displayed_required_experience: int = 1
 var _displayed_rage: float = 0.0
@@ -17,6 +20,8 @@ var _displayed_max_rage: float = 10.0
 
 @onready var _mana_bar: ProgressBar = %ManaBar
 @onready var _mana_value: Label = %ManaValue
+@onready var _stamina_bar: ProgressBar = %StaminaBar
+@onready var _stamina_value: Label = %StaminaValue
 @onready var _experience_bar: ProgressBar = %ExperienceBar
 @onready var _experience_value: Label = %ExperienceValue
 @onready var _rage_bar: ProgressBar = %RageBar
@@ -24,13 +29,19 @@ var _displayed_max_rage: float = 10.0
 
 
 func _ready() -> void:
-	if _magic == null or _progression == null or _status_effects == null:
+	if (
+		_magic == null
+		or _stamina == null
+		or _progression == null
+		or _status_effects == null
+	):
 		var target_actor := get_node_or_null(actor_path) as Actor
 		if target_actor == null:
 			push_error("PlayerResourceBarsView requires a valid Actor path")
 			return
 		bind_components(
 			target_actor.get_component(MagicComponent) as MagicComponent,
+			target_actor.get_component(StaminaComponent) as StaminaComponent,
 			target_actor.get_component(ProgressionComponent) as ProgressionComponent,
 			target_actor.get_component(StatusEffectComponent) as StatusEffectComponent
 		)
@@ -43,11 +54,13 @@ func _process(_delta: float) -> void:
 
 func bind_components(
 	magic: MagicComponent,
+	stamina: StaminaComponent,
 	progression: ProgressionComponent,
 	status_effects: StatusEffectComponent
 ) -> void:
 	_disconnect_sources()
 	_magic = magic
+	_stamina = stamina
 	_progression = progression
 	_status_effects = status_effects
 	if _magic == null or not _magic.is_enabled:
@@ -56,15 +69,20 @@ func bind_components(
 	if _progression == null or not _progression.is_enabled:
 		push_error("PlayerResourceBarsView requires an enabled ProgressionComponent")
 		return
+	if _stamina == null or not _stamina.is_enabled:
+		push_error("PlayerResourceBarsView requires an enabled StaminaComponent")
+		return
 	if _status_effects == null or not _status_effects.is_enabled:
 		push_error("PlayerResourceBarsView requires an enabled StatusEffectComponent")
 		return
 
 	_magic.mana_changed.connect(_on_mana_changed)
+	_stamina.stamina_changed.connect(_on_stamina_changed)
 	_progression.experience_changed.connect(_on_experience_changed)
 	_status_effects.effect_applied.connect(_on_effect_applied)
 	_status_effects.effect_removed.connect(_on_effect_removed)
 	_on_mana_changed(_magic.get_mana(), _magic.get_max_mana())
+	_on_stamina_changed(_stamina.get_stamina(), _stamina.get_max_stamina())
 	_on_experience_changed(
 		_progression.get_experience(),
 		_progression.get_experience_required()
@@ -79,6 +97,14 @@ func get_displayed_mana() -> float:
 
 func get_displayed_max_mana() -> float:
 	return _displayed_max_mana
+
+
+func get_displayed_stamina() -> float:
+	return _displayed_stamina
+
+
+func get_displayed_max_stamina() -> float:
+	return _displayed_max_stamina
 
 
 func get_displayed_experience() -> int:
@@ -104,6 +130,12 @@ func _exit_tree() -> void:
 func _on_mana_changed(current: float, maximum: float) -> void:
 	_displayed_max_mana = maxf(maximum, 1.0)
 	_displayed_mana = clampf(current, 0.0, _displayed_max_mana)
+	_apply_display_if_ready()
+
+
+func _on_stamina_changed(current: float, maximum: float) -> void:
+	_displayed_max_stamina = maxf(maximum, 1.0)
+	_displayed_stamina = clampf(current, 0.0, _displayed_max_stamina)
 	_apply_display_if_ready()
 
 
@@ -149,6 +181,11 @@ func _apply_display() -> void:
 	_mana_value.text = "%d / %d" % [
 		roundi(_displayed_mana), roundi(_displayed_max_mana)
 	]
+	_stamina_bar.max_value = _displayed_max_stamina
+	_stamina_bar.value = _displayed_stamina
+	_stamina_value.text = "%d / %d" % [
+		roundi(_displayed_stamina), roundi(_displayed_max_stamina)
+	]
 	_experience_bar.max_value = _displayed_required_experience
 	_experience_bar.value = _displayed_experience
 	_experience_value.text = "%d / %d" % [
@@ -164,6 +201,8 @@ func _apply_display() -> void:
 func _disconnect_sources() -> void:
 	if _magic != null and _magic.mana_changed.is_connected(_on_mana_changed):
 		_magic.mana_changed.disconnect(_on_mana_changed)
+	if _stamina != null and _stamina.stamina_changed.is_connected(_on_stamina_changed):
+		_stamina.stamina_changed.disconnect(_on_stamina_changed)
 	if (
 		_progression != null
 		and _progression.experience_changed.is_connected(

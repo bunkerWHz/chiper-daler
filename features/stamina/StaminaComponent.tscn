@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://features/stamina/StaminaComponent.gd" id="1"]
+[ext_resource type="Script" path="res://features/stamina/StaminaConfig.gd" id="2"]
+[sub_resource type="Resource" id="config"]
+script = ExtResource("2")
+[node name="StaminaComponent" type="Node"]
+script = ExtResource("1")
+config = SubResource("config")

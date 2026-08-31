@@ -11,6 +11,7 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	var player := track(packed.instantiate()) as Actor
 	player._collect_components()
 	var magic := player.get_component(MagicComponent) as MagicComponent
+	var stamina := player.get_component(StaminaComponent) as StaminaComponent
 	var progression := (
 		player.get_component(ProgressionComponent) as ProgressionComponent
 	)
@@ -25,11 +26,13 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	equipment._ready()
 	visual._ready()
 	var view := track(PlayerResourceBarsView.new()) as PlayerResourceBarsView
-	view.bind_components(magic, progression, status_effects)
+	view.bind_components(magic, stamina, progression, status_effects)
 
 	assert_eq(view.get_displayed_mana(), magic.get_max_mana())
 	magic.restore_runtime_state(40.0)
 	assert_eq(view.get_displayed_mana(), 40.0)
+	assert_true(stamina.spend(30.0))
+	assert_eq(view.get_displayed_stamina(), 70.0)
 	progression.gain_experience(25)
 	assert_eq(view.get_displayed_experience(), 25)
 	assert_eq(
@@ -62,6 +65,9 @@ func test_scene_uses_requested_temporary_colors_and_sits_below_health() -> void:
 	var experience_bar := view.get_node(
 		"MarginContainer/Bars/Experience/ExperienceBar"
 	) as ProgressBar
+	var stamina_bar := view.get_node(
+		"MarginContainer/Bars/Stamina/StaminaBar"
+	) as ProgressBar
 	var rage_bar := view.get_node(
 		"MarginContainer/Bars/Rage/RageBar"
 	) as ProgressBar
@@ -69,10 +75,12 @@ func test_scene_uses_requested_temporary_colors_and_sits_below_health() -> void:
 	var experience_fill := (
 		experience_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	)
+	var stamina_fill := stamina_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	var rage_fill := rage_bar.get_theme_stylebox("fill") as StyleBoxFlat
 
 	assert_eq(view.offset_left, 16.0)
 	assert_eq(view.offset_top, 82.0)
 	assert_eq(mana_fill.bg_color, Color(0.12, 0.42, 0.95, 1.0))
 	assert_eq(experience_fill.bg_color, Color(0.94, 0.94, 0.98, 1.0))
+	assert_eq(stamina_fill.bg_color, Color(0.2, 0.75, 0.3, 1.0))
 	assert_eq(rage_fill.bg_color, Color(1.0, 0.45, 0.08, 1.0))

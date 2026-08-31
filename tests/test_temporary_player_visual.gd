@@ -15,11 +15,16 @@ func test_active_main_hand_selects_temporary_visual_profile() -> void:
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.WARRIOR)
 	assert_true(equipment.switch_weapon_set(1))
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.ARCHER)
+	var attributes := (
+		setup.player.get_component(CharacterAttributesComponent)
+		as CharacterAttributesComponent
+	)
+	attributes.set_strength(6)
 	assert_true(equipment.equip_inventory_item(
-		&"training_spear", ItemData.EquipSlot.MAIN_HAND, 0, 1
+		&"training_halberd", ItemData.EquipSlot.MAIN_HAND, 0, 1
 	))
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.LANCER)
-	assert_eq(inventory.get_quantity(&"training_spear"), 1)
+	assert_eq(inventory.get_quantity(&"training_halberd"), 1)
 
 
 func test_item_and_buff_effects_render_on_separate_overlays() -> void:
