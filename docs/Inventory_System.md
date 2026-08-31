@@ -59,6 +59,9 @@ the remaining item resources are migrated.
 Bow and crossbow aiming/firing and magic casting/channeling use the same action
 gate. `Reload` is already represented in weapon data but will become mandatory
 only when a real crossbow reload phase exists.
+The inventory item card exposes weapon family, grip, damage type, moveset,
+actions, scaling, timing/reach values, ammunition, and shield/offhand defense
+data. The bag and equipped paper doll continue to show icons only.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

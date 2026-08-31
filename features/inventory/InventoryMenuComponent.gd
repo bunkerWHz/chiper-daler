@@ -363,6 +363,8 @@ func _get_item_details(item: ItemData) -> String:
 		item.weight,
 		item.sell_price,
 	])
+	_append_weapon_profile(detail_lines, item.weapon_profile)
+	_append_offhand_profile(detail_lines, item.offhand_profile)
 	_append_item_stats(detail_lines, item)
 	return "\n".join(detail_lines)
 
@@ -857,6 +859,87 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 		item_stats.damage - equipped_stats.damage,
 		item_stats.defense - equipped_stats.defense,
 	])
+
+
+func _append_weapon_profile(
+	lines: PackedStringArray,
+	profile: ItemWeaponProfile
+) -> void:
+	if profile == null:
+		return
+	lines.append("Weapon: %s  %s  %s" % [
+		_enum_label(ItemWeaponProfile.Family.keys()[profile.family]),
+		_enum_label(ItemWeaponProfile.Handedness.keys()[profile.handedness]),
+		_enum_label(
+			ItemWeaponProfile.DamageType.keys()[profile.primary_damage_type]
+		),
+	])
+	if not profile.moveset_id.is_empty():
+		lines.append("Moveset: %s" % profile.moveset_id)
+	var actions := PackedStringArray()
+	for entry: Dictionary in [
+		{"flag": ItemWeaponProfile.Action.LIGHT_ATTACK, "label": "Light"},
+		{"flag": ItemWeaponProfile.Action.HEAVY_ATTACK, "label": "Heavy"},
+		{"flag": ItemWeaponProfile.Action.GUARD, "label": "Guard"},
+		{"flag": ItemWeaponProfile.Action.PARRY, "label": "Parry"},
+		{"flag": ItemWeaponProfile.Action.AIM, "label": "Aim"},
+		{"flag": ItemWeaponProfile.Action.FIRE, "label": "Fire"},
+		{"flag": ItemWeaponProfile.Action.RELOAD, "label": "Reload"},
+		{"flag": ItemWeaponProfile.Action.CAST, "label": "Cast"},
+		{"flag": ItemWeaponProfile.Action.CHANNEL, "label": "Channel"},
+	]:
+		if profile.has_action(int(entry.flag) as ItemWeaponProfile.Action):
+			actions.append(String(entry.label))
+	if not actions.is_empty():
+		lines.append("Actions: %s" % ", ".join(actions))
+	var scaling := PackedStringArray()
+	if profile.strength_scaling > 0.0:
+		scaling.append("STR %.2f" % profile.strength_scaling)
+	if profile.dexterity_scaling > 0.0:
+		scaling.append("DEX %.2f" % profile.dexterity_scaling)
+	if profile.magic_scaling > 0.0:
+		scaling.append("MAG %.2f" % profile.magic_scaling)
+	if not scaling.is_empty():
+		lines.append("Scaling: %s" % " / ".join(scaling))
+	lines.append("Speed x%.2f  Reach x%.2f  Stagger %.2f" % [
+		profile.attack_speed_multiplier,
+		profile.reach_multiplier,
+		profile.stagger_power,
+	])
+	if not profile.ammunition_type.is_empty():
+		lines.append("Ammunition: %s" % _enum_label(profile.ammunition_type))
+
+
+func _append_offhand_profile(
+	lines: PackedStringArray,
+	profile: ItemOffhandProfile
+) -> void:
+	if profile == null:
+		return
+	lines.append("Offhand: %s" % _enum_label(
+		ItemOffhandProfile.Family.keys()[profile.family]
+	))
+	var actions := PackedStringArray()
+	for entry: Dictionary in [
+		{"flag": ItemOffhandProfile.Action.GUARD, "label": "Guard"},
+		{"flag": ItemOffhandProfile.Action.PARRY, "label": "Parry"},
+		{"flag": ItemOffhandProfile.Action.CAST, "label": "Cast"},
+		{"flag": ItemOffhandProfile.Action.AIM, "label": "Aim"},
+		{"flag": ItemOffhandProfile.Action.FIRE, "label": "Fire"},
+	]:
+		if profile.has_action(int(entry.flag) as ItemOffhandProfile.Action):
+			actions.append(String(entry.label))
+	if not actions.is_empty():
+		lines.append("Actions: %s" % ", ".join(actions))
+	lines.append("Block %.0f%%  Stability %.2f  Parry x%.2f" % [
+		profile.block_damage_reduction * 100.0,
+		profile.guard_stability,
+		profile.parry_window_multiplier,
+	])
+
+
+func _enum_label(value: Variant) -> String:
+	return String(value).replace("_", " ").capitalize()
 
 
 func _on_inventory_changed() -> void:

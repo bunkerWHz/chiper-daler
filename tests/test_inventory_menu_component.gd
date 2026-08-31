@@ -225,6 +225,23 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	crossbow.stats.damage = 12.0
 	crossbow.stats.dexterity_requirement = 3
 	crossbow.sell_price = 100
+	crossbow.weapon_profile = ItemWeaponProfile.new()
+	crossbow.weapon_profile.combat_mode = ItemData.CombatMode.CROSSBOW
+	crossbow.weapon_profile.family = ItemWeaponProfile.Family.CROSSBOW
+	crossbow.weapon_profile.handedness = (
+		ItemWeaponProfile.Handedness.TWO_HANDED
+	)
+	crossbow.weapon_profile.primary_damage_type = (
+		ItemWeaponProfile.DamageType.PIERCE
+	)
+	crossbow.weapon_profile.moveset_id = &"crossbow_test"
+	crossbow.weapon_profile.available_actions = (
+		ItemWeaponProfile.Action.AIM
+		| ItemWeaponProfile.Action.FIRE
+		| ItemWeaponProfile.Action.RELOAD
+	)
+	crossbow.weapon_profile.dexterity_scaling = 0.8
+	crossbow.weapon_profile.ammunition_type = &"bolt"
 	inventory.add_item(crossbow)
 	menu._on_category_selected(ItemData.Category.WEAPON + 1)
 	assert_eq(grid.get_child_count(), 1)
@@ -299,6 +316,17 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(details.text.contains("Requirements not met: DEX 3"))
 	assert_true(details.text.contains("Compared with Test Sword"))
 	assert_true(details.text.contains("Damage +7.0"))
+	assert_true(details.text.contains("Weapon: Crossbow  Two Handed  Pierce"))
+	assert_true(details.text.contains("Actions: Aim, Fire, Reload"))
+	assert_true(details.text.contains("Scaling: DEX 0.80"))
+	assert_true(details.text.contains("Ammunition: Bolt"))
+	var shield := load(
+		"res://features/inventory/items/WoodenShield.tres"
+	) as ItemData
+	var shield_details := menu._get_item_details(shield)
+	assert_true(shield_details.contains("Offhand: Medium Shield"))
+	assert_true(shield_details.contains("Actions: Guard, Parry"))
+	assert_true(shield_details.contains("Block 50%"))
 	assert_true(equip_button.disabled)
 	menu._activate_weapon_set(1)
 	assert_eq(equipment.get_active_weapon_set(), 1)
