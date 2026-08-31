@@ -110,6 +110,9 @@ Actor Scene Structure
 -   Components use Node unless they own spatial children or transforms.
 -   `_Visual` and `_Sockets` are Node2D branches owned by the Actor scene.
 -   Gameplay behavior stays in components; the Player script stays minimal.
+-   Out-of-bounds detection is a focused gameplay component. It reports lethal
+    failure through `HealthComponent`; death and checkpoint respawn remain owned
+    by their existing components.
 -   New world actors start from `framework/core/Actor.tscn`.
 -   The Actor template contains no gameplay or test components by default.
 

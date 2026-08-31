@@ -19,6 +19,11 @@ Temporary combat and status phases are intentionally cleared by death.
 If replacing the Player scene is impossible, respawn safely falls back to the
 previous full-scene reload behavior.
 
+For platforming tests, `ViewportFallDeathComponent` kills the Player after its
+origin passes 32 pixels below the visible viewport. It uses the regular health,
+death, and respawn chain, so the replacement appears at the latest RestPoint
+checkpoint without reloading the level.
+
 The main sandbox contains a `RestPoint` near the initial Player position. Press
 `E` beside its blue marker to activate it.
 

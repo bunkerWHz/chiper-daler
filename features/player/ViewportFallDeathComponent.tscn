@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://features/player/ViewportFallDeathComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/player/ViewportFallDeathConfig.gd" id="2_config"]
+
+[sub_resource type="Resource" id="ViewportFallDeathConfig_default"]
+script = ExtResource("2_config")
+
+[node name="ViewportFallDeathComponent" type="Node"]
+script = ExtResource("1_component")
+config = SubResource("ViewportFallDeathConfig_default")

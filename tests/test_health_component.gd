@@ -176,6 +176,39 @@ func test_player_respawn_stores_checkpoint_position() -> void:
 	assert_eq(respawn.get_checkpoint_position(), Vector2(120.0, 64.0))
 
 
+func test_falling_below_viewport_uses_normal_death_and_respawn_flow() -> void:
+	PlayerRespawnComponent.clear_saved_checkpoints()
+	var actor := track(Actor.new()) as Actor
+	actor.global_position = Vector2(24.0, 40.0)
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+	var health := HealthComponent.new()
+	var health_config := HealthConfig.new()
+	health_config.max_health = 10.0
+	health.config = health_config
+	var respawn := PlayerRespawnComponent.new()
+	respawn.config = PlayerRespawnConfig.new()
+	var fall_death := ViewportFallDeathComponent.new()
+	var fall_config := ViewportFallDeathConfig.new()
+	fall_config.bottom_margin = 10.0
+	fall_death.config = fall_config
+	for component: Component in [health, respawn, fall_death]:
+		container.add_child(component)
+	actor._collect_components()
+	var viewport_rect := Rect2(Vector2.ZERO, Vector2(320.0, 180.0))
+	assert_false(fall_death._check_screen_position(
+		Vector2(24.0, 190.0), viewport_rect
+	))
+	assert_true(health.is_alive())
+	assert_true(fall_death._check_screen_position(
+		Vector2(24.0, 191.0), viewport_rect
+	))
+	assert_true(health.is_dead())
+	assert_true(respawn.is_restart_scheduled())
+	assert_eq(respawn.get_checkpoint_position(), Vector2(24.0, 40.0))
+
+
 func test_player_respawn_transfers_component_runtime_state() -> void:
 	var source := track(Actor.new()) as Actor
 	var source_components := Node2D.new()

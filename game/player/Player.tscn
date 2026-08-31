@@ -52,6 +52,7 @@
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessHUDComponent.tscn" id="46_quick_hud"]
 [ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
 [ext_resource type="PackedScene" path="res://features/stamina/StaminaComponent.tscn" id="48_stamina"]
+[ext_resource type="PackedScene" path="res://features/player/ViewportFallDeathComponent.tscn" id="49_fall_death"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -309,6 +310,8 @@ config = SubResource("Resource_lg056")
 [node name="InvulnerabilityComponent" parent="_Components" instance=ExtResource("20_invulnerability")]
 
 [node name="PlayerRespawnComponent" parent="_Components" instance=ExtResource("18_respawn")]
+
+[node name="ViewportFallDeathComponent" parent="_Components" instance=ExtResource("49_fall_death")]
 
 [node name="DeathComponent" parent="_Components" instance=ExtResource("16_death")]
 config = SubResource("DeathConfig_player")
