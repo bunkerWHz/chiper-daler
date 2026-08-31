@@ -392,6 +392,14 @@ func get_total_defense() -> float:
 	return total
 
 
+func get_total_poise() -> float:
+	var total := 0.0
+	for item: ItemData in _get_effective_equipped_items():
+		if item.armor_profile != null:
+			total += item.armor_profile.poise
+	return total
+
+
 func get_total_equipped_weight() -> float:
 	if _inventory_component == null:
 		return 0.0

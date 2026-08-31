@@ -365,6 +365,7 @@ func _get_item_details(item: ItemData) -> String:
 	])
 	_append_weapon_profile(detail_lines, item.weapon_profile)
 	_append_offhand_profile(detail_lines, item.offhand_profile)
+	_append_armor_profile(detail_lines, item.armor_profile)
 	_append_item_stats(detail_lines, item)
 	return "\n".join(detail_lines)
 
@@ -827,7 +828,8 @@ func _rebuild_equipment_text() -> void:
 		wisdom = attributes.wisdom
 	_equipment_text.text = (
 		"STR %d  DEX %d  INT %d\n"
-		+ "END %d  WIS %d  Defense %.1f\nLoad %.1f / %.1f (%.0f%%)"
+		+ "END %d  WIS %d  Defense %.1f  Poise %.1f\n"
+		+ "Load %.1f / %.1f (%.0f%%)"
 	) % [
 		strength,
 		dexterity,
@@ -835,6 +837,7 @@ func _rebuild_equipment_text() -> void:
 		endurance,
 		wisdom,
 		_equipment.get_total_defense(),
+		_equipment.get_total_poise(),
 		_equipment.get_total_equipped_weight(),
 		_equipment.get_max_equip_load(),
 		_equipment.get_equip_load_ratio() * 100.0,
@@ -957,6 +960,20 @@ func _append_offhand_profile(
 		profile.guard_stability,
 		profile.parry_window_multiplier,
 	])
+
+
+func _append_armor_profile(
+	lines: PackedStringArray,
+	profile: ItemArmorProfile
+) -> void:
+	if profile == null:
+		return
+	lines.append("Armor: %s  Poise %.1f" % [
+		_enum_label(ItemArmorProfile.ArmorClass.keys()[profile.armor_class]),
+		profile.poise,
+	])
+	if not profile.set_id.is_empty():
+		lines.append("Set: %s" % _enum_label(profile.set_id))
 
 
 func _enum_label(value: Variant) -> String:

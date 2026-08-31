@@ -98,6 +98,11 @@ Combat actions do not consume stamina yet. The starting inventory replaces the
 old sword, shield, focus, and spear with the new weapon/offhand batches; the
 legacy bow and crossbow remain only until their replacement resources exist.
 
+Armor uses a dedicated profile with light, heavy, and robe classes, set ID, and
+poise. The first comparison batch contains one chest item per class and is
+included in the starting inventory. Defense and weight remain shared equipment
+data; total equipped poise is exposed for the later stagger-resistance system.
+
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,
 and rage flasks with three charges each, and two Experience Tonics. These are

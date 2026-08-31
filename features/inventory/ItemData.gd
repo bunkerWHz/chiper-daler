@@ -92,6 +92,7 @@ enum UseVisualEffect {
 @export var equipment_profile: ItemEquipmentProfile
 @export var weapon_profile: ItemWeaponProfile
 @export var offhand_profile: ItemOffhandProfile
+@export var armor_profile: ItemArmorProfile
 @export var consumable_profile: ItemConsumableProfile
 
 # Kept as serialized fallback data while old resources and saves are migrated.

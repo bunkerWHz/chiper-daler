@@ -194,3 +194,17 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)
 	assert_eq(dagger.offhand_profile.family, ItemOffhandProfile.Family.PARRYING_DAGGER)
 	assert_eq(dagger.offhand_profile.parry_window_multiplier, 1.5)
+
+
+func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
+	var light := load("res://features/inventory/items/ScoutLeatherArmor.tres") as ItemData
+	var heavy := load("res://features/inventory/items/KnightPlateArmor.tres") as ItemData
+	var robe := load("res://features/inventory/items/ScholarRobe.tres") as ItemData
+	assert_eq(light.armor_profile.armor_class, ItemArmorProfile.ArmorClass.LIGHT)
+	assert_eq(heavy.armor_profile.armor_class, ItemArmorProfile.ArmorClass.HEAVY)
+	assert_eq(robe.armor_profile.armor_class, ItemArmorProfile.ArmorClass.ROBE)
+	assert_true(heavy.weight > light.weight)
+	assert_true(heavy.get_equipment_stats().defense > light.get_equipment_stats().defense)
+	assert_true(heavy.armor_profile.poise > light.armor_profile.poise)
+	assert_true(light.weight > robe.weight)
+	assert_eq(robe.get_equipment_stats().intelligence_requirement, 5)
