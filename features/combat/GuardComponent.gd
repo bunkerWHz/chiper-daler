@@ -157,7 +157,13 @@ func modify_damage(hit: HitData, damage: float) -> float:
 	if not _is_guarding:
 		return damage
 
-	var modified_damage := damage * config.damage_multiplier
+	var damage_multiplier := config.damage_multiplier
+	if _equipment_component != null:
+		damage_multiplier = float(_equipment_component.call(
+			"get_active_block_damage_multiplier",
+			config.damage_multiplier
+		))
+	var modified_damage := damage * damage_multiplier
 	var prevented_damage := damage - modified_damage
 	damage_blocked.emit(hit, prevented_damage)
 	return modified_damage
@@ -192,7 +198,12 @@ func start_parry() -> bool:
 		return false
 
 	stop_guard()
-	_parry_timer = config.parry_window
+	var window_multiplier := 1.0
+	if _equipment_component != null:
+		window_multiplier = float(_equipment_component.call(
+			"get_active_parry_window_multiplier"
+		))
+	_parry_timer = config.parry_window * window_multiplier
 	_parry_cooldown_timer = config.parry_cooldown
 	parry_started.emit()
 	return true

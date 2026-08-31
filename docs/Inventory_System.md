@@ -88,6 +88,9 @@ The remaining two-handed batch adds training great hammer, staff, halberd, and
 scythe. The staff exposes cast/channel actions and intelligence scaling; the
 great hammer leads stagger and weight; the halberd leads reach; the scythe
 leans toward dexterity and critical damage.
+The first offhand batch adds buckler, greatshield, and parrying dagger. Shield
+block reduction and parry-window multipliers now affect `GuardComponent`;
+stability remains reserved for the future stamina/poise system.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

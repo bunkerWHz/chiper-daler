@@ -1,0 +1,31 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemOffhandProfile.gd" id="4"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+defense = 10.0
+strength_requirement = 8
+endurance_requirement = 6
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("3")
+allowed_slots = Array[int]([2])
+stats = SubResource("stats")
+[sub_resource type="Resource" id="offhand"]
+script = ExtResource("4")
+family = 3
+available_actions = 1
+block_damage_reduction = 0.75
+guard_stability = 2.5
+parry_window_multiplier = 0.6
+[resource]
+script = ExtResource("1")
+id = &"training_greatshield"
+display_name = "Training Greatshield"
+description = "A massive shield focused on damage reduction and stability."
+category = 1
+weight = 10.0
+equipment_profile = SubResource("equipment")
+offhand_profile = SubResource("offhand")
+sell_price = 48

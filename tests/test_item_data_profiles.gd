@@ -179,3 +179,18 @@ func test_specialized_two_handed_weapon_batch_has_expected_roles() -> void:
 	assert_eq(halberd.weapon_profile.reach_multiplier, 1.6)
 	assert_eq(scythe.weapon_profile.family, ItemWeaponProfile.Family.SCYTHE)
 	assert_eq(scythe.weapon_profile.critical_damage_multiplier, 2.5)
+
+
+func test_offhand_batch_has_distinct_defensive_roles() -> void:
+	var buckler := load("res://features/inventory/items/TrainingBuckler.tres") as ItemData
+	var greatshield := load("res://features/inventory/items/TrainingGreatshield.tres") as ItemData
+	var dagger := load("res://features/inventory/items/TrainingParryingDagger.tres") as ItemData
+	assert_eq(buckler.offhand_profile.family, ItemOffhandProfile.Family.BUCKLER)
+	assert_true(buckler.has_offhand_action(ItemOffhandProfile.Action.PARRY))
+	assert_eq(buckler.offhand_profile.parry_window_multiplier, 1.35)
+	assert_eq(greatshield.offhand_profile.family, ItemOffhandProfile.Family.GREATSHIELD)
+	assert_true(greatshield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
+	assert_false(greatshield.has_offhand_action(ItemOffhandProfile.Action.PARRY))
+	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)
+	assert_eq(dagger.offhand_profile.family, ItemOffhandProfile.Family.PARRYING_DAGGER)
+	assert_eq(dagger.offhand_profile.parry_window_multiplier, 1.5)

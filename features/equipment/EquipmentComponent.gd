@@ -365,6 +365,24 @@ func get_active_weapon_critical_multiplier(fallback: float = 2.0) -> float:
 	)
 
 
+func get_active_block_damage_multiplier(fallback: float) -> float:
+	var off_hand := get_equipped_item(ItemData.EquipSlot.OFF_HAND)
+	return (
+		1.0 - off_hand.offhand_profile.block_damage_reduction
+		if off_hand != null and off_hand.offhand_profile != null
+		else fallback
+	)
+
+
+func get_active_parry_window_multiplier() -> float:
+	var off_hand := get_equipped_item(ItemData.EquipSlot.OFF_HAND)
+	return (
+		off_hand.offhand_profile.parry_window_multiplier
+		if off_hand != null and off_hand.offhand_profile != null
+		else 1.0
+	)
+
+
 func get_total_defense() -> float:
 	var total := 0.0
 	for item: ItemData in _get_effective_equipped_items():
