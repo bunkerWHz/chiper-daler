@@ -121,6 +121,9 @@ At zero charges the item and hotbar binding remain visible and selectable, but
 use is disabled. Flasks cannot be stacked, removed, dropped, or transferred;
 sanctuary rest refills every owned flask. Their runtime charge state is saved
 independently from inventory ownership.
+Persistent flasks are also rejected by enemy loot tables and loot bags. The
+default test enemy drops an ordinary Experience Tonic instead, so every item in
+its bag can be collected normally.
 
 ## Implementation stages
 

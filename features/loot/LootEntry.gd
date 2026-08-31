@@ -11,6 +11,7 @@ func is_valid() -> bool:
 	return (
 		item != null
 		and item.is_valid()
+		and not item.is_flask()
 		and minimum_quantity > 0
 		and maximum_quantity >= minimum_quantity
 	)

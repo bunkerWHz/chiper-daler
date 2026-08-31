@@ -82,6 +82,32 @@ func test_enemy_death_drops_configured_loot_bag_once() -> void:
 	assert_eq(world.get_child_count(), 2)
 
 
+func test_persistent_flasks_cannot_enter_loot_tables_or_bags() -> void:
+	var flask := load(
+		"res://features/inventory/items/HealthPotion.tres"
+	) as ItemData
+	var entry := LootEntry.new()
+	entry.item = flask
+	var bag := track(LootBag.new()) as LootBag
+
+	assert_false(entry.is_valid())
+	assert_eq(entry.roll_quantity(), 0)
+	assert_eq(bag.add_item(flask), 0)
+	assert_true(bag.is_empty())
+
+
+func test_default_enemy_loot_uses_collectible_non_flask_item() -> void:
+	var drop_scene := load(
+		"res://features/loot/LootDropComponent.tscn"
+	) as PackedScene
+	var drop := track(drop_scene.instantiate()) as LootDropComponent
+
+	assert_eq(drop.loot_entries.size(), 1)
+	assert_true(drop.loot_entries[0].is_valid())
+	assert_false(drop.loot_entries[0].item.is_flask())
+	assert_eq(drop.loot_entries[0].item.id, &"experience_tonic")
+
+
 func test_full_inventory_leaves_remainder_in_bag() -> void:
 	var collector := track(Actor.new()) as Actor
 	var components := Node2D.new()

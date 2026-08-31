@@ -17,7 +17,12 @@ func _ready() -> void:
 
 
 func add_item(item: ItemData, quantity: int = 1) -> int:
-	if item == null or not item.is_valid() or quantity <= 0:
+	if (
+		item == null
+		or not item.is_valid()
+		or item.is_flask()
+		or quantity <= 0
+	):
 		return 0
 
 	var remaining := quantity
