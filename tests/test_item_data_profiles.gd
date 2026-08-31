@@ -216,3 +216,10 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 		var head := load(path) as ItemData
 		assert_true(head.can_equip_in(ItemData.EquipSlot.HEAD))
 		assert_false(head.armor_profile.set_id.is_empty())
+	for path: String in [
+		"res://features/inventory/items/ScoutLeatherMantle.tres",
+		"res://features/inventory/items/KnightPlatePauldrons.tres",
+		"res://features/inventory/items/ScholarMantle.tres",
+	]:
+		var shoulder := load(path) as ItemData
+		assert_true(shoulder.can_equip_in(ItemData.EquipSlot.SHOULDER))

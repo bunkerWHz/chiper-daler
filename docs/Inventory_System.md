@@ -104,6 +104,8 @@ included in the starting inventory. Defense and weight remain shared equipment
 data; total equipped poise is exposed for the later stagger-resistance system.
 Each armor class now also has a head item in the same set: scout leather hood,
 knight plate helm, and scholar hood.
+The same three sets include shoulder items: scout leather mantle, knight plate
+pauldrons, and scholar mantle.
 
 The starting inventory contains a Rusty Sword, Wooden Shield, Short Bow, Light
 Crossbow, Apprentice Focus, temporary Training Spear, permanent health, mana,

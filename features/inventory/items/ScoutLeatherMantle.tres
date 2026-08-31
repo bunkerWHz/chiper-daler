@@ -1,0 +1,27 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+defense = 2.5
+dexterity_requirement = 3
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("3")
+allowed_slots = Array[int]([12])
+stats = SubResource("stats")
+[sub_resource type="Resource" id="armor"]
+script = ExtResource("4")
+set_id = &"scout_leather"
+poise = 0.5
+[resource]
+script = ExtResource("1")
+id = &"scout_leather_mantle"
+display_name = "Scout Leather Mantle"
+description = "A flexible shoulder mantle for a light armor set."
+category = 1
+weight = 1.0
+equipment_profile = SubResource("equipment")
+armor_profile = SubResource("armor")
+sell_price = 16
