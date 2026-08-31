@@ -88,9 +88,11 @@ The remaining two-handed batch adds training great hammer, staff, halberd, and
 scythe. The staff exposes cast/channel actions and intelligence scaling; the
 great hammer leads stagger and weight; the halberd leads reach; the scythe
 leans toward dexterity and critical damage.
-The first offhand batch adds buckler, greatshield, and parrying dagger. Shield
-block reduction and parry-window multipliers now affect `GuardComponent`;
-stability remains reserved for the future stamina/poise system.
+The current offhand catalog contains buckler and greatshield. Daggers are
+main-hand-only for now; the former parrying-dagger resource is retained as a
+legacy main-hand dagger but is excluded from the starting inventory. Shield
+block reduction and parry-window multipliers affect `GuardComponent`; stability
+remains reserved for the future stamina/poise system.
 
 The Player now owns a minimal stamina resource with spending, delayed
 regeneration, restoration, save-state support, and a temporary green HUD bar.
@@ -130,6 +132,7 @@ longer included in the starting inventory or weapon sets.
 
 Inventory icons support double-click equipment. The action fills the first free
 compatible slot and replaces slot zero when every compatible slot is occupied.
+Double-clicking an occupied equipment slot unequips its item back to the bag.
 Equipping a two-handed weapon replaces both hands. Bows and crossbows then put
 the first compatible ammunition stack into the active set's offhand: arrows for
 bows and bolts for crossbows. Without compatible ammunition, the ranged weapon

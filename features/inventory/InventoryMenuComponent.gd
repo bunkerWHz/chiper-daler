@@ -582,6 +582,11 @@ func _add_equipment_slot_button(
 		button.pressed.connect(
 			_select_equipped_slot.bind(slot, index, weapon_set)
 		)
+		button.double_clicked.connect(
+			_unequip_equipped_item_by_double_click.bind(
+				slot, index, weapon_set
+			)
+		)
 		button.mouse_entered.connect(show_item_details.bind(item.id))
 		button.mouse_exited.connect(hide_hover_details)
 		button.focus_entered.connect(show_item_details.bind(item.id))
@@ -597,6 +602,15 @@ func _select_equipped_slot(
 	var item_id := _equipment.get_equipped_item_id(slot, index, weapon_set)
 	if not item_id.is_empty():
 		_select_item(item_id)
+
+
+func _unequip_equipped_item_by_double_click(
+	slot: ItemData.EquipSlot,
+	index: int,
+	weapon_set: int
+) -> void:
+	if _equipment.unequip_item(slot, index, weapon_set):
+		_rebuild()
 
 
 func _activate_weapon_set(set_index: int) -> void:

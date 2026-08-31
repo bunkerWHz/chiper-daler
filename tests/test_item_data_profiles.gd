@@ -128,6 +128,8 @@ func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 	assert_eq(dagger.weapon_profile.reach_multiplier, 0.7)
 	assert_eq(dagger.weapon_profile.critical_damage_multiplier, 3.0)
 	assert_true(dagger.weapon_profile.dexterity_scaling > rapier.weapon_profile.dexterity_scaling)
+	assert_true(dagger.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
+	assert_false(dagger.can_equip_in(ItemData.EquipSlot.OFF_HAND))
 
 
 func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
@@ -219,7 +221,6 @@ func test_specialized_two_handed_weapon_batch_has_expected_roles() -> void:
 func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	var buckler := load("res://features/inventory/items/TrainingBuckler.tres") as ItemData
 	var greatshield := load("res://features/inventory/items/TrainingGreatshield.tres") as ItemData
-	var dagger := load("res://features/inventory/items/TrainingParryingDagger.tres") as ItemData
 	assert_eq(buckler.offhand_profile.family, ItemOffhandProfile.Family.BUCKLER)
 	assert_true(buckler.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(buckler.offhand_profile.parry_window_multiplier, 1.35)
@@ -227,8 +228,12 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	assert_true(greatshield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
 	assert_false(greatshield.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)
-	assert_eq(dagger.offhand_profile.family, ItemOffhandProfile.Family.PARRYING_DAGGER)
-	assert_eq(dagger.offhand_profile.parry_window_multiplier, 1.5)
+	var legacy_dagger := load(
+		"res://features/inventory/items/TrainingParryingDagger.tres"
+	) as ItemData
+	assert_true(legacy_dagger.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
+	assert_false(legacy_dagger.can_equip_in(ItemData.EquipSlot.OFF_HAND))
+	assert_eq(legacy_dagger.weapon_profile.family, ItemWeaponProfile.Family.DAGGER)
 
 
 func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:

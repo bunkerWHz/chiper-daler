@@ -2,26 +2,35 @@
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1"]
 [ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2"]
 [ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemOffhandProfile.gd" id="4"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4"]
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
+damage = 6.0
 dexterity_requirement = 4
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")
-allowed_slots = Array[int]([2])
+allowed_slots = Array[int]([1])
 stats = SubResource("stats")
-[sub_resource type="Resource" id="offhand"]
+[sub_resource type="Resource" id="weapon"]
 script = ExtResource("4")
-family = 5
-available_actions = 2
-parry_window_multiplier = 1.5
+combat_mode = 1
+visual_archetype = 1
+family = 4
+primary_damage_type = 2
+moveset_id = &"dagger_basic"
+available_actions = 11
+attack_speed_multiplier = 1.4
+reach_multiplier = 0.7
+stagger_power = 0.4
+critical_damage_multiplier = 3.0
+dexterity_scaling = 1.0
 [resource]
 script = ExtResource("1")
 id = &"training_parrying_dagger"
-display_name = "Training Parrying Dagger"
-description = "An offhand dagger specialized for precise parries."
+display_name = "Legacy Parrying Dagger"
+description = "A legacy dagger retained as a main-hand weapon for compatibility."
 category = 0
 weight = 0.8
 equipment_profile = SubResource("equipment")
-offhand_profile = SubResource("offhand")
+weapon_profile = SubResource("weapon")
 sell_price = 26

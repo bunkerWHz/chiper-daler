@@ -365,6 +365,13 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		equipment.get_equipped_item_id(ItemData.EquipSlot.FEET),
 		boots_two.id
 	)
+	var equipped_boots_button := (
+		equipment_slots.get_child(16) as InventoryDragButton
+	)
+	equipped_boots_button.double_clicked.emit()
+	assert_true(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.FEET).is_empty()
+	)
 	menu.close_inventory()
 	assert_false(menu.is_open())
 

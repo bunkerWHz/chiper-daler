@@ -45,7 +45,6 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"training_scythe",
 		&"training_buckler",
 		&"training_greatshield",
-		&"training_parrying_dagger",
 		&"training_sword",
 		&"training_longspear",
 		&"training_wand",
@@ -82,6 +81,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		&"training_spear",
 		&"short_bow",
 		&"light_crossbow",
+		&"training_parrying_dagger",
 	]:
 		assert_eq(inventory.get_quantity(removed_id), 0)
 	assert_eq(inventory.get_quantity(&"health_potion"), 1)
