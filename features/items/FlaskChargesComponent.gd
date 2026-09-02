@@ -73,9 +73,9 @@ func restore_runtime_state(state: Variant) -> void:
 		return
 	_register_owned_flasks()
 	for item_id: StringName in _charges.keys():
-		var state_key: Variant = (
-			item_id if state.has(item_id) else String(item_id)
-		)
+		var state_key: Variant = item_id
+		if not state.has(state_key):
+			state_key = String(item_id)
 		if not state.has(state_key):
 			continue
 		_charges[item_id] = clampi(

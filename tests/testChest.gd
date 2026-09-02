@@ -1,5 +1,4 @@
 extends Actor
-class_name TestChest
 
 @onready var interactable: InteractableComponent = (
 	get_component(InteractableComponent)

@@ -206,12 +206,12 @@ func _resolve_movement_state() -> ActorState.Behavior:
 
 
 func _resolve_statuses() -> int:
-	var result := ActorState.Status.NONE
+	var result: int = int(ActorState.Status.NONE)
 	if _status_effect_component != null and _status_effect_component.is_enabled:
 		if _status_effect_component.has_debuff():
-			result |= ActorState.Status.DEBUFFED
+			result |= int(ActorState.Status.DEBUFFED)
 		if _status_effect_component.has_buff():
-			result |= ActorState.Status.BUFFED
+			result |= int(ActorState.Status.BUFFED)
 	return result
 
 

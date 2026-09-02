@@ -78,10 +78,15 @@ func _build_sprite_frames() -> SpriteFrames:
 	return frames
 
 
-func _add_animation(frames: SpriteFrames, name: StringName, folder: StringName, loops: bool) -> void:
-	frames.add_animation(name)
-	frames.set_animation_speed(name, config.frames_per_second)
-	frames.set_animation_loop(name, loops)
+func _add_animation(
+	frames: SpriteFrames,
+	animation_name: StringName,
+	folder: StringName,
+	loops: bool
+) -> void:
+	frames.add_animation(animation_name)
+	frames.set_animation_speed(animation_name, config.frames_per_second)
+	frames.set_animation_loop(animation_name, loops)
 	var directory_path := config.animation_root.path_join(String(folder))
 	var files := DirAccess.get_files_at(directory_path)
 	files.sort()
@@ -89,7 +94,7 @@ func _add_animation(frames: SpriteFrames, name: StringName, folder: StringName, 
 		if file_name.to_lower().ends_with(".png"):
 			var texture := load(directory_path.path_join(file_name)) as Texture2D
 			if texture != null:
-				frames.add_frame(name, texture)
+				frames.add_frame(animation_name, texture)
 
 
 func _play(animation_name: StringName) -> void:

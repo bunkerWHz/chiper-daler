@@ -182,7 +182,7 @@ func _create_profile(
 
 func _build_effect_frames() -> void:
 	var item_effect_speed := (
-		float(HEAL_EFFECT.get_width() / EFFECT_FRAME_SIZE.x)
+		float(HEAL_EFFECT.get_width()) / float(EFFECT_FRAME_SIZE.x)
 		/ maxf(_item_use.config.use_duration, 0.01)
 	)
 	_effect_frames[ItemData.UseVisualEffect.HEAL] = _create_effect_frames(
@@ -225,7 +225,7 @@ func _add_strip(
 	frames.add_animation(animation_name)
 	frames.set_animation_speed(animation_name, speed)
 	frames.set_animation_loop(animation_name, loop)
-	var frame_count := int(texture.get_width() / frame_size.x)
+	var frame_count := floori(float(texture.get_width()) / float(frame_size.x))
 	if frame_limit > 0:
 		frame_count = mini(frame_count, frame_limit)
 	for frame_index in frame_count:

@@ -116,7 +116,7 @@ func split_stack(item_id: StringName, quantity: int = -1) -> bool:
 			continue
 		var split_quantity := quantity
 		if split_quantity <= 0:
-			split_quantity = stack.quantity / 2
+			split_quantity = floori(float(stack.quantity) / 2.0)
 		split_quantity = clampi(split_quantity, 1, stack.quantity - 1)
 		stack.quantity -= split_quantity
 		_stacks.append(InventoryStack.new(stack.item, split_quantity))
