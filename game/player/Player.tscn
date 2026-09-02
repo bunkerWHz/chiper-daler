@@ -291,6 +291,8 @@ script = ExtResource("1_wv0h6")
 faction = 1
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
+collision_layer = 8
+collision_mask = 1
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")

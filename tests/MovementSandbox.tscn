@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://features/rest/RestPoint.tscn" id="8_rest_point"]
 [ext_resource type="PackedScene" path="res://features/level/LevelExit.tscn" id="9_level_exit"]
 [ext_resource type="PackedScene" path="res://features/progression/ui/PlayerResourceBarsView.tscn" id="10_resource_bars"]
+[ext_resource type="PackedScene" path="res://game/enemy/FlyingEnemy.tscn" id="11_flying_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(400, 10)
@@ -76,6 +77,9 @@ position = Vector2(161, 323)
 
 [node name="Enemy" parent="." unique_id=492946956 instance=ExtResource("5_6luox")]
 position = Vector2(534, 337)
+
+[node name="FlyingEnemy" parent="." instance=ExtResource("11_flying_enemy")]
+position = Vector2(420, 235)
 
 [node name="LevelExit" parent="." unique_id=268007414 instance=ExtResource("9_level_exit")]
 position = Vector2(778, 403)

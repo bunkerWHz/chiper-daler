@@ -11,10 +11,10 @@ const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
 @export var visual_path: NodePath = ^"_Visual"
 
 var _attack_component: AttackComponent
-var _movement_component: EnemyMovementComponent
+var _movement_component: Component
 var _detection_area: Area2D
 var _targets: Array[HurtboxComponent] = []
-var _stored_move_direction: float = 0.0
+var _stored_move_direction: Variant = 0.0
 var _movement_stopped: bool = false
 var _visual: CanvasItem
 var _original_modulate: Color = Color.WHITE
@@ -40,10 +40,7 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_movement_component = (
-		actor.get_component(EnemyMovementComponent)
-		as EnemyMovementComponent
-	)
+	_movement_component = EnemyLocomotion.find(actor)
 
 
 func _ready() -> void:
@@ -235,8 +232,8 @@ func _stop_movement() -> void:
 	):
 		return
 
-	_stored_move_direction = _movement_component.get_move_direction()
-	_movement_component.stop()
+	_stored_move_direction = _movement_component.call(&"capture_move_intent")
+	_movement_component.call(&"stop")
 	_movement_stopped = true
 
 
@@ -251,5 +248,5 @@ func _resume_movement() -> void:
 	if not _movement_component.is_enabled:
 		return
 
-	_movement_component.set_move_direction(_stored_move_direction)
+	_movement_component.call(&"restore_move_intent", _stored_move_direction)
 	_movement_stopped = false

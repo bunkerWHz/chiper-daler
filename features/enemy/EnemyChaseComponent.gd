@@ -5,12 +5,12 @@ const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
 
 @export var config: EnemyChaseConfig
 
-var _movement_component: EnemyMovementComponent
+var _movement_component: Component
 var _attack_component: EnemyAttackComponent
 var _ground_sensor: EnemyGroundSensorComponent
 var _detection_area: Area2D
 var _targets: Array[HurtboxComponent] = []
-var _stored_move_direction: float = 0.0
+var _stored_move_direction: Variant = 0.0
 var _is_chasing: bool = false
 
 
@@ -25,13 +25,10 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_movement_component = (
-		actor.get_component(EnemyMovementComponent)
-		as EnemyMovementComponent
-	)
+	_movement_component = EnemyLocomotion.find(actor)
 
 	if _movement_component == null or not _movement_component.is_enabled:
-		push_error("EnemyChaseComponent requires EnemyMovementComponent")
+		push_error("EnemyChaseComponent requires enemy locomotion")
 		disable()
 		return
 
@@ -110,24 +107,24 @@ func _process(_delta: float) -> void:
 		return
 
 	if not _is_chasing:
-		_stored_move_direction = _movement_component.get_move_direction()
+		_stored_move_direction = _movement_component.call(&"capture_move_intent")
 		_is_chasing = true
 
 	var direction := signf(
 		target.actor.global_position.x - actor.global_position.x
 	)
 
-	if is_zero_approx(direction):
+	if _ground_sensor != null and is_zero_approx(direction):
 		return
 
 	if (
 		_ground_sensor != null
 		and not _ground_sensor.is_direction_safe(direction)
 	):
-		_movement_component.stop()
+		_movement_component.call(&"stop")
 		return
 
-	_movement_component.set_move_direction(direction)
+	_movement_component.call(&"set_chase_target", target.actor.global_position)
 
 
 func has_target() -> bool:
@@ -186,5 +183,6 @@ func _restore_patrol() -> void:
 	if not _movement_component.is_enabled:
 		return
 
-	_movement_component.set_move_direction(_stored_move_direction)
+	_movement_component.call(&"clear_chase_target")
+	_movement_component.call(&"restore_move_intent", _stored_move_direction)
 	_is_chasing = false

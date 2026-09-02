@@ -92,3 +92,23 @@ func jump(jump_velocity: float, horizontal_speed: float = -1.0) -> bool:
 
 func get_move_direction() -> float:
 	return _move_direction
+
+
+func set_chase_target(world_position: Vector2) -> void:
+	set_move_direction(signf(world_position.x - actor.global_position.x))
+
+
+func clear_chase_target() -> void:
+	pass
+
+
+func capture_move_intent() -> Variant:
+	return _move_direction
+
+
+func restore_move_intent(intent: Variant) -> void:
+	set_move_direction(float(intent))
+
+
+func get_facing_direction() -> float:
+	return _move_direction

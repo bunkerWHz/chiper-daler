@@ -13,6 +13,7 @@ signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal projectile_fired(phase: Phase, remaining_ammo: int)
 
 const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
+const ARROW_TEXTURE := preload("res://assets/Test/Hero/Archer/Arrow.png")
 const BEHAVIOR_GATE := preload(
 	"res://features/state/ExclusiveBehaviorGate.gd"
 )
@@ -177,7 +178,11 @@ func _process_bow_input() -> void:
 				cancel_aim()
 				return
 			_arrows -= 1
-			_spawn_projectile(config.arrow_speed, config.arrow_damage)
+			_spawn_projectile(
+				config.arrow_speed,
+				config.arrow_damage,
+				ARROW_TEXTURE
+			)
 			projectile_fired.emit(Phase.BOW_LOOSE, _arrows)
 			_set_phase(Phase.BOW_LOOSE, config.release_duration)
 			_cooldown_timer = config.shot_cooldown
@@ -216,7 +221,11 @@ func _update_release(delta: float) -> void:
 		_set_phase(Phase.NONE, 0.0)
 
 
-func _spawn_projectile(speed: float, damage: float) -> void:
+func _spawn_projectile(
+	speed: float,
+	damage: float,
+	visual_texture: Texture2D = null
+) -> void:
 	var parent := actor.get_parent()
 
 	if parent == null:
@@ -231,7 +240,8 @@ func _spawn_projectile(speed: float, damage: float) -> void:
 		speed,
 		damage + _equipment_component.get_active_weapon_damage(),
 		config.knockback,
-		config.projectile_lifetime
+		config.projectile_lifetime,
+		visual_texture
 	)
 
 

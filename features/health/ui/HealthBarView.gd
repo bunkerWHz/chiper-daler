@@ -4,6 +4,7 @@ class_name HealthBarView
 @export var actor_path: NodePath
 
 var _health_component: HealthComponent
+var _respawn_component: PlayerRespawnComponent
 var _displayed_health: float = 0.0
 var _displayed_max_health: float = 1.0
 
@@ -19,13 +20,7 @@ func _ready() -> void:
 			push_error("HealthBarView requires a valid Actor path")
 			return
 
-		var health := target_actor.get_component(HealthComponent) as HealthComponent
-
-		if health == null or not health.is_enabled:
-			push_error("HealthBarView requires an enabled HealthComponent")
-			return
-
-		bind_health(health)
+		_bind_actor(target_actor)
 
 	_apply_display()
 
@@ -56,6 +51,43 @@ func get_displayed_health() -> float:
 
 func get_displayed_max_health() -> float:
 	return _displayed_max_health
+
+
+func _exit_tree() -> void:
+	_disconnect_respawn()
+
+
+func _bind_actor(target_actor: Actor) -> void:
+	var health := target_actor.get_component(HealthComponent) as HealthComponent
+	if health == null or not health.is_enabled:
+		push_error("HealthBarView requires an enabled HealthComponent")
+		return
+
+	_disconnect_respawn()
+	_respawn_component = (
+		target_actor.get_component(PlayerRespawnComponent)
+		as PlayerRespawnComponent
+	)
+	if (
+		_respawn_component != null
+		and not _respawn_component.actor_respawned.is_connected(_on_actor_respawned)
+	):
+		_respawn_component.actor_respawned.connect(_on_actor_respawned)
+	bind_health(health)
+
+
+func _disconnect_respawn() -> void:
+	if (
+		_respawn_component != null
+		and is_instance_valid(_respawn_component)
+		and _respawn_component.actor_respawned.is_connected(_on_actor_respawned)
+	):
+		_respawn_component.actor_respawned.disconnect(_on_actor_respawned)
+	_respawn_component = null
+
+
+func _on_actor_respawned(replacement: Actor) -> void:
+	_bind_actor(replacement)
 
 
 func _on_health_changed(_previous_health: float, current_health: float) -> void:

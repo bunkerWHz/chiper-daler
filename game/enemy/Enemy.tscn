@@ -24,10 +24,25 @@
 [ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="22_actor_state"]
 [ext_resource type="PackedScene" path="res://features/progression/ExperienceRewardComponent.tscn" id="23_experience"]
 [ext_resource type="PackedScene" path="res://features/loot/LootDropComponent.tscn" id="24_loot"]
+[ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="25_visual"]
+[ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="26_visual_config"]
+[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="27_death_config"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
 initial_direction = -1.0
+
+[sub_resource type="Resource" id="EnemyVisualConfig_ground"]
+script = ExtResource("26_visual_config")
+animation_root = "res://assets/Enemies/Test Monster Ground/PNG Sequences"
+frames_per_second = 18.0
+visual_scale = Vector2(0.24, 0.24)
+visual_offset = Vector2(0, -17)
+
+[sub_resource type="Resource" id="EnemyDeathConfig"]
+script = ExtResource("27_death_config")
+duration = 1.0
+fade_visual = false
 
 [node name="Enemy" type="Node2D" unique_id=492946956]
 script = ExtResource("1_enemy")
@@ -38,6 +53,8 @@ script = ExtResource("1_enemy")
 faction = 2
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=1881215311 instance=ExtResource("2_body")]
+collision_layer = 16
+collision_mask = 1
 
 [node name="KnockbackComponent" parent="_Components" instance=ExtResource("14_knockback")]
 
@@ -54,9 +71,10 @@ faction = 2
 [node name="DamageNumberComponent" parent="_Components" instance=ExtResource("13_damage_number")]
 
 [node name="HitReactionComponent" parent="_Components" instance=ExtResource("7_reaction")]
-visual_path = NodePath("_Visual/Placeholder")
+visual_path = NodePath("_Visual/AnimatedSprite2D")
 
 [node name="DeathComponent" parent="_Components" instance=ExtResource("8_death")]
+config = SubResource("EnemyDeathConfig")
 
 [node name="HitboxComponent" parent="_Components" instance=ExtResource("9_hitbox")]
 position = Vector2(-20, 0)
@@ -70,7 +88,7 @@ config = SubResource("EnemyMovementConfig_default")
 [node name="EnemyGroundSensorComponent" parent="_Components" instance=ExtResource("19_ground_sensor")]
 
 [node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("11_enemy_attack")]
-visual_path = NodePath("_Visual/Placeholder")
+visual_path = NodePath("_Visual/AnimatedSprite2D")
 
 [node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("17_chase")]
 
@@ -80,11 +98,13 @@ visual_path = NodePath("_Visual/Placeholder")
 
 [node name="ActorStateComponent" parent="_Components" instance=ExtResource("22_actor_state")]
 
+[node name="EnemyVisualComponent" type="Node" parent="_Components"]
+script = ExtResource("25_visual")
+config = SubResource("EnemyVisualConfig_ground")
+
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 
-[node name="Placeholder" type="Polygon2D" parent="_Visual" unique_id=629312966]
-color = Color(0.8, 0.2, 0.2, 1)
-polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual"]
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 

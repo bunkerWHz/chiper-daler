@@ -77,6 +77,14 @@ func _on_hit_received(_hit: HitData, _applied_damage: float) -> void:
 	if not is_enabled or _visual == null:
 		return
 
+	# Presentation components may apply their final scale after this component's
+	# _ready(). Capture the current resting values when a new reaction starts so
+	# the effect remains relative to the actual visual size.
+	if not is_reacting():
+		_original_modulate = _visual.modulate
+		if _visual is Node2D:
+			_original_scale = (_visual as Node2D).scale
+
 	_reaction_timer = config.duration
 	_visual.modulate = config.flash_modulate
 

@@ -3,6 +3,9 @@ class_name CharacterBodyComponent
 
 const BODY_NODE: String = "CharacterBody2D"
 
+@export_flags_2d_physics var collision_layer: int = 1
+@export_flags_2d_physics var collision_mask: int = 1
+
 var _body: CharacterBody2D
 
 
@@ -12,6 +15,10 @@ func on_initialize() -> void:
 	if _body == null:
 		push_error("CharacterBodyComponent requires CharacterBody2D")
 		disable()
+		return
+
+	_body.collision_layer = collision_layer
+	_body.collision_mask = collision_mask
 
 
 func get_velocity() -> Vector2:

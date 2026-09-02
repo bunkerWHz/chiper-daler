@@ -1,0 +1,115 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/enemy/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://framework/components/CharacterBodyComponent.tscn" id="2_body"]
+[ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="3_health"]
+[ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="4_hurtbox"]
+[ext_resource type="PackedScene" path="res://features/combat/HitReactionComponent.tscn" id="5_reaction"]
+[ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="6_death"]
+[ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="7_hitbox"]
+[ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="8_attack"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="9_enemy_attack"]
+[ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="10_health_bar"]
+[ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="11_damage"]
+[ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="12_knockback"]
+[ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="13_stun"]
+[ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="14_faction"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyChaseComponent.tscn" id="15_chase"]
+[ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="16_state"]
+[ext_resource type="PackedScene" path="res://features/progression/ExperienceRewardComponent.tscn" id="17_experience"]
+[ext_resource type="PackedScene" path="res://features/loot/LootDropComponent.tscn" id="18_loot"]
+[ext_resource type="Script" path="res://features/enemy/EnemyFlightComponent.gd" id="19_flight"]
+[ext_resource type="Script" path="res://features/enemy/EnemyFlightConfig.gd" id="20_flight_config"]
+[ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="21_visual"]
+[ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="22_visual_config"]
+[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="23_death_config"]
+[ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="24_chase_config"]
+
+[sub_resource type="Resource" id="FlightConfig"]
+script = ExtResource("20_flight_config")
+move_speed = 75.0
+patrol_distance = 85.0
+patrol_vertical_amplitude = 10.0
+target_stopping_distance = 28.0
+
+[sub_resource type="Resource" id="VisualConfig"]
+script = ExtResource("22_visual_config")
+animation_root = "res://assets/Enemies/Test Monster Fly/PNG Sequences"
+frames_per_second = 18.0
+visual_scale = Vector2(0.22, 0.22)
+visual_offset = Vector2(0, -5)
+move_folder = &"Fly"
+airborne_folder = &"Fall"
+
+[sub_resource type="Resource" id="DeathConfig"]
+script = ExtResource("23_death_config")
+duration = 1.0
+fade_visual = false
+
+[sub_resource type="Resource" id="ChaseConfig"]
+script = ExtResource("24_chase_config")
+horizontal_range = 220.0
+vertical_range = 150.0
+avoid_unsafe_ground = false
+
+[node name="FlyingEnemy" type="Node2D"]
+script = ExtResource("1_enemy")
+
+[node name="_Components" type="Node2D" parent="."]
+
+[node name="CombatFactionComponent" parent="_Components" instance=ExtResource("14_faction")]
+faction = 2
+
+[node name="CharacterBodyComponent" parent="_Components" instance=ExtResource("2_body")]
+collision_layer = 16
+collision_mask = 1
+
+[node name="KnockbackComponent" parent="_Components" instance=ExtResource("12_knockback")]
+
+[node name="HitStunComponent" parent="_Components" instance=ExtResource("13_stun")]
+
+[node name="HealthComponent" parent="_Components" instance=ExtResource("3_health")]
+
+[node name="HurtboxComponent" parent="_Components" instance=ExtResource("4_hurtbox")]
+
+[node name="ExperienceRewardComponent" parent="_Components" instance=ExtResource("17_experience")]
+
+[node name="LootDropComponent" parent="_Components" instance=ExtResource("18_loot")]
+
+[node name="DamageNumberComponent" parent="_Components" instance=ExtResource("11_damage")]
+
+[node name="HitReactionComponent" parent="_Components" instance=ExtResource("5_reaction")]
+visual_path = NodePath("_Visual/AnimatedSprite2D")
+
+[node name="DeathComponent" parent="_Components" instance=ExtResource("6_death")]
+config = SubResource("DeathConfig")
+
+[node name="HitboxComponent" parent="_Components" instance=ExtResource("7_hitbox")]
+position = Vector2(-24, 0)
+
+[node name="AttackComponent" parent="_Components" instance=ExtResource("8_attack")]
+
+[node name="EnemyFlightComponent" type="Node" parent="_Components"]
+script = ExtResource("19_flight")
+config = SubResource("FlightConfig")
+
+[node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("9_enemy_attack")]
+visual_path = NodePath("_Visual/AnimatedSprite2D")
+
+[node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("15_chase")]
+config = SubResource("ChaseConfig")
+
+[node name="ActorStateComponent" parent="_Components" instance=ExtResource("16_state")]
+
+[node name="EnemyVisualComponent" type="Node" parent="_Components"]
+script = ExtResource("21_visual")
+config = SubResource("VisualConfig")
+
+[node name="_Visual" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual"]
+
+[node name="HealthBar" parent="_Visual" instance=ExtResource("10_health_bar")]
+position = Vector2(0, -28)
+
+[node name="_Sockets" type="Node2D" parent="."]

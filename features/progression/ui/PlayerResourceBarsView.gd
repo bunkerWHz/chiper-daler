@@ -9,6 +9,7 @@ var _magic: MagicComponent
 var _stamina: StaminaComponent
 var _progression: ProgressionComponent
 var _status_effects: StatusEffectComponent
+var _respawn_component: PlayerRespawnComponent
 var _displayed_mana: float = 0.0
 var _displayed_max_mana: float = 1.0
 var _displayed_stamina: float = 0.0
@@ -39,13 +40,41 @@ func _ready() -> void:
 		if target_actor == null:
 			push_error("PlayerResourceBarsView requires a valid Actor path")
 			return
-		bind_components(
+		_bind_actor(target_actor)
+	_apply_display()
+
+
+func _bind_actor(target_actor: Actor) -> void:
+	_disconnect_respawn()
+	_respawn_component = (
+		target_actor.get_component(PlayerRespawnComponent)
+		as PlayerRespawnComponent
+	)
+	if (
+		_respawn_component != null
+		and not _respawn_component.actor_respawned.is_connected(_on_actor_respawned)
+	):
+		_respawn_component.actor_respawned.connect(_on_actor_respawned)
+	bind_components(
 			target_actor.get_component(MagicComponent) as MagicComponent,
 			target_actor.get_component(StaminaComponent) as StaminaComponent,
 			target_actor.get_component(ProgressionComponent) as ProgressionComponent,
 			target_actor.get_component(StatusEffectComponent) as StatusEffectComponent
 		)
-	_apply_display()
+
+
+func _disconnect_respawn() -> void:
+	if (
+		_respawn_component != null
+		and is_instance_valid(_respawn_component)
+		and _respawn_component.actor_respawned.is_connected(_on_actor_respawned)
+	):
+		_respawn_component.actor_respawned.disconnect(_on_actor_respawned)
+	_respawn_component = null
+
+
+func _on_actor_respawned(replacement: Actor) -> void:
+	_bind_actor(replacement)
 
 
 func _process(_delta: float) -> void:
@@ -124,6 +153,7 @@ func get_displayed_max_rage() -> float:
 
 
 func _exit_tree() -> void:
+	_disconnect_respawn()
 	_disconnect_sources()
 
 
