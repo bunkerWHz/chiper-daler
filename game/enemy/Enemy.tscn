@@ -27,6 +27,8 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="25_visual"]
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="26_visual_config"]
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="27_death_config"]
+[ext_resource type="SpriteFrames" path="res://game/enemy/animations/GroundEnemySpriteFrames.tres" id="28_sprite_frames"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyAnimationPlayer.tscn" id="29_animation_player"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -34,8 +36,6 @@ initial_direction = -1.0
 
 [sub_resource type="Resource" id="EnemyVisualConfig_ground"]
 script = ExtResource("26_visual_config")
-animation_root = "res://assets/Enemies/Test Monster Ground/PNG Sequences"
-frames_per_second = 18.0
 visual_scale = Vector2(0.24, 0.24)
 visual_offset = Vector2(0, -17)
 
@@ -105,6 +105,10 @@ config = SubResource("EnemyVisualConfig_ground")
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual"]
+sprite_frames = ExtResource("28_sprite_frames")
+animation = &"idle"
+
+[node name="AnimationPlayer" parent="_Visual" instance=ExtResource("29_animation_player")]
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 

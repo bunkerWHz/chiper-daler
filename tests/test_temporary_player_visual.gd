@@ -13,8 +13,14 @@ func test_active_main_hand_selects_temporary_visual_profile() -> void:
 	var inventory := setup.inventory as InventoryComponent
 
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.WARRIOR)
+	assert_true(visual.get_animation_player() != null)
+	assert_true(visual.get_animation_player().has_animation(&"attack"))
 	assert_true(equipment.switch_weapon_set(1))
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.ARCHER)
+	var sprite := (
+		setup.player.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
+	)
+	assert_eq(sprite.sprite_frames, visual.archer_frames)
 	var attributes := (
 		setup.player.get_component(CharacterAttributesComponent)
 		as CharacterAttributesComponent
@@ -24,6 +30,7 @@ func test_active_main_hand_selects_temporary_visual_profile() -> void:
 		&"training_halberd", ItemData.EquipSlot.MAIN_HAND, 0, 1
 	))
 	assert_eq(visual.get_visual_profile(), ItemData.VisualArchetype.LANCER)
+	assert_eq(sprite.sprite_frames, visual.lancer_frames)
 	assert_eq(inventory.get_quantity(&"training_halberd"), 1)
 
 

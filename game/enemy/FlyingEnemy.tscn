@@ -24,6 +24,8 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="22_visual_config"]
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="23_death_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="24_chase_config"]
+[ext_resource type="SpriteFrames" path="res://game/enemy/animations/FlyingEnemySpriteFrames.tres" id="25_sprite_frames"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyAnimationPlayer.tscn" id="26_animation_player"]
 
 [sub_resource type="Resource" id="FlightConfig"]
 script = ExtResource("20_flight_config")
@@ -34,12 +36,8 @@ target_stopping_distance = 28.0
 
 [sub_resource type="Resource" id="VisualConfig"]
 script = ExtResource("22_visual_config")
-animation_root = "res://assets/Enemies/Test Monster Fly/PNG Sequences"
-frames_per_second = 18.0
 visual_scale = Vector2(0.22, 0.22)
 visual_offset = Vector2(0, -5)
-move_folder = &"Fly"
-airborne_folder = &"Fall"
 
 [sub_resource type="Resource" id="DeathConfig"]
 script = ExtResource("23_death_config")
@@ -108,6 +106,10 @@ config = SubResource("VisualConfig")
 [node name="_Visual" type="Node2D" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual"]
+sprite_frames = ExtResource("25_sprite_frames")
+animation = &"idle"
+
+[node name="AnimationPlayer" parent="_Visual" instance=ExtResource("26_animation_player")]
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("10_health_bar")]
 position = Vector2(0, -28)

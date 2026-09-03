@@ -11,6 +11,7 @@ const REQUIRED_ANIMATIONS: Array[StringName] = [
 ]
 
 var _sprite: AnimatedSprite2D
+var _animation_player: AnimationPlayer
 var _actor_state_component: ActorStateComponent
 var _facing_component: FacingComponent
 var _current_state: ActorState.Behavior = ActorState.Behavior.IDLE
@@ -46,9 +47,19 @@ func _ready() -> void:
 		push_error("AnimationComponent requires AnimatedSprite2D with SpriteFrames")
 		disable()
 		return
+	_animation_player = actor.get_node_or_null(
+		"_Visual/AnimationPlayer"
+	) as AnimationPlayer
+	if _animation_player == null:
+		push_error("AnimationComponent requires AnimationPlayer")
+		disable()
+		return
 
 	for animation_name: StringName in REQUIRED_ANIMATIONS:
-		if not _sprite.sprite_frames.has_animation(animation_name):
+		if (
+			not _sprite.sprite_frames.has_animation(animation_name)
+			or not _animation_player.has_animation(animation_name)
+		):
 			push_error(
 				"AnimationComponent requires a '%s' animation" % animation_name
 			)
@@ -61,6 +72,10 @@ func _ready() -> void:
 
 func get_state() -> ActorState.Behavior:
 	return _current_state
+
+
+func get_animation_player() -> AnimationPlayer:
+	return _animation_player
 
 
 func _on_state_changed(
@@ -99,8 +114,8 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 
 
 func _play_animation(animation_name: StringName) -> void:
-	if _sprite.animation != animation_name or not _sprite.is_playing():
-		_sprite.play(animation_name)
+	if _animation_player.has_animation(animation_name):
+		_animation_player.play(animation_name)
 
 
 func _get_animation_name(state: ActorState.Behavior) -> StringName:

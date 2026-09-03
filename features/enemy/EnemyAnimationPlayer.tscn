@@ -1,0 +1,98 @@
+[gd_scene format=3]
+
+[sub_resource type="Animation" id="Animation_jrlya"]
+resource_name = "airborne"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"airborne"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_mgn5u"]
+resource_name = "attack"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"attack"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_od1dx"]
+resource_name = "death"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"death"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_207o6"]
+resource_name = "idle"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"idle"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_cf2xf"]
+resource_name = "move"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"move"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xhc15"]
+_data = {
+&"airborne": SubResource("Animation_jrlya"),
+&"attack": SubResource("Animation_mgn5u"),
+&"death": SubResource("Animation_od1dx"),
+&"idle": SubResource("Animation_207o6"),
+&"move": SubResource("Animation_cf2xf")
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" unique_id=100714197]
+libraries/ = SubResource("AnimationLibrary_xhc15")

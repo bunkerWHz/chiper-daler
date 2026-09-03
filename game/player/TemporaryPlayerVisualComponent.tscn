@@ -1,6 +1,20 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://game/player/TemporaryPlayerVisualComponent.gd" id="1_visual"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/WarriorSpriteFrames.tres" id="2_warrior"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/ArcherSpriteFrames.tres" id="3_archer"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/LancerSpriteFrames.tres" id="4_lancer"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/HealEffectSpriteFrames.tres" id="5_heal"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/ManaEffectSpriteFrames.tres" id="6_mana"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/RageEffectSpriteFrames.tres" id="7_rage"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/BuffEffectSpriteFrames.tres" id="8_buff"]
 
 [node name="TemporaryPlayerVisualComponent" type="Node"]
 script = ExtResource("1_visual")
+warrior_frames = ExtResource("2_warrior")
+archer_frames = ExtResource("3_archer")
+lancer_frames = ExtResource("4_lancer")
+heal_effect_frames = ExtResource("5_heal")
+mana_effect_frames = ExtResource("6_mana")
+rage_effect_frames = ExtResource("7_rage")
+buff_effect_frames = ExtResource("8_buff")

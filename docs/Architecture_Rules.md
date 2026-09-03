@@ -174,6 +174,27 @@ State Machine
     fact signals, but it never owns damage, healing, inventory consumption, or
     status-effect timing.
 
+Animation and presentation
+
+-   `ActorStateComponent` and focused gameplay components remain authoritative.
+    An animation ending never decides whether an attack, item use, death, or
+    another gameplay action succeeded.
+-   Actor animation components are thin presentation adapters. They translate
+    coordinated Actor behavior and gameplay fact signals into semantic clips on
+    an `AnimationPlayer`; they do not implement a second gameplay state machine.
+-   `AnimationPlayer` is the standard orchestration point for Actor animation.
+    Its tracks may coordinate the sprite, sound, visual effects, and future
+    presentation events. `AnimatedSprite2D` remains the frame-by-frame renderer.
+-   `SpriteFrames` and animation libraries are serialized Godot resources owned
+    by scenes. Production Actors must not scan asset folders, load frame files,
+    or assemble animation libraries at runtime.
+-   Add an `AnimationTree` only when the presentation needs blending or a complex
+    transition graph. Its graph is presentation-only and must still follow the
+    authoritative Actor behavior.
+-   A self-contained one-shot overlay, such as a temporary potion or buff effect,
+    may play directly on its own `AnimatedSprite2D` when it does not coordinate
+    multiple nodes.
+
 Commands
 
 -   Input -> Command -> Actor.

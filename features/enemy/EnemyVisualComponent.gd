@@ -3,18 +3,25 @@ class_name EnemyVisualComponent
 
 @export var config: EnemyVisualConfig
 @export var sprite_path: NodePath = ^"_Visual/AnimatedSprite2D"
+@export var animation_player_path: NodePath = ^"_Visual/AnimationPlayer"
 
 var _sprite: AnimatedSprite2D
+var _animation_player: AnimationPlayer
 var _body_component: CharacterBodyComponent
 var _locomotion: Component
 var _attack_component: AttackComponent
 var _health_component: HealthComponent
 var _is_attacking: bool = false
 var _is_dead: bool = false
+var _current_animation: StringName
+
+const REQUIRED_ANIMATIONS: Array[StringName] = [
+	&"idle", &"move", &"airborne", &"attack", &"death",
+]
 
 
 func on_initialize() -> void:
-	if config == null or config.animation_root.is_empty():
+	if config == null:
 		push_error("EnemyVisualComponent requires EnemyVisualConfig")
 		disable()
 		return
@@ -33,12 +40,28 @@ func on_initialize() -> void:
 
 func _ready() -> void:
 	_sprite = actor.get_node_or_null(sprite_path) as AnimatedSprite2D
-	if _sprite == null:
-		push_error("EnemyVisualComponent requires AnimatedSprite2D")
+	_animation_player = actor.get_node_or_null(
+		animation_player_path
+	) as AnimationPlayer
+	if _sprite == null or _sprite.sprite_frames == null:
+		push_error("EnemyVisualComponent requires AnimatedSprite2D with SpriteFrames")
 		disable()
 		return
-
-	_sprite.sprite_frames = _build_sprite_frames()
+	if _animation_player == null:
+		push_error("EnemyVisualComponent requires AnimationPlayer")
+		disable()
+		return
+	for animation_name: StringName in REQUIRED_ANIMATIONS:
+		if (
+			not _sprite.sprite_frames.has_animation(animation_name)
+			or not _animation_player.has_animation(animation_name)
+		):
+			push_error(
+				"EnemyVisualComponent requires a '%s' animation"
+				% animation_name
+			)
+			disable()
+			return
 	_sprite.position = config.visual_offset
 	_sprite.scale = config.visual_scale
 	_play(&"idle")
@@ -67,40 +90,16 @@ func should_disable_on_actor_death() -> bool:
 	return false
 
 
-func _build_sprite_frames() -> SpriteFrames:
-	var frames := SpriteFrames.new()
-	frames.remove_animation(&"default")
-	_add_animation(frames, &"idle", config.idle_folder, true)
-	_add_animation(frames, &"move", config.move_folder, true)
-	_add_animation(frames, &"airborne", config.airborne_folder, true)
-	_add_animation(frames, &"attack", config.attack_folder, false)
-	_add_animation(frames, &"death", config.death_folder, false)
-	return frames
-
-
-func _add_animation(
-	frames: SpriteFrames,
-	animation_name: StringName,
-	folder: StringName,
-	loops: bool
-) -> void:
-	frames.add_animation(animation_name)
-	frames.set_animation_speed(animation_name, config.frames_per_second)
-	frames.set_animation_loop(animation_name, loops)
-	var directory_path := config.animation_root.path_join(String(folder))
-	var files := DirAccess.get_files_at(directory_path)
-	files.sort()
-	for file_name: String in files:
-		if file_name.to_lower().ends_with(".png"):
-			var texture := load(directory_path.path_join(file_name)) as Texture2D
-			if texture != null:
-				frames.add_frame(animation_name, texture)
+func get_animation_player() -> AnimationPlayer:
+	return _animation_player
 
 
 func _play(animation_name: StringName) -> void:
-	if _sprite.sprite_frames.has_animation(animation_name) and _sprite.sprite_frames.get_frame_count(animation_name) > 0:
-		if _sprite.animation != animation_name or not _sprite.is_playing():
-			_sprite.play(animation_name)
+	if _current_animation == animation_name:
+		return
+	if _animation_player.has_animation(animation_name):
+		_current_animation = animation_name
+		_animation_player.play(animation_name)
 
 
 func _apply_facing() -> void:

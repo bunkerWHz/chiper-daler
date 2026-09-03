@@ -1,21 +1,17 @@
-[gd_scene format=3 uid="uid://b48nrgcygf2cm"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://oxt258x2k4xp" path="res://game/player/player.gd" id="1_wv0h6"]
-[ext_resource type="PackedScene" uid="uid://b7twfe0a5fcbt" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
-[ext_resource type="Script" uid="uid://b8d0ic1ruenbv" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
-[ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
+[ext_resource type="Script" path="res://game/player/player.gd" id="1_wv0h6"]
+[ext_resource type="PackedScene" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
+[ext_resource type="Script" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
+[ext_resource type="PackedScene" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 [ext_resource type="PackedScene" path="res://game/player/TemporaryPlayerVisualComponent.tscn" id="6_lg056"]
-[ext_resource type="PackedScene" uid="uid://bw1a5wx3lqx60" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
-[ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
-[ext_resource type="Script" uid="uid://bcwnhbaqj47sg" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
-[ext_resource type="Script" uid="uid://cuofhl2p3ogcx" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
-[ext_resource type="Script" uid="uid://df5k1rqt7k0ak" path="res://framework/components/FacingComponent.gd" id="10_facing"]
-[ext_resource type="Texture2D" uid="uid://1l5blnurv7mu" path="res://assets/Warrior_Run.png" id="10_txqmf"]
-[ext_resource type="Texture2D" uid="uid://danne1jtbnxso" path="res://assets/Warrior_Attack2.png" id="11_bp8ig"]
+[ext_resource type="PackedScene" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
+[ext_resource type="Script" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
+[ext_resource type="Script" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
+[ext_resource type="Script" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
+[ext_resource type="Script" path="res://framework/components/FacingComponent.gd" id="10_facing"]
 [ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="11_health"]
 [ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="12_hurtbox"]
-[ext_resource type="Texture2D" uid="uid://cdnbnpoxjui65" path="res://assets/Warrior_Idle.png" id="12_ptk05"]
-[ext_resource type="Texture2D" uid="uid://dowiloriqwj2m" path="res://assets/Warrior_Guard.png" id="13_fuwly"]
 [ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="13_hitbox"]
 [ext_resource type="PackedScene" path="res://framework/debug/DebugOverlayComponent.tscn" id="14_debug"]
 [ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="15_attack"]
@@ -53,6 +49,8 @@
 [ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
 [ext_resource type="PackedScene" path="res://features/stamina/StaminaComponent.tscn" id="48_stamina"]
 [ext_resource type="PackedScene" path="res://features/player/ViewportFallDeathComponent.tscn" id="49_fall_death"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/WarriorSpriteFrames.tres" id="50_player_frames"]
+[ext_resource type="PackedScene" path="res://framework/animation/CharacterAnimationPlayer.tscn" id="51_animation_player"]
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -62,225 +60,6 @@ metadata/_custom_type_script = "uid://b8d0ic1ruenbv"
 script = ExtResource("17_death_config")
 duration = 0.4
 remove_actor_on_finish = false
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8cf8e"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wcm5h"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o7uqf"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b51sn"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b72hb"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3q1ya"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0eanl"]
-atlas = ExtResource("11_bp8ig")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_attack_2"]
-atlas = ExtResource("11_bp8ig")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_attack_3"]
-atlas = ExtResource("11_bp8ig")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_attack_4"]
-atlas = ExtResource("11_bp8ig")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ohvm5"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_txqmf"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bp8ig"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ptk05"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fuwly"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0khln"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8oup8"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(1152, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qa6a8"]
-atlas = ExtResource("12_ptk05")
-region = Rect2(1344, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hqrom"]
-atlas = ExtResource("13_fuwly")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_82tp1"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5cev7"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xvu62"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_t8syf"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bc0o5"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wejqe"]
-atlas = ExtResource("10_txqmf")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_wcm5h"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8cf8e")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wcm5h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_o7uqf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b51sn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b72hb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3q1ya")
-}],
-"loop": true,
-"name": &"default",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0eanl")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_attack_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_attack_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_attack_4")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 16.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0eanl")
-}],
-"loop": false,
-"name": &"fall",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hqrom")
-}],
-"loop": false,
-"name": &"guard",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ohvm5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_txqmf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bp8ig")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ptk05")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fuwly")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0khln")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8oup8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qa6a8")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hqrom")
-}],
-"loop": false,
-"name": &"jump",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_82tp1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5cev7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xvu62")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_t8syf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bc0o5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wejqe")
-}],
-"loop": true,
-"name": &"run",
-"speed": 6.0
-}]
 
 [node name="Player" type="Node2D" unique_id=2130954343]
 script = ExtResource("1_wv0h6")
@@ -403,9 +182,10 @@ texture_filter = 1
 position = Vector2(3, -22)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=1165928745]
-sprite_frames = SubResource("SpriteFrames_wcm5h")
-animation = &"jump"
-autoplay = "idle"
+sprite_frames = ExtResource("50_player_frames")
+animation = &"idle"
+
+[node name="AnimationPlayer" parent="_Visual" instance=ExtResource("51_animation_player")]
 
 [node name="ItemEffectSprite" type="AnimatedSprite2D" parent="_Visual"]
 visible = false

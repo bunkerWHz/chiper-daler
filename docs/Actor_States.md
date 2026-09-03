@@ -144,7 +144,8 @@ When adding a behavior:
 3. Check `ExclusiveBehaviorGate` before starting the behavior.
 4. Expose locomotion blocks when the behavior restricts movement.
 5. Add its priority mapping to `ActorStateComponent`.
-6. Map its temporary animation in `AnimationComponent`.
+6. Add or edit its serialized `SpriteFrames`/`AnimationPlayer` clip, then map
+   the semantic animation in the Actor's presentation component.
 7. Add transition, conflict, and debug-state tests.
 
 Unrelated components never write directly into Actor state.

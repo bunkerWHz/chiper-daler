@@ -1,48 +1,13 @@
 extends AnimationComponent
 class_name TemporaryPlayerVisualComponent
 
-const WARRIOR_IDLE := preload(
-	"res://assets/Test/Hero/Warrior/Warrior_Idle.png"
-)
-const WARRIOR_RUN := preload(
-	"res://assets/Test/Hero/Warrior/Warrior_Run.png"
-)
-const WARRIOR_ATTACK := preload(
-	"res://assets/Test/Hero/Warrior/Warrior_Attack1.png"
-)
-const WARRIOR_GUARD := preload(
-	"res://assets/Test/Hero/Warrior/Warrior_Guard.png"
-)
-const ARCHER_IDLE := preload(
-	"res://assets/Test/Hero/Archer/Archer_Idle.png"
-)
-const ARCHER_RUN := preload(
-	"res://assets/Test/Hero/Archer/Archer_Run.png"
-)
-const ARCHER_ATTACK := preload(
-	"res://assets/Test/Hero/Archer/Archer_Shoot.png"
-)
-const LANCER_IDLE := preload(
-	"res://assets/Test/Hero/Lancer/Lancer_Idle.png"
-)
-const LANCER_RUN := preload(
-	"res://assets/Test/Hero/Lancer/Lancer_Run.png"
-)
-const LANCER_ATTACK := preload(
-	"res://assets/Test/Hero/Lancer/Lancer_Right_Attack.png"
-)
-const LANCER_GUARD := preload(
-	"res://assets/Test/Hero/Lancer/Lancer_Right_Defence.png"
-)
-const HEAL_EFFECT := preload("res://assets/Test/Heal_Effect.png")
-const MANA_EFFECT := preload("res://assets/Test/Mana_Effect.png")
-const RAGE_EFFECT := preload("res://assets/Test/Rage_effect.png")
-const BUFF_EFFECT := preload("res://assets/Test/buff_effect.png")
-
-const STANDARD_FRAME_SIZE := Vector2i(192, 192)
-const LANCER_FRAME_SIZE := Vector2i(320, 320)
-const EFFECT_FRAME_SIZE := Vector2i(192, 192)
-const EFFECT_FRAME_RATE := 22.0
+@export var warrior_frames: SpriteFrames
+@export var archer_frames: SpriteFrames
+@export var lancer_frames: SpriteFrames
+@export var heal_effect_frames: SpriteFrames
+@export var mana_effect_frames: SpriteFrames
+@export var rage_effect_frames: SpriteFrames
+@export var buff_effect_frames: SpriteFrames
 
 var _equipment: EquipmentComponent
 var _item_use: ItemUseComponent
@@ -105,6 +70,10 @@ func _ready() -> void:
 		return
 	_build_profiles()
 	_build_effect_frames()
+	if _profiles.values().has(null) or _effect_frames.values().has(null):
+		push_error("TemporaryPlayerVisualComponent requires configured SpriteFrames")
+		disable()
+		return
 	_item_effect_sprite.animation_finished.connect(_hide_item_effect)
 	_buff_effect_sprite.animation_finished.connect(_hide_buff_effect)
 	_refresh_visual_profile()
@@ -129,115 +98,16 @@ func _get_animation_name(state: ActorState.Behavior) -> StringName:
 
 
 func _build_profiles() -> void:
-	_profiles[ItemData.VisualArchetype.WARRIOR] = _create_profile(
-		WARRIOR_IDLE,
-		WARRIOR_RUN,
-		WARRIOR_ATTACK,
-		WARRIOR_GUARD,
-		STANDARD_FRAME_SIZE
-	)
-	_profiles[ItemData.VisualArchetype.ARCHER] = _create_profile(
-		ARCHER_IDLE,
-		ARCHER_RUN,
-		ARCHER_ATTACK,
-		ARCHER_IDLE,
-		STANDARD_FRAME_SIZE,
-		1
-	)
-	_profiles[ItemData.VisualArchetype.LANCER] = _create_profile(
-		LANCER_IDLE,
-		LANCER_RUN,
-		LANCER_ATTACK,
-		LANCER_GUARD,
-		LANCER_FRAME_SIZE
-	)
-
-
-func _create_profile(
-	idle_texture: Texture2D,
-	run_texture: Texture2D,
-	attack_texture: Texture2D,
-	guard_texture: Texture2D,
-	frame_size: Vector2i,
-	guard_frame_limit: int = -1
-) -> SpriteFrames:
-	var frames := SpriteFrames.new()
-	frames.remove_animation(&"default")
-	_add_strip(frames, &"idle", idle_texture, frame_size, 8.0, true)
-	_add_strip(frames, &"run", run_texture, frame_size, 8.0, true)
-	_add_strip(frames, &"attack", attack_texture, frame_size, 16.0, false)
-	_add_strip(
-		frames,
-		&"guard",
-		guard_texture,
-		frame_size,
-		10.0,
-		false,
-		guard_frame_limit
-	)
-	_add_strip(frames, &"jump", idle_texture, frame_size, 1.0, false, 1)
-	_add_strip(frames, &"fall", idle_texture, frame_size, 1.0, false, 1)
-	return frames
+	_profiles[ItemData.VisualArchetype.WARRIOR] = warrior_frames
+	_profiles[ItemData.VisualArchetype.ARCHER] = archer_frames
+	_profiles[ItemData.VisualArchetype.LANCER] = lancer_frames
 
 
 func _build_effect_frames() -> void:
-	var item_effect_speed := (
-		float(HEAL_EFFECT.get_width()) / float(EFFECT_FRAME_SIZE.x)
-		/ maxf(_item_use.config.use_duration, 0.01)
-	)
-	_effect_frames[ItemData.UseVisualEffect.HEAL] = _create_effect_frames(
-		HEAL_EFFECT, item_effect_speed
-	)
-	_effect_frames[ItemData.UseVisualEffect.MANA] = _create_effect_frames(
-		MANA_EFFECT, item_effect_speed
-	)
-	_effect_frames[ItemData.UseVisualEffect.RAGE] = _create_effect_frames(
-		RAGE_EFFECT, item_effect_speed
-	)
-	_buff_effect_sprite.sprite_frames = _create_effect_frames(
-		BUFF_EFFECT, EFFECT_FRAME_RATE
-	)
-
-
-func _create_effect_frames(texture: Texture2D, speed: float) -> SpriteFrames:
-	var frames := SpriteFrames.new()
-	frames.remove_animation(&"default")
-	_add_strip(
-		frames,
-		&"effect",
-		texture,
-		EFFECT_FRAME_SIZE,
-		speed,
-		false
-	)
-	return frames
-
-
-func _add_strip(
-	frames: SpriteFrames,
-	animation_name: StringName,
-	texture: Texture2D,
-	frame_size: Vector2i,
-	speed: float,
-	loop: bool,
-	frame_limit: int = -1
-) -> void:
-	frames.add_animation(animation_name)
-	frames.set_animation_speed(animation_name, speed)
-	frames.set_animation_loop(animation_name, loop)
-	var frame_count := floori(float(texture.get_width()) / float(frame_size.x))
-	if frame_limit > 0:
-		frame_count = mini(frame_count, frame_limit)
-	for frame_index in frame_count:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(
-			frame_index * frame_size.x,
-			0,
-			frame_size.x,
-			frame_size.y
-		)
-		frames.add_frame(animation_name, atlas)
+	_effect_frames[ItemData.UseVisualEffect.HEAL] = heal_effect_frames
+	_effect_frames[ItemData.UseVisualEffect.MANA] = mana_effect_frames
+	_effect_frames[ItemData.UseVisualEffect.RAGE] = rage_effect_frames
+	_buff_effect_sprite.sprite_frames = buff_effect_frames
 
 
 func _refresh_visual_profile() -> void:
