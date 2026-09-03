@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bjnjilee0h3w7" path="res://framework/components/CharacterBodyComponent.gd" id="1_wm2ld"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wm2ld"]
+resource_local_to_scene = true
 
 [node name="CharacterBodyComponent" type="Node2D" unique_id=945165399]
 script = ExtResource("1_wm2ld")

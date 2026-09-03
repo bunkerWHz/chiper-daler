@@ -17,15 +17,21 @@ The visual layer only selects and presents the matching animation.
 3. Open its `Sprite Frames` resource in the bottom SpriteFrames panel to replace,
    reorder, or retime frame-by-frame art.
 4. Select `_Visual/AnimationPlayer` and use the Animation panel when a clip must
-   also coordinate sound, effects, or another presentation node.
+   coordinate sounds, effects, or combat timing events.
 
-Ground-enemy frames live in
-`game/enemy/animations/GroundEnemySpriteFrames.tres`; flying-enemy frames live in
-`game/enemy/animations/FlyingEnemySpriteFrames.tres`.
+The template resources live in `game/enemy/animations`. Every production enemy
+must own copies of both its `SpriteFrames` and `AnimationLibrary`. This keeps
+frame timing, sound cues, and attack events independent between enemy types.
 
 Both enemy scenes expose the same semantic clips: `idle`, `move`, `airborne`,
 `attack`, and `death`. Different enemies may use completely different art while
 their gameplay components keep using those names.
+
+For an event that belongs to a drawn frame, add a Call Method Track targeting
+`../_Components/AnimationEventComponent`. Use `footstep`, `wing_flap`,
+`attack_swing`, `hitbox_on`, `hitbox_off`, or `body_impact` as the event name.
+Gameplay-result audio such as a successful hit is emitted by gameplay signals
+instead of the animation timeline.
 
 ## Editing the player
 

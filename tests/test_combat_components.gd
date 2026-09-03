@@ -171,6 +171,55 @@ func test_attack_can_be_driven_without_input_or_facing() -> void:
 	assert_true(attack.attack())
 
 
+func test_animation_events_control_enemy_damage_window() -> void:
+	var actor := track(Actor.new()) as Actor
+	var container := Node2D.new()
+	container.name = "_Components"
+	actor.add_child(container)
+
+	var animation_events := AnimationEventComponent.new()
+	container.add_child(animation_events)
+
+	var hitbox := HitboxComponent.new()
+	var area := Area2D.new()
+	area.name = "Area2D"
+	hitbox.add_child(area)
+	container.add_child(hitbox)
+
+	var attack := AttackComponent.new()
+	var config := AttackConfig.new()
+	config.active_duration = 1.0
+	attack.config = config
+	attack.animation_driven_damage_window = true
+	container.add_child(attack)
+
+	actor._collect_components()
+	hitbox._ready()
+	attack._ready()
+
+	assert_true(attack.attack())
+	assert_true(attack.is_attacking())
+	assert_false(attack.is_damage_window_open())
+	assert_false(area.monitoring)
+
+	animation_events.emit_event(AnimationEventComponent.HITBOX_ON)
+	assert_true(attack.is_damage_window_open())
+	assert_true(area.monitoring)
+
+	animation_events.emit_event(AnimationEventComponent.HITBOX_OFF)
+	assert_false(attack.is_damage_window_open())
+	assert_false(area.monitoring)
+
+	animation_events.emit_event(AnimationEventComponent.HITBOX_ON)
+	attack._process(config.active_duration)
+	assert_false(attack.is_attacking())
+	assert_false(attack.is_damage_window_open())
+	assert_false(area.monitoring)
+
+	animation_events.emit_event(AnimationEventComponent.HITBOX_ON)
+	assert_false(area.monitoring)
+
+
 func test_guard_blocks_attack_until_the_defensive_state_finishes() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()

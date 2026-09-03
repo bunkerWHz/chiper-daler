@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://framework/animation/AnimationEventComponent.gd" id="1_events"]
+
+[node name="AnimationEventComponent" type="Node"]
+script = ExtResource("1_events")

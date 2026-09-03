@@ -54,6 +54,8 @@ func set_horizontal_direction(direction: float) -> void:
 	spatial_root.position.x = (
 		offset_x if _horizontal_direction > 0.0 else -offset_x
 	)
+	var scale_x := absf(spatial_root.scale.x)
+	spatial_root.scale.x = scale_x * _horizontal_direction
 
 
 func get_horizontal_direction() -> float:

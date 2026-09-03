@@ -28,7 +28,10 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="26_visual_config"]
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="27_death_config"]
 [ext_resource type="SpriteFrames" path="res://game/enemy/animations/GroundEnemySpriteFrames.tres" id="28_sprite_frames"]
-[ext_resource type="PackedScene" path="res://features/enemy/EnemyAnimationPlayer.tscn" id="29_animation_player"]
+[ext_resource type="AnimationLibrary" path="res://game/enemy/animations/GroundEnemyAnimationLibrary.tres" id="29_animation_library"]
+[ext_resource type="Script" path="res://features/combat/AttackConfig.gd" id="30_attack_config"]
+[ext_resource type="PackedScene" path="res://framework/animation/AnimationEventComponent.tscn" id="31_animation_events"]
+[ext_resource type="PackedScene" path="res://features/audio/ActorAudioComponent.tscn" id="32_audio"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -43,6 +46,12 @@ visual_offset = Vector2(0, -17)
 script = ExtResource("27_death_config")
 duration = 1.0
 fade_visual = false
+
+[sub_resource type="Resource" id="EnemyAttackTimelineConfig"]
+resource_local_to_scene = true
+script = ExtResource("30_attack_config")
+active_duration = 1.0
+heavy_active_duration = 1.0
 
 [node name="Enemy" type="Node2D" unique_id=492946956]
 script = ExtResource("1_enemy")
@@ -76,10 +85,16 @@ visual_path = NodePath("_Visual/AnimatedSprite2D")
 [node name="DeathComponent" parent="_Components" instance=ExtResource("8_death")]
 config = SubResource("EnemyDeathConfig")
 
+[node name="AnimationEventComponent" parent="_Components" instance=ExtResource("31_animation_events")]
+
 [node name="HitboxComponent" parent="_Components" instance=ExtResource("9_hitbox")]
 position = Vector2(-20, 0)
 
 [node name="AttackComponent" parent="_Components" instance=ExtResource("10_attack")]
+config = SubResource("EnemyAttackTimelineConfig")
+animation_driven_damage_window = true
+
+[node name="ActorAudioComponent" parent="_Components" instance=ExtResource("32_audio")]
 
 [node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
 script = ExtResource("3_movement")
@@ -108,7 +123,8 @@ config = SubResource("EnemyVisualConfig_ground")
 sprite_frames = ExtResource("28_sprite_frames")
 animation = &"idle"
 
-[node name="AnimationPlayer" parent="_Visual" instance=ExtResource("29_animation_player")]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="_Visual"]
+libraries/ = ExtResource("29_animation_library")
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 
@@ -121,3 +137,9 @@ z_index = -10
 script = ExtResource("21_jump_preview")
 show_standing_jump = false
 running_jump_color = Color(1, 0.45, 0.1, 0.9)
+
+[editable path="_Components/CharacterBodyComponent"]
+[editable path="_Components/HurtboxComponent"]
+[editable path="_Components/HitboxComponent"]
+[editable path="_Components/EnemyAttackComponent"]
+[editable path="_Components/EnemyChaseComponent"]

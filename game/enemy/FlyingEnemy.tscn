@@ -25,7 +25,10 @@
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="23_death_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="24_chase_config"]
 [ext_resource type="SpriteFrames" path="res://game/enemy/animations/FlyingEnemySpriteFrames.tres" id="25_sprite_frames"]
-[ext_resource type="PackedScene" path="res://features/enemy/EnemyAnimationPlayer.tscn" id="26_animation_player"]
+[ext_resource type="AnimationLibrary" path="res://game/enemy/animations/FlyingEnemyAnimationLibrary.tres" id="26_animation_library"]
+[ext_resource type="Script" path="res://features/combat/AttackConfig.gd" id="27_attack_config"]
+[ext_resource type="PackedScene" path="res://framework/animation/AnimationEventComponent.tscn" id="28_animation_events"]
+[ext_resource type="PackedScene" path="res://features/audio/ActorAudioComponent.tscn" id="29_audio"]
 
 [sub_resource type="Resource" id="FlightConfig"]
 script = ExtResource("20_flight_config")
@@ -49,6 +52,12 @@ script = ExtResource("24_chase_config")
 horizontal_range = 220.0
 vertical_range = 150.0
 avoid_unsafe_ground = false
+
+[sub_resource type="Resource" id="AttackTimelineConfig"]
+resource_local_to_scene = true
+script = ExtResource("27_attack_config")
+active_duration = 1.0
+heavy_active_duration = 1.0
 
 [node name="FlyingEnemy" type="Node2D"]
 script = ExtResource("1_enemy")
@@ -82,10 +91,16 @@ visual_path = NodePath("_Visual/AnimatedSprite2D")
 [node name="DeathComponent" parent="_Components" instance=ExtResource("6_death")]
 config = SubResource("DeathConfig")
 
+[node name="AnimationEventComponent" parent="_Components" instance=ExtResource("28_animation_events")]
+
 [node name="HitboxComponent" parent="_Components" instance=ExtResource("7_hitbox")]
 position = Vector2(-24, 0)
 
 [node name="AttackComponent" parent="_Components" instance=ExtResource("8_attack")]
+config = SubResource("AttackTimelineConfig")
+animation_driven_damage_window = true
+
+[node name="ActorAudioComponent" parent="_Components" instance=ExtResource("29_audio")]
 
 [node name="EnemyFlightComponent" type="Node" parent="_Components"]
 script = ExtResource("19_flight")
@@ -109,9 +124,16 @@ config = SubResource("VisualConfig")
 sprite_frames = ExtResource("25_sprite_frames")
 animation = &"idle"
 
-[node name="AnimationPlayer" parent="_Visual" instance=ExtResource("26_animation_player")]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="_Visual"]
+libraries/ = ExtResource("26_animation_library")
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("10_health_bar")]
 position = Vector2(0, -28)
 
 [node name="_Sockets" type="Node2D" parent="."]
+
+[editable path="_Components/CharacterBodyComponent"]
+[editable path="_Components/HurtboxComponent"]
+[editable path="_Components/HitboxComponent"]
+[editable path="_Components/EnemyAttackComponent"]
+[editable path="_Components/EnemyChaseComponent"]

@@ -62,6 +62,7 @@ func _ready() -> void:
 			)
 			disable()
 			return
+	_validate_attack_timeline()
 	_sprite.position = config.visual_offset
 	_sprite.scale = config.visual_scale
 	_play(&"idle")
@@ -100,6 +101,52 @@ func _play(animation_name: StringName) -> void:
 	if _animation_player.has_animation(animation_name):
 		_current_animation = animation_name
 		_animation_player.play(animation_name)
+
+
+func _validate_attack_timeline() -> void:
+	if (
+		_attack_component == null
+		or not _attack_component.animation_driven_damage_window
+	):
+		return
+
+	var attack_animation := _animation_player.get_animation(&"attack")
+	for event_name: StringName in [
+		AnimationEventComponent.HITBOX_ON,
+		AnimationEventComponent.HITBOX_OFF,
+	]:
+		if not _animation_has_event(attack_animation, event_name):
+			push_error(
+				"Enemy attack animation requires a '%s' event" % event_name
+			)
+
+	if not is_equal_approx(
+		attack_animation.length,
+		_attack_component.config.active_duration
+	):
+		push_warning(
+			"Enemy attack duration must match its animation clip length"
+		)
+
+
+func _animation_has_event(
+	animation: Animation,
+	event_name: StringName
+) -> bool:
+	for track_index: int in animation.get_track_count():
+		if animation.track_get_type(track_index) != Animation.TYPE_METHOD:
+			continue
+		for key_index: int in animation.track_get_key_count(track_index):
+			var key: Dictionary = animation.track_get_key_value(
+				track_index,
+				key_index
+			)
+			if key.get(&"method", StringName()) != &"emit_event":
+				continue
+			var arguments: Array = key.get(&"args", [])
+			if not arguments.is_empty() and arguments[0] == event_name:
+				return true
+	return false
 
 
 func _apply_facing() -> void:

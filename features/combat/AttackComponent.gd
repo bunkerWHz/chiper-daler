@@ -18,10 +18,12 @@ signal landing_recovery_started
 signal landing_recovery_finished
 
 @export var config: AttackConfig
+@export var animation_driven_damage_window: bool = false
 
 var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
 var _hitbox_component: HitboxComponent
+var _animation_events: AnimationEventComponent
 var _facing_component: FacingComponent
 var _equipment_component: Component
 var _active_timer: float = 0.0
@@ -36,6 +38,7 @@ var _base_critical_damage_multiplier: float = 2.0
 var _critical_timer: float = 0.0
 var _attack_started_airborne: bool = false
 var _landing_recovery_timer: float = 0.0
+var _damage_window_open: bool = false
 
 
 func on_initialize() -> void:
@@ -64,6 +67,9 @@ func on_initialize() -> void:
 		actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	)
 	_hitbox_component = actor.get_component(HitboxComponent) as HitboxComponent
+	_animation_events = (
+		actor.get_component(AnimationEventComponent) as AnimationEventComponent
+	)
 	_facing_component = actor.get_component(FacingComponent) as FacingComponent
 	_equipment_component = (
 		actor.get_component(EQUIPMENT_COMPONENT_SCRIPT) as Component
@@ -71,6 +77,12 @@ func on_initialize() -> void:
 
 	if _hitbox_component == null or not _hitbox_component.is_enabled:
 		push_error("AttackComponent requires an enabled HitboxComponent")
+		disable()
+		return
+	if animation_driven_damage_window and _animation_events == null:
+		push_error(
+			"Animation-driven AttackComponent requires AnimationEventComponent"
+		)
 		disable()
 		return
 
@@ -84,6 +96,11 @@ func on_initialize() -> void:
 		_on_critical_hit_landed
 	):
 		_hitbox_component.critical_hit_landed.connect(_on_critical_hit_landed)
+	if (
+		_animation_events != null
+		and not _animation_events.event_emitted.is_connected(_on_animation_event)
+	):
+		_animation_events.event_emitted.connect(_on_animation_event)
 
 	if _input_component != null and not _input_component.is_enabled:
 		_input_component = null
@@ -133,7 +150,7 @@ func _ready() -> void:
 	if _facing_component != null:
 		_apply_facing(_facing_component.get_direction())
 
-	_hitbox_component.deactivate()
+	close_damage_window()
 
 
 func _process(delta: float) -> void:
@@ -233,6 +250,25 @@ func set_horizontal_direction(direction: float) -> void:
 		_hitbox_component.set_horizontal_direction(direction)
 
 
+func open_damage_window() -> bool:
+	if not is_enabled or not is_attacking() or _hitbox_component == null:
+		return false
+
+	_damage_window_open = true
+	_hitbox_component.activate()
+	return true
+
+
+func close_damage_window() -> void:
+	_damage_window_open = false
+	if _hitbox_component != null:
+		_hitbox_component.deactivate()
+
+
+func is_damage_window_open() -> bool:
+	return _damage_window_open
+
+
 func disable() -> void:
 	var was_attacking := is_attacking()
 	var was_recovering := is_landing_recovery()
@@ -244,8 +280,7 @@ func disable() -> void:
 	_attack_started_airborne = false
 	_restore_hitbox_damage()
 
-	if _hitbox_component != null:
-		_hitbox_component.deactivate()
+	close_damage_window()
 
 	if was_attacking:
 		attack_finished.emit()
@@ -257,7 +292,7 @@ func disable() -> void:
 
 func _finish_attack() -> void:
 	_active_timer = 0.0
-	_hitbox_component.deactivate()
+	close_damage_window()
 	_restore_hitbox_damage()
 	_attack_started_airborne = false
 	attack_finished.emit()
@@ -320,7 +355,10 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 		)
 		heavy_attack_started.emit()
 
-	_hitbox_component.activate()
+	if animation_driven_damage_window:
+		close_damage_window()
+	else:
+		open_damage_window()
 	attack_started.emit()
 	return true
 
@@ -431,7 +469,7 @@ func _cancel_attack_if_melee_unavailable() -> void:
 	_landing_recovery_timer = 0.0
 	_is_charging = false
 	_attack_started_airborne = false
-	_hitbox_component.deactivate()
+	close_damage_window()
 	_restore_hitbox_damage()
 
 	if was_attacking:
@@ -453,6 +491,17 @@ func _on_critical_hit_landed(
 	_applied_damage: float
 ) -> void:
 	_critical_timer = config.critical_state_duration
+
+
+func _on_animation_event(event_name: StringName) -> void:
+	if not animation_driven_damage_window:
+		return
+
+	match event_name:
+		AnimationEventComponent.HITBOX_ON:
+			open_damage_window()
+		AnimationEventComponent.HITBOX_OFF:
+			close_damage_window()
 
 
 func _apply_facing(direction: FacingComponent.Direction) -> void:

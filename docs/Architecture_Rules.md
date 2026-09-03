@@ -185,6 +185,10 @@ Animation and presentation
 -   `AnimationPlayer` is the standard orchestration point for Actor animation.
     Its tracks may coordinate the sprite, sound, visual effects, and future
     presentation events. `AnimatedSprite2D` remains the frame-by-frame renderer.
+-   Frame-authored events pass through `AnimationEventComponent`. Animation
+    tracks may request a sound, visual effect, or a validated combat window,
+    but they do not apply damage directly. Gameplay components validate each
+    request and clean up their state when an action is interrupted.
 -   `SpriteFrames` and animation libraries are serialized Godot resources owned
     by scenes. Production Actors must not scan asset folders, load frame files,
     or assemble animation libraries at runtime.
