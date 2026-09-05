@@ -1408,7 +1408,7 @@ func test_debug_overlay_reports_guard_state() -> void:
 
 	target.actor._collect_components()
 
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = target.actor
 	var lines := PackedStringArray()
 	overlay._append_guard_info(lines)

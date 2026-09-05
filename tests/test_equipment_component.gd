@@ -271,7 +271,7 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND),
 		bow.id
 	)
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = actor
 	var lines := PackedStringArray()
 	overlay._append_equipment_info(lines)

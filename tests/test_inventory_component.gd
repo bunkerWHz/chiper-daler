@@ -17,7 +17,7 @@ func test_stackable_items_fill_existing_stacks_and_capacity() -> void:
 	assert_eq(inventory.get_stacks()[0].quantity, 5)
 	assert_eq(inventory.get_stacks()[1].quantity, 5)
 
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = inventory.actor
 	var lines := PackedStringArray()
 	overlay._append_inventory_info(lines)

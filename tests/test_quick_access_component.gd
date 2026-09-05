@@ -67,7 +67,7 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 	assert_eq(quick_access.get_active_slot(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.THROWABLE)
 	assert_eq(quick_access.get_active_item_quantity(), 3)
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = setup.actor as Actor
 	var lines := PackedStringArray()
 	overlay._append_quick_access_info(lines)

@@ -34,7 +34,7 @@ func test_experience_can_gain_multiple_levels_and_reports_state() -> void:
 	assert_false(progression.is_leveling_up())
 	assert_eq(state.get_state(), ActorState.Behavior.IDLE)
 
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = actor
 	var lines := PackedStringArray()
 	overlay._append_progression_info(lines)

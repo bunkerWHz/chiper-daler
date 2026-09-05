@@ -122,7 +122,7 @@ func test_actor_state_component_survives_death_and_reports_it() -> void:
 	assert_true(actor_state.is_enabled)
 	assert_eq(actor_state.get_state(), ActorState.Behavior.DEAD)
 
-	var overlay := DebugOverlayComponent.new()
+	var overlay := track(DebugOverlayComponent.new()) as DebugOverlayComponent
 	overlay.actor = actor
 	var lines := PackedStringArray()
 	overlay._append_actor_state_info(lines)
