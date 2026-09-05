@@ -67,22 +67,22 @@ func test_item_without_profiles_has_no_equipment_or_use_effect() -> void:
 
 func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
 	var sword := load(
-		"res://features/inventory/items/RustySword.tres"
+		"res://game/items/weapons/RustySword.tres"
 	) as ItemData
 	var spear := load(
-		"res://features/inventory/items/TrainingSpear.tres"
+		"res://game/items/weapons/TrainingSpear.tres"
 	) as ItemData
 	var bow := load(
-		"res://features/inventory/items/ShortBow.tres"
+		"res://game/items/weapons/ShortBow.tres"
 	) as ItemData
 	var crossbow := load(
-		"res://features/inventory/items/LightCrossbow.tres"
+		"res://game/items/weapons/LightCrossbow.tres"
 	) as ItemData
 	var focus := load(
-		"res://features/inventory/items/ApprenticeFocus.tres"
+		"res://game/items/weapons/ApprenticeFocus.tres"
 	) as ItemData
 	var shield := load(
-		"res://features/inventory/items/WoodenShield.tres"
+		"res://game/items/offhand/WoodenShield.tres"
 	) as ItemData
 
 	assert_eq(sword.weapon_profile.family, ItemWeaponProfile.Family.SWORD)
@@ -103,13 +103,13 @@ func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
 
 func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 	var rapier := load(
-		"res://features/inventory/items/TrainingRapier.tres"
+		"res://game/items/weapons/TrainingRapier.tres"
 	) as ItemData
 	var katana := load(
-		"res://features/inventory/items/TrainingKatana.tres"
+		"res://game/items/weapons/TrainingKatana.tres"
 	) as ItemData
 	var dagger := load(
-		"res://features/inventory/items/TrainingDagger.tres"
+		"res://game/items/weapons/TrainingDagger.tres"
 	) as ItemData
 
 	assert_eq(rapier.weapon_profile.family, ItemWeaponProfile.Family.RAPIER)
@@ -128,11 +128,11 @@ func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 
 
 func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
-	var sword := load("res://features/inventory/items/TrainingSword.tres") as ItemData
-	var spear := load("res://features/inventory/items/TrainingLongspear.tres") as ItemData
-	var wand := load("res://features/inventory/items/TrainingWand.tres") as ItemData
-	var bow := load("res://features/inventory/items/TrainingBow.tres") as ItemData
-	var crossbow := load("res://features/inventory/items/TrainingCrossbow.tres") as ItemData
+	var sword := load("res://game/items/weapons/TrainingSword.tres") as ItemData
+	var spear := load("res://game/items/weapons/TrainingLongspear.tres") as ItemData
+	var wand := load("res://game/items/weapons/TrainingWand.tres") as ItemData
+	var bow := load("res://game/items/weapons/TrainingBow.tres") as ItemData
+	var crossbow := load("res://game/items/weapons/TrainingCrossbow.tres") as ItemData
 	assert_eq(sword.weapon_profile.family, ItemWeaponProfile.Family.SWORD)
 	assert_false(sword.is_two_handed_weapon())
 	assert_true(sword.has_weapon_action(ItemWeaponProfile.Action.PARRY))
@@ -151,10 +151,10 @@ func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
 	assert_true(crossbow.has_weapon_action(ItemWeaponProfile.Action.RELOAD))
 	assert_true(crossbow.get_equipment_stats().damage > bow.get_equipment_stats().damage)
 	var arrows := load(
-		"res://features/inventory/items/TrainingArrows.tres"
+		"res://game/items/ammunition/TrainingArrows.tres"
 	) as ItemData
 	var bolts := load(
-		"res://features/inventory/items/TrainingBolts.tres"
+		"res://game/items/ammunition/TrainingBolts.tres"
 	) as ItemData
 	assert_eq(arrows.category, ItemData.Category.AMMUNITION)
 	assert_true(arrows.can_equip_in(ItemData.EquipSlot.OFF_HAND))
@@ -164,13 +164,13 @@ func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
 
 func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:
 	var axe := load(
-		"res://features/inventory/items/TrainingBattleAxe.tres"
+		"res://game/items/weapons/TrainingBattleAxe.tres"
 	) as ItemData
 	var hammer := load(
-		"res://features/inventory/items/TrainingWarHammer.tres"
+		"res://game/items/weapons/TrainingWarHammer.tres"
 	) as ItemData
 	var greatsword := load(
-		"res://features/inventory/items/TrainingGreatsword.tres"
+		"res://game/items/weapons/TrainingGreatsword.tres"
 	) as ItemData
 
 	assert_true(axe.is_two_handed_weapon())
@@ -187,16 +187,16 @@ func test_strength_weapon_batch_is_two_handed_and_distinct() -> void:
 
 func test_specialized_two_handed_weapon_batch_has_expected_roles() -> void:
 	var great_hammer := load(
-		"res://features/inventory/items/TrainingGreatHammer.tres"
+		"res://game/items/weapons/TrainingGreatHammer.tres"
 	) as ItemData
 	var staff := load(
-		"res://features/inventory/items/TrainingStaff.tres"
+		"res://game/items/weapons/TrainingStaff.tres"
 	) as ItemData
 	var halberd := load(
-		"res://features/inventory/items/TrainingHalberd.tres"
+		"res://game/items/weapons/TrainingHalberd.tres"
 	) as ItemData
 	var scythe := load(
-		"res://features/inventory/items/TrainingScythe.tres"
+		"res://game/items/weapons/TrainingScythe.tres"
 	) as ItemData
 
 	for item: ItemData in [great_hammer, staff, halberd, scythe]:
@@ -214,8 +214,8 @@ func test_specialized_two_handed_weapon_batch_has_expected_roles() -> void:
 
 
 func test_offhand_batch_has_distinct_defensive_roles() -> void:
-	var buckler := load("res://features/inventory/items/TrainingBuckler.tres") as ItemData
-	var greatshield := load("res://features/inventory/items/TrainingGreatshield.tres") as ItemData
+	var buckler := load("res://game/items/offhand/TrainingBuckler.tres") as ItemData
+	var greatshield := load("res://game/items/offhand/TrainingGreatshield.tres") as ItemData
 	assert_eq(buckler.offhand_profile.family, ItemOffhandProfile.Family.BUCKLER)
 	assert_true(buckler.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(buckler.offhand_profile.parry_window_multiplier, 1.35)
@@ -224,7 +224,7 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	assert_false(greatshield.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)
 	var legacy_dagger := load(
-		"res://features/inventory/items/TrainingParryingDagger.tres"
+		"res://game/items/weapons/TrainingParryingDagger.tres"
 	) as ItemData
 	assert_true(legacy_dagger.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
 	assert_false(legacy_dagger.can_equip_in(ItemData.EquipSlot.OFF_HAND))
@@ -232,9 +232,9 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 
 
 func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
-	var light := load("res://features/inventory/items/ScoutLeatherArmor.tres") as ItemData
-	var heavy := load("res://features/inventory/items/KnightPlateArmor.tres") as ItemData
-	var robe := load("res://features/inventory/items/ScholarRobe.tres") as ItemData
+	var light := load("res://game/items/armor/ScoutLeatherArmor.tres") as ItemData
+	var heavy := load("res://game/items/armor/KnightPlateArmor.tres") as ItemData
+	var robe := load("res://game/items/armor/ScholarRobe.tres") as ItemData
 	assert_eq(light.armor_profile.armor_class, ItemArmorProfile.ArmorClass.LIGHT)
 	assert_eq(heavy.armor_profile.armor_class, ItemArmorProfile.ArmorClass.HEAVY)
 	assert_eq(robe.armor_profile.armor_class, ItemArmorProfile.ArmorClass.ROBE)
@@ -247,48 +247,48 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 		assert_true(chest.can_equip_in(ItemData.EquipSlot.CHEST))
 		assert_false(chest.can_equip_in(ItemData.EquipSlot.HANDS))
 	for path: String in [
-		"res://features/inventory/items/ScoutLeatherHood.tres",
-		"res://features/inventory/items/KnightPlateHelm.tres",
-		"res://features/inventory/items/ScholarHood.tres",
+		"res://game/items/armor/ScoutLeatherHood.tres",
+		"res://game/items/armor/KnightPlateHelm.tres",
+		"res://game/items/armor/ScholarHood.tres",
 	]:
 		var head := load(path) as ItemData
 		assert_true(head.can_equip_in(ItemData.EquipSlot.HEAD))
 		assert_false(head.armor_profile.set_id.is_empty())
 	for path: String in [
-		"res://features/inventory/items/ScoutLeatherMantle.tres",
-		"res://features/inventory/items/KnightPlatePauldrons.tres",
-		"res://features/inventory/items/ScholarMantle.tres",
+		"res://game/items/armor/ScoutLeatherMantle.tres",
+		"res://game/items/armor/KnightPlatePauldrons.tres",
+		"res://game/items/armor/ScholarMantle.tres",
 	]:
 		var shoulder := load(path) as ItemData
 		assert_true(shoulder.can_equip_in(ItemData.EquipSlot.SHOULDER))
 	for path: String in [
-		"res://features/inventory/items/ScoutLeatherGloves.tres",
-		"res://features/inventory/items/KnightPlateGauntlets.tres",
-		"res://features/inventory/items/ScholarHandwraps.tres",
+		"res://game/items/armor/ScoutLeatherGloves.tres",
+		"res://game/items/armor/KnightPlateGauntlets.tres",
+		"res://game/items/armor/ScholarHandwraps.tres",
 	]:
 		var hands := load(path) as ItemData
 		assert_true(hands.can_equip_in(ItemData.EquipSlot.HANDS))
 		assert_false(hands.armor_profile.set_id.is_empty())
 	for path: String in [
-		"res://features/inventory/items/ScoutUtilityBelt.tres",
-		"res://features/inventory/items/KnightWarBelt.tres",
-		"res://features/inventory/items/ScholarSash.tres",
+		"res://game/items/armor/ScoutUtilityBelt.tres",
+		"res://game/items/armor/KnightWarBelt.tres",
+		"res://game/items/armor/ScholarSash.tres",
 	]:
 		var belt := load(path) as ItemData
 		assert_true(belt.can_equip_in(ItemData.EquipSlot.BELT))
 		assert_false(belt.armor_profile.set_id.is_empty())
 	for path: String in [
-		"res://features/inventory/items/ScoutLeatherPants.tres",
-		"res://features/inventory/items/KnightPlateLeggings.tres",
-		"res://features/inventory/items/ScholarTrousers.tres",
+		"res://game/items/armor/ScoutLeatherPants.tres",
+		"res://game/items/armor/KnightPlateLeggings.tres",
+		"res://game/items/armor/ScholarTrousers.tres",
 	]:
 		var legs := load(path) as ItemData
 		assert_true(legs.can_equip_in(ItemData.EquipSlot.LEGS))
 		assert_false(legs.armor_profile.set_id.is_empty())
 	for path: String in [
-		"res://features/inventory/items/ScoutLeatherBoots.tres",
-		"res://features/inventory/items/KnightPlateGreaves.tres",
-		"res://features/inventory/items/ScholarShoes.tres",
+		"res://game/items/armor/ScoutLeatherBoots.tres",
+		"res://game/items/armor/KnightPlateGreaves.tres",
+		"res://game/items/armor/ScholarShoes.tres",
 	]:
 		var feet := load(path) as ItemData
 		assert_true(feet.can_equip_in(ItemData.EquipSlot.FEET))

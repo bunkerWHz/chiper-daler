@@ -220,10 +220,10 @@ func test_mana_and_rage_apply_only_after_use_duration() -> void:
 		components.add_child(component)
 	actor._collect_components()
 	var mana_potion := load(
-		"res://features/inventory/items/ManaPotion.tres"
+		"res://game/items/consumables/ManaPotion.tres"
 	) as ItemData
 	var rage_potion := load(
-		"res://features/inventory/items/RagePotion.tres"
+		"res://game/items/consumables/RagePotion.tres"
 	) as ItemData
 	inventory.add_item(mana_potion)
 	inventory.add_item(rage_potion)
@@ -282,7 +282,7 @@ func _create_item_actor(include_actor_state: bool) -> Dictionary:
 
 	actor._collect_components()
 	var health_flask := load(
-		"res://features/inventory/items/HealthPotion.tres"
+		"res://game/items/consumables/HealthPotion.tres"
 	) as ItemData
 	inventory.add_item(health_flask)
 

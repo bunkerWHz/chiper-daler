@@ -152,7 +152,7 @@ func test_replacing_active_main_hand_changes_combat_mode() -> void:
 	actor._collect_components()
 
 	var crossbow := load(
-		"res://features/inventory/items/TrainingCrossbow.tres"
+		"res://game/items/weapons/TrainingCrossbow.tres"
 	) as ItemData
 	inventory.add_item(crossbow)
 	assert_true(equipment.equip_inventory_item(

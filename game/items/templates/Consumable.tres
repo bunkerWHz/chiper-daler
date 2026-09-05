@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="consumable"]
+
+[sub_resource type="Resource" id="consumable"]
+script = ExtResource("consumable")
+use_effect = 1
+use_value = 10.0
+
+[resource]
+script = ExtResource("item")
+display_name = "New Consumable"
+icon = ExtResource("icon")
+category = 4
+stackable = true
+max_stack_size = 10
+usable_in_combat = true
+consumable_profile = SubResource("consumable")

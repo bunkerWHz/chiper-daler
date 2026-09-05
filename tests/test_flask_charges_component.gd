@@ -23,7 +23,7 @@ func test_flask_is_unique_persistent_and_refilled_by_rest() -> void:
 	actor._collect_components()
 
 	var flask := load(
-		"res://features/inventory/items/HealthPotion.tres"
+		"res://game/items/consumables/HealthPotion.tres"
 	) as ItemData
 	assert_eq(inventory.add_item(flask, 8), 1)
 	assert_eq(inventory.get_quantity(flask.id), 1)
@@ -98,7 +98,7 @@ func _create_flask_owner() -> Dictionary:
 	components.add_child(flasks)
 	actor._collect_components()
 	var flask := load(
-		"res://features/inventory/items/HealthPotion.tres"
+		"res://game/items/consumables/HealthPotion.tres"
 	) as ItemData
 	inventory.add_item(flask)
 	return {

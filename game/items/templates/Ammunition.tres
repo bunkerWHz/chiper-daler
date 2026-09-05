@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemAmmunitionProfile.gd" id="ammunition"]
+
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("equipment")
+allowed_slots = Array[int]([2])
+
+[sub_resource type="Resource" id="ammunition"]
+script = ExtResource("ammunition")
+ammunition_type = &"arrow"
+
+[resource]
+script = ExtResource("item")
+display_name = "New Ammunition"
+icon = ExtResource("icon")
+category = 7
+stackable = true
+max_stack_size = 999
+equipment_profile = SubResource("equipment")
+ammunition_profile = SubResource("ammunition")

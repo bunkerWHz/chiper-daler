@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://features/loot/LootDropComponent.gd" id="1_component"]
 [ext_resource type="PackedScene" path="res://features/loot/LootBag.tscn" id="2_bag"]
-[ext_resource type="Resource" path="res://features/inventory/items/ExperienceTonic.tres" id="3_item"]
+[ext_resource type="Resource" path="res://game/items/consumables/ExperienceTonic.tres" id="3_item"]
 [ext_resource type="Script" path="res://features/loot/LootEntry.gd" id="4_entry"]
 
 [sub_resource type="Resource" id="LootEntry_experience_tonic"]

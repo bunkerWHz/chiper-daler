@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="armor"]
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("stats")
+defense = 5.0
+
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("equipment")
+allowed_slots = Array[int]([4])
+stats = SubResource("stats")
+
+[sub_resource type="Resource" id="armor"]
+script = ExtResource("armor")
+armor_class = 0
+
+[resource]
+script = ExtResource("item")
+display_name = "New Armor"
+icon = ExtResource("icon")
+category = 1
+equipment_profile = SubResource("equipment")
+armor_profile = SubResource("armor")

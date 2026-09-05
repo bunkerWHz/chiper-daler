@@ -41,7 +41,7 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	)
 
 	var rage_item := load(
-		"res://features/inventory/items/RagePotion.tres"
+		"res://game/items/consumables/RagePotion.tres"
 	) as ItemData
 	assert_true(status_effects.apply_effect(rage_item.get_status_effect()))
 	view._process(0.0)

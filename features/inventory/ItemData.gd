@@ -75,16 +75,22 @@ enum UseVisualEffect {
 	RAGE,
 }
 
+@export_group("Identity")
+## Unique stable item key, for example iron_sword. Different items must use different IDs.
 @export var id: StringName
+@export_group("Presentation")
 @export var display_name: String = "New Item"
 @export_multiline var description: String
 @export var icon: Texture2D
+@export_group("Category and rarity")
 @export var category: Category = Category.MATERIAL
+@export var rarity: Rarity = Rarity.COMMON
+@export_group("Inventory and economy")
 @export var stackable: bool = false
 @export_range(1, 999, 1) var max_stack_size: int = 1
 @export_range(0.0, 1000.0, 0.01) var weight: float = 0.0
-@export var rarity: Rarity = Rarity.COMMON
 @export_range(0, 1000000, 1) var sell_price: int = 0
+@export_group("Usage")
 @export var is_key_item: bool = false
 @export var usable_in_combat: bool = false
 

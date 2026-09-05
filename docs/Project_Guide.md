@@ -52,7 +52,9 @@ godot --headless --path . --script tests/run_tests.gd
 
 ## Предмет
 
-Откройте нужный файл в `features/inventory/items`. В ItemData находятся название,
+Откройте нужную категорию в `game/items`. Для нового предмета скопируйте
+ресурс из `game/items/templates`: [инструкция](../game/items/README.md).
+В ItemData находятся название,
 описание, иконка, масса и размер стопки. В разделе Profiles:
 
 | Профиль | Настройка |

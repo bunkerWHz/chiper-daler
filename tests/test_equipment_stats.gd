@@ -13,7 +13,7 @@ func test_attribute_requirements_gate_equipping() -> void:
 	var equipment := setup.equipment as EquipmentComponent
 	attributes.set_dexterity(1)
 	var crossbow := load(
-		"res://features/inventory/items/LightCrossbow.tres"
+		"res://game/items/weapons/LightCrossbow.tres"
 	) as ItemData
 	inventory.add_item(crossbow)
 
@@ -87,7 +87,7 @@ func test_weapon_damage_applies_before_heavy_multiplier() -> void:
 	var hitbox := setup.hitbox as HitboxComponent
 	var attack := setup.attack as AttackComponent
 	var sword := load(
-		"res://features/inventory/items/RustySword.tres"
+		"res://game/items/weapons/RustySword.tres"
 	) as ItemData
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
@@ -108,7 +108,7 @@ func test_active_weapon_controls_critical_damage_multiplier() -> void:
 	var hitbox := setup.hitbox as HitboxComponent
 	var attack := setup.attack as AttackComponent
 	var dagger := load(
-		"res://features/inventory/items/TrainingDagger.tres"
+		"res://game/items/weapons/TrainingDagger.tres"
 	) as ItemData
 	inventory.add_item(dagger)
 	equipment.equip_inventory_item(dagger.id, ItemData.EquipSlot.MAIN_HAND)
@@ -221,10 +221,10 @@ func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	actor._collect_components()
 
 	var bow := load(
-		"res://features/inventory/items/ShortBow.tres"
+		"res://game/items/weapons/ShortBow.tres"
 	) as ItemData
 	var focus := load(
-		"res://features/inventory/items/ApprenticeFocus.tres"
+		"res://game/items/weapons/ApprenticeFocus.tres"
 	) as ItemData
 	inventory.add_item(bow)
 	inventory.add_item(focus)

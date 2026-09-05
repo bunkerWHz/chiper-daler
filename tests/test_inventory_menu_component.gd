@@ -334,7 +334,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_false(details.text.contains("Moveset:"))
 	assert_true(details.text.contains("Ammunition: Bolt"))
 	var shield := load(
-		"res://features/inventory/items/WoodenShield.tres"
+		"res://game/items/offhand/WoodenShield.tres"
 	) as ItemData
 	var shield_details := menu._detail_popup.get_item_text(shield)
 	assert_true(shield_details.contains("Offhand: Medium Shield"))

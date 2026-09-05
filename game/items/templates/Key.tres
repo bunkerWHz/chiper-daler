@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+
+[resource]
+script = ExtResource("item")
+display_name = "New Key"
+icon = ExtResource("icon")
+category = 9
+is_key_item = true

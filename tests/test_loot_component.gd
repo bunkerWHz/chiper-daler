@@ -84,7 +84,7 @@ func test_enemy_death_drops_configured_loot_bag_once() -> void:
 
 func test_persistent_flasks_cannot_enter_loot_tables_or_bags() -> void:
 	var flask := load(
-		"res://features/inventory/items/HealthPotion.tres"
+		"res://game/items/consumables/HealthPotion.tres"
 	) as ItemData
 	var entry := LootEntry.new()
 	entry.item = flask
