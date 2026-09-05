@@ -145,7 +145,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(quick_drop_target._can_drop_data(Vector2.ZERO, potion_payload))
 	quick_access.assign_item(3, potion.id)
 	menu.show_quick_slot_details(3)
-	assert_true(menu._details_text.text.contains("Test Potion"))
+	assert_true(menu._detail_popup.get_text().contains("Test Potion"))
 	menu.hide_hover_details()
 	menu._on_inventory_data_dropped({
 		"kind": InventoryDragButton.KIND_QUICK_SLOT,
@@ -307,8 +307,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq(set_one_button.text, "Set 1")
 	assert_eq(set_two_button.text, "Set 2")
 	assert_false(set_one_button.text.contains("Active"))
-	assert_true(set_one_button.has_theme_stylebox_override("normal"))
-	assert_false(set_two_button.has_theme_stylebox_override("normal"))
+	assert_eq(set_one_button.theme_type_variation, &"ActiveWeaponSet")
+	assert_eq(set_two_button.theme_type_variation, &"")
 	var first_equipped_button := (
 		equipment_slots.get_child(6) as InventoryDragButton
 	)
@@ -316,7 +316,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_eq(first_equipped_button.icon, ItemData.PLACEHOLDER_ICON)
 	first_equipped_button.focus_entered.emit()
 	assert_true(detail_popup.visible)
-	assert_true(menu._details_text.text.contains("Test Sword"))
+	assert_true(menu._detail_popup.get_text().contains("Test Sword"))
 	first_equipped_button.focus_exited.emit()
 	menu._select_item(crossbow.id)
 	var details := menu.get_node(
@@ -335,15 +335,15 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var shield := load(
 		"res://features/inventory/items/WoodenShield.tres"
 	) as ItemData
-	var shield_details := menu._get_item_details(shield)
+	var shield_details := menu._detail_popup.get_item_text(shield)
 	assert_true(shield_details.contains("Offhand: Medium Shield"))
 	assert_true(shield_details.contains("Actions: Guard, Parry"))
 	assert_true(shield_details.contains("Block 50%"))
 	assert_true(equip_button.disabled)
 	menu._activate_weapon_set(1)
 	assert_eq(equipment.get_active_weapon_set(), 1)
-	assert_false(set_one_button.has_theme_stylebox_override("normal"))
-	assert_true(set_two_button.has_theme_stylebox_override("normal"))
+	assert_eq(set_one_button.theme_type_variation, &"")
+	assert_eq(set_two_button.theme_type_variation, &"ActiveWeaponSet")
 	menu._select_item(sword.id)
 	menu._equip_selected_item()
 	assert_false(equipment.is_item_equipped(sword.id))

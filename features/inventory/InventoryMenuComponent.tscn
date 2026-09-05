@@ -2,17 +2,8 @@
 
 [ext_resource type="Script" path="res://features/inventory/InventoryMenuComponent.gd" id="1_menu"]
 
-[sub_resource type="StyleBoxFlat" id="InventoryPanel"]
-bg_color = Color(0.055, 0.063, 0.085, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.35, 0.4, 0.5, 0.9)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[ext_resource type="PackedScene" path="res://features/inventory/ui/ItemDetailsView.tscn" id="2_details"]
+[ext_resource type="Theme" path="res://features/inventory/ui/InventoryTheme.tres" id="3_theme"]
 
 [node name="InventoryMenuComponent" type="Node"]
 script = ExtResource("1_menu")
@@ -29,7 +20,7 @@ anchor_bottom = 0.95
 offset_top = 92.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("InventoryPanel")
+theme = ExtResource("3_theme")
 
 [node name="Main" type="VBoxContainer" parent="CanvasLayer/Panel"]
 layout_mode = 1
@@ -145,27 +136,7 @@ layout_mode = 2
 text = "Drop..."
 disabled = true
 
-[node name="DetailPopup" type="PanelContainer" parent="CanvasLayer"]
-visible = false
-custom_minimum_size = Vector2(340, 180)
-offset_right = 340.0
-offset_bottom = 180.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("InventoryPanel")
-
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/DetailPopup"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
-
-[node name="Details" type="Label" parent="CanvasLayer/DetailPopup/Margin"]
-layout_mode = 2
-text = "Item details"
-autowrap_mode = 2
-text_overrun_behavior = 3
-max_lines_visible = 8
+[node name="DetailPopup" parent="CanvasLayer" instance=ExtResource("2_details")]
 
 [node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
 title = "Drop item"

@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ui/ItemDetailsView.gd" id="1_script"]
+[ext_resource type="Theme" path="res://features/inventory/ui/InventoryTheme.tres" id="2_theme"]
+
+[node name="ItemDetailsView" type="PanelContainer"]
+script = ExtResource("1_script")
+theme = ExtResource("2_theme")
+visible = false
+custom_minimum_size = Vector2(340, 180)
+offset_right = 340.0
+offset_bottom = 180.0
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Details" type="Label" parent="Margin"]
+layout_mode = 2
+text = "Item details"
+autowrap_mode = 2
+text_overrun_behavior = 3
+max_lines_visible = 8
