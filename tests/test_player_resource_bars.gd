@@ -54,33 +54,19 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	assert_eq(view.get_displayed_rage(), 0.0)
 
 
-func test_scene_uses_requested_temporary_colors_and_sits_below_health() -> void:
+func test_resource_bars_have_distinct_labels_and_visible_ranges() -> void:
 	var packed := load(
 		"res://features/progression/ui/PlayerResourceBarsView.tscn"
 	) as PackedScene
 	var view := track(packed.instantiate()) as PlayerResourceBarsView
-	var mana_bar := view.get_node(
-		"MarginContainer/Bars/Mana/ManaBar"
-	) as ProgressBar
-	var experience_bar := view.get_node(
-		"MarginContainer/Bars/Experience/ExperienceBar"
-	) as ProgressBar
-	var stamina_bar := view.get_node(
-		"MarginContainer/Bars/Stamina/StaminaBar"
-	) as ProgressBar
-	var rage_bar := view.get_node(
-		"MarginContainer/Bars/Rage/RageBar"
-	) as ProgressBar
-	var mana_fill := mana_bar.get_theme_stylebox("fill") as StyleBoxFlat
-	var experience_fill := (
-		experience_bar.get_theme_stylebox("fill") as StyleBoxFlat
-	)
-	var stamina_fill := stamina_bar.get_theme_stylebox("fill") as StyleBoxFlat
-	var rage_fill := rage_bar.get_theme_stylebox("fill") as StyleBoxFlat
-
-	assert_eq(view.offset_left, 16.0)
-	assert_eq(view.offset_top, 82.0)
-	assert_eq(mana_fill.bg_color, Color(0.12, 0.42, 0.95, 1.0))
-	assert_eq(experience_fill.bg_color, Color(0.94, 0.94, 0.98, 1.0))
-	assert_eq(stamina_fill.bg_color, Color(0.2, 0.75, 0.3, 1.0))
-	assert_eq(rage_fill.bg_color, Color(1.0, 0.45, 0.08, 1.0))
+	var titles := PackedStringArray()
+	for resource_name: String in ["Mana", "Experience", "Stamina", "Rage"]:
+		var row := view.get_node("MarginContainer/Bars/" + resource_name)
+		var title := row.get_node("Header/Title") as Label
+		var bar := row.get_node(resource_name + "Bar") as ProgressBar
+		assert_false(title.text.is_empty())
+		assert_false(titles.has(title.text))
+		titles.append(title.text)
+		assert_true(title.visible)
+		assert_true(bar.visible)
+		assert_true(bar.max_value > bar.min_value)

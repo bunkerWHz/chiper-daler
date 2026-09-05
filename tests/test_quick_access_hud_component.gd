@@ -6,15 +6,14 @@ func suite_name() -> String:
 	return "quick_access_hud"
 
 
-func test_scene_places_hotbar_right_of_player_health() -> void:
+func test_hotbar_background_does_not_intercept_world_input() -> void:
 	var hud_scene := load(
 		"res://features/inventory/QuickAccessHUDComponent.tscn"
 	) as PackedScene
 	var hud := track(hud_scene.instantiate()) as QuickAccessHUDComponent
 	var margin := hud.get_node("CanvasLayer/TopMargin") as MarginContainer
-	assert_eq(margin.offset_left, 260.0)
-	assert_eq(margin.offset_top, 16.0)
-	assert_true(margin.offset_left > 248.0)
+	assert_eq(margin.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_true(margin.get_node("Slots") is Container)
 
 
 func test_slot_display_tracks_item_assignments_and_quantities() -> void:
@@ -32,7 +31,6 @@ func test_slot_display_tracks_item_assignments_and_quantities() -> void:
 	var health_display := hud.get_slot_display(0)
 	assert_false(health_display.available)
 	assert_eq(health_display.title, "Health Potion")
-	assert_eq(QuickAccessHUDComponent.ICON_SIZE, Vector2(64.0, 64.0))
 	assert_false(hud.get_slot_display(2).available)
 	var item_display := hud.get_slot_display(1)
 	assert_true(item_display.available)

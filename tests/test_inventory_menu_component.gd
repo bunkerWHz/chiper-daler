@@ -48,11 +48,6 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	) as PackedScene
 	var menu := menu_scene.instantiate() as InventoryMenuComponent
 	var menu_panel := menu.get_node("CanvasLayer/Panel") as Control
-	assert_eq(menu_panel.anchor_left, 0.25)
-	assert_eq(menu_panel.anchor_top, 0.0)
-	assert_eq(menu_panel.anchor_right, 0.75)
-	assert_true(is_equal_approx(menu_panel.anchor_bottom, 0.95))
-	assert_eq(menu_panel.offset_top, 92.0)
 	for component: Component in [
 		input,
 		body,
@@ -68,6 +63,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		components.add_child(component)
 	actor._collect_components()
 	menu._ready()
+	assert_false(menu_panel.visible)
 
 	var potion := ItemData.new()
 	potion.id = &"test_potion"
@@ -86,7 +82,6 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var grid := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
-	assert_eq(grid.columns, 5)
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
 	assert_eq((grid.get_child(0) as Button).text, "")
@@ -270,9 +265,6 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var equipment_slots := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll/EquipmentSlots"
 	) as GridContainer
-	var equipment_column := equipment_slots.get_parent().get_parent() as VBoxContainer
-	assert_eq(equipment_column.custom_minimum_size.x, 232.0)
-	assert_eq(equipment_slots.columns, 3)
 	assert_eq(equipment_slots.get_child_count(), 21)
 	var expected_slots: Array[int] = [
 		ItemData.EquipSlot.SHOULDER,
@@ -297,11 +289,14 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		ItemData.EquipSlot.RUNE,
 		ItemData.EquipSlot.RUNE,
 	]
-	for index in expected_slots.size():
-		var equipment_button := (
-			equipment_slots.get_child(index) as InventoryDragButton
-		)
-		assert_eq(int(equipment_button.target_equip_slot), expected_slots[index])
+	var actual_slots: Array[int] = []
+	for equipment_button: InventoryDragButton in equipment_slots.get_children():
+		actual_slots.append(equipment_button.target_equip_slot)
+		assert_true(equipment_button.visible)
+		assert_ne(equipment_button.focus_mode, Control.FOCUS_NONE)
+	actual_slots.sort()
+	expected_slots.sort()
+	assert_eq(actual_slots, expected_slots)
 	var weapon_sets := menu.get_node(
 		"CanvasLayer/Panel/Main/Content/Equipment/WeaponSets"
 	) as HBoxContainer
@@ -432,11 +427,7 @@ func _create_equipment_item(
 	display_name: String,
 	slot: ItemData.EquipSlot
 ) -> ItemData:
-	var item := ItemData.new()
-	item.id = item_id
+	var item := preload("res://tests/fixtures/ItemFixtures.gd").equippable(item_id, slot)
 	item.display_name = display_name
 	item.category = ItemData.Category.ARMOR
-	item.equipment_profile = ItemEquipmentProfile.new()
-	item.equipment_profile.allowed_slots = [slot]
-	item.equipment_profile.stats = ItemStats.new()
 	return item

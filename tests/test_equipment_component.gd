@@ -728,9 +728,4 @@ func _create_equippable(
 	id: StringName,
 	equip_slot: ItemData.EquipSlot
 ) -> ItemData:
-	var item := ItemData.new()
-	item.id = id
-	item.display_name = String(id).capitalize()
-	item.equipment_profile = ItemEquipmentProfile.new()
-	item.equipment_profile.allowed_slots = [equip_slot]
-	return item
+	return preload("res://tests/fixtures/ItemFixtures.gd").equippable(id, equip_slot)

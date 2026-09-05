@@ -279,12 +279,7 @@ func _create_stat_item(
 	damage: float,
 	defense: float
 ) -> ItemData:
-	var item := ItemData.new()
-	item.id = id
-	item.display_name = String(id).capitalize()
-	item.equipment_profile = ItemEquipmentProfile.new()
-	item.equipment_profile.allowed_slots = [slot]
-	item.equipment_profile.stats = ItemStats.new()
+	var item := preload("res://tests/fixtures/ItemFixtures.gd").equippable(id, slot)
 	item.equipment_profile.stats.damage = damage
 	item.equipment_profile.stats.defense = defense
 	return item
