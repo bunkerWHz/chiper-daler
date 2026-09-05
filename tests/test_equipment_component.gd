@@ -503,6 +503,114 @@ func test_displaced_item_stays_in_bag_when_it_cannot_use_source_slot() -> void:
 	assert_eq(inventory.get_quantity(amulet.id), 1)
 
 
+func test_failed_move_does_not_interrupt_attack_or_publish_changes() -> void:
+	var setup := _create_equipped_actor()
+	var equipment := setup.equipment as EquipmentComponent
+	var attack := setup.attack as AttackComponent
+	assert_true(attack.attack())
+	var before: Dictionary = equipment.capture_runtime_state()
+	var observed := _observe_equipment(equipment)
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0, ItemData.EquipSlot.HEAD, 0, -1
+	))
+	assert_eq(equipment.capture_runtime_state(), before)
+	assert_true(attack.is_attacking())
+	assert_true(observed.is_empty())
+
+
+func test_failed_move_preserves_explicit_ammunition_choice() -> void:
+	var setup := _create_equipment_only_actor()
+	var equipment := setup.equipment as EquipmentComponent
+	var inventory := setup.inventory as InventoryComponent
+	var bow := _create_ranged_item(&"atomic_bow", &"arrow", ItemData.CombatMode.BOW)
+	var arrows := _create_ammunition(&"ordinary_arrows", &"arrow")
+	var chosen_arrows := _create_ammunition(&"chosen_arrows", &"arrow")
+	for item: ItemData in [bow, arrows, chosen_arrows]:
+		inventory.add_item(item)
+	equipment.equip_inventory_item(bow.id, ItemData.EquipSlot.MAIN_HAND)
+	equipment.equip_inventory_item(chosen_arrows.id, ItemData.EquipSlot.OFF_HAND)
+	var before: Dictionary = equipment.capture_runtime_state()
+	var observed := _observe_equipment(equipment)
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0, ItemData.EquipSlot.HEAD, 0, -1
+	))
+	assert_eq(equipment.capture_runtime_state(), before)
+	assert_true(observed.is_empty())
+
+
+func test_weapon_swap_publishes_final_hands_and_mode_with_scarce_ammunition() -> void:
+	var setup := _create_equipment_only_actor()
+	var equipment := setup.equipment as EquipmentComponent
+	var inventory := setup.inventory as InventoryComponent
+	var bow := _create_ranged_item(&"swap_bow", &"arrow", ItemData.CombatMode.BOW)
+	var crossbow := _create_ranged_item(&"swap_crossbow", &"bolt", ItemData.CombatMode.CROSSBOW)
+	var arrows := _create_ammunition(&"swap_arrows", &"arrow")
+	var bolts := _create_ammunition(&"swap_bolts", &"bolt")
+	for item: ItemData in [bow, crossbow, arrows, bolts]:
+		inventory.add_item(item)
+	equipment.equip_inventory_item(bow.id, ItemData.EquipSlot.MAIN_HAND, 0, 0)
+	equipment.equip_inventory_item(crossbow.id, ItemData.EquipSlot.MAIN_HAND, 0, 1)
+	var initial: Dictionary = equipment.capture_runtime_state()
+	var observed := _observe_equipment(equipment)
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	))
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.CROSSBOW)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND, 0, 0), bolts.id)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND, 0, 1), arrows.id)
+	assert_false(observed.is_empty())
+	for snapshot: Dictionary in observed:
+		assert_eq(snapshot, equipment.capture_runtime_state())
+	observed.clear()
+	equipment.restore_runtime_state(initial)
+	assert_eq(equipment.capture_runtime_state(), initial)
+	assert_false(observed.is_empty())
+	for snapshot: Dictionary in observed:
+		assert_eq(snapshot, initial)
+	observed.clear()
+	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND), &"")
+	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
+	for snapshot: Dictionary in observed:
+		assert_eq(snapshot, equipment.capture_runtime_state())
+	assert_eq(inventory.get_quantity(arrows.id), 1)
+	assert_eq(inventory.get_quantity(bolts.id), 1)
+
+
+func _observe_equipment(equipment: EquipmentComponent) -> Array[Dictionary]:
+	var observed: Array[Dictionary] = []
+	equipment.loadout_item_changed.connect(func(_slot, _index, _set, _before, _after):
+		observed.append(equipment.capture_runtime_state())
+	)
+	equipment.equipment_changed.connect(func(_before, _after):
+		observed.append(equipment.capture_runtime_state())
+	)
+	equipment.weapon_set_changed.connect(func(_before, _after):
+		observed.append(equipment.capture_runtime_state())
+	)
+	equipment.equipment_load_changed.connect(func(_weight, _max_weight, _ratio):
+		observed.append(equipment.capture_runtime_state())
+	)
+	return observed
+
+
+func _create_ranged_item(id: StringName, ammo_type: StringName, mode: ItemData.CombatMode) -> ItemData:
+	var item := _create_equippable(id, ItemData.EquipSlot.MAIN_HAND)
+	item.weapon_profile = ItemWeaponProfile.new()
+	item.weapon_profile.handedness = ItemWeaponProfile.Handedness.TWO_HANDED
+	item.weapon_profile.combat_mode = mode
+	item.weapon_profile.ammunition_type = ammo_type
+	return item
+
+
+func _create_ammunition(id: StringName, ammo_type: StringName) -> ItemData:
+	var item := _create_equippable(id, ItemData.EquipSlot.OFF_HAND)
+	item.category = ItemData.Category.AMMUNITION
+	item.ammunition_profile = ItemAmmunitionProfile.new()
+	item.ammunition_profile.ammunition_type = ammo_type
+	return item
+
+
 func _create_equipped_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

@@ -182,66 +182,19 @@ func equip_inventory_item(
 ) -> bool:
 	if not is_enabled or _inventory_component == null:
 		return false
-
-	var item := _inventory_component.get_item_data(item_id)
-	if (
-		item == null
-		or not item.can_equip_in(target_slot)
-		or not meets_item_requirements(item)
-	):
-		return false
-
 	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
-	if resolved_set < -1 or resolved_set >= WEAPON_SET_COUNT:
+	if not _is_valid_address(target_slot, slot_index, resolved_set):
 		return false
-	if not _is_valid_slot_index(target_slot, slot_index):
-		return false
-	if (
-		target_slot == ItemData.EquipSlot.OFF_HAND
-		and item.category == ItemData.Category.AMMUNITION
-		and not is_ammunition_compatible(item, resolved_set)
-	):
-		return false
-
 	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
-	var previous := StringName(_equipped_items.get(key, &""))
-	if previous == item_id:
+	if StringName(_equipped_items.get(key, &"")) == item_id:
 		return false
-	if _count_equipped_item(item_id) >= _inventory_component.get_quantity(item_id):
-		return false
-	if (
-		target_slot == ItemData.EquipSlot.OFF_HAND
-		and not is_off_hand_available(resolved_set)
-		and not (
-			item.category == ItemData.Category.AMMUNITION
-			and is_ammunition_compatible(item, resolved_set)
-		)
-	):
-		return false
-
-	if (
-		target_slot == ItemData.EquipSlot.MAIN_HAND
-		and item.is_two_handed_weapon()
-	):
-		unequip_item(ItemData.EquipSlot.OFF_HAND, 0, resolved_set)
-
-	_equipped_items[key] = item_id
-	loadout_item_changed.emit(
-		target_slot,
-		slot_index,
-		resolved_set,
-		previous,
-		item_id
-	)
+	var candidate := _equipped_items.duplicate()
+	candidate[key] = item_id
 	if target_slot == ItemData.EquipSlot.MAIN_HAND:
-		_sync_ammunition_for_weapon(item, resolved_set)
-	_emit_equipment_load_changed()
-	if (
-		target_slot == ItemData.EquipSlot.MAIN_HAND
-		and resolved_set == _active_weapon_set
-	):
-		equip(get_item_action_slot(item))
-	return true
+		_reconcile_hands(candidate, [resolved_set])
+	if not _is_valid_loadout(candidate):
+		return false
+	return _commit_loadout(candidate)
 
 
 ## Move an equipped item, swapping the displaced item back when compatible.
@@ -259,39 +212,37 @@ func move_equipped_item(
 	source_weapon_set = _resolve_weapon_set(source_slot, source_weapon_set)
 	target_weapon_set = _resolve_weapon_set(target_slot, target_weapon_set)
 	if (
-		source_slot == target_slot
-		and source_index == target_index
-		and source_weapon_set == target_weapon_set
+		not _is_valid_address(source_slot, source_index, source_weapon_set)
+		or not _is_valid_address(target_slot, target_index, target_weapon_set)
 	):
 		return false
-	var source_item_id := get_equipped_item_id(
-		source_slot, source_index, source_weapon_set
-	)
-	if source_item_id.is_empty():
+	var source_key := _make_equipment_key(source_slot, source_index, source_weapon_set)
+	var target_key := _make_equipment_key(target_slot, target_index, target_weapon_set)
+	var source_item := _loadout_item(_equipped_items, source_key)
+	if source_key == target_key or source_item == null:
 		return false
-	var displaced_item_id := get_equipped_item_id(
-		target_slot, target_index, target_weapon_set
-	)
-	unequip_item(target_slot, target_index, target_weapon_set)
-	unequip_item(source_slot, source_index, source_weapon_set)
-	if not equip_inventory_item(
-		source_item_id, target_slot, target_index, target_weapon_set
-	):
-		equip_inventory_item(
-			source_item_id, source_slot, source_index, source_weapon_set
-		)
-		if not displaced_item_id.is_empty():
-			equip_inventory_item(
-				displaced_item_id, target_slot, target_index, target_weapon_set
-			)
+	if not source_item.can_equip_in(target_slot) or not meets_item_requirements(source_item):
 		return false
-	if not displaced_item_id.is_empty():
-		var displaced_item := _inventory_component.get_item_data(displaced_item_id)
-		if displaced_item != null and displaced_item.can_equip_in(source_slot):
-			equip_inventory_item(
-				displaced_item_id, source_slot, source_index, source_weapon_set
-			)
-	return true
+	var displaced := _loadout_item(_equipped_items, target_key)
+	var candidate := _equipped_items.duplicate()
+	candidate.erase(source_key)
+	candidate[target_key] = source_item.id
+	if displaced != null and displaced.can_equip_in(source_slot) and meets_item_requirements(displaced):
+		candidate[source_key] = displaced.id
+
+	var changed_sets: Array[int] = []
+	if source_slot == ItemData.EquipSlot.MAIN_HAND:
+		changed_sets.append(source_weapon_set)
+	if target_slot == ItemData.EquipSlot.MAIN_HAND and target_weapon_set not in changed_sets:
+		changed_sets.append(target_weapon_set)
+	_reconcile_hands(candidate, changed_sets)
+	# Reconciliation may return an incompatible displaced offhand to the bag,
+	# but must never discard the item the player explicitly moved.
+	if StringName(candidate.get(target_key, &"")) != source_item.id:
+		return false
+	if not _is_valid_loadout(candidate):
+		return false
+	return _commit_loadout(candidate)
 
 
 func unequip_item(
@@ -303,24 +254,11 @@ func unequip_item(
 	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
 	if not _equipped_items.has(key):
 		return false
+	var candidate := _equipped_items.duplicate()
+	candidate.erase(key)
 	if target_slot == ItemData.EquipSlot.MAIN_HAND:
-		var off_hand := get_equipped_item(
-			ItemData.EquipSlot.OFF_HAND, 0, resolved_set
-		)
-		if off_hand != null and off_hand.category == ItemData.Category.AMMUNITION:
-			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, resolved_set)
-
-	var previous := StringName(_equipped_items[key])
-	_equipped_items.erase(key)
-	loadout_item_changed.emit(
-		target_slot,
-		slot_index,
-		resolved_set,
-		previous,
-		&""
-	)
-	_emit_equipment_load_changed()
-	return true
+		_reconcile_hands(candidate, [resolved_set])
+	return _commit_loadout(candidate)
 
 
 func is_item_equipped(item_id: StringName) -> bool:
@@ -336,16 +274,10 @@ func get_equipped_item_count(item_id: StringName) -> int:
 func unequip_inventory_item(item_id: StringName) -> bool:
 	if item_id.is_empty():
 		return false
-	for key: Variant in _equipped_items.keys():
-		if StringName(_equipped_items[key]) != item_id:
-			continue
-		var was_active_main := (
-			get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND) == item_id
-		)
-		_remove_equipped_key(key)
-		if was_active_main:
-			equip(Slot.MELEE)
-		return true
+	for key: String in _equipped_items:
+		if StringName(_equipped_items[key]) == item_id:
+			var parts := key.split(":")
+			return unequip_item(int(parts[0]) as ItemData.EquipSlot, int(parts[1]), int(parts[2]))
 	return false
 
 
@@ -374,14 +306,7 @@ func get_equipped_item(
 func switch_weapon_set(set_index: int) -> bool:
 	if not is_enabled or set_index < 0 or set_index >= WEAPON_SET_COUNT:
 		return false
-	if set_index == _active_weapon_set:
-		return false
-
-	var previous := _active_weapon_set
-	_active_weapon_set = set_index
-	weapon_set_changed.emit(previous, _active_weapon_set)
-	equip(get_item_action_slot(get_equipped_item(ItemData.EquipSlot.MAIN_HAND)))
-	return true
+	return _commit_loadout(_equipped_items.duplicate(), set_index)
 
 
 func cycle_weapon_set() -> int:
@@ -576,30 +501,17 @@ func restore_runtime_state(state: Variant) -> void:
 		if legacy_slot >= 0 and legacy_slot < Slot.size():
 			equip(legacy_slot as Slot)
 		return
-
-	var action_slot := int(state.get("action_slot", _current_slot))
-	if action_slot >= 0 and action_slot < Slot.size():
-		equip(action_slot as Slot)
-	switch_weapon_set(
-		clampi(int(state.get("active_weapon_set", 0)), 0, WEAPON_SET_COUNT - 1)
-	)
-	_equipped_items.clear()
+	var candidate: Dictionary = {}
 	var equipped_state: Variant = state.get("equipped_items", {})
 	if equipped_state is Dictionary:
-		for key: Variant in equipped_state:
-			var item_id := StringName(equipped_state[key])
-			var item := (
-				_inventory_component.get_item_data(item_id)
-				if _inventory_component != null
-				else null
-			)
-			if (
-				item != null
-				and meets_item_requirements(item)
-			):
-				_equipped_items[String(key)] = item_id
-	_normalize_weapon_sets()
-	_emit_equipment_load_changed()
+		candidate = equipped_state.duplicate()
+	_prune_unavailable_items(candidate)
+	_reconcile_hands(candidate, [0, 1])
+	var next_set := clampi(int(state.get("active_weapon_set", 0)), 0, WEAPON_SET_COUNT - 1)
+	var next_mode := int(state.get("action_slot", _current_slot))
+	if next_mode < 0 or next_mode >= Slot.size():
+		next_mode = int(_current_slot)
+	_commit_loadout(candidate, next_set, next_mode)
 
 
 func _resolve_weapon_set(
@@ -680,18 +592,10 @@ func _make_equipment_key(
 
 
 func _on_inventory_changed() -> void:
-	var previous_active_main := get_equipped_item_id(
-		ItemData.EquipSlot.MAIN_HAND
-	)
-	var equipped_counts := {}
-	for key: Variant in _equipped_items.keys():
-		var item_id := StringName(_equipped_items[key])
-		var used_count := int(equipped_counts.get(item_id, 0))
-		if used_count >= _inventory_component.get_quantity(item_id):
-			_remove_equipped_key(key)
-		else:
-			equipped_counts[item_id] = used_count + 1
-	_update_mode_after_active_weapon_removal(previous_active_main)
+	var candidate := _equipped_items.duplicate()
+	_prune_unavailable_items(candidate)
+	_reconcile_changed_hands(candidate)
+	_commit_loadout(candidate)
 
 
 func _count_equipped_item(item_id: StringName) -> int:
@@ -718,16 +622,6 @@ func _equip_starting_weapon_sets() -> void:
 				equip_inventory_item(
 					off_id, ItemData.EquipSlot.OFF_HAND, 0, set_index
 				)
-
-
-func _normalize_weapon_sets() -> void:
-	for set_index in WEAPON_SET_COUNT:
-		var main_hand := get_equipped_item(
-			ItemData.EquipSlot.MAIN_HAND, 0, set_index
-		)
-		if main_hand != null and main_hand.is_two_handed_weapon():
-			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, set_index)
-		_sync_ammunition_for_weapon(main_hand, set_index)
 
 
 func _get_effective_equipped_items() -> Array[ItemData]:
@@ -780,94 +674,11 @@ func _on_attributes_changed(
 ) -> void:
 	if _inventory_component == null:
 		return
-	var previous_active_main := get_equipped_item_id(
-		ItemData.EquipSlot.MAIN_HAND
-	)
-	for key: Variant in _equipped_items.keys():
-		var item := _inventory_component.get_item_data(
-			StringName(_equipped_items[key])
-		)
-		if item == null or not meets_item_requirements(item):
-			_remove_equipped_key(key)
-	_update_mode_after_active_weapon_removal(previous_active_main)
-	_emit_equipment_load_changed()
-
-
-func _update_mode_after_active_weapon_removal(
-	previous_active_main: StringName
-) -> void:
-	if (
-		not previous_active_main.is_empty()
-		and get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND).is_empty()
-	):
-		equip(Slot.MELEE)
-
-
-func _remove_equipped_key(key: Variant) -> void:
-	if not _equipped_items.has(key):
-		return
-	var previous := StringName(_equipped_items[key])
-	var parts := String(key).split(":")
-	_equipped_items.erase(key)
-	if parts.size() != 3:
-		return
-	var removed_slot := int(parts[0]) as ItemData.EquipSlot
-	var removed_set := int(parts[2])
-	loadout_item_changed.emit(
-		removed_slot,
-		int(parts[1]),
-		removed_set,
-		previous,
-		&""
-	)
-	if removed_slot == ItemData.EquipSlot.MAIN_HAND:
-		var off_hand := get_equipped_item(
-			ItemData.EquipSlot.OFF_HAND, 0, removed_set
-		)
-		if off_hand != null and off_hand.category == ItemData.Category.AMMUNITION:
-			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, removed_set)
-	_emit_equipment_load_changed()
-
-
-func _sync_ammunition_for_weapon(item: ItemData, weapon_set: int) -> void:
-	var required_type := item.get_ammunition_type() if item != null else &""
-	var equipped_ammunition := get_equipped_item(
-		ItemData.EquipSlot.OFF_HAND, 0, weapon_set
-	)
-	if (
-		equipped_ammunition != null
-		and equipped_ammunition.get_ammunition_type() == required_type
-		and not required_type.is_empty()
-	):
-		return
-	if required_type.is_empty():
-		if (
-			equipped_ammunition != null
-			and equipped_ammunition.category == ItemData.Category.AMMUNITION
-		):
-			unequip_item(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
-		return
-	unequip_item(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
-	if _inventory_component == null:
-		return
-	for stack: InventoryStack in _inventory_component.get_stacks():
-		var ammunition := stack.item
-		if (
-			ammunition.category != ItemData.Category.AMMUNITION
-			or ammunition.get_ammunition_type() != required_type
-			or not ammunition.can_equip_in(ItemData.EquipSlot.OFF_HAND)
-			or not meets_item_requirements(ammunition)
-			or _count_equipped_item(ammunition.id)
-			>= _inventory_component.get_quantity(ammunition.id)
-		):
-			continue
-		equip_inventory_item(
-			ammunition.id,
-			ItemData.EquipSlot.OFF_HAND,
-			0,
-			weapon_set
-		)
-		return
+	var candidate := _equipped_items.duplicate()
+	_prune_unavailable_items(candidate)
+	_reconcile_changed_hands(candidate)
+	if not _commit_loadout(candidate):
+		_emit_equipment_load_changed()
 
 
 func _emit_equipment_load_changed() -> void:
@@ -876,3 +687,157 @@ func _emit_equipment_load_changed() -> void:
 		get_max_equip_load(),
 		get_equip_load_ratio()
 	)
+
+
+func _is_valid_address(slot: ItemData.EquipSlot, index: int, weapon_set: int) -> bool:
+	var hand_slot := slot in [ItemData.EquipSlot.MAIN_HAND, ItemData.EquipSlot.OFF_HAND]
+	return (
+		slot > ItemData.EquipSlot.NONE and slot < ItemData.EquipSlot.size()
+		and _is_valid_slot_index(slot, index)
+		and ((weapon_set >= 0 and weapon_set < WEAPON_SET_COUNT) if hand_slot else weapon_set == -1)
+	)
+
+
+func _loadout_item(loadout: Dictionary, key: String) -> ItemData:
+	if _inventory_component == null:
+		return null
+	return _inventory_component.get_item_data(StringName(loadout.get(key, &"")))
+
+
+func _is_valid_loadout(loadout: Dictionary) -> bool:
+	var counts := {}
+	for key: String in loadout:
+		var parts := key.split(":")
+		if parts.size() != 3:
+			return false
+		var slot := int(parts[0]) as ItemData.EquipSlot
+		var weapon_set := int(parts[2])
+		var item := _loadout_item(loadout, key)
+		if (
+			not _is_valid_address(slot, int(parts[1]), weapon_set)
+			or item == null or not item.can_equip_in(slot)
+			or not meets_item_requirements(item)
+		):
+			return false
+		counts[item.id] = int(counts.get(item.id, 0)) + 1
+		if int(counts[item.id]) > _inventory_component.get_quantity(item.id):
+			return false
+		if slot == ItemData.EquipSlot.OFF_HAND:
+			var main := _loadout_item(loadout, _make_equipment_key(
+				ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
+			))
+			if not _offhand_fits(main, item):
+				return false
+	return true
+
+
+func _offhand_fits(main: ItemData, offhand: ItemData) -> bool:
+	if offhand == null:
+		return true
+	if offhand.category == ItemData.Category.AMMUNITION:
+		return (
+			main != null and not main.get_ammunition_type().is_empty()
+			and main.get_ammunition_type() == offhand.get_ammunition_type()
+		)
+	return (
+		main == null
+		or (not main.is_two_handed_weapon() and main.get_ammunition_type().is_empty())
+	)
+
+
+## Reconcile all changed hands before selecting ammunition, so a scarce stack
+## released by one weapon set is available to the other set in the same swap.
+func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int]) -> void:
+	for weapon_set: int in weapon_sets:
+		var main := _loadout_item(loadout, _make_equipment_key(
+			ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
+		))
+		var off_key := _make_equipment_key(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
+		if not _offhand_fits(main, _loadout_item(loadout, off_key)):
+			loadout.erase(off_key)
+	if _inventory_component == null:
+		return
+	for weapon_set: int in weapon_sets:
+		var main := _loadout_item(loadout, _make_equipment_key(
+			ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
+		))
+		var off_key := _make_equipment_key(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
+		if main == null or main.get_ammunition_type().is_empty() or loadout.has(off_key):
+			continue
+		for stack: InventoryStack in _inventory_component.get_stacks():
+			var ammo := stack.item
+			if (
+				ammo.category == ItemData.Category.AMMUNITION
+				and ammo.can_equip_in(ItemData.EquipSlot.OFF_HAND)
+				and _offhand_fits(main, ammo) and meets_item_requirements(ammo)
+				and loadout.values().count(ammo.id) < _inventory_component.get_quantity(ammo.id)
+			):
+				loadout[off_key] = ammo.id
+				break
+
+
+## Publish only after both the full loadout and its combat mode are installed.
+func _commit_loadout(candidate: Dictionary, next_set: int = -1, next_mode: int = -1) -> bool:
+	if next_set < 0:
+		next_set = _active_weapon_set
+	if candidate == _equipped_items and next_set == _active_weapon_set and (
+		next_mode < 0 or next_mode == int(_current_slot)
+	):
+		return false
+	var previous := _equipped_items
+	var previous_mode := _current_slot
+	var previous_set := _active_weapon_set
+	var main_key := _make_equipment_key(ItemData.EquipSlot.MAIN_HAND, 0, next_set)
+	_equipped_items = candidate
+	_active_weapon_set = next_set
+	if next_mode >= 0:
+		_current_slot = next_mode as Slot
+	elif previous_set != next_set or previous.get(main_key, &"") != candidate.get(main_key, &""):
+		_current_slot = get_item_action_slot(_loadout_item(candidate, main_key))
+	var changed_keys := previous.keys()
+	for key: String in candidate:
+		if key not in changed_keys:
+			changed_keys.append(key)
+	for key: String in changed_keys:
+		var before := StringName(previous.get(key, &""))
+		var after := StringName(candidate.get(key, &""))
+		if before == after:
+			continue
+		var parts := key.split(":")
+		loadout_item_changed.emit(
+			int(parts[0]) as ItemData.EquipSlot, int(parts[1]), int(parts[2]), before, after
+		)
+	if previous_set != _active_weapon_set:
+		weapon_set_changed.emit(previous_set, _active_weapon_set)
+	if previous_mode != _current_slot:
+		equipment_changed.emit(previous_mode, _current_slot)
+	_emit_equipment_load_changed()
+	return true
+
+func _prune_unavailable_items(candidate: Dictionary) -> void:
+	var counts := {}
+	for key: Variant in candidate.keys():
+		var parts := String(key).split(":")
+		var item := _loadout_item(candidate, String(key))
+		if parts.size() != 3 or item == null:
+			candidate.erase(key)
+			continue
+		var slot := int(parts[0]) as ItemData.EquipSlot
+		var weapon_set := int(parts[2])
+		if (
+			not _is_valid_address(slot, int(parts[1]), weapon_set)
+			or not item.can_equip_in(slot) or not meets_item_requirements(item)
+			or int(counts.get(item.id, 0)) >= _inventory_component.get_quantity(item.id)
+		):
+			candidate.erase(key)
+			continue
+		counts[item.id] = int(counts.get(item.id, 0)) + 1
+
+
+func _reconcile_changed_hands(candidate: Dictionary) -> void:
+	var changed_sets: Array[int] = []
+	for weapon_set in WEAPON_SET_COUNT:
+		var key := _make_equipment_key(ItemData.EquipSlot.MAIN_HAND, 0, weapon_set)
+		if candidate.get(key, &"") != _equipped_items.get(key, &""):
+			changed_sets.append(weapon_set)
+	_reconcile_hands(candidate, changed_sets)
