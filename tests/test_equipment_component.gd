@@ -383,6 +383,126 @@ func test_restored_two_handed_set_discards_incompatible_offhand() -> void:
 	)
 
 
+func test_move_equipped_item_between_empty_and_occupied_ring_slots() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var copper := _create_equippable(&"move_copper", ItemData.EquipSlot.RING)
+	var silver := _create_equippable(&"move_silver", ItemData.EquipSlot.RING)
+	inventory.add_item(copper)
+	inventory.add_item(silver)
+	equipment.equip_inventory_item(copper.id, ItemData.EquipSlot.RING, 0)
+	equipment.equip_inventory_item(silver.id, ItemData.EquipSlot.RING, 1)
+
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 0, -1, ItemData.EquipSlot.RING, 2, -1
+	))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING, 0), &"")
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING, 2), copper.id)
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 2, -1, ItemData.EquipSlot.RING, 1, -1
+	))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING, 1), copper.id)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING, 2), silver.id)
+	assert_eq(inventory.get_quantity(copper.id), 1)
+	assert_eq(inventory.get_quantity(silver.id), 1)
+
+
+func test_rejected_equipment_move_restores_source_and_destination() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var ring := _create_equippable(&"move_ring", ItemData.EquipSlot.RING)
+	var helmet := _create_equippable(&"move_helmet", ItemData.EquipSlot.HEAD)
+	inventory.add_item(ring)
+	inventory.add_item(helmet)
+	equipment.equip_inventory_item(ring.id, ItemData.EquipSlot.RING)
+	equipment.equip_inventory_item(helmet.id, ItemData.EquipSlot.HEAD)
+	var before: Dictionary = equipment.capture_runtime_state()
+
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 0, -1, ItemData.EquipSlot.HEAD, 0, -1
+	))
+	assert_eq(equipment.capture_runtime_state(), before)
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 0, -1, ItemData.EquipSlot.RING, 4, -1
+	))
+	assert_eq(equipment.capture_runtime_state(), before)
+
+
+func test_move_weapon_between_sets_and_swap_back() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var sword := _create_equippable(&"move_sword", ItemData.EquipSlot.MAIN_HAND)
+	var axe := _create_equippable(&"move_axe", ItemData.EquipSlot.MAIN_HAND)
+	inventory.add_item(sword)
+	inventory.add_item(axe)
+	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND, 0, 0)
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND), &"")
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 1), sword.id
+	)
+	equipment.equip_inventory_item(axe.id, ItemData.EquipSlot.MAIN_HAND, 0, 0)
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 1, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND), sword.id)
+	assert_eq(
+		equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, 1), axe.id
+	)
+	assert_eq(equipment.get_active_weapon_set(), 0)
+
+
+func test_equipment_move_ignores_same_slot_empty_source_and_disabled_component() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var sword := _create_equippable(&"same_sword", ItemData.EquipSlot.MAIN_HAND)
+	inventory.add_item(sword)
+	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
+	var before: Dictionary = equipment.capture_runtime_state()
+
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, -1, ItemData.EquipSlot.MAIN_HAND, 0, 0
+	))
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 0, -1, ItemData.EquipSlot.RING, 1, -1
+	))
+	equipment.disable()
+	assert_false(equipment.move_equipped_item(
+		ItemData.EquipSlot.MAIN_HAND, 0, 0, ItemData.EquipSlot.MAIN_HAND, 0, 1
+	))
+	assert_eq(equipment.capture_runtime_state(), before)
+
+
+func test_displaced_item_stays_in_bag_when_it_cannot_use_source_slot() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var flexible := _create_equippable(&"flexible_charm", ItemData.EquipSlot.RING)
+	flexible.equipment_profile = ItemEquipmentProfile.new()
+	flexible.equipment_profile.allowed_slots = [
+		ItemData.EquipSlot.RING, ItemData.EquipSlot.AMULET,
+	]
+	var amulet := _create_equippable(&"move_amulet", ItemData.EquipSlot.AMULET)
+	inventory.add_item(flexible)
+	inventory.add_item(amulet)
+	equipment.equip_inventory_item(flexible.id, ItemData.EquipSlot.RING)
+	equipment.equip_inventory_item(amulet.id, ItemData.EquipSlot.AMULET)
+
+	assert_true(equipment.move_equipped_item(
+		ItemData.EquipSlot.RING, 0, -1, ItemData.EquipSlot.AMULET, 0, -1
+	))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.AMULET), flexible.id)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING), &"")
+	assert_false(equipment.is_item_equipped(amulet.id))
+	assert_eq(inventory.get_quantity(amulet.id), 1)
+
+
 func _create_equipped_actor() -> Dictionary:
 	var actor := track(Actor.new()) as Actor
 	var components := Node2D.new()

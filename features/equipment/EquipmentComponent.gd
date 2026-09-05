@@ -244,6 +244,56 @@ func equip_inventory_item(
 	return true
 
 
+## Move an equipped item, swapping the displaced item back when compatible.
+## Items that cannot return to the source slot remain in the inventory.
+func move_equipped_item(
+	source_slot: ItemData.EquipSlot,
+	source_index: int,
+	source_weapon_set: int,
+	target_slot: ItemData.EquipSlot,
+	target_index: int,
+	target_weapon_set: int
+) -> bool:
+	if not is_enabled or _inventory_component == null:
+		return false
+	source_weapon_set = _resolve_weapon_set(source_slot, source_weapon_set)
+	target_weapon_set = _resolve_weapon_set(target_slot, target_weapon_set)
+	if (
+		source_slot == target_slot
+		and source_index == target_index
+		and source_weapon_set == target_weapon_set
+	):
+		return false
+	var source_item_id := get_equipped_item_id(
+		source_slot, source_index, source_weapon_set
+	)
+	if source_item_id.is_empty():
+		return false
+	var displaced_item_id := get_equipped_item_id(
+		target_slot, target_index, target_weapon_set
+	)
+	unequip_item(target_slot, target_index, target_weapon_set)
+	unequip_item(source_slot, source_index, source_weapon_set)
+	if not equip_inventory_item(
+		source_item_id, target_slot, target_index, target_weapon_set
+	):
+		equip_inventory_item(
+			source_item_id, source_slot, source_index, source_weapon_set
+		)
+		if not displaced_item_id.is_empty():
+			equip_inventory_item(
+				displaced_item_id, target_slot, target_index, target_weapon_set
+			)
+		return false
+	if not displaced_item_id.is_empty():
+		var displaced_item := _inventory_component.get_item_data(displaced_item_id)
+		if displaced_item != null and displaced_item.can_equip_in(source_slot):
+			equip_inventory_item(
+				displaced_item_id, source_slot, source_index, source_weapon_set
+			)
+	return true
+
+
 func unequip_item(
 	target_slot: ItemData.EquipSlot,
 	slot_index: int = 0,

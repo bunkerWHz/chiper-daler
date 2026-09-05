@@ -796,58 +796,13 @@ func _on_equipment_data_dropped(
 			StringName(data.get("item_id", &"")), slot, index, weapon_set
 		)
 	elif kind == InventoryDragButton.KIND_EQUIPPED_ITEM:
-		_move_equipped_item(data, slot, index, weapon_set)
+		_equipment.move_equipped_item(
+			int(data.get("equip_slot", ItemData.EquipSlot.NONE)) as ItemData.EquipSlot,
+			int(data.get("slot_index", 0)),
+			int(data.get("weapon_set", -1)),
+			slot, index, weapon_set
+		)
 	_rebuild()
-
-
-func _move_equipped_item(
-	data: Dictionary,
-	target_slot: ItemData.EquipSlot,
-	target_index: int,
-	target_weapon_set: int
-) -> void:
-	var source_slot := int(
-		data.get("equip_slot", ItemData.EquipSlot.NONE)
-	) as ItemData.EquipSlot
-	var source_index := int(data.get("slot_index", 0))
-	var source_weapon_set := int(data.get("weapon_set", -1))
-	if (
-		source_slot == target_slot
-		and source_index == target_index
-		and source_weapon_set == target_weapon_set
-	):
-		return
-	var source_item_id := _equipment.get_equipped_item_id(
-		source_slot, source_index, source_weapon_set
-	)
-	if source_item_id.is_empty():
-		return
-	var displaced_item_id := _equipment.get_equipped_item_id(
-		target_slot, target_index, target_weapon_set
-	)
-	_equipment.unequip_item(target_slot, target_index, target_weapon_set)
-	_equipment.unequip_item(source_slot, source_index, source_weapon_set)
-	if not _equipment.equip_inventory_item(
-		source_item_id, target_slot, target_index, target_weapon_set
-	):
-		_equipment.equip_inventory_item(
-			source_item_id, source_slot, source_index, source_weapon_set
-		)
-		if not displaced_item_id.is_empty():
-			_equipment.equip_inventory_item(
-				displaced_item_id,
-				target_slot,
-				target_index,
-				target_weapon_set
-			)
-		return
-	if displaced_item_id.is_empty():
-		return
-	var displaced_item := _inventory.get_item_data(displaced_item_id)
-	if displaced_item != null and displaced_item.can_equip_in(source_slot):
-		_equipment.equip_inventory_item(
-			displaced_item_id, source_slot, source_index, source_weapon_set
-		)
 
 
 func _rebuild_equipment_text() -> void:
