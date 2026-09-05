@@ -32,6 +32,7 @@
 [ext_resource type="Script" path="res://features/combat/AttackConfig.gd" id="30_attack_config"]
 [ext_resource type="PackedScene" path="res://framework/animation/AnimationEventComponent.tscn" id="31_animation_events"]
 [ext_resource type="PackedScene" path="res://features/audio/ActorAudioComponent.tscn" id="32_audio"]
+[ext_resource type="Script" path="res://features/enemy/EnemyAuthoringChecks.gd" id="authoring_checks"]
 
 [sub_resource type="Resource" id="EnemyMovementConfig_default"]
 script = ExtResource("4_config")
@@ -128,6 +129,9 @@ libraries/ = ExtResource("29_animation_library")
 [node name="HealthBar" parent="_Visual" instance=ExtResource("12_health_bar")]
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]
+
+[node name="EnemyAuthoringChecks" type="Node" parent="."]
+script = ExtResource("authoring_checks")
 
 [node name="EnemyJumpReachPreview" type="Node2D" parent="."]
 position = Vector2(0, 10)

@@ -21,6 +21,7 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyFlightComponent.gd" id="19_flight"]
 [ext_resource type="Script" path="res://features/enemy/EnemyFlightConfig.gd" id="20_flight_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="21_visual"]
+[ext_resource type="Script" path="res://features/enemy/EnemyAuthoringChecks.gd" id="authoring_checks"]
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="22_visual_config"]
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="23_death_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="24_chase_config"]
@@ -130,6 +131,9 @@ libraries/ = ExtResource("26_animation_library")
 position = Vector2(0, -28)
 
 [node name="_Sockets" type="Node2D" parent="."]
+
+[node name="EnemyAuthoringChecks" type="Node" parent="."]
+script = ExtResource("authoring_checks")
 
 [editable path="_Components/CharacterBodyComponent"]
 [editable path="_Components/HurtboxComponent"]
