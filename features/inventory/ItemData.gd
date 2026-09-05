@@ -96,16 +96,6 @@ enum UseVisualEffect {
 @export var consumable_profile: ItemConsumableProfile
 @export var ammunition_profile: ItemAmmunitionProfile
 
-# Kept as serialized fallback data while old resources and saves are migrated.
-@export_storage var equip_slot: EquipSlot = EquipSlot.NONE
-@export_storage var combat_mode: CombatMode = CombatMode.NONE
-@export_storage var use_effect: UseEffect = UseEffect.NONE
-@export_storage var use_value: float = 0.0
-@export_storage var use_visual_effect: UseVisualEffect = UseVisualEffect.NONE
-@export_storage var status_effect: StatusEffect
-@export_storage var visual_archetype: VisualArchetype = VisualArchetype.DEFAULT
-@export_storage var stats: ItemStats
-
 
 func is_valid() -> bool:
 	return (
@@ -123,28 +113,28 @@ func get_effective_stack_size() -> int:
 func can_equip_in(slot: EquipSlot) -> bool:
 	if equipment_profile != null:
 		return equipment_profile.can_equip_in(slot)
-	return equip_slot != EquipSlot.NONE and equip_slot == slot
+	return false
 
 
 func get_primary_equip_slot() -> EquipSlot:
 	if equipment_profile != null:
 		return equipment_profile.get_primary_slot()
-	return equip_slot
+	return EquipSlot.NONE
 
 
 func get_equipment_stats() -> ItemStats:
-	return equipment_profile.stats if equipment_profile != null else stats
+	return equipment_profile.stats if equipment_profile != null else null
 
 
 func get_combat_mode() -> CombatMode:
-	return weapon_profile.combat_mode if weapon_profile != null else combat_mode
+	return weapon_profile.combat_mode if weapon_profile != null else CombatMode.NONE
 
 
 func get_visual_archetype() -> VisualArchetype:
 	return (
 		weapon_profile.visual_archetype
 		if weapon_profile != null
-		else visual_archetype
+		else VisualArchetype.DEFAULT
 	)
 
 
@@ -172,7 +162,7 @@ func get_use_effect() -> UseEffect:
 	return (
 		consumable_profile.use_effect
 		if consumable_profile != null
-		else use_effect
+		else UseEffect.NONE
 	)
 
 
@@ -180,7 +170,7 @@ func get_use_value() -> float:
 	return (
 		consumable_profile.use_value
 		if consumable_profile != null
-		else use_value
+		else 0.0
 	)
 
 
@@ -188,7 +178,7 @@ func get_use_visual_effect() -> UseVisualEffect:
 	return (
 		consumable_profile.use_visual_effect
 		if consumable_profile != null
-		else use_visual_effect
+		else UseVisualEffect.NONE
 	)
 
 
@@ -196,7 +186,7 @@ func get_status_effect() -> StatusEffect:
 	return (
 		consumable_profile.status_effect
 		if consumable_profile != null
-		else status_effect
+		else null
 	)
 
 

@@ -131,7 +131,8 @@ func _create_quick_item(
 	item.id = id
 	item.display_name = String(id).capitalize()
 	item.category = category
-	item.combat_mode = combat_mode
+	item.weapon_profile = ItemWeaponProfile.new()
+	item.weapon_profile.combat_mode = combat_mode
 	item.stackable = true
 	item.max_stack_size = 10
 	item.usable_in_combat = true

@@ -56,11 +56,11 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 	var item := _create_stat_item(
 		&"five_attribute_item", ItemData.EquipSlot.HEAD, 0.0, 0.0
 	)
-	item.stats.strength_requirement = 2
-	item.stats.dexterity_requirement = 3
-	item.stats.intelligence_requirement = 4
-	item.stats.endurance_requirement = 5
-	item.stats.wisdom_requirement = 6
+	item.equipment_profile.stats.strength_requirement = 2
+	item.equipment_profile.stats.dexterity_requirement = 3
+	item.equipment_profile.stats.intelligence_requirement = 4
+	item.equipment_profile.stats.endurance_requirement = 5
+	item.equipment_profile.stats.wisdom_requirement = 6
 	assert_false(attributes.meets_item_requirements(item))
 	assert_eq(
 		attributes.get_requirement_failure(item),
@@ -282,8 +282,9 @@ func _create_stat_item(
 	var item := ItemData.new()
 	item.id = id
 	item.display_name = String(id).capitalize()
-	item.equip_slot = slot
-	item.stats = ItemStats.new()
-	item.stats.damage = damage
-	item.stats.defense = defense
+	item.equipment_profile = ItemEquipmentProfile.new()
+	item.equipment_profile.allowed_slots = [slot]
+	item.equipment_profile.stats = ItemStats.new()
+	item.equipment_profile.stats.damage = damage
+	item.equipment_profile.stats.defense = defense
 	return item

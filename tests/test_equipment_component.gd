@@ -646,7 +646,12 @@ func _create_equipped_actor() -> Dictionary:
 	var sword := _create_equippable(
 		&"equipped_test_sword", ItemData.EquipSlot.MAIN_HAND
 	)
-	sword.combat_mode = ItemData.CombatMode.MELEE
+	sword.weapon_profile = ItemWeaponProfile.new()
+	sword.weapon_profile.combat_mode = ItemData.CombatMode.MELEE
+	sword.weapon_profile.available_actions = (
+		ItemWeaponProfile.Action.LIGHT_ATTACK | ItemWeaponProfile.Action.HEAVY_ATTACK
+		| ItemWeaponProfile.Action.GUARD | ItemWeaponProfile.Action.PARRY
+	)
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(
 		sword.id, ItemData.EquipSlot.MAIN_HAND
@@ -693,5 +698,6 @@ func _create_equippable(
 	var item := ItemData.new()
 	item.id = id
 	item.display_name = String(id).capitalize()
-	item.equip_slot = equip_slot
+	item.equipment_profile = ItemEquipmentProfile.new()
+	item.equipment_profile.allowed_slots = [equip_slot]
 	return item

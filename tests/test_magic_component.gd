@@ -112,7 +112,8 @@ func test_magic_profile_separates_cast_and_channel_actions() -> void:
 	actor._collect_components()
 	var focus := ItemData.new()
 	focus.id = &"restricted_focus"
-	focus.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	focus.equipment_profile = ItemEquipmentProfile.new()
+	focus.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
 	focus.weapon_profile = ItemWeaponProfile.new()
 	focus.weapon_profile.combat_mode = ItemData.CombatMode.MAGIC
 	focus.weapon_profile.available_actions = ItemWeaponProfile.Action.CAST

@@ -51,23 +51,18 @@ func test_profiles_separate_equipment_weapon_and_consumable_data() -> void:
 	assert_eq(item.get_use_visual_effect(), ItemData.UseVisualEffect.HEAL)
 
 
-func test_legacy_fields_remain_readable_during_migration() -> void:
+func test_item_without_profiles_has_no_equipment_or_use_effect() -> void:
 	var item := ItemData.new()
-	item.equip_slot = ItemData.EquipSlot.RING
-	item.combat_mode = ItemData.CombatMode.MAGIC
-	item.visual_archetype = ItemData.VisualArchetype.ARCHER
-	item.use_effect = ItemData.UseEffect.RESTORE_MANA
-	item.use_value = 20.0
-	item.stats = ItemStats.new()
-	item.stats.defense = 3.0
-
-	assert_true(item.can_equip_in(ItemData.EquipSlot.RING))
-	assert_eq(item.get_primary_equip_slot(), ItemData.EquipSlot.RING)
-	assert_eq(item.get_combat_mode(), ItemData.CombatMode.MAGIC)
-	assert_eq(item.get_visual_archetype(), ItemData.VisualArchetype.ARCHER)
-	assert_eq(item.get_use_effect(), ItemData.UseEffect.RESTORE_MANA)
-	assert_eq(item.get_use_value(), 20.0)
-	assert_eq(item.get_equipment_stats().defense, 3.0)
+	assert_false(item.can_equip_in(ItemData.EquipSlot.NONE))
+	assert_false(item.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
+	assert_eq(item.get_primary_equip_slot(), ItemData.EquipSlot.NONE)
+	assert_eq(item.get_equipment_stats(), null)
+	assert_eq(item.get_combat_mode(), ItemData.CombatMode.NONE)
+	assert_eq(item.get_visual_archetype(), ItemData.VisualArchetype.DEFAULT)
+	assert_eq(item.get_use_effect(), ItemData.UseEffect.NONE)
+	assert_eq(item.get_use_value(), 0.0)
+	assert_eq(item.get_use_visual_effect(), ItemData.UseVisualEffect.NONE)
+	assert_eq(item.get_status_effect(), null)
 
 
 func test_sample_weapons_and_shield_use_specialized_profiles() -> void:

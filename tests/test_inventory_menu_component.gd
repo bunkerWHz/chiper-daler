@@ -76,8 +76,9 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	potion.stackable = true
 	potion.max_stack_size = 10
 	potion.usable_in_combat = true
-	potion.use_effect = ItemData.UseEffect.HEAL
-	potion.use_value = 35.0
+	potion.consumable_profile = ItemConsumableProfile.new()
+	potion.consumable_profile.use_effect = ItemData.UseEffect.HEAL
+	potion.consumable_profile.use_value = 35.0
 	assert_eq(inventory.add_item(potion, 3), 3)
 	health.take_damage(50.0)
 
@@ -168,12 +169,13 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	sword.id = &"test_sword"
 	sword.display_name = "Test Sword"
 	sword.category = ItemData.Category.WEAPON
-	sword.equip_slot = ItemData.EquipSlot.MAIN_HAND
-	sword.stats = ItemStats.new()
-	sword.stats.damage = 5.0
+	sword.equipment_profile = ItemEquipmentProfile.new()
+	sword.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
+	sword.equipment_profile.stats = ItemStats.new()
+	sword.equipment_profile.stats.damage = 5.0
 	sword.sell_price = 25
 	inventory.add_item(sword)
-	equipment.equip_inventory_item(sword.id, sword.equip_slot)
+	equipment.equip_inventory_item(sword.id, sword.get_primary_equip_slot())
 	menu._rebuild()
 	assert_eq(menu._get_unequipped_stacks().size(), 1)
 	assert_eq(equipment.get_equipped_item_count(sword.id), 1)
@@ -213,7 +215,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		sword.id
 	)
 	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND, 0, 1)
-	equipment.equip_inventory_item(sword.id, sword.equip_slot, 0, 0)
+	equipment.equip_inventory_item(sword.id, sword.get_primary_equip_slot(), 0, 0)
 	menu._on_equipment_data_dropped(
 		equipped_sword_payload, ItemData.EquipSlot.MAIN_HAND, 0, 1
 	)
@@ -227,15 +229,16 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		).is_empty()
 	)
 	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND, 0, 1)
-	equipment.equip_inventory_item(sword.id, sword.equip_slot, 0, 0)
+	equipment.equip_inventory_item(sword.id, sword.get_primary_equip_slot(), 0, 0)
 	var crossbow := ItemData.new()
 	crossbow.id = &"test_crossbow"
 	crossbow.display_name = "Test Crossbow"
 	crossbow.category = ItemData.Category.WEAPON
-	crossbow.equip_slot = ItemData.EquipSlot.MAIN_HAND
-	crossbow.stats = ItemStats.new()
-	crossbow.stats.damage = 12.0
-	crossbow.stats.dexterity_requirement = 3
+	crossbow.equipment_profile = ItemEquipmentProfile.new()
+	crossbow.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
+	crossbow.equipment_profile.stats = ItemStats.new()
+	crossbow.equipment_profile.stats.damage = 12.0
+	crossbow.equipment_profile.stats.dexterity_requirement = 3
 	crossbow.sell_price = 100
 	crossbow.weapon_profile = ItemWeaponProfile.new()
 	crossbow.weapon_profile.combat_mode = ItemData.CombatMode.CROSSBOW
@@ -433,6 +436,7 @@ func _create_equipment_item(
 	item.id = item_id
 	item.display_name = display_name
 	item.category = ItemData.Category.ARMOR
-	item.equip_slot = slot
-	item.stats = ItemStats.new()
+	item.equipment_profile = ItemEquipmentProfile.new()
+	item.equipment_profile.allowed_slots = [slot]
+	item.equipment_profile.stats = ItemStats.new()
 	return item

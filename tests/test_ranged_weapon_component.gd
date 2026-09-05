@@ -90,7 +90,8 @@ func test_bow_profile_requires_aim_and_fire_actions() -> void:
 	var ranged := setup.ranged as RangedWeaponComponent
 	var bow := ItemData.new()
 	bow.id = &"restricted_bow"
-	bow.equip_slot = ItemData.EquipSlot.MAIN_HAND
+	bow.equipment_profile = ItemEquipmentProfile.new()
+	bow.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
 	bow.weapon_profile = ItemWeaponProfile.new()
 	bow.weapon_profile.combat_mode = ItemData.CombatMode.BOW
 	bow.weapon_profile.available_actions = ItemWeaponProfile.Action.AIM

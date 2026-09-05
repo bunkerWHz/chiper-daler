@@ -24,7 +24,8 @@ func test_slot_display_tracks_item_assignments_and_quantities() -> void:
 	var hud := setup.hud as QuickAccessHUDComponent
 
 	var bomb := _create_item(&"bomb", "Fire Bomb", true)
-	bomb.combat_mode = ItemData.CombatMode.THROWABLE
+	bomb.weapon_profile = ItemWeaponProfile.new()
+	bomb.weapon_profile.combat_mode = ItemData.CombatMode.THROWABLE
 	inventory.add_item(bomb, 3)
 	quick_access.assign_item(1, bomb.id)
 

@@ -54,14 +54,14 @@ execution and final scaling formulas will consume this metadata in later tasks;
 they are intentionally not hard-coded into item resources.
 Light/heavy attacks, guard, and parry now consult those action flags. Defensive
 actions may come from either the main-hand weapon or the equipped offhand tool;
-legacy items without a specialized profile retain their previous behavior while
-the remaining item resources are migrated.
+weapon items declare their available actions in `ItemWeaponProfile`.
 Bow and crossbow aiming/firing and magic casting/channeling use the same action
 gate. `Reload` is already represented in weapon data but will become mandatory
 only when a real crossbow reload phase exists.
-The inventory item card exposes weapon family, grip, damage type, moveset,
-actions, scaling, timing/reach values, ammunition, and shield/offhand defense
-data. The bag and equipped paper doll continue to show icons only.
+The inventory item card exposes weapon family, grip, implemented actions,
+melee reach and critical multiplier, ammunition, and working shield/offhand
+defense data. Planned parameters are listed in `Item_Parameters.md` and marked
+inactive in the Inspector. The bag and equipped paper doll show icons only.
 
 Endurance increases maximum health and equipment load through a configurable
 derived-stat resource. At the reference value of 5 Endurance, base health is
@@ -193,11 +193,13 @@ family:
 - `ItemConsumableProfile` declares the current use effect, value, status, and
   presentation effect.
 
-Gameplay systems use the `ItemData` query methods, so a profile can replace the
-legacy flat fields without changing every consumer at once. The flat fields
-remain serialized fallbacks during migration of older resources and saves.
-Production test items already use profiles. Durability is not part of the game
-and is not stored in item stats.
+Gameplay systems use the `ItemData` query methods. Profiles are the only source
+of equipment, weapon, and consumable settings; missing profiles return neutral
+values. The old flat fields were removed after auditing all 51 item resources
+and migrating test fixtures. Runtime restoration keeps ItemData references in
+memory; the project has no disk save format to migrate. External resources made
+with the old flat fields must be converted to profiles before loading them.
+Durability is not part of the game and is not stored in item stats.
 
 Equipment enhancement will be runtime state on a unique item instance, never a
 mutation of shared `ItemData`. A failed enhancement attempt spends the required
