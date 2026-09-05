@@ -729,7 +729,7 @@ func _rebuild_equipment_text() -> void:
 		wisdom = attributes.wisdom
 	_equipment_text.text = (
 		"STR %d  DEX %d  INT %d\n"
-		+ "END %d  WIS %d  Defense %.1f  Poise %.1f\n"
+		+ "END %d  WIS %d  Defense %.1f\n"
 		+ "Load %.1f / %.1f (%.0f%%)"
 	) % [
 		strength,
@@ -738,7 +738,6 @@ func _rebuild_equipment_text() -> void:
 		endurance,
 		wisdom,
 		_equipment.get_total_defense(),
-		_equipment.get_total_poise(),
 		_equipment.get_total_equipped_weight(),
 		_equipment.get_max_equip_load(),
 		_equipment.get_equip_load_ratio() * 100.0,

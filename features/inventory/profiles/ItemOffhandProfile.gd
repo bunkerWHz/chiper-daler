@@ -21,10 +21,12 @@ enum Action {
 }
 
 @export var family: Family = Family.NONE
-@export_flags("Guard", "Parry", "Cast", "Aim", "Fire") var available_actions: int = 0
+@export_flags("Guard", "Parry", "Cast (inactive)", "Aim (inactive)", "Fire (inactive)") var available_actions: int = 0
 @export_range(0.0, 1.0, 0.01) var block_damage_reduction: float = 0.0
-@export_range(0.0, 10.0, 0.05) var guard_stability: float = 0.0
 @export_range(0.1, 3.0, 0.05) var parry_window_multiplier: float = 1.0
+
+@export_group("Planned (inactive)")
+@export_range(0.0, 10.0, 0.05) var guard_stability: float = 0.0
 
 
 func has_action(action: Action) -> bool:

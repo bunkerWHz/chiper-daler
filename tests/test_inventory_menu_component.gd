@@ -328,9 +328,12 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(details.text.contains("Requirements not met: DEX 3"))
 	assert_true(details.text.contains("Compared with Test Sword"))
 	assert_true(details.text.contains("Damage +7.0"))
-	assert_true(details.text.contains("Weapon: Crossbow  Two Handed  Pierce"))
-	assert_true(details.text.contains("Actions: Aim, Fire, Reload"))
-	assert_true(details.text.contains("Scaling: DEX 0.80"))
+	assert_true(details.text.contains("Weapon: Crossbow  Two Handed"))
+	assert_true(details.text.contains("Actions: Aim, Fire"))
+	assert_false(details.text.contains("Reload"))
+	assert_false(details.text.contains("Scaling:"))
+	assert_false(details.text.contains("Speed x"))
+	assert_false(details.text.contains("Moveset:"))
 	assert_true(details.text.contains("Ammunition: Bolt"))
 	var shield := load(
 		"res://features/inventory/items/WoodenShield.tres"
