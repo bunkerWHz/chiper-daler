@@ -27,14 +27,12 @@ signal equipment_load_changed(
 	load_ratio: float
 )
 
-const EQUIPMENT_PROCESS_PRIORITY := -90
 const WEAPON_SET_COUNT := 2
 
 @export var default_slot: Slot = Slot.MELEE
 @export var starting_main_hand_ids: Array[StringName] = []
 @export var starting_off_hand_ids: Array[StringName] = []
 
-var _input_component: InputComponent
 var _inventory_component: InventoryComponent
 var _attributes_component: CharacterAttributesComponent
 var _current_slot: Slot = Slot.MELEE
@@ -43,7 +41,6 @@ var _equipped_items: Dictionary = {}
 
 
 func on_initialize() -> void:
-	_input_component = actor.get_component(InputComponent) as InputComponent
 	_inventory_component = (
 		actor.get_component(InventoryComponent) as InventoryComponent
 	)
@@ -59,11 +56,6 @@ func on_initialize() -> void:
 	):
 		_attributes_component.attributes_changed.connect(_on_attributes_changed)
 
-	if _input_component == null or not _input_component.is_enabled:
-		push_error("EquipmentComponent requires an enabled InputComponent")
-		disable()
-		return
-
 	_current_slot = default_slot
 	if _inventory_component != null and _inventory_component.is_enabled:
 		if not _inventory_component.inventory_changed.is_connected(
@@ -75,13 +67,7 @@ func on_initialize() -> void:
 
 
 func _ready() -> void:
-	process_priority = EQUIPMENT_PROCESS_PRIORITY
 	_equip_starting_weapon_sets()
-
-
-func _process(_delta: float) -> void:
-	if _input_component.consume_weapon_set_swap_pressed():
-		cycle_weapon_set()
 
 
 func equip(slot: Slot) -> bool:

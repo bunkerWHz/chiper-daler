@@ -64,7 +64,6 @@ func test_fixed_and_configurable_slots_switch_combat_context() -> void:
 
 	input._quick_slot_request = 1
 	quick_access._process(0.0)
-	equipment._process(0.0)
 	assert_eq(quick_access.get_active_slot(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.THROWABLE)
 	assert_eq(quick_access.get_active_item_quantity(), 3)

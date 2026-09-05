@@ -129,6 +129,10 @@ Actor Scene Structure
 Systems
 
 -   Systems coordinate gameplay across Actors.
+-   `EquipmentComponent` owns loadout rules and restoration without depending
+    on player input. Player actors add `EquipmentInputComponent` to translate
+    weapon-set commands after `InputComponent` has sampled input. Scripted actors
+    call equipment operations directly.
 -   Systems never become God Objects.
 -   Keep systems focused on one domain.
 

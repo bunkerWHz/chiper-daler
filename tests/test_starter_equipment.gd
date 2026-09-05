@@ -12,6 +12,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
+	var commands := EquipmentInputComponent.new()
 	var equipment_scene := load(
 		"res://features/equipment/EquipmentComponent.tscn"
 	) as PackedScene
@@ -26,7 +27,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	) as PackedScene
 	var quick_access := quick_scene.instantiate() as QuickAccessComponent
 	for component: Component in [
-		input, equipment, inventory, flasks, quick_access
+		input, commands, equipment, inventory, flasks, quick_access
 	]:
 		components.add_child(component)
 	actor._collect_components()
@@ -129,7 +130,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_true(quick_access.is_slot_available(0))
 	assert_false(quick_access.activate_slot(1))
 	input._weapon_set_swap_pressed = true
-	equipment._process(0.0)
+	commands._process(0.0)
 	assert_eq(equipment.get_active_weapon_set(), 1)
 	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.BOW)
 	assert_eq(equipment.get_total_defense(), 0.0)

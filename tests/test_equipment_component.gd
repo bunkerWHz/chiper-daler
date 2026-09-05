@@ -10,15 +10,16 @@ func test_tab_request_cycles_weapon_set() -> void:
 	var setup := _create_equipped_actor()
 	var input := setup.input as InputComponent
 	var equipment := setup.equipment as EquipmentComponent
+	var commands := setup.actor.get_component(EquipmentInputComponent) as EquipmentInputComponent
 
 	assert_eq(equipment.get_active_weapon_set(), 0)
 	assert_eq(InputComponent.WEAPON_SET_SWAP_ACTION, &"weapon_set_swap")
 	assert_true(InputMap.has_action(InputComponent.WEAPON_SET_SWAP_ACTION))
 	input._weapon_set_swap_pressed = true
-	equipment._process(0.0)
+	commands._process(0.0)
 	assert_eq(equipment.get_active_weapon_set(), 1)
 	input._weapon_set_swap_pressed = true
-	equipment._process(0.0)
+	commands._process(0.0)
 	assert_eq(equipment.get_active_weapon_set(), 0)
 
 
@@ -38,6 +39,38 @@ func test_switching_from_melee_cancels_attack_and_guard() -> void:
 	assert_false(hitbox._area.monitoring)
 	assert_false(guard.start_guard())
 	assert_false(guard.start_parry())
+
+
+func test_disabled_equipment_commands_do_not_switch_sets() -> void:
+	var setup := _create_equipped_actor()
+	var commands := setup.actor.get_component(EquipmentInputComponent) as EquipmentInputComponent
+	var input := setup.input as InputComponent
+	var equipment := setup.equipment as EquipmentComponent
+	commands.disable()
+	input._weapon_set_swap_pressed = true
+	commands._process(0.0)
+	assert_eq(equipment.get_active_weapon_set(), 0)
+	commands.enable()
+	commands._process(0.0)
+	assert_eq(equipment.get_active_weapon_set(), 1)
+	commands._process(0.0)
+	assert_eq(equipment.get_active_weapon_set(), 1)
+
+
+func test_equipment_without_player_input_can_equip_and_restore() -> void:
+	var setup := _create_equipment_only_actor()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	assert_true(equipment.is_enabled)
+	assert_eq(equipment.actor.get_component(InputComponent), null)
+	var ring := _create_equippable(&"scripted_ring", ItemData.EquipSlot.RING)
+	inventory.add_item(ring)
+	assert_true(equipment.equip_inventory_item(ring.id, ItemData.EquipSlot.RING))
+	var saved: Variant = equipment.capture_runtime_state()
+	assert_true(equipment.cycle_weapon_set())
+	equipment.restore_runtime_state(saved)
+	assert_eq(equipment.get_active_weapon_set(), 0)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING), ring.id)
 
 
 func test_removing_last_active_weapon_disables_melee_actions() -> void:
@@ -621,6 +654,7 @@ func _create_equipped_actor() -> Dictionary:
 	var inventory := InventoryComponent.new()
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
+	var commands := EquipmentInputComponent.new()
 	var facing := FacingComponent.new()
 	var hitbox := HitboxComponent.new()
 	var area := Area2D.new()
@@ -635,6 +669,7 @@ func _create_equipped_actor() -> Dictionary:
 		input,
 		inventory,
 		equipment,
+		commands,
 		facing,
 		hitbox,
 		attack,
@@ -677,11 +712,9 @@ func _create_equipment_only_actor() -> Dictionary:
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
-	var input := InputComponent.new()
 	var inventory := InventoryComponent.new()
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
-	components.add_child(input)
 	components.add_child(inventory)
 	components.add_child(equipment)
 	actor._collect_components()
