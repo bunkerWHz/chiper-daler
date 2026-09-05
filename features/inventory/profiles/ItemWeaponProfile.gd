@@ -64,12 +64,13 @@ enum Action {
 ) var available_actions: int = 0
 @export_range(1.0, 10.0, 0.05) var critical_damage_multiplier: float = 2.0
 @export var ammunition_type: StringName
+## Horizontal melee reach relative to the actor's hitbox. Does not change projectile range.
+@export_range(0.1, 5.0, 0.05) var reach_multiplier: float = 1.0
 
 @export_group("Planned (inactive)")
 @export var primary_damage_type: DamageType = DamageType.NONE
 @export var moveset_id: StringName
 @export_range(0.1, 3.0, 0.05) var attack_speed_multiplier: float = 1.0
-@export_range(0.1, 5.0, 0.05) var reach_multiplier: float = 1.0
 @export_range(0.0, 10.0, 0.05) var stagger_power: float = 1.0
 @export_range(0.0, 2.0, 0.05) var strength_scaling: float = 0.0
 @export_range(0.0, 2.0, 0.05) var dexterity_scaling: float = 0.0

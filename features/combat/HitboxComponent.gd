@@ -11,6 +11,18 @@ signal critical_hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
 
 var _area: Area2D
 var _horizontal_direction: float = 1.0
+var _reach_multiplier: float = 1.0
+
+
+## Changes horizontal reach relative to the authored hitbox, without stretching height.
+func set_reach_multiplier(multiplier: float) -> void:
+	var next_multiplier := clampf(multiplier, 0.1, 5.0)
+	var spatial_root := get_node(".") as Node2D
+	if spatial_root != null:
+		var ratio := next_multiplier / _reach_multiplier
+		spatial_root.position.x *= ratio
+		spatial_root.scale.x *= ratio
+	_reach_multiplier = next_multiplier
 
 
 func _ready() -> void:

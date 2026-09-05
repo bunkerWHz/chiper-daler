@@ -128,6 +128,7 @@ func _append_weapon_profile(
 		lines.append("Actions: %s" % ", ".join(actions))
 	if profile.combat_mode == ItemData.CombatMode.MELEE:
 		lines.append("Critical x%.2f" % profile.critical_damage_multiplier)
+		lines.append("Reach x%.2f" % clampf(profile.reach_multiplier, 0.1, 5.0))
 	if not profile.ammunition_type.is_empty():
 		lines.append("Ammunition: %s" % _enum_label(profile.ammunition_type))
 

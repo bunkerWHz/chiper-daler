@@ -338,6 +338,10 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 	)
 	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
 	var equipped_damage := _get_equipped_melee_damage()
+	_hitbox_component.set_reach_multiplier(
+		float(_equipment_component.call("get_active_weapon_reach_multiplier"))
+		if _equipment_component != null else 1.0
+	)
 	_hitbox_component.damage = equipped_damage
 	_hitbox_component.critical_damage_multiplier = (
 		_get_equipped_critical_multiplier()
@@ -383,6 +387,7 @@ func _is_airborne() -> bool:
 
 func _restore_hitbox_damage() -> void:
 	if _hitbox_component != null:
+		_hitbox_component.set_reach_multiplier(1.0)
 		_hitbox_component.damage = _get_equipped_melee_damage()
 		_hitbox_component.horizontal_knockback = _base_horizontal_knockback
 		_hitbox_component.vertical_knockback = _base_vertical_knockback
