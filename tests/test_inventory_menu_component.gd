@@ -384,6 +384,46 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_false(menu.is_open())
 
 
+func test_menu_pause_lifecycle_preserves_other_owners() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var was_paused := tree.paused
+	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
+
+	# Closing a menu which never opened must not clear an existing pause.
+	tree.paused = true
+	menu.close_inventory()
+	assert_true(tree.paused)
+	menu.open_inventory()
+	menu.close_inventory()
+	assert_true(tree.paused)
+	tree.paused = false
+
+	menu.open_inventory()
+	menu.open_inventory()
+	assert_true(tree.paused)
+	menu.close_inventory()
+	assert_false(tree.paused)
+
+	menu.open_inventory()
+	var other_screen := PauseLease.acquire(tree)
+	menu.disable()
+	assert_true(tree.paused)
+	assert_false(menu.is_open())
+	other_screen.release()
+	assert_false(tree.paused)
+
+	menu.enable()
+	assert_eq(menu.process_mode, Node.PROCESS_MODE_ALWAYS)
+	menu.open_inventory()
+	assert_true(tree.paused)
+	tree.root.remove_child(player)
+	assert_false(tree.paused)
+	assert_false(tree.has_meta(PauseLease.STATE_KEY))
+	tree.paused = was_paused
+
+
 func _create_equipment_item(
 	item_id: StringName,
 	display_name: String,

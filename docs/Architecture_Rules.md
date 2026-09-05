@@ -35,6 +35,16 @@ Component Rules
 -   No gameplay constants embedded in code.
 -   Components must be optional and removable.
 
+Pause ownership
+
+- Screens and scenarios acquire a `PauseLease` while they need the SceneTree
+  paused, and release it on close, cancellation, disable, or scene exit.
+- Each owner keeps its own lease. The last release restores the pause state
+  that existed before the first lease. New owners must use this contract
+  instead of directly assigning `SceneTree.paused` during an active lease.
+- Repeated release is harmless. Dropping the last reference also releases
+  the lease. A closed screen never unpauses the tree by itself.
+
 Component Lifecycle
 
 -   Actor uses two-pass setup: it first collects every direct Component under

@@ -43,6 +43,7 @@ var _selected_category: int = ALL_CATEGORIES
 var _sort_mode: SortMode = SortMode.NAME
 var _details_pinned := false
 var _pinned_detail_position := Vector2.ZERO
+var _pause_lease: PauseLease
 
 
 func on_initialize() -> void:
@@ -174,16 +175,16 @@ func _process(_delta: float) -> void:
 
 
 func open_inventory() -> void:
-	if not is_enabled or _panel == null:
+	if not is_enabled or _panel == null or is_open():
 		return
 	_panel.visible = true
 	_action_feedback.hide()
 	_details_pinned = false
 	_detail_popup.visible = false
 	_rebuild()
-	open_state_changed.emit(true)
 	if is_inside_tree():
-		get_tree().paused = true
+		_pause_lease = PauseLease.acquire(get_tree())
+	open_state_changed.emit(true)
 
 
 func close_inventory() -> void:
@@ -195,14 +196,24 @@ func close_inventory() -> void:
 	_details_pinned = false
 	if _detail_popup != null:
 		_detail_popup.visible = false
+	if _pause_lease != null:
+		_pause_lease.release()
+		_pause_lease = null
 	if was_open:
 		open_state_changed.emit(false)
-	if is_inside_tree():
-		get_tree().paused = false
+
+
+func _exit_tree() -> void:
+	close_inventory()
 
 
 func is_open() -> bool:
 	return _panel != null and _panel.visible
+
+
+func enable() -> void:
+	super.enable()
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 func disable() -> void:
