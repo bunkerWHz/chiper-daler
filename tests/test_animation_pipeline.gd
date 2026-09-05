@@ -102,6 +102,28 @@ func test_enemies_use_serialized_frames_and_animation_player() -> void:
 		))
 
 
+func test_enemy_visual_follows_attack_cancellation_and_death() -> void:
+	for entry: Dictionary in ENEMY_SCENES:
+		var enemy := track((load(entry.scene) as PackedScene).instantiate()) as Actor
+		(Engine.get_main_loop() as SceneTree).root.add_child(enemy)
+		var attack := enemy.get_component(AttackComponent) as AttackComponent
+		var health := enemy.get_component(HealthComponent) as HealthComponent
+		var visual := enemy.get_component(EnemyVisualComponent) as EnemyVisualComponent
+		var player := visual.get_animation_player()
+		assert_true(attack.attack())
+		assert_eq(player.current_animation, &"attack")
+		attack.disable()
+		assert_ne(player.current_animation, &"attack")
+		attack.enable()
+		attack._process(attack.config.cooldown)
+		assert_true(attack.attack())
+		assert_eq(player.current_animation, &"attack")
+		health.take_damage(health.get_max_health())
+		assert_eq(player.current_animation, &"death")
+		visual._process(0.0)
+		assert_eq(player.current_animation, &"death")
+
+
 func test_audio_profile_maps_semantic_cues_to_streams() -> void:
 	var profile := ActorAudioProfile.new()
 	var footstep := AudioStreamWAV.new()

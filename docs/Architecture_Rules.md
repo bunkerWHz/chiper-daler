@@ -69,6 +69,13 @@ Capability Gates and Action Coordination
 
 -   The component that owns an action remains its single source of truth and
     exposes read-only queries plus fact signals.
+-   `ActorStateComponent` resolves a presentation summary from those owners.
+    Its priority order chooses what the HUD and general animation layer display;
+    it does not start actions or grant permission to run them. Start checks use
+    the owners and capability gates, so a summary from the previous frame cannot
+    authorize a conflicting action. Focused visuals may query their action owner
+    directly and use fact signals for immediate refresh, without storing copies
+    of gameplay flags. Only the last selected animation is presentation state.
 -   Consumers check capability gates when an action starts and react to source
     signals when an ongoing action must be cancelled. They do not copy the
     source state into a second flag.

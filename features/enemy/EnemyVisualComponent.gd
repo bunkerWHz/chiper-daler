@@ -11,8 +11,6 @@ var _body_component: CharacterBodyComponent
 var _locomotion: Component
 var _attack_component: AttackComponent
 var _health_component: HealthComponent
-var _is_attacking: bool = false
-var _is_dead: bool = false
 var _current_animation: StringName
 
 const REQUIRED_ANIMATIONS: Array[StringName] = [
@@ -32,9 +30,11 @@ func on_initialize() -> void:
 	_health_component = actor.get_component(HealthComponent) as HealthComponent
 
 	if _attack_component != null:
-		_attack_component.attack_started.connect(_on_attack_started)
-		_attack_component.attack_finished.connect(_on_attack_finished)
-	if _health_component != null:
+		if not _attack_component.attack_started.is_connected(_on_attack_started):
+			_attack_component.attack_started.connect(_on_attack_started)
+		if not _attack_component.attack_finished.is_connected(_on_attack_finished):
+			_attack_component.attack_finished.connect(_on_attack_finished)
+	if _health_component != null and not _health_component.died.is_connected(_on_died):
 		_health_component.died.connect(_on_died)
 
 
@@ -65,15 +65,19 @@ func _ready() -> void:
 	_validate_attack_timeline()
 	_sprite.position = config.visual_offset
 	_sprite.scale = config.visual_scale
-	_play(&"idle")
+	_process(0.0)
 
 
 func _process(_delta: float) -> void:
-	if _sprite == null or _is_dead:
+	if not is_enabled or _sprite == null:
+		return
+	if _health_component != null and _health_component.is_dead():
+		_play(&"death")
 		return
 
 	_apply_facing()
-	if _is_attacking:
+	if _attack_component != null and _attack_component.is_attacking():
+		_play(&"attack")
 		return
 
 	var velocity := _body_component.get_velocity() if _body_component != null else Vector2.ZERO
@@ -158,14 +162,12 @@ func _apply_facing() -> void:
 
 
 func _on_attack_started() -> void:
-	_is_attacking = true
-	_play(&"attack")
+	_process(0.0)
 
 
 func _on_attack_finished() -> void:
-	_is_attacking = false
+	_process(0.0)
 
 
 func _on_died() -> void:
-	_is_dead = true
-	_play(&"death")
+	_process(0.0)
