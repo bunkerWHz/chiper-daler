@@ -124,15 +124,6 @@ func _validate_attack_timeline() -> void:
 				"Enemy attack animation requires a '%s' event" % event_name
 			)
 
-	if not is_equal_approx(
-		attack_animation.length,
-		_attack_component.config.active_duration
-	):
-		push_warning(
-			"Enemy attack duration must match its animation clip length"
-		)
-
-
 func _animation_has_event(
 	animation: Animation,
 	event_name: StringName

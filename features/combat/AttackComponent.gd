@@ -19,6 +19,10 @@ signal landing_recovery_finished
 
 @export var config: AttackConfig
 @export var animation_driven_damage_window: bool = false
+@export_group("Animation timing")
+## Optional AnimationPlayer, relative to this component. Its clip replaces config durations.
+@export_node_path("AnimationPlayer") var timing_player_path: NodePath
+@export var timing_clip: StringName = &"attack"
 
 var _input_component: InputComponent
 var _body_component: CharacterBodyComponent
@@ -39,19 +43,30 @@ var _critical_timer: float = 0.0
 var _attack_started_airborne: bool = false
 var _landing_recovery_timer: float = 0.0
 var _damage_window_open: bool = false
+var _timing_player: AnimationPlayer
 
 
 func on_initialize() -> void:
+	_timing_player = null
 	if config == null:
 		push_error("AttackComponent requires AttackConfig")
 		disable()
 		return
+	if not timing_player_path.is_empty():
+		_timing_player = get_node_or_null(timing_player_path) as AnimationPlayer
+		if (
+			_timing_player == null or not _timing_player.has_animation(timing_clip)
+			or _timing_player.get_animation(timing_clip).loop_mode != Animation.LOOP_NONE
+		):
+			push_error("AttackComponent timing requires an existing non-looping animation clip")
+			disable()
+			return
 
 	if (
-		config.active_duration <= 0.0
+		get_attack_duration() <= 0.0
 		or config.cooldown <= 0.0
 		or config.heavy_charge_time <= 0.0
-		or config.heavy_active_duration <= 0.0
+		or get_attack_duration(true) <= 0.0
 		or config.heavy_cooldown <= 0.0
 		or config.landing_recovery_duration <= 0.0
 		or config.heavy_damage_multiplier < 1.0
@@ -190,6 +205,12 @@ func can_attack() -> bool:
 
 func is_attacking() -> bool:
 	return _active_timer > 0.0
+
+
+func get_attack_duration(heavy: bool = false) -> float:
+	if _timing_player != null:
+		return _timing_player.get_animation(timing_clip).length
+	return config.heavy_active_duration if heavy else config.active_duration
 
 
 func is_heavy_attacking() -> bool:
@@ -333,9 +354,7 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 	_charge_timer = 0.0
 	_is_heavy_attack = heavy
 	_attack_started_airborne = started_airborne
-	_active_timer = (
-		config.heavy_active_duration if heavy else config.active_duration
-	)
+	_active_timer = get_attack_duration(heavy)
 	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
 	var equipped_damage := _get_equipped_melee_damage()
 	_hitbox_component.set_reach_multiplier(

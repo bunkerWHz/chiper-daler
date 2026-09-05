@@ -74,7 +74,6 @@ func test_enemies_use_serialized_frames_and_animation_player() -> void:
 		)
 
 		var attack: Node = enemy.get_node("_Components/AttackComponent")
-		var attack_config := attack.get("config") as AttackConfig
 		var events: Node = enemy.get_node_or_null(
 			"_Components/AnimationEventComponent"
 		)
@@ -83,8 +82,8 @@ func test_enemies_use_serialized_frames_and_animation_player() -> void:
 		)
 		assert_true(attack.get("animation_driven_damage_window") as bool)
 		assert_eq(
-			attack_config.active_duration,
-			animation_player.get_animation(&"attack").length
+			attack.get_node(attack.get("timing_player_path")),
+			animation_player
 		)
 		assert_true(events != null)
 		assert_true(audio != null)
@@ -100,6 +99,31 @@ func test_enemies_use_serialized_frames_and_animation_player() -> void:
 			animation_player.get_animation(&"attack"),
 			AnimationEventComponent.HITBOX_OFF
 		))
+
+
+func test_enemy_attack_duration_follows_edited_animation_clip() -> void:
+	for entry: Dictionary in ENEMY_SCENES:
+		var enemy := track((load(entry.scene) as PackedScene).instantiate()) as Actor
+		var player := enemy.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+		var library := player.get_animation_library(&"").duplicate(true) as AnimationLibrary
+		player.remove_animation_library(&"")
+		player.add_animation_library(&"", library)
+		library.get_animation(&"attack").length = 1.7
+		(Engine.get_main_loop() as SceneTree).root.add_child(enemy)
+		var attack := enemy.get_component(AttackComponent) as AttackComponent
+		assert_true(is_equal_approx(attack.get_attack_duration(), 1.7))
+		assert_ne(attack.get_attack_duration(), attack.config.active_duration)
+		assert_true(attack.attack())
+		assert_true(attack.open_damage_window())
+		attack._process(1.0)
+		assert_true(attack.is_attacking())
+		attack._process(0.71)
+		assert_false(attack.is_attacking())
+		assert_false(attack.is_damage_window_open())
+		library.get_animation(&"attack").length = 0.8
+		assert_true(attack.heavy_attack())
+		attack._process(0.81)
+		assert_false(attack.is_attacking())
 
 
 func test_enemy_visual_follows_attack_cancellation_and_death() -> void:

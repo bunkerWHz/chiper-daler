@@ -50,8 +50,6 @@ fade_visual = false
 [sub_resource type="Resource" id="EnemyAttackTimelineConfig"]
 resource_local_to_scene = true
 script = ExtResource("30_attack_config")
-active_duration = 1.0
-heavy_active_duration = 1.0
 
 [node name="Enemy" type="Node2D" unique_id=492946956]
 script = ExtResource("1_enemy")
@@ -93,6 +91,7 @@ position = Vector2(-20, 0)
 [node name="AttackComponent" parent="_Components" instance=ExtResource("10_attack")]
 config = SubResource("EnemyAttackTimelineConfig")
 animation_driven_damage_window = true
+timing_player_path = NodePath("../../_Visual/AnimationPlayer")
 
 [node name="ActorAudioComponent" parent="_Components" instance=ExtResource("32_audio")]
 

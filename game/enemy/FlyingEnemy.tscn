@@ -56,8 +56,6 @@ avoid_unsafe_ground = false
 [sub_resource type="Resource" id="AttackTimelineConfig"]
 resource_local_to_scene = true
 script = ExtResource("27_attack_config")
-active_duration = 1.0
-heavy_active_duration = 1.0
 
 [node name="FlyingEnemy" type="Node2D"]
 script = ExtResource("1_enemy")
@@ -99,6 +97,7 @@ position = Vector2(-24, 0)
 [node name="AttackComponent" parent="_Components" instance=ExtResource("8_attack")]
 config = SubResource("AttackTimelineConfig")
 animation_driven_damage_window = true
+timing_player_path = NodePath("../../_Visual/AnimationPlayer")
 
 [node name="ActorAudioComponent" parent="_Components" instance=ExtResource("29_audio")]
 
