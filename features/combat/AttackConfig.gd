@@ -1,12 +1,17 @@
 extends Resource
 class_name AttackConfig
 
+@export_group("Light attack")
+## Used when AttackComponent has no Timing Player Path.
 @export_range(0.01, 2.0, 0.01) var active_duration: float = 0.12
 @export_range(0.01, 5.0, 0.01) var cooldown: float = 0.3
+@export_group("Heavy attack")
 @export_range(0.05, 2.0, 0.01) var heavy_charge_time: float = 0.35
+## Used when AttackComponent has no Timing Player Path.
 @export_range(0.01, 2.0, 0.01) var heavy_active_duration: float = 0.22
 @export_range(0.01, 5.0, 0.01) var heavy_cooldown: float = 0.65
-@export_range(0.01, 1.0, 0.01) var landing_recovery_duration: float = 0.15
 @export_range(1.0, 10.0, 0.1) var heavy_damage_multiplier: float = 2.0
 @export_range(1.0, 10.0, 0.1) var heavy_knockback_multiplier: float = 1.75
+@export_group("Recovery and critical hit")
+@export_range(0.01, 1.0, 0.01) var landing_recovery_duration: float = 0.15
 @export_range(0.05, 2.0, 0.05) var critical_state_duration: float = 0.3

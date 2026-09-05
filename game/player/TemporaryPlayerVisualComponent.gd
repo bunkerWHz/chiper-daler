@@ -1,9 +1,11 @@
 extends AnimationComponent
 class_name TemporaryPlayerVisualComponent
 
+@export_group("Character art")
 @export var warrior_frames: SpriteFrames
 @export var archer_frames: SpriteFrames
 @export var lancer_frames: SpriteFrames
+@export_group("Item effects")
 @export var heal_effect_frames: SpriteFrames
 @export var mana_effect_frames: SpriteFrames
 @export var rage_effect_frames: SpriteFrames

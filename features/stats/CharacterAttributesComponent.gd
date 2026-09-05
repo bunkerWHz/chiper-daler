@@ -9,11 +9,13 @@ signal attributes_changed(
 	wisdom: int
 )
 
+@export_group("Base attributes")
 @export_range(0, 999, 1) var strength: int = 5
 @export_range(0, 999, 1) var dexterity: int = 5
 @export_range(0, 999, 1) var intelligence: int = 5
 @export_range(0, 999, 1) var endurance: int = 5
 @export_range(0, 999, 1) var wisdom: int = 5
+@export_group("Derived values")
 @export var derived_stats_config := CharacterDerivedStatsConfig.new()
 
 

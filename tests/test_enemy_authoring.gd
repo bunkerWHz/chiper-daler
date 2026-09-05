@@ -75,6 +75,11 @@ func test_copy_owns_resources_and_preserves_component_instances() -> void:
 		assert_eq(frames.resource_path, directory.path_join("SpriteFrames.tres"))
 		var source_frames := (source.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D).sprite_frames
 		var original_speed := source_frames.get_animation_speed(&"attack")
+		var original_texture := source_frames.get_frame_texture(&"attack", 0)
+		var replacement := GradientTexture2D.new()
+		replacement.gradient = Gradient.new()
+		frames.set_frame(&"attack", 0, replacement)
+		assert_eq(source_frames.get_frame_texture(&"attack", 0), original_texture)
 		frames.set_animation_speed(&"attack", original_speed + 3.0)
 		assert_eq(source_frames.get_animation_speed(&"attack"), original_speed)
 		var player := copied.get_node("_Visual/AnimationPlayer") as AnimationPlayer
@@ -86,4 +91,19 @@ func test_copy_owns_resources_and_preserves_component_instances() -> void:
 		var source_config := source.get_node("_Components/AttackComponent").get("config") as Resource
 		var copied_config := copied.get_node("_Components/AttackComponent").get("config") as Resource
 		assert_ne(copied_config, source_config)
+		hitbox.set("damage", 23.0)
+		assert_eq(ResourceSaver.save(frames, frames.resource_path), OK)
+		assert_eq(ResourceSaver.save(player.get_animation_library(&""), player.get_animation_library(&"").resource_path), OK)
+		copied.scene_file_path = ""
+		var edited := PackedScene.new()
+		assert_eq(edited.pack(copied), OK)
+		assert_eq(ResourceSaver.save(edited, directory.path_join("TestEnemy.tscn")), OK)
+		var reloaded := ResourceLoader.load(directory.path_join("TestEnemy.tscn"), "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		var playable := track(reloaded.instantiate()) as Actor
+		(Engine.get_main_loop() as SceneTree).root.add_child(playable)
+		var attack := playable.get_component(AttackComponent) as AttackComponent
+		assert_true(attack.attack())
+		assert_eq(attack.get_attack_duration(), original_length + 1.0)
+		assert_eq((playable.get_component(HitboxComponent) as HitboxComponent).damage, 23.0)
+		assert_true((playable.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D).sprite_frames.get_frame_texture(&"attack", 0) is GradientTexture2D)
 		assert_eq(COPIER.save_copy(source, directory, "TestEnemy"), ERR_ALREADY_EXISTS)
