@@ -4,8 +4,31 @@ class_name EnemyAuthoringChecks
 
 ## Editor-only checks for a standalone enemy composition; never initialize gameplay here.
 const CLIPS: Array[StringName] = [&"idle", &"move", &"airborne", &"attack", &"death"]
+@export_group("Create an independent enemy")
+@export var new_enemy_name: String = "NewEnemy"
+@export_tool_button("Create independent copy", "Duplicate") var create_copy: Callable = _create_copy
 var _refresh_time: float = 0.0
 var _last_warnings := PackedStringArray()
+
+
+func _create_copy() -> void:
+	if not Engine.is_editor_hint():
+		return
+	if EditorInterface.get_edited_scene_root() != get_parent():
+		push_error("Open the enemy scene itself before creating a copy.")
+		return
+	if not new_enemy_name.is_valid_identifier():
+		push_error("Use a valid enemy name such as ForestBat or CaveGuard.")
+		return
+	var directory := "res://game/enemy".path_join(new_enemy_name.to_snake_case())
+	var error := preload("res://features/enemy/EnemyTemplateCopy.gd").save_copy(
+		get_parent(), directory, new_enemy_name
+	)
+	if error != OK:
+		push_error("Could not create enemy in %s: %s" % [directory, error_string(error)])
+		return
+	EditorInterface.get_resource_filesystem().scan()
+	print("Created independent enemy: ", directory.path_join(new_enemy_name + ".tscn"))
 
 
 func _ready() -> void:
