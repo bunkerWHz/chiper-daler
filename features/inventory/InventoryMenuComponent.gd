@@ -37,6 +37,7 @@ var _weapon_set_buttons: HBoxContainer
 var _category_filter: OptionButton
 var _sort_option: OptionButton
 var _inventory_summary: Label
+var _action_feedback: Label
 var _selected_item_id: StringName
 var _selected_category: int = ALL_CATEGORIES
 var _sort_mode: SortMode = SortMode.NAME
@@ -122,6 +123,7 @@ func _ready() -> void:
 	var close_button := get_node_or_null(
 		"CanvasLayer/Panel/Main/Header/Close"
 	) as Button
+	_action_feedback = get_node_or_null("CanvasLayer/Panel/Main/ActionFeedback") as Label
 	if (
 		_panel == null
 		or _grid == null
@@ -139,6 +141,7 @@ func _ready() -> void:
 		or _sort_option == null
 		or _inventory_summary == null
 		or close_button == null
+		or _action_feedback == null
 	):
 		push_error("InventoryMenuComponent scene hierarchy is invalid")
 		disable()
@@ -155,6 +158,7 @@ func _ready() -> void:
 	_inventory.inventory_changed.connect(_on_inventory_changed)
 	_equipment.loadout_item_changed.connect(_on_loadout_changed)
 	_equipment.weapon_set_changed.connect(_on_weapon_set_changed)
+	_equipment.operation_rejected.connect(_show_action_failure)
 	if _attributes != null:
 		_attributes.attributes_changed.connect(_on_attributes_changed)
 	_setup_toolbar()
@@ -173,6 +177,7 @@ func open_inventory() -> void:
 	if not is_enabled or _panel == null:
 		return
 	_panel.visible = true
+	_action_feedback.hide()
 	_details_pinned = false
 	_detail_popup.visible = false
 	_rebuild()
@@ -248,6 +253,7 @@ func _rebuild_grid() -> void:
 
 
 func _select_item(item_id: StringName) -> void:
+	_action_feedback.hide()
 	_selected_item_id = item_id
 	_details_pinned = true
 	_rebuild_grid()
@@ -369,7 +375,6 @@ func _equip_item_by_double_click(item_id: StringName) -> void:
 	if (
 		item == null
 		or item.get_primary_equip_slot() == ItemData.EquipSlot.NONE
-		or not _equipment.meets_item_requirements(item)
 	):
 		return
 	_selected_item_id = item_id
@@ -756,6 +761,7 @@ func _on_loadout_changed(
 	_previous: StringName,
 	_current: StringName
 ) -> void:
+	_action_feedback.hide()
 	if is_open():
 		_rebuild()
 
@@ -772,5 +778,12 @@ func _on_attributes_changed(
 
 
 func _on_weapon_set_changed(_previous: int, _current: int) -> void:
+	_action_feedback.hide()
 	if is_open():
 		_rebuild()
+
+
+func _show_action_failure(reason: String) -> void:
+	if _action_feedback != null and is_open():
+		_action_feedback.text = reason
+		_action_feedback.show()

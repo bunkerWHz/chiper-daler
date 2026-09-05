@@ -10,6 +10,8 @@ enum Slot {
 	MAGIC,
 }
 
+signal operation_rejected(reason: String)
+
 signal equipment_changed(previous_slot: Slot, current_slot: Slot)
 signal weapon_set_changed(previous_set: int, current_set: int)
 signal loadout_item_changed(
@@ -181,19 +183,20 @@ func equip_inventory_item(
 	weapon_set: int = -1
 ) -> bool:
 	if not is_enabled or _inventory_component == null:
-		return false
+		return _reject_operation("Equipment is unavailable.")
 	var resolved_set := _resolve_weapon_set(target_slot, weapon_set)
 	if not _is_valid_address(target_slot, slot_index, resolved_set):
-		return false
+		return _reject_operation("Choose a valid equipment slot.")
 	var key := _make_equipment_key(target_slot, slot_index, resolved_set)
 	if StringName(_equipped_items.get(key, &"")) == item_id:
-		return false
+		return _reject_operation("This item is already equipped in that slot.")
 	var candidate := _equipped_items.duplicate()
 	candidate[key] = item_id
 	if target_slot == ItemData.EquipSlot.MAIN_HAND:
 		_reconcile_hands(candidate, [resolved_set])
-	if not _is_valid_loadout(candidate):
-		return false
+	var failure := _get_loadout_failure(candidate)
+	if not failure.is_empty():
+		return _reject_operation(failure)
 	return _commit_loadout(candidate)
 
 
@@ -208,21 +211,25 @@ func move_equipped_item(
 	target_weapon_set: int
 ) -> bool:
 	if not is_enabled or _inventory_component == null:
-		return false
+		return _reject_operation("Equipment is unavailable.")
 	source_weapon_set = _resolve_weapon_set(source_slot, source_weapon_set)
 	target_weapon_set = _resolve_weapon_set(target_slot, target_weapon_set)
 	if (
 		not _is_valid_address(source_slot, source_index, source_weapon_set)
 		or not _is_valid_address(target_slot, target_index, target_weapon_set)
 	):
-		return false
+		return _reject_operation("Choose a valid equipment slot.")
 	var source_key := _make_equipment_key(source_slot, source_index, source_weapon_set)
 	var target_key := _make_equipment_key(target_slot, target_index, target_weapon_set)
 	var source_item := _loadout_item(_equipped_items, source_key)
-	if source_key == target_key or source_item == null:
+	if source_key == target_key:
 		return false
-	if not source_item.can_equip_in(target_slot) or not meets_item_requirements(source_item):
-		return false
+	if source_item == null:
+		return _reject_operation("There is no item in the source slot.")
+	if not source_item.can_equip_in(target_slot):
+		return _reject_operation("%s does not fit this slot." % source_item.display_name)
+	if not meets_item_requirements(source_item):
+		return _reject_operation("Requires %s." % get_requirement_failure(source_item))
 	var displaced := _loadout_item(_equipped_items, target_key)
 	var candidate := _equipped_items.duplicate()
 	candidate.erase(source_key)
@@ -239,9 +246,10 @@ func move_equipped_item(
 	# Reconciliation may return an incompatible displaced offhand to the bag,
 	# but must never discard the item the player explicitly moved.
 	if StringName(candidate.get(target_key, &"")) != source_item.id:
-		return false
-	if not _is_valid_loadout(candidate):
-		return false
+		return _reject_operation("This item is incompatible with the weapon in that set.")
+	var failure := _get_loadout_failure(candidate)
+	if not failure.is_empty():
+		return _reject_operation(failure)
 	return _commit_loadout(candidate)
 
 
@@ -704,31 +712,37 @@ func _loadout_item(loadout: Dictionary, key: String) -> ItemData:
 	return _inventory_component.get_item_data(StringName(loadout.get(key, &"")))
 
 
-func _is_valid_loadout(loadout: Dictionary) -> bool:
+func _get_loadout_failure(loadout: Dictionary) -> String:
 	var counts := {}
 	for key: String in loadout:
 		var parts := key.split(":")
 		if parts.size() != 3:
-			return false
+			return "Choose a valid equipment slot."
 		var slot := int(parts[0]) as ItemData.EquipSlot
 		var weapon_set := int(parts[2])
 		var item := _loadout_item(loadout, key)
-		if (
-			not _is_valid_address(slot, int(parts[1]), weapon_set)
-			or item == null or not item.can_equip_in(slot)
-			or not meets_item_requirements(item)
-		):
-			return false
+		if not _is_valid_address(slot, int(parts[1]), weapon_set):
+			return "Choose a valid equipment slot."
+		if item == null:
+			return "This item is no longer in your inventory."
+		if not item.can_equip_in(slot):
+			return "%s does not fit this slot." % item.display_name
+		if not meets_item_requirements(item):
+			return "Requires %s." % get_requirement_failure(item)
 		counts[item.id] = int(counts.get(item.id, 0)) + 1
 		if int(counts[item.id]) > _inventory_component.get_quantity(item.id):
-			return false
+			return "All copies of %s are already equipped." % item.display_name
 		if slot == ItemData.EquipSlot.OFF_HAND:
 			var main := _loadout_item(loadout, _make_equipment_key(
 				ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
 			))
 			if not _offhand_fits(main, item):
-				return false
-	return true
+				return (
+					"These ammunition and weapon types do not match."
+					if item.category == ItemData.Category.AMMUNITION
+					else "The weapon in this set reserves the off hand."
+				)
+	return ""
 
 
 func _offhand_fits(main: ItemData, offhand: ItemData) -> bool:
@@ -841,3 +855,8 @@ func _reconcile_changed_hands(candidate: Dictionary) -> void:
 		if candidate.get(key, &"") != _equipped_items.get(key, &""):
 			changed_sets.append(weapon_set)
 	_reconcile_hands(candidate, changed_sets)
+
+
+func _reject_operation(reason: String) -> bool:
+	operation_rejected.emit(reason)
+	return false

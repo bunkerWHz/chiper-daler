@@ -37,6 +37,8 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [resource]
+ActionFeedback/base_type = &"Label"
+ActionFeedback/colors/font_color = Color(1, 0.72, 0.4, 1)
 Panel/styles/panel = SubResource("InventoryPanel")
 PanelContainer/styles/panel = SubResource("InventoryPanel")
 Button/constants/icon_max_width = 64
