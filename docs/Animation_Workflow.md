@@ -12,7 +12,8 @@ The visual layer only selects and presents the matching animation.
 
 ## Editing an enemy
 
-1. Open `game/enemy/Enemy.tscn` or `game/enemy/FlyingEnemy.tscn`.
+1. Open the enemy's standalone scene. For a new enemy, first copy the grounded
+   or flying composition template; do not create an inherited scene.
 2. Select `_Visual/AnimatedSprite2D`.
 3. Open its `Sprite Frames` resource in the bottom SpriteFrames panel to replace,
    reorder, or retime frame-by-frame art.

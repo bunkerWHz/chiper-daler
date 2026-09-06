@@ -4,12 +4,19 @@ Enemies are Actors assembled from independent combat, locomotion, targeting,
 audio, animation-event, and presentation components. A content author should be
 able to create a normal enemy without editing GDScript.
 
-## Creating a variant
+## Creating an enemy
 
-1. Create an inherited scene from the closest template in `game/enemy`:
-   `Enemy.tscn` for grounded movement or `FlyingEnemy.tscn` for flight. Do not
-   duplicate the complete scene tree.
-2. Save the inherited scene and its art under a directory owned by that enemy.
+Each enemy is a standalone composition scene. Enemy scenes must not inherit
+from `Enemy.tscn`, `FlyingEnemy.tscn`, or from another concrete enemy.
+
+1. Copy the closest composition template in `game/enemy`: `Enemy.tscn` for
+   grounded movement or `FlyingEnemy.tscn` for flight. Save the copy and its
+   art under a directory owned by that enemy. The copied root scene is now the
+   complete, independent assembly for this enemy.
+2. Add or remove component scene instances under `_Components` to define the
+   enemy's abilities. Shared component scenes remain referenced, so fixes to a
+   component are received by every enemy that uses it without creating an
+   inheritance relationship between enemy scenes.
 3. Duplicate the template's `SpriteFrames` and `AnimationLibrary` into the
    same directory. Assign those enemy-owned resources to
    `_Visual/AnimatedSprite2D` and `_Visual/AnimationPlayer`. Never edit another
@@ -19,7 +26,7 @@ able to create a normal enemy without editing GDScript.
 5. Match every `AnimationPlayer` clip length to the corresponding
    `SpriteFrames` cycle. Loop `idle`, `move`, and `airborne`; keep `attack` and
    `death` one-shot.
-6. Select the editable collision children in the inherited scene and fit the
+6. Select the editable collision children in the enemy scene and fit the
    body, hurtbox, and attack hitbox over the new art. Their Shape2D resources
    are local to the scene, so editing one enemy does not change another.
 7. Tune chase and attack range through `EnemyChaseConfig` and
@@ -47,7 +54,7 @@ attack lifetime and must match the `attack` AnimationPlayer clip length. The
 component closes the hitbox automatically when the attack ends, is cancelled,
 or is interrupted, even if an animation key is missing.
 
-The ground and flying template timelines contain example event keys. Move the
+The ground and flying composition templates contain example event keys. Move the
 keys to fit the replacement art instead of assuming the example timing is
 correct.
 
