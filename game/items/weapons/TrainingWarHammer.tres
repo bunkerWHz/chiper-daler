@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b4tghtwj2dbfr"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_hammer"]
 script = ExtResource("2_stats")
@@ -21,9 +21,9 @@ combat_mode = 1
 visual_archetype = 1
 family = 6
 handedness = 1
+available_actions = 7
 primary_damage_type = 3
 moveset_id = &"war_hammer_basic"
-available_actions = 7
 attack_speed_multiplier = 0.7
 stagger_power = 2.0
 strength_scaling = 1.0
@@ -34,9 +34,7 @@ id = &"training_war_hammer"
 display_name = "Training War Hammer"
 description = "A blunt two-handed weapon with strong stagger potential."
 category = 0
-stackable = false
-max_stack_size = 1
 weight = 7.0
+sell_price = 36
 equipment_profile = SubResource("ItemEquipmentProfile_hammer")
 weapon_profile = SubResource("ItemWeaponProfile_hammer")
-sell_price = 36

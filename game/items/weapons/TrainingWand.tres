@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dya8d27yey8cc"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_wand"]
 script = ExtResource("2_stats")
@@ -20,9 +20,9 @@ stats = SubResource("ItemStats_wand")
 script = ExtResource("4_weapon")
 combat_mode = 5
 family = 12
+available_actions = 384
 primary_damage_type = 4
 moveset_id = &"wand_basic"
-available_actions = 384
 attack_speed_multiplier = 1.1
 stagger_power = 0.25
 intelligence_scaling = 1.0
@@ -33,9 +33,7 @@ id = &"training_wand"
 display_name = "Training Wand"
 description = "A light one-handed catalyst for fast spellcasting."
 category = 0
-stackable = false
-max_stack_size = 1
 weight = 1.2
+sell_price = 38
 equipment_profile = SubResource("ItemEquipmentProfile_wand")
 weapon_profile = SubResource("ItemWeaponProfile_wand")
-sell_price = 38

@@ -1,9 +1,9 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://c3o8ckxu6sfnu"]
 
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Warrior/Warrior_Attack1.png" id="1_qot7k"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Warrior/Warrior_Idle.png" id="2_2jrky"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Warrior/Warrior_Guard.png" id="3_1kjgu"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Warrior/Warrior_Run.png" id="4_whv15"]
+[ext_resource type="Texture2D" uid="uid://byc3wm5jf3vsc" path="res://assets/Test/Hero/Warrior/Warrior_Attack1.png" id="1_qot7k"]
+[ext_resource type="Texture2D" uid="uid://okhu07g0rj43" path="res://assets/Test/Hero/Warrior/Warrior_Idle.png" id="2_2jrky"]
+[ext_resource type="Texture2D" uid="uid://c0bdm3f3qsoah" path="res://assets/Test/Hero/Warrior/Warrior_Guard.png" id="3_1kjgu"]
+[ext_resource type="Texture2D" uid="uid://dffoxso38pwmh" path="res://assets/Test/Hero/Warrior/Warrior_Run.png" id="4_whv15"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_di45f"]
 atlas = ExtResource("1_qot7k")

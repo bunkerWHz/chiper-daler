@@ -1,4 +1,16 @@
-[gd_resource type="Theme" format=3]
+[gd_resource type="Theme" format=3 uid="uid://c2iqeh3n6cact"]
+
+[sub_resource type="StyleBoxFlat" id="ActiveSet"]
+bg_color = Color(0.16, 0.13, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.68, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="InventoryPanel"]
 bg_color = Color(0.055, 0.063, 0.085, 0.98)
@@ -24,28 +36,16 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="ActiveSet"]
-bg_color = Color(0.16, 0.13, 0.06, 0.98)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.96, 0.68, 0.18, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [resource]
 ActionFeedback/base_type = &"Label"
 ActionFeedback/colors/font_color = Color(1, 0.72, 0.4, 1)
+ActiveWeaponSet/base_type = &"Button"
+ActiveWeaponSet/colors/font_color = Color(1, 0.82, 0.34, 1)
+ActiveWeaponSet/styles/hover = SubResource("ActiveSet")
+ActiveWeaponSet/styles/normal = SubResource("ActiveSet")
+ActiveWeaponSet/styles/pressed = SubResource("ActiveSet")
+Button/constants/icon_max_width = 64
 Panel/styles/panel = SubResource("InventoryPanel")
 PanelContainer/styles/panel = SubResource("InventoryPanel")
-Button/constants/icon_max_width = 64
 SelectedItemCell/base_type = &"Button"
 SelectedItemCell/styles/normal = SubResource("SelectedItem")
-ActiveWeaponSet/base_type = &"Button"
-ActiveWeaponSet/styles/normal = SubResource("ActiveSet")
-ActiveWeaponSet/styles/hover = SubResource("ActiveSet")
-ActiveWeaponSet/styles/pressed = SubResource("ActiveSet")
-ActiveWeaponSet/colors/font_color = Color(1, 0.82, 0.34, 1)

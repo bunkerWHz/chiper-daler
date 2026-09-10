@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b3u471fecwqvt"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="2_consumable"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://enw47aohjhqn" path="res://features/inventory/profiles/ItemConsumableProfile.gd" id="2_consumable"]
 
 [sub_resource type="Resource" id="ItemConsumableProfile_experience"]
 script = ExtResource("2_consumable")
@@ -17,6 +17,6 @@ category = 4
 stackable = true
 max_stack_size = 10
 weight = 0.2
+sell_price = 10
 usable_in_combat = true
 consumable_profile = SubResource("ItemConsumableProfile_experience")
-sell_price = 10

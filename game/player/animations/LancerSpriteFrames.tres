@@ -1,9 +1,9 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://ve07f13j2csg"]
 
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Lancer/Lancer_Right_Attack.png" id="1_dw6qy"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Lancer/Lancer_Idle.png" id="2_2mqib"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Lancer/Lancer_Right_Defence.png" id="3_y13kv"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Lancer/Lancer_Run.png" id="4_gm7j1"]
+[ext_resource type="Texture2D" uid="uid://cpsin3modb8ae" path="res://assets/Test/Hero/Lancer/Lancer_Right_Attack.png" id="1_dw6qy"]
+[ext_resource type="Texture2D" uid="uid://cgvilk0ycxx0v" path="res://assets/Test/Hero/Lancer/Lancer_Idle.png" id="2_2mqib"]
+[ext_resource type="Texture2D" uid="uid://mafi3ayo6v5u" path="res://assets/Test/Hero/Lancer/Lancer_Right_Defence.png" id="3_y13kv"]
+[ext_resource type="Texture2D" uid="uid://cohly7lkxoegx" path="res://assets/Test/Hero/Lancer/Lancer_Run.png" id="4_gm7j1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5w3o3"]
 atlas = ExtResource("1_dw6qy")

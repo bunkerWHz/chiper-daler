@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dq05g4b3r1tac"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_spear"]
 script = ExtResource("2_stats")
@@ -22,13 +22,13 @@ combat_mode = 1
 visual_archetype = 3
 family = 9
 handedness = 1
+available_actions = 7
+critical_damage_multiplier = 2.2
+reach_multiplier = 1.5
 primary_damage_type = 2
 moveset_id = &"spear_basic"
-available_actions = 7
 attack_speed_multiplier = 0.9
-reach_multiplier = 1.5
 stagger_power = 1.2
-critical_damage_multiplier = 2.2
 strength_scaling = 0.5
 dexterity_scaling = 0.8
 
@@ -38,9 +38,7 @@ id = &"training_longspear"
 display_name = "Training Spear"
 description = "A two-handed thrusting weapon with excellent reach."
 category = 0
-stackable = false
-max_stack_size = 1
 weight = 4.5
+sell_price = 34
 equipment_profile = SubResource("ItemEquipmentProfile_spear")
 weapon_profile = SubResource("ItemWeaponProfile_spear")
-sell_price = 34

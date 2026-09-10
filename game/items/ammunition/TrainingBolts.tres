@@ -1,16 +1,16 @@
-[gd_resource type="Resource" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cmssj3phqlte6"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="2_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemAmmunitionProfile.gd" id="3_ammunition"]
-
-[sub_resource type="Resource" id="ItemEquipmentProfile_bolts"]
-script = ExtResource("2_equipment")
-allowed_slots = Array[int]([2])
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="2_equipment"]
+[ext_resource type="Script" uid="uid://v04akmqocn7b" path="res://features/inventory/profiles/ItemAmmunitionProfile.gd" id="3_ammunition"]
 
 [sub_resource type="Resource" id="ItemAmmunitionProfile_bolts"]
 script = ExtResource("3_ammunition")
 ammunition_type = &"bolt"
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_bolts"]
+script = ExtResource("2_equipment")
+allowed_slots = Array[int]([2])
 
 [resource]
 script = ExtResource("1_item")
@@ -21,6 +21,6 @@ category = 7
 stackable = true
 max_stack_size = 999
 weight = 0.08
+sell_price = 1
 equipment_profile = SubResource("ItemEquipmentProfile_bolts")
 ammunition_profile = SubResource("ItemAmmunitionProfile_bolts")
-sell_price = 1

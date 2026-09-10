@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d111f6hb4r64t"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_staff"]
 script = ExtResource("2_stats")
@@ -21,11 +21,11 @@ script = ExtResource("4_weapon")
 combat_mode = 5
 family = 13
 handedness = 1
+available_actions = 384
+reach_multiplier = 1.2
 primary_damage_type = 4
 moveset_id = &"staff_basic"
-available_actions = 384
 attack_speed_multiplier = 0.8
-reach_multiplier = 1.2
 stagger_power = 0.5
 intelligence_scaling = 1.1
 
@@ -35,9 +35,7 @@ id = &"training_staff"
 display_name = "Training Staff"
 description = "A two-handed focus for testing casting and channeling magic."
 category = 0
-stackable = false
-max_stack_size = 1
 weight = 4.0
+sell_price = 46
 equipment_profile = SubResource("ItemEquipmentProfile_staff")
 weapon_profile = SubResource("ItemWeaponProfile_staff")
-sell_price = 46

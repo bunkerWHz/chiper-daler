@@ -1,22 +1,27 @@
-[gd_resource type="Resource" load_steps=6 format=3]
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
-[sub_resource type="Resource" id="stats"]
-script = ExtResource("2")
-defense = 2.0
-intelligence_requirement = 5
-wisdom_requirement = 4
-[sub_resource type="Resource" id="equipment"]
-script = ExtResource("3")
-allowed_slots = Array[int]([6])
-stats = SubResource("stats")
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://y55ollqhfyl2"]
+
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
+[ext_resource type="Script" uid="uid://5cybblhcc8ax" path="res://features/inventory/profiles/ItemArmorProfile.gd" id="4"]
+
 [sub_resource type="Resource" id="armor"]
 script = ExtResource("4")
 armor_class = 2
 set_id = &"scholar_robe"
 poise = 0.2
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+defense = 2.0
+intelligence_requirement = 5
+wisdom_requirement = 4
+
+[sub_resource type="Resource" id="equipment"]
+script = ExtResource("3")
+allowed_slots = Array[int]([6])
+stats = SubResource("stats")
+
 [resource]
 script = ExtResource("1")
 id = &"scholar_trousers"
@@ -24,6 +29,6 @@ display_name = "Scholar Trousers"
 description = "Light ceremonial trousers woven with arcane thread."
 category = 1
 weight = 1.4
+sell_price = 32
 equipment_profile = SubResource("equipment")
 armor_profile = SubResource("armor")
-sell_price = 32

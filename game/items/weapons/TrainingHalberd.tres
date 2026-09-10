@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://sf06uaghswbd"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
-[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_halberd"]
 script = ExtResource("2_stats")
@@ -22,11 +22,11 @@ combat_mode = 1
 visual_archetype = 3
 family = 10
 handedness = 1
+available_actions = 7
+reach_multiplier = 1.6
 primary_damage_type = 1
 moveset_id = &"halberd_basic"
-available_actions = 7
 attack_speed_multiplier = 0.7
-reach_multiplier = 1.6
 stagger_power = 1.7
 strength_scaling = 0.7
 dexterity_scaling = 0.5
@@ -37,9 +37,7 @@ id = &"training_halberd"
 display_name = "Training Halberd"
 description = "A long polearm for testing wide attacks and extended reach."
 category = 0
-stackable = false
-max_stack_size = 1
 weight = 7.5
+sell_price = 44
 equipment_profile = SubResource("ItemEquipmentProfile_halberd")
 weapon_profile = SubResource("ItemWeaponProfile_halberd")
-sell_price = 44

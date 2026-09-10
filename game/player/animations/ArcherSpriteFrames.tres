@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://c65skx8jxefjd"]
 
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Archer/Archer_Shoot.png" id="1_241ep"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Archer/Archer_Idle.png" id="2_o5eei"]
-[ext_resource type="Texture2D" path="res://assets/Test/Hero/Archer/Archer_Run.png" id="3_5nspl"]
+[ext_resource type="Texture2D" uid="uid://caxg6iqk7gmh4" path="res://assets/Test/Hero/Archer/Archer_Shoot.png" id="1_241ep"]
+[ext_resource type="Texture2D" uid="uid://cw6yvn4abcbkf" path="res://assets/Test/Hero/Archer/Archer_Idle.png" id="2_o5eei"]
+[ext_resource type="Texture2D" uid="uid://bp8a7fee4q7d8" path="res://assets/Test/Hero/Archer/Archer_Run.png" id="3_5nspl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_knw3w"]
 atlas = ExtResource("1_241ep")
