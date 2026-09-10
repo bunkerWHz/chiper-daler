@@ -1,21 +1,32 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b0tj16b3ysnm7"]
 
-[ext_resource type="Script" path="res://features/loot/LootBag.gd" id="1_bag"]
-[ext_resource type="Script" path="res://framework/components/InteractableComponent.gd" id="2_interactable"]
+[ext_resource type="Script" uid="uid://q5eo6pkr72q3" path="res://features/loot/LootBag.gd" id="1_bag"]
+[ext_resource type="Script" uid="uid://msb0mnd7fg37" path="res://framework/components/InteractableComponent.gd" id="2_interactable"]
+[ext_resource type="Script" uid="uid://bjnjilee0h3w7" path="res://framework/components/CharacterBodyComponent.gd" id="3_body"]
+[ext_resource type="Texture2D" uid="uid://d4b5vdiaejg5m" path="res://assets/items/Dropbag.png" id="4_icon"]
 
-[node name="LootBag" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bag"]
+size = Vector2(86, 118)
+
+[node name="LootBag" type="Node2D" unique_id=1680541889]
 script = ExtResource("1_bag")
 
-[node name="_Components" type="Node2D" parent="."]
+[node name="_Components" type="Node2D" parent="." unique_id=353358911]
 
-[node name="InteractableComponent" type="Node" parent="_Components"]
+[node name="CharacterBodyComponent" type="Node2D" parent="_Components" unique_id=1602685267]
+script = ExtResource("3_body")
+collision_layer = 0
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="_Components/CharacterBodyComponent" unique_id=460422176]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" unique_id=1364468474]
+position = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_bag")
+
+[node name="InteractableComponent" type="Node" parent="_Components" unique_id=563382115]
 script = ExtResource("2_interactable")
 interaction_name = "Loot bag"
 
-[node name="Visual" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-9, -4, -5, -10, 5, -10, 9, -4, 8, 8, -8, 8)
-color = Color(0.58, 0.36, 0.16, 1)
-
-[node name="Tie" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-5, -11, 5, -11, 3, -7, -3, -7)
-color = Color(0.88, 0.68, 0.28, 1)
+[node name="Visual" type="Sprite2D" parent="." unique_id=2067428466]
+texture = ExtResource("4_icon")

@@ -3,17 +3,31 @@ class_name LootBag
 
 signal item_collected(collector: Actor, item: ItemData, quantity: int)
 
+@export_range(0.0, 5000.0) var gravity: float = 1200.0
+@export_range(0.0, 5000.0) var terminal_velocity: float = 900.0
+
 var _stacks: Array[InventoryStack] = []
 var _interactable: InteractableComponent
+var _body_component: CharacterBodyComponent
 
 
 func _ready() -> void:
+	_body_component = get_component(CharacterBodyComponent) as CharacterBodyComponent
 	_interactable = get_component(InteractableComponent) as InteractableComponent
 	if _interactable == null:
 		push_error("LootBag requires an InteractableComponent")
 		return
 	_interactable.interacted_by.connect(_on_interacted_by)
 	_update_interaction_state()
+
+
+func _physics_process(delta: float) -> void:
+	if _body_component == null or not _body_component.is_enabled:
+		return
+	var velocity := _body_component.get_velocity()
+	velocity.y = minf(velocity.y + gravity * delta, terminal_velocity)
+	_body_component.set_velocity(velocity)
+	_body_component.move_and_slide()
 
 
 func add_item(item: ItemData, quantity: int = 1) -> int:

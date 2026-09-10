@@ -37,6 +37,8 @@ func _on_health_died() -> void:
 	var parent := actor.get_parent()
 	var bag := loot_bag_scene.instantiate() as LootBag
 	if parent == null or bag == null:
+		if bag != null:
+			bag.free()
 		return
 
 	for entry: LootEntry in loot_entries:
@@ -49,9 +51,26 @@ func _on_health_died() -> void:
 		bag.free()
 		return
 
+	# Capture the death position before the enemy moves or is freed. The static
+	# callback survives the component and adds physics bodies outside queries.
+	if parent.is_inside_tree():
+		_spawn_bag.call_deferred(parent, bag, actor.global_position, self)
+	else:
+		_spawn_bag(parent, bag, actor.global_position, self)
+
+
+static func _spawn_bag(
+	parent: Node, bag: LootBag, death_position: Vector2, source: LootDropComponent
+) -> void:
+	if not is_instance_valid(bag):
+		return
+	if not is_instance_valid(parent) or parent.is_queued_for_deletion():
+		bag.free()
+		return
 	parent.add_child(bag)
-	bag.global_position = actor.global_position
-	loot_dropped.emit(bag)
+	bag.global_position = death_position
+	if is_instance_valid(source):
+		source.loot_dropped.emit(bag)
 
 
 func _has_valid_entry() -> bool:
