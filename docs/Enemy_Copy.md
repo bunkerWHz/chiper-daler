@@ -31,6 +31,8 @@
 - События и длительность удара: `_Visual/AnimationPlayer` → `attack`.
   Подробности в [Enemy_Timing.md](Enemy_Timing.md).
 - Здоровье: `_Components/HealthComponent` → Config.
+- Дроп: `_Components/LootDropComponent` → Loot Entries.
+  [Настройка предметов, количества и шанса](Loot_Setup.md).
 - Урон и зона удара: `_Components/HitboxComponent` и его CollisionShape2D.
 - Движение: EnemyMovementComponent или EnemyFlightComponent → Config.
 - Обнаружение и подготовка удара: EnemyChaseComponent и EnemyAttackComponent → Config.
