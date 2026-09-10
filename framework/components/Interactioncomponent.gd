@@ -91,7 +91,7 @@ func find_nearest_interactable() -> InteractableComponent:
 			continue
 
 		var distance: float = actor.global_position.distance_to(
-			interactable.actor.global_position
+			interactable.get_closest_interaction_point(actor.global_position)
 		)
 
 		if distance <= nearest_distance:

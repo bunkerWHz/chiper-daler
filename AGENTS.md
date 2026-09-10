@@ -23,3 +23,13 @@ on both axes. Sprites stay at unit scale; collision shapes use native dimensions
 Prepare all character sprites facing right in the source art. Use flip_h for
 left-facing movement; do not add artwork-direction detection or per-character
 facing configuration. Prefer scene/node properties over one-off config resources.
+
+# Commit workflow
+
+- After completing and verifying a fix, always create a Git commit before
+  reporting completion. The user has authorized this; do not ask again unless
+  they explicitly request leaving the changes uncommitted.
+- Include the fix, its relevant tests and documentation. Stage only files or
+  hunks belonging to the current work; leave unrelated user changes untouched.
+- Use a concise commit message describing the change and report the commit hash.
+  This authorization covers local commits, not pushing to a remote.

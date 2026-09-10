@@ -58,7 +58,7 @@ func _process(_delta: float) -> void:
 	prompt.text = "[R] %s" % target.interaction_name
 	prompt.reset_size()
 
-	var world_pos: Vector2 = target.actor.global_position + offset
+	var world_pos := target.get_closest_interaction_point(actor.global_position) + offset
 	var screen_pos: Vector2 = world_to_screen(world_pos, cam)
 
 	prompt.global_position = screen_pos - (prompt.size * 0.5)

@@ -27,6 +27,7 @@ shape = SubResource("RectangleShape2D_bag")
 [node name="InteractableComponent" type="Node" parent="_Components" unique_id=563382115]
 script = ExtResource("2_interactable")
 interaction_name = "Loot bag"
+interaction_shape_path = NodePath("../CharacterBodyComponent/CharacterBody2D/CollisionShape2D")
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=2067428466]
 texture = ExtResource("4_icon")

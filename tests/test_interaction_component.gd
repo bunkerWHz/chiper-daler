@@ -51,6 +51,59 @@ func test_interaction_runs_start_progress_and_end_phases() -> void:
 	assert_eq(interaction.get_phase(), InteractionComponent.Phase.NONE)
 
 
+func test_scaled_loot_can_be_collected_from_ground_beside_either_edge() -> void:
+	for bag_scale: float in [0.5, 1.0, 3.0]:
+		var setup := _create_interaction_setup(false)
+		var collector := setup.actor as Actor
+		var interaction := setup.interaction as InteractionComponent
+		var inventory := InventoryComponent.new()
+		inventory.config = InventoryConfig.new()
+		collector.get_node("_Components").add_child(inventory)
+		var tree := Engine.get_main_loop() as SceneTree
+		tree.root.add_child(collector)
+		collector.process_mode = Node.PROCESS_MODE_DISABLED
+		var bag := track(preload("res://features/loot/LootBag.tscn").instantiate()) as LootBag
+		bag.scale = Vector2.ONE * bag_scale
+		bag.position = Vector2(400, 200)
+		var item := ItemData.new()
+		item.id = &"edge_loot"
+		item.display_name = "Edge loot"
+		bag.add_item(item)
+		tree.root.add_child(bag)
+		bag.process_mode = Node.PROCESS_MODE_DISABLED
+		var target := bag.get_component(InteractableComponent) as InteractableComponent
+		var shape := bag.get_node("_Components/CharacterBodyComponent/CharacterBody2D/CollisionShape2D") as CollisionShape2D
+		var bounds := shape.shape.get_rect()
+		for direction: float in [-1.0, 1.0]:
+			var side_x := bounds.position.x if direction < 0.0 else bounds.end.x
+			var ground_edge := shape.to_global(Vector2(side_x, bounds.end.y))
+			collector.global_position = ground_edge + Vector2(direction * 24.0, -10.0)
+			interaction._update_target()
+			assert_eq(interaction.get_target(), target)
+			assert_true(is_equal_approx(collector.global_position.distance_to(target.get_closest_interaction_point(collector.global_position)), 24.0))
+			collector.global_position = ground_edge + Vector2(direction * 49.0, -10.0)
+			interaction._update_target()
+			assert_eq(interaction.get_target(), null)
+		# The nearest point follows both the body offset and the root transform.
+		collector.global_position = shape.to_global(bounds.end) + Vector2(24, -10)
+		interaction._update_target()
+		assert_true(interaction.interact())
+		assert_eq(inventory.get_quantity(item.id), 1)
+		assert_true(bag.is_empty())
+		interaction._update_target()
+		assert_eq(interaction.get_target(), null)
+		bag.free()
+		collector.free()
+
+
+func test_interactable_without_shape_keeps_its_actor_position() -> void:
+	var setup := _create_interaction_setup(false)
+	var target := setup.target as Actor
+	target.position = Vector2(30, 50)
+	var interactable := setup.interactable as InteractableComponent
+	assert_eq(interactable.get_closest_interaction_point(Vector2(100, 100)), target.global_position)
+
+
 func test_actor_state_maps_all_interaction_phases() -> void:
 	var setup := _create_interaction_setup(true)
 	var interaction := setup.interaction as InteractionComponent
