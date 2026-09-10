@@ -42,6 +42,9 @@ func _draw() -> void:
 	if config == null:
 		return
 
+	# Trajectory samples and labels are in world pixels, regardless of actor size.
+	draw_set_transform(Vector2.ZERO, -global_rotation, Vector2.ONE / global_scale)
+
 	var resolved_running_color := _resolve_color(
 		&"running_jump_color",
 		Color(0.2, 1.0, 0.35, 0.9)

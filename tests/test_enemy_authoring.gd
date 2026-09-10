@@ -24,6 +24,46 @@ func test_enemy_templates_pass_checks_without_running_gameplay() -> void:
 		assert_eq(CHECKS.inspect_scene(enemy), PackedStringArray())
 
 
+func test_root_scale_preserves_geometry_and_scales_all_enemy_sensors() -> void:
+	for flying: bool in [false, true]:
+		var path := "res://game/enemy/FlyingEnemy.tscn" if flying else "res://game/enemy/Enemy.tscn"
+		for multiplier: float in [1.0, 2.0]:
+			var enemy := track((load(path) as PackedScene).instantiate()) as Actor
+			enemy.scale *= multiplier
+			enemy.position = Vector2(400, 200)
+			(Engine.get_main_loop() as SceneTree).root.add_child(enemy)
+			enemy.process_mode = Node.PROCESS_MODE_DISABLED
+			var sprite := enemy.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
+			assert_eq(sprite.scale, Vector2.ONE)
+			assert_true(sprite.global_scale.is_equal_approx(Vector2.ONE * (0.22 if flying else 0.24) * multiplier))
+			assert_true((sprite.global_position - enemy.global_position).is_equal_approx(Vector2(0, -5 if flying else -17) * multiplier))
+			for suffix: String in ["CharacterBodyComponent/CharacterBody2D", "HurtboxComponent/Area2D", "HitboxComponent/Area2D"]:
+				assert_true(_world_shape_size(enemy, suffix).is_equal_approx(Vector2(20, 20) * multiplier))
+			assert_true(_world_shape_size(enemy, "EnemyAttackComponent/DetectionArea2D").is_equal_approx(Vector2(52, 52) * multiplier))
+			var chase_size := Vector2(440, 300) if flying else Vector2(360, 160)
+			assert_true(_world_shape_size(enemy, "EnemyChaseComponent/DetectionArea2D").is_equal_approx(chase_size * multiplier))
+			var hitbox := enemy.get_component(HitboxComponent) as HitboxComponent
+			var hitbox_node := enemy.get_node("_Components/HitboxComponent") as Node2D
+			for direction: float in [-1.0, 1.0]:
+				hitbox.set_horizontal_direction(direction)
+				var expected := Vector2((24.0 if flying else 20.0) * direction * multiplier, 0)
+				assert_true((hitbox_node.global_position - enemy.global_position).is_equal_approx(expected))
+			if not flying:
+				var sensor := enemy.get_component(EnemyGroundSensorComponent) as EnemyGroundSensorComponent
+				sensor._update_floor_ray(1.0)
+				sensor._update_wall_ray(-1.0)
+				var floor_ray := sensor.get_node("FloorRayCast2D") as RayCast2D
+				var wall_ray := sensor.get_node("WallRayCast2D") as RayCast2D
+				assert_true((floor_ray.global_position - enemy.global_position).is_equal_approx(Vector2(14, 0) * multiplier))
+				assert_true((floor_ray.to_global(floor_ray.target_position) - floor_ray.global_position).is_equal_approx(Vector2(0, 24) * multiplier))
+				assert_true((wall_ray.to_global(wall_ray.target_position) - wall_ray.global_position).is_equal_approx(Vector2(-16, 0) * multiplier))
+
+
+func _world_shape_size(enemy: Actor, suffix: String) -> Vector2:
+	var shape := enemy.get_node("_Components/" + suffix + "/CollisionShape2D") as CollisionShape2D
+	return (shape.shape as RectangleShape2D).size * shape.global_scale.abs()
+
+
 func test_checks_explain_missing_dependency_and_timing_source() -> void:
 	var enemy := _create_enemy()
 	var hitbox := enemy.get_node("_Components/HitboxComponent")

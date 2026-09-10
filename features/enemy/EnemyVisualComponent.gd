@@ -1,7 +1,6 @@
 extends Component
 class_name EnemyVisualComponent
 
-@export var config: EnemyVisualConfig
 @export var sprite_path: NodePath = ^"_Visual/AnimatedSprite2D"
 @export var animation_player_path: NodePath = ^"_Visual/AnimationPlayer"
 
@@ -19,11 +18,6 @@ const REQUIRED_ANIMATIONS: Array[StringName] = [
 
 
 func on_initialize() -> void:
-	if config == null:
-		push_error("EnemyVisualComponent requires EnemyVisualConfig")
-		disable()
-		return
-
 	_body_component = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	_locomotion = EnemyLocomotion.find(actor)
 	_attack_component = actor.get_component(AttackComponent) as AttackComponent
@@ -63,8 +57,6 @@ func _ready() -> void:
 			disable()
 			return
 	_validate_attack_timeline()
-	_sprite.position = config.visual_offset
-	_sprite.scale = config.visual_scale
 	_process(0.0)
 
 
@@ -149,7 +141,7 @@ func _apply_facing() -> void:
 		return
 	var direction := float(_locomotion.call(&"get_facing_direction"))
 	if not is_zero_approx(direction):
-		_sprite.flip_h = (direction > 0.0) if config.art_faces_left else (direction < 0.0)
+		_sprite.flip_h = direction < 0.0
 
 
 func _on_attack_started() -> void:

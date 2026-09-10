@@ -54,21 +54,23 @@ func _on_health_died() -> void:
 	# Capture the death position before the enemy moves or is freed. The static
 	# callback survives the component and adds physics bodies outside queries.
 	if parent.is_inside_tree():
-		_spawn_bag.call_deferred(parent, bag, actor.global_position, self)
+		_spawn_bag.call_deferred(weakref(parent), bag, actor.global_position, weakref(self))
 	else:
-		_spawn_bag(parent, bag, actor.global_position, self)
+		_spawn_bag(weakref(parent), bag, actor.global_position, weakref(self))
 
 
 static func _spawn_bag(
-	parent: Node, bag: LootBag, death_position: Vector2, source: LootDropComponent
+	parent_ref: WeakRef, bag: LootBag, death_position: Vector2, source_ref: WeakRef
 ) -> void:
 	if not is_instance_valid(bag):
 		return
+	var parent := parent_ref.get_ref() as Node
 	if not is_instance_valid(parent) or parent.is_queued_for_deletion():
 		bag.free()
 		return
 	parent.add_child(bag)
 	bag.global_position = death_position
+	var source := source_ref.get_ref() as LootDropComponent
 	if is_instance_valid(source):
 		source.loot_dropped.emit(bag)
 

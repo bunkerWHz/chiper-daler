@@ -22,7 +22,6 @@
 [ext_resource type="Script" path="res://features/enemy/EnemyFlightConfig.gd" id="20_flight_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="21_visual"]
 [ext_resource type="Script" path="res://features/enemy/EnemyAuthoringChecks.gd" id="authoring_checks"]
-[ext_resource type="Script" path="res://features/enemy/EnemyVisualConfig.gd" id="22_visual_config"]
 [ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="23_death_config"]
 [ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="24_chase_config"]
 [ext_resource type="SpriteFrames" path="res://game/enemy/animations/FlyingEnemySpriteFrames.tres" id="25_sprite_frames"]
@@ -31,17 +30,14 @@
 [ext_resource type="PackedScene" path="res://framework/animation/AnimationEventComponent.tscn" id="28_animation_events"]
 [ext_resource type="PackedScene" path="res://features/audio/ActorAudioComponent.tscn" id="29_audio"]
 
+[ext_resource type="Script" path="res://features/enemy/EnemyAttackConfig.gd" id="native_attack_config"]
+
 [sub_resource type="Resource" id="FlightConfig"]
 script = ExtResource("20_flight_config")
 move_speed = 75.0
 patrol_distance = 85.0
 patrol_vertical_amplitude = 10.0
 target_stopping_distance = 28.0
-
-[sub_resource type="Resource" id="VisualConfig"]
-script = ExtResource("22_visual_config")
-visual_scale = Vector2(0.22, 0.22)
-visual_offset = Vector2(0, -5)
 
 [sub_resource type="Resource" id="DeathConfig"]
 script = ExtResource("23_death_config")
@@ -50,15 +46,40 @@ fade_visual = false
 
 [sub_resource type="Resource" id="ChaseConfig"]
 script = ExtResource("24_chase_config")
-horizontal_range = 220.0
-vertical_range = 150.0
+horizontal_range = 1000
+vertical_range = 681.818182
 avoid_unsafe_ground = false
 
 [sub_resource type="Resource" id="AttackTimelineConfig"]
 resource_local_to_scene = true
 script = ExtResource("27_attack_config")
 
+[sub_resource type="RectangleShape2D" id="NativeBodyShape"]
+resource_local_to_scene = true
+size = Vector2(90.909091, 90.909091)
+
+[sub_resource type="RectangleShape2D" id="NativeHurtboxShape"]
+resource_local_to_scene = true
+size = Vector2(90.909091, 90.909091)
+
+[sub_resource type="RectangleShape2D" id="NativeHitboxShape"]
+resource_local_to_scene = true
+size = Vector2(90.909091, 90.909091)
+
+[sub_resource type="RectangleShape2D" id="NativeAttackSensorShape"]
+resource_local_to_scene = true
+size = Vector2(236.363636, 236.363636)
+
+[sub_resource type="RectangleShape2D" id="NativeChaseSensorShape"]
+resource_local_to_scene = true
+size = Vector2(2000, 1363.636364)
+
+[sub_resource type="Resource" id="NativeAttackConfig"]
+script = ExtResource("native_attack_config")
+attack_range = 118.181818
+
 [node name="FlyingEnemy" type="Node2D"]
+scale = Vector2(0.22, 0.22)
 script = ExtResource("1_enemy")
 
 [node name="_Components" type="Node2D" parent="."]
@@ -93,7 +114,7 @@ config = SubResource("DeathConfig")
 [node name="AnimationEventComponent" parent="_Components" instance=ExtResource("28_animation_events")]
 
 [node name="HitboxComponent" parent="_Components" instance=ExtResource("7_hitbox")]
-position = Vector2(-24, 0)
+position = Vector2(-109.090909, 0)
 
 [node name="AttackComponent" parent="_Components" instance=ExtResource("8_attack")]
 config = SubResource("AttackTimelineConfig")
@@ -107,6 +128,7 @@ script = ExtResource("19_flight")
 config = SubResource("FlightConfig")
 
 [node name="EnemyAttackComponent" parent="_Components" instance=ExtResource("9_enemy_attack")]
+config = SubResource("NativeAttackConfig")
 visual_path = NodePath("_Visual/AnimatedSprite2D")
 
 [node name="EnemyChaseComponent" parent="_Components" instance=ExtResource("15_chase")]
@@ -116,11 +138,11 @@ config = SubResource("ChaseConfig")
 
 [node name="EnemyVisualComponent" type="Node" parent="_Components"]
 script = ExtResource("21_visual")
-config = SubResource("VisualConfig")
 
 [node name="_Visual" type="Node2D" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual"]
+position = Vector2(0, -22.727273)
 sprite_frames = ExtResource("25_sprite_frames")
 animation = &"idle"
 
@@ -128,12 +150,28 @@ animation = &"idle"
 libraries/ = ExtResource("26_animation_library")
 
 [node name="HealthBar" parent="_Visual" instance=ExtResource("10_health_bar")]
-position = Vector2(0, -28)
+position = Vector2(0, -127.272727)
+scale = Vector2(4.545455, 4.545455)
 
 [node name="_Sockets" type="Node2D" parent="."]
 
 [node name="EnemyAuthoringChecks" type="Node" parent="."]
 script = ExtResource("authoring_checks")
+
+[node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D"]
+shape = SubResource("NativeBodyShape")
+
+[node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D"]
+shape = SubResource("NativeHurtboxShape")
+
+[node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D"]
+shape = SubResource("NativeHitboxShape")
+
+[node name="CollisionShape2D" parent="_Components/EnemyAttackComponent/DetectionArea2D"]
+shape = SubResource("NativeAttackSensorShape")
+
+[node name="CollisionShape2D" parent="_Components/EnemyChaseComponent/DetectionArea2D"]
+shape = SubResource("NativeChaseSensorShape")
 
 [editable path="_Components/CharacterBodyComponent"]
 [editable path="_Components/HurtboxComponent"]

@@ -1,6 +1,6 @@
 # Scene sizing convention
 
-- Prefer authoring simple world objects in the sprite's native pixel dimensions:
+- Author world objects, including players and enemies, in the sprite's native pixel dimensions:
   keep Sprite2D/AnimatedSprite2D scale at (1, 1), fit collision shape dimensions
   and offsets to the visible artwork (excluding transparent padding), and set
   the object's overall size with a uniform scale on its scene root.
@@ -8,13 +8,18 @@
 - Apply this convention to new objects and safe updates to existing scenes.
   Preserve user-authored sizes and offsets unless a size change is requested.
   Verify physics and visual alignment after changing the root scale.
-- Do not blindly migrate characters with independently tuned movement sensors,
-  attack ranges, hurtboxes, UI, or differently sized animation assets. Preserve
-  intentional visual-only normalization when changing it would alter gameplay.
+- When migrating characters, recalculate local collision dimensions, offsets,
+  attack/chase sensor ranges and ground rays to preserve existing world geometry.
+  Do not keep a separate visual size setting. Movement speed, gravity, jump
+  velocity and world-space navigation distances remain in world units.
 - Visual-only animation effects (hit reactions, squash/stretch) and UI layout
   are exceptions: they should not resize physical collision shapes.
 - Prefer setting physics object scale during scene authoring, before spawning;
   runtime resizing needs separate validation of physics behavior.
 
-LootBag follows this convention: adjust its root Scale equally on both axes.
-Its Visual stays at unit scale and its collision shape is authored at native size.
+LootBag, Enemy and FlyingEnemy follow this convention: adjust root Scale equally
+on both axes. Sprites stay at unit scale; collision shapes use native dimensions.
+
+Prepare all character sprites facing right in the source art. Use flip_h for
+left-facing movement; do not add artwork-direction detection or per-character
+facing configuration. Prefer scene/node properties over one-off config resources.

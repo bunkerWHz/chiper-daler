@@ -56,6 +56,10 @@ static func inspect_scene(enemy: Node) -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if enemy == null:
 		return warnings
+	if enemy is Node2D:
+		var root_scale := (enemy as Node2D).scale
+		if root_scale.x <= 0.0 or not is_equal_approx(root_scale.x, root_scale.y):
+			warnings.append("Use a positive uniform Scale on the enemy root (equal X and Y).")
 	var components := enemy.get_node_or_null("_Components")
 	if components == null:
 		warnings.append("Add a _Components node containing the enemy's components.")
@@ -87,6 +91,8 @@ static func inspect_scene(enemy: Node) -> PackedStringArray:
 	if visual == null:
 		return warnings
 	var sprite := enemy.get_node_or_null(visual.get("sprite_path")) as AnimatedSprite2D
+	if sprite != null and not sprite.scale.is_equal_approx(Vector2.ONE):
+		warnings.append("Keep AnimatedSprite2D Scale at (1, 1); resize the enemy with root Scale.")
 	var player := enemy.get_node_or_null(visual.get("animation_player_path")) as AnimationPlayer
 	if sprite == null or sprite.sprite_frames == null:
 		warnings.append("Assign AnimatedSprite2D with SpriteFrames at EnemyVisualComponent's Sprite Path.")

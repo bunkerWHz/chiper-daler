@@ -35,6 +35,20 @@ from `Enemy.tscn`, `FlyingEnemy.tscn`, or from another concrete enemy.
 8. Tune health, movement, damage, knockback, rewards, and loot through their
    component properties and config resources.
 
+## Sizing
+
+Keep AnimatedSprite2D at unit scale. Set overall size with equal positive X/Y
+Scale on the Actor root (ground template: 0.24; flying template: 0.22).
+Author sprite Position, body/hurtbox/hitbox shapes, hitbox offsets, attack/chase
+sensor ranges and ground-ray distances in native, actor-local pixels. These
+grow together with root scale. Do not resize collision nodes independently;
+edit their Shape2D dimensions. Prepare all source sprites facing right;
+left-facing movement uses flip_h. There is no per-enemy artwork-facing config.
+
+Movement speed, gravity, jump velocity and navigation distances are world units
+and remain independent of visual size. Health bars use a UI scale correction;
+jump previews draw in world pixels to keep the displayed trajectory accurate.
+
 ## Authoring animation events
 
 Each enemy owns its AnimationLibrary timeline. Add Call Method Track keys that
