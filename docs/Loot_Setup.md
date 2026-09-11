@@ -5,8 +5,8 @@
 
 ## Добавить предмет в дроп
 
-1. Откройте сцену нужного монстра: `game/enemy/Enemy.tscn`,
-   `game/enemy/FlyingEnemy.tscn` или свою [копию врага](Enemy_Copy.md).
+1. Откройте сцену нужного монстра из `game/enemy/monsters`, например
+   `stone_maw/StoneMaw.tscn`, или свою [копию врага](Enemy_Copy.md).
 2. Выберите `_Components/LootDropComponent`.
 3. Раскройте **Loot Entries** — список возможного дропа.
 4. Добавьте элемент массива (увеличьте **Size**) и в пустом элементе

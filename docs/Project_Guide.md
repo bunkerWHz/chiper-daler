@@ -40,7 +40,9 @@ godot --headless --path . --script tests/run_tests.gd
 
 ## Враг
 
-Наземный шаблон — `game/enemy/Enemy.tscn`, летающий — `FlyingEnemy.tscn`.
+Наземный шаблон — `game/enemy/GroundDummy.tscn`, летающий — `FlyDummy.tscn`.
+У обоих масштаб `1, 1` и не назначена графика. Готовые монстры коллекции —
+StoneMaw и AmberWasp — находятся в отдельных папках `game/enemy/monsters`.
 [Создание независимой копии](Enemy_Copy.md) занимает выбор имени и нажатие
 кнопки. Затем меняйте рисунок, коллизии и конфигурации в новой сцене.
 

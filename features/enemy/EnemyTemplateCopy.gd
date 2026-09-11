@@ -12,13 +12,15 @@ static func save_copy(source: Node, directory: String, enemy_name: String) -> Er
 	var copy := source.duplicate()
 	copy.name = enemy_name
 	copy.scene_file_path = ""
+	if copy is Node2D:
+		(copy as Node2D).scale = Vector2.ONE
 	var visual := copy.get_node_or_null("_Components/EnemyVisualComponent")
 	if visual == null:
 		copy.free()
 		return ERR_INVALID_DATA
 	var sprite := copy.get_node_or_null(visual.get("sprite_path")) as AnimatedSprite2D
 	var player := copy.get_node_or_null(visual.get("animation_player_path")) as AnimationPlayer
-	if sprite == null or sprite.sprite_frames == null or player == null:
+	if sprite == null or player == null:
 		copy.free()
 		return ERR_INVALID_DATA
 	var error := DirAccess.make_dir_recursive_absolute(directory)
@@ -26,7 +28,15 @@ static func save_copy(source: Node, directory: String, enemy_name: String) -> Er
 		copy.free()
 		return error
 	var written := PackedStringArray()
-	var frames := sprite.sprite_frames.duplicate(true) as SpriteFrames
+	var frames: SpriteFrames
+	if sprite.sprite_frames != null:
+		frames = sprite.sprite_frames.duplicate(true) as SpriteFrames
+	else:
+		frames = SpriteFrames.new()
+		frames.remove_animation(&"default")
+		for clip: StringName in [&"idle", &"move", &"airborne", &"attack", &"death"]:
+			frames.add_animation(clip)
+			frames.set_animation_loop(clip, clip not in [&"attack", &"death"])
 	var frames_path := directory.path_join("SpriteFrames.tres")
 	error = ResourceSaver.save(frames, frames_path, ResourceSaver.FLAG_CHANGE_PATH)
 	if error == OK:

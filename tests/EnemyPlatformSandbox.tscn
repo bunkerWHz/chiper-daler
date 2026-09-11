@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://game/player/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://game/enemy/Enemy.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/stone_maw/StoneMaw.tscn" id="2_enemy"]
 [ext_resource type="Script" path="res://features/movement/PlatformReachMarker.gd" id="3_reach_marker"]
 
 [sub_resource type="RectangleShape2D" id="StartShape"]

@@ -4,15 +4,15 @@ extends McpTestSuite
 
 const ENEMY_SCENES: Array[Dictionary] = [
 	{
-		"scene": "res://game/enemy/Enemy.tscn",
-		"frames": "res://game/enemy/animations/GroundEnemySpriteFrames.tres",
-		"animation_library": "res://game/enemy/animations/GroundEnemyAnimationLibrary.tres",
+		"scene": "res://game/enemy/monsters/stone_maw/StoneMaw.tscn",
+		"frames": "res://game/enemy/monsters/stone_maw/SpriteFrames.tres",
+		"animation_library": "res://game/enemy/monsters/stone_maw/AnimationLibrary.tres",
 		"movement_cue": AnimationEventComponent.FOOTSTEP,
 	},
 	{
-		"scene": "res://game/enemy/FlyingEnemy.tscn",
-		"frames": "res://game/enemy/animations/FlyingEnemySpriteFrames.tres",
-		"animation_library": "res://game/enemy/animations/FlyingEnemyAnimationLibrary.tres",
+		"scene": "res://game/enemy/monsters/amber_wasp/AmberWasp.tscn",
+		"frames": "res://game/enemy/monsters/amber_wasp/SpriteFrames.tres",
+		"animation_library": "res://game/enemy/monsters/amber_wasp/AnimationLibrary.tres",
 		"movement_cue": AnimationEventComponent.WING_FLAP,
 	},
 ]

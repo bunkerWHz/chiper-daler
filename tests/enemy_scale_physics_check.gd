@@ -18,7 +18,7 @@ func _run() -> void:
 	world.add_child(floor_body)
 	var enemies: Array[Actor] = []
 	for multiplier: float in [1.0, 2.0]:
-		var enemy := (load("res://game/enemy/Enemy.tscn") as PackedScene).instantiate() as Actor
+		var enemy := (load("res://game/enemy/monsters/stone_maw/StoneMaw.tscn") as PackedScene).instantiate() as Actor
 		enemy.scale *= multiplier
 		enemy.position = Vector2(multiplier * 400, 40)
 		world.add_child(enemy)

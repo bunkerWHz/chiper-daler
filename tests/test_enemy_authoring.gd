@@ -19,14 +19,42 @@ func suite_name() -> String:
 
 
 func test_enemy_templates_pass_checks_without_running_gameplay() -> void:
-	for path: String in ["res://game/enemy/Enemy.tscn", "res://game/enemy/FlyingEnemy.tscn"]:
+	for path: String in ["res://game/enemy/monsters/stone_maw/StoneMaw.tscn", "res://game/enemy/monsters/amber_wasp/AmberWasp.tscn"]:
 		var enemy := track((load(path) as PackedScene).instantiate()) as Node
 		assert_eq(CHECKS.inspect_scene(enemy), PackedStringArray())
 
 
+func test_blank_dummies_copy_without_art_and_reset_root_scale() -> void:
+	for dummy_name: String in ["GroundDummy", "FlyDummy"]:
+		var path := "res://game/enemy/" + dummy_name + ".tscn"
+		var source := track((load(path) as PackedScene).instantiate()) as Node2D
+		assert_eq(source.name, StringName(dummy_name))
+		assert_eq(source.scale, Vector2.ONE)
+		var source_sprite := source.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
+		assert_eq(source_sprite.sprite_frames, null)
+		assert_eq(source_sprite.scale, Vector2.ONE)
+		assert_eq(source_sprite.position, Vector2.ZERO)
+		source.scale = Vector2(3, 3)
+		var directory := "res://.godot/dummy_copy_%s" % Time.get_ticks_usec()
+		_copy_directories.append(directory)
+		assert_eq(COPIER.save_copy(source, directory, "NewMonster"), OK)
+		var copied := track((load(directory.path_join("NewMonster.tscn")) as PackedScene).instantiate()) as Node2D
+		assert_eq(copied.scale, Vector2.ONE)
+		assert_eq(source.scale, Vector2(3, 3))
+		assert_eq(source_sprite.sprite_frames, null)
+		var frames := (copied.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D).sprite_frames
+		assert_eq(frames.resource_path, directory.path_join("SpriteFrames.tres"))
+		for clip: StringName in CHECKS.CLIPS:
+			assert_true(frames.has_animation(clip))
+			assert_eq(frames.get_frame_count(clip), 0)
+		var player := copied.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+		assert_eq(player.get_animation_library(&"").resource_path, directory.path_join("AnimationLibrary.tres"))
+		assert_contains("\n".join(CHECKS.inspect_scene(copied)), "non-empty")
+
+
 func test_root_scale_preserves_geometry_and_scales_all_enemy_sensors() -> void:
 	for flying: bool in [false, true]:
-		var path := "res://game/enemy/FlyingEnemy.tscn" if flying else "res://game/enemy/Enemy.tscn"
+		var path := "res://game/enemy/monsters/amber_wasp/AmberWasp.tscn" if flying else "res://game/enemy/monsters/stone_maw/StoneMaw.tscn"
 		for multiplier: float in [1.0, 2.0]:
 			var enemy := track((load(path) as PackedScene).instantiate()) as Actor
 			enemy.scale *= multiplier
@@ -95,11 +123,11 @@ func test_checks_detect_missing_frames_and_disabled_damage_events() -> void:
 
 
 func _create_enemy() -> Node:
-	return track(preload("res://game/enemy/Enemy.tscn").instantiate()) as Node
+	return track(preload("res://game/enemy/monsters/stone_maw/StoneMaw.tscn").instantiate()) as Node
 
 
 func test_copy_owns_resources_and_preserves_component_instances() -> void:
-	for source_path: String in ["res://game/enemy/Enemy.tscn", "res://game/enemy/FlyingEnemy.tscn"]:
+	for source_path: String in ["res://game/enemy/monsters/stone_maw/StoneMaw.tscn", "res://game/enemy/monsters/amber_wasp/AmberWasp.tscn"]:
 		var source := track((load(source_path) as PackedScene).instantiate()) as Node
 		var directory := "res://.godot/enemy_copy_%s" % Time.get_ticks_usec()
 		_copy_directories.append(directory)

@@ -20,7 +20,7 @@ func _create_copy() -> void:
 	if not new_enemy_name.is_valid_identifier():
 		push_error("Use a valid enemy name such as ForestBat or CaveGuard.")
 		return
-	var directory := "res://game/enemy".path_join(new_enemy_name.to_snake_case())
+	var directory := "res://game/enemy/monsters".path_join(new_enemy_name.to_snake_case())
 	var error := preload("res://features/enemy/EnemyTemplateCopy.gd").save_copy(
 		get_parent(), directory, new_enemy_name
 	)

@@ -17,12 +17,17 @@
 - Prefer setting physics object scale during scene authoring, before spawning;
   runtime resizing needs separate validation of physics behavior.
 
-LootBag, Enemy and FlyingEnemy follow this convention: adjust root Scale equally
+LootBag and all monsters follow this convention: adjust root Scale equally
 on both axes. Sprites stay at unit scale; collision shapes use native dimensions.
 
 Prepare all character sprites facing right in the source art. Use flip_h for
 left-facing movement; do not add artwork-direction detection or per-character
 facing configuration. Prefer scene/node properties over one-off config resources.
+
+Start new enemies from game/enemy/GroundDummy.tscn or FlyDummy.tscn. Keep these
+templates at unit scale with no assigned SpriteFrames. Store completed enemies
+in game/enemy/monsters/<name>/ with owned animation resources. The copy tool
+resets the new root scale to (1, 1); levels reference completed monsters.
 
 # Commit workflow
 

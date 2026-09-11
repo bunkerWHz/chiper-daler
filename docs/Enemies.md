@@ -7,19 +7,20 @@ able to create a normal enemy without editing GDScript.
 ## Creating an enemy
 
 Each enemy is a standalone composition scene. Enemy scenes must not inherit
-from `Enemy.tscn`, `FlyingEnemy.tscn`, or from another concrete enemy.
+from a Dummy scene or from another concrete enemy.
 
-1. Copy the closest composition template in `game/enemy`: `Enemy.tscn` for
-   grounded movement or `FlyingEnemy.tscn` for flight. Save the copy and its
+1. Copy the blank composition template in `game/enemy`: `GroundDummy.tscn` for
+   grounded movement or `FlyDummy.tscn` for flight. Save the copy and its
    art under a directory owned by that enemy. The copied root scene is now the
    complete, independent assembly for this enemy.
 2. Add or remove component scene instances under `_Components` to define the
    enemy's abilities. Shared component scenes remain referenced, so fixes to a
    component are received by every enemy that uses it without creating an
    inheritance relationship between enemy scenes.
-3. Duplicate the template's `SpriteFrames` and `AnimationLibrary` into the
-   same directory. Assign those enemy-owned resources to
-   `_Visual/AnimatedSprite2D` and `_Visual/AnimationPlayer`. Never edit another
+3. The copy button creates owned `SpriteFrames.tres` and `AnimationLibrary.tres`
+   in `game/enemy/monsters/<name>/`. Dummy sprites have no assigned frames;
+   their copies get empty named animations to fill. The new root scale is
+   always reset to (1, 1), without modifying the source. Never edit another
    enemy's animation resources in place.
 4. Replace, reorder, and retime the frames for the semantic clips `idle`,
    `move`, `airborne`, `attack`, and `death`.
@@ -38,7 +39,8 @@ from `Enemy.tscn`, `FlyingEnemy.tscn`, or from another concrete enemy.
 ## Sizing
 
 Keep AnimatedSprite2D at unit scale. Set overall size with equal positive X/Y
-Scale on the Actor root (ground template: 0.24; flying template: 0.22).
+Scale on the Actor root. Blank templates and new copies start at (1, 1).
+The collection's StoneMaw and AmberWasp retain scales 0.24 and 0.22.
 Author sprite Position, body/hurtbox/hitbox shapes, hitbox offsets, attack/chase
 sensor ranges and ground-ray distances in native, actor-local pixels. These
 grow together with root scale. Do not resize collision nodes independently;
