@@ -1,7 +1,17 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://game/player/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://game/enemy/monsters/stone_maw/StoneMaw.tscn" id="2_enemy"]
+[ext_resource type="Script" path="res://tests/EnemyPlatformSandbox.gd" id="sandbox"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/stone_maw/StoneMaw.tscn" id="enemy_0"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/amber_wasp/AmberWasp.tscn" id="enemy_1"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/bog_stinger/BogStinger.tscn" id="enemy_2"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/cave_imp/CaveImp.tscn" id="enemy_3"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/venom_howler/VenomHowler.tscn" id="enemy_4"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/ember_eye/EmberEye.tscn" id="enemy_5"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/horned_wretch/HornedWretch.tscn" id="enemy_6"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/ash_raptor/AshRaptor.tscn" id="enemy_7"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/moss_crawler/MossCrawler.tscn" id="enemy_8"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/rust_cyclops/RustCyclops.tscn" id="enemy_9"]
 [ext_resource type="Script" path="res://features/movement/PlatformReachMarker.gd" id="3_reach_marker"]
 
 [sub_resource type="RectangleShape2D" id="StartShape"]
@@ -17,12 +27,14 @@ size = Vector2(120, 20)
 size = Vector2(140, 20)
 
 [node name="EnemyPlatformSandbox" type="Node2D"]
+script = ExtResource("sandbox")
+enemy_scenes = Array[PackedScene]([ExtResource("enemy_0"), ExtResource("enemy_1"), ExtResource("enemy_2"), ExtResource("enemy_3"), ExtResource("enemy_4"), ExtResource("enemy_5"), ExtResource("enemy_6"), ExtResource("enemy_7"), ExtResource("enemy_8"), ExtResource("enemy_9")])
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(290, 315)
 
-[node name="Enemy" parent="." instance=ExtResource("2_enemy")]
-position = Vector2(230, 385)
+[node name="EnemySpawn" type="Marker2D" parent="."]
+position = Vector2(130, 330)
 
 [node name="Platforms" type="Node2D" parent="."]
 
@@ -110,6 +122,13 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="UI"]
+
+[node name="MonsterStatus" type="Label" parent="UI/CanvasLayer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 620.0
+offset_bottom = 80.0
+text = "Подготовка монстра…"
 
 [node name="InteractionPrompt" type="Label" parent="UI/CanvasLayer" groups=["interaction_prompt"]]
 visible = false
