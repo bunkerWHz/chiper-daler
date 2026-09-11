@@ -8,16 +8,16 @@
 
 | Папка ассетов | Имя | Тип | Сцена в game/enemy/monsters |
 | --- | --- | --- | --- |
-| Monster_1 | BogStinger — болотный жалохвост | Летающий | `bog_stinger/BogStinger.tscn` |
-| Monster_3 | CaveImp — пещерный бес | Летающий | `cave_imp/CaveImp.tscn` |
-| Monster_4 | VenomHowler — ядовитый ревун | Летающий | `venom_howler/VenomHowler.tscn` |
-| Monster_5 | EmberEye — угольный глаз | Летающий | `ember_eye/EmberEye.tscn` |
-| Monster_7 | HornedWretch — рогатый злыдень | Наземный | `horned_wretch/HornedWretch.tscn` |
-| Monster_8 | AshRaptor — пепельный ящер | Наземный | `ash_raptor/AshRaptor.tscn` |
-| Monster_9 | MossCrawler — мшистый ползун | Наземный | `moss_crawler/MossCrawler.tscn` |
-| Monster_10 | RustCyclops — ржавый циклоп | Наземный | `rust_cyclops/RustCyclops.tscn` |
+| BogStinger | BogStinger — болотный жалохвост | Летающий | `bog_stinger/BogStinger.tscn` |
+| CaveImp | CaveImp — пещерный бес | Летающий | `cave_imp/CaveImp.tscn` |
+| VenomHowler | VenomHowler — ядовитый ревун | Летающий | `venom_howler/VenomHowler.tscn` |
+| EmberEye | EmberEye — угольный глаз | Летающий | `ember_eye/EmberEye.tscn` |
+| HornedWretch | HornedWretch — рогатый злыдень | Наземный | `horned_wretch/HornedWretch.tscn` |
+| AshRaptor | AshRaptor — пепельный ящер | Наземный | `ash_raptor/AshRaptor.tscn` |
+| MossCrawler | MossCrawler — мшистый ползун | Наземный | `moss_crawler/MossCrawler.tscn` |
+| RustCyclops | RustCyclops — ржавый циклоп | Наземный | `rust_cyclops/RustCyclops.tscn` |
 
-StoneMaw и AmberWasp также остаются в коллекции, в своих прежних папках.
+StoneMaw и AmberWasp также остаются в коллекции. Папки ассетов всех монстров называются по имени: assets/Enemies/<Имя>/PNG Sequences.
 
 Тип новых монстров определён по папке `Fly` внутри `PNG Sequences`.
 В восьми новых папках ассетов оставлена только `PNG Sequences`; файлы AI,

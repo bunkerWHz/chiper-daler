@@ -1,10 +1,10 @@
 @tool
 extends McpTestSuite
 
-const MONSTERS = {
-	"BogStinger": 1, "CaveImp": 3, "VenomHowler": 4, "EmberEye": 5,
-	"HornedWretch": 7, "AshRaptor": 8, "MossCrawler": 9, "RustCyclops": 10,
-}
+const MONSTERS = [
+	"BogStinger", "CaveImp", "VenomHowler", "EmberEye",
+	"HornedWretch", "AshRaptor", "MossCrawler", "RustCyclops",
+]
 
 func suite_name() -> String:
 	return "monster_collection"
@@ -14,7 +14,7 @@ func test_new_monsters_have_complete_art_and_working_compositions() -> void:
 		var directory := "res://game/enemy/monsters/" + monster_name.to_snake_case()
 		var monster := track((load(directory.path_join(monster_name + ".tscn")) as PackedScene).instantiate()) as Actor
 		assert_eq(EnemyAuthoringChecks.inspect_scene(monster), PackedStringArray())
-		var art := "res://assets/Enemies/Monster_%d/PNG Sequences" % MONSTERS[monster_name]
+		var art := "res://assets/Enemies/%s/PNG Sequences" % monster_name
 		var flying := DirAccess.dir_exists_absolute(art.path_join("Fly"))
 		assert_eq(monster.has_node("_Components/EnemyFlightComponent"), flying)
 		assert_eq(monster.has_node("_Components/EnemyMovementComponent"), not flying)
@@ -41,7 +41,7 @@ func test_new_monsters_have_complete_art_and_working_compositions() -> void:
 		assert_true(drop.loot_entries[0].is_valid())
 
 func test_monster_art_contains_only_png_sequences() -> void:
-	for id: int in MONSTERS.values():
-		var directory := "res://assets/Enemies/Monster_%d" % id
+	for monster_name: String in MONSTERS:
+		var directory := "res://assets/Enemies/%s" % monster_name
 		assert_eq(DirAccess.get_directories_at(directory), PackedStringArray(["PNG Sequences"]))
 		assert_eq(DirAccess.get_files_at(directory).size(), 0)

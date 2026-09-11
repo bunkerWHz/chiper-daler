@@ -28,6 +28,7 @@ Start new enemies from game/enemy/GroundDummy.tscn or FlyDummy.tscn. Keep these
 templates at unit scale with no assigned SpriteFrames. Store completed enemies
 in game/enemy/monsters/<name>/ with owned animation resources. The copy tool
 resets the new root scale to (1, 1); levels reference completed monsters.
+Name enemy asset folders after the monster: assets/Enemies/<MonsterName>/PNG Sequences.
 
 # Commit workflow
 
