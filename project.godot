@@ -12,7 +12,7 @@ config_version=5
 
 config/name="ChipAndDaleLike"
 run/main_scene="uid://b5g7au4rcinfe"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
