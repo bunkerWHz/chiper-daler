@@ -1,0 +1,327 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/enemy/enemy.gd" id="1_ts6iu"]
+[ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="2_y1qi5"]
+[ext_resource type="Script" path="res://features/combat/CombatFactionComponent.gd" id="3_ljsi5"]
+[ext_resource type="PackedScene" path="res://framework/components/CharacterBodyComponent.tscn" id="4_7aco4"]
+[ext_resource type="Script" path="res://framework/components/CharacterBodyComponent.gd" id="5_n7k41"]
+[ext_resource type="PackedScene" path="res://features/combat/KnockbackComponent.tscn" id="6_acbew"]
+[ext_resource type="Script" path="res://features/combat/KnockbackComponent.gd" id="7_61vm1"]
+[ext_resource type="Script" path="res://features/combat/KnockbackConfig.gd" id="8_bbs2m"]
+[ext_resource type="PackedScene" path="res://features/combat/HitStunComponent.tscn" id="9_uc2u6"]
+[ext_resource type="Script" path="res://features/combat/HitStunComponent.gd" id="10_fng1o"]
+[ext_resource type="Script" path="res://features/combat/HitStunConfig.gd" id="11_vasgw"]
+[ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="12_6qta4"]
+[ext_resource type="Script" path="res://features/health/HealthComponent.gd" id="13_cckie"]
+[ext_resource type="Script" path="res://features/health/HealthConfig.gd" id="14_17gkm"]
+[ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="15_7vm87"]
+[ext_resource type="Script" path="res://features/combat/HurtboxComponent.gd" id="16_omt61"]
+[ext_resource type="PackedScene" path="res://features/progression/ExperienceRewardComponent.tscn" id="17_jt5ov"]
+[ext_resource type="Script" path="res://features/progression/ExperienceRewardComponent.gd" id="18_32ydm"]
+[ext_resource type="Script" path="res://features/progression/ExperienceRewardConfig.gd" id="19_mta53"]
+[ext_resource type="PackedScene" path="res://features/loot/LootDropComponent.tscn" id="20_o8a4w"]
+[ext_resource type="Script" path="res://features/loot/LootDropComponent.gd" id="21_ilpu5"]
+[ext_resource type="PackedScene" path="res://features/loot/LootBag.tscn" id="22_rpxw5"]
+[ext_resource type="Script" path="res://features/loot/LootEntry.gd" id="23_xdft6"]
+[ext_resource type="Resource" path="res://game/items/consumables/ExperienceTonic.tres" id="24_n0ifd"]
+[ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="25_x8tsv"]
+[ext_resource type="Script" path="res://features/combat/DamageNumberComponent.gd" id="26_hwgvb"]
+[ext_resource type="Script" path="res://features/combat/DamageNumberConfig.gd" id="27_fupcf"]
+[ext_resource type="PackedScene" path="res://features/combat/HitReactionComponent.tscn" id="28_d7tn1"]
+[ext_resource type="Script" path="res://features/combat/HitReactionComponent.gd" id="29_0l6c0"]
+[ext_resource type="Script" path="res://features/combat/HitReactionConfig.gd" id="30_moraq"]
+[ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="31_g5hig"]
+[ext_resource type="Script" path="res://features/health/DeathComponent.gd" id="32_mcvil"]
+[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="33_tgp8t"]
+[ext_resource type="PackedScene" path="res://framework/animation/AnimationEventComponent.tscn" id="34_51khu"]
+[ext_resource type="Script" path="res://framework/animation/AnimationEventComponent.gd" id="35_rbowq"]
+[ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="36_y4mvx"]
+[ext_resource type="Script" path="res://features/combat/HitboxComponent.gd" id="37_lcruw"]
+[ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="38_1hyti"]
+[ext_resource type="Script" path="res://features/combat/AttackComponent.gd" id="39_bsbws"]
+[ext_resource type="Script" path="res://features/combat/AttackConfig.gd" id="40_h241l"]
+[ext_resource type="PackedScene" path="res://features/audio/ActorAudioComponent.tscn" id="41_4lyw6"]
+[ext_resource type="Script" path="res://features/audio/ActorAudioComponent.gd" id="42_ynnk1"]
+[ext_resource type="Script" path="res://features/audio/ActorAudioProfile.gd" id="43_bguj3"]
+[ext_resource type="Script" path="res://features/enemy/EnemyMovementComponent.gd" id="44_k2s8s"]
+[ext_resource type="Script" path="res://features/enemy/EnemyMovementConfig.gd" id="45_owib6"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyGroundSensorComponent.tscn" id="46_u1mx2"]
+[ext_resource type="Script" path="res://features/enemy/EnemyGroundSensorComponent.gd" id="47_i1lub"]
+[ext_resource type="Script" path="res://features/enemy/EnemyGroundSensorConfig.gd" id="48_46p1x"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyAttackComponent.tscn" id="49_q4hqj"]
+[ext_resource type="Script" path="res://features/enemy/EnemyAttackComponent.gd" id="50_csl6y"]
+[ext_resource type="Script" path="res://features/enemy/EnemyAttackConfig.gd" id="51_p817c"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyChaseComponent.tscn" id="52_5oy6f"]
+[ext_resource type="Script" path="res://features/enemy/EnemyChaseComponent.gd" id="53_otst0"]
+[ext_resource type="Script" path="res://features/enemy/EnemyChaseConfig.gd" id="54_dddik"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyJumpComponent.tscn" id="55_biaym"]
+[ext_resource type="Script" path="res://features/enemy/EnemyJumpComponent.gd" id="56_b4g5x"]
+[ext_resource type="Script" path="res://features/enemy/EnemyJumpConfig.gd" id="57_ir3u0"]
+[ext_resource type="PackedScene" path="res://features/enemy/EnemyPatrolComponent.tscn" id="58_h2rr1"]
+[ext_resource type="Script" path="res://features/enemy/EnemyPatrolComponent.gd" id="59_2risg"]
+[ext_resource type="Script" path="res://features/enemy/EnemyPatrolConfig.gd" id="60_t2qel"]
+[ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="61_ytwoa"]
+[ext_resource type="Script" path="res://features/state/ActorStateComponent.gd" id="62_ekox5"]
+[ext_resource type="Script" path="res://features/enemy/EnemyVisualComponent.gd" id="63_512w1"]
+[ext_resource type="SpriteFrames" path="res://game/enemy/monsters/ash_raptor/SpriteFrames.tres" id="64_kdgr2"]
+[ext_resource type="AnimationLibrary" path="res://game/enemy/monsters/ash_raptor/AnimationLibrary.tres" id="65_hi0s5"]
+[ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="66_ii23j"]
+[ext_resource type="Script" path="res://features/health/ui/WorldHealthBarView.gd" id="67_dwo2x"]
+[ext_resource type="Script" path="res://features/enemy/EnemyAuthoringChecks.gd" id="68_v5rm1"]
+[ext_resource type="Script" path="res://features/enemy/EnemyJumpReachPreview.gd" id="69_wm230"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ts6iu"]
+resource_local_to_scene = true
+size = Vector2(110, 240)
+
+[sub_resource type="Resource" id="Resource_l7dds"]
+script = ExtResource("8_bbs2m")
+
+[sub_resource type="Resource" id="Resource_dosjs"]
+script = ExtResource("11_vasgw")
+
+[sub_resource type="Resource" id="Resource_2hf4c"]
+script = ExtResource("14_17gkm")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y1qi5"]
+resource_local_to_scene = true
+size = Vector2(110, 240)
+
+[sub_resource type="Resource" id="Resource_ennoc"]
+script = ExtResource("19_mta53")
+
+[sub_resource type="Resource" id="LootEntry_experience_tonic"]
+script = ExtResource("23_xdft6")
+item = ExtResource("24_n0ifd")
+
+[sub_resource type="Resource" id="Resource_hpmxc"]
+script = ExtResource("27_fupcf")
+
+[sub_resource type="Resource" id="Resource_bovnb"]
+script = ExtResource("30_moraq")
+
+[sub_resource type="Resource" id="Resource_5aqgj"]
+script = ExtResource("33_tgp8t")
+duration = 1.0
+fade_visual = false
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ljsi5"]
+resource_local_to_scene = true
+size = Vector2(70, 156)
+
+[sub_resource type="Resource" id="Resource_7aco4"]
+resource_local_to_scene = true
+script = ExtResource("40_h241l")
+
+[sub_resource type="Resource" id="Resource_n7k41"]
+resource_local_to_scene = true
+script = ExtResource("43_bguj3")
+
+[sub_resource type="Resource" id="Resource_4pfm3"]
+script = ExtResource("45_owib6")
+initial_direction = -1.0
+
+[sub_resource type="Resource" id="Resource_74n88"]
+script = ExtResource("48_46p1x")
+ledge_check_distance = 71.66666666666667
+floor_check_depth = 178.33333333333334
+wall_check_distance = 80.0
+
+[sub_resource type="Resource" id="Resource_qk27t"]
+script = ExtResource("51_p817c")
+attack_range = 100.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_acbew"]
+resource_local_to_scene = true
+size = Vector2(200, 200)
+
+[sub_resource type="Resource" id="Resource_ryx8p"]
+script = ExtResource("54_dddik")
+horizontal_range = 916.6666666666667
+vertical_range = 333.33333333333337
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_61vm1"]
+resource_local_to_scene = true
+size = Vector2(1833.3334, 666.6667)
+
+[sub_resource type="Resource" id="Resource_2lnw6"]
+script = ExtResource("57_ir3u0")
+
+[sub_resource type="Resource" id="Resource_02qne"]
+script = ExtResource("60_t2qel")
+
+[node name="AshRaptor" type="Node2D" unique_id=492946956]
+scale = Vector2(0.24, 0.24)
+script = ExtResource("1_ts6iu")
+
+[node name="_Components" type="Node2D" parent="." unique_id=1342791048]
+
+[node name="CombatFactionComponent" type="Node" parent="_Components" unique_id=1161388126 instance=ExtResource("2_y1qi5")]
+script = ExtResource("3_ljsi5")
+faction = 2
+
+[node name="CharacterBodyComponent" parent="_Components" unique_id=1881215311 instance=ExtResource("4_7aco4")]
+script = ExtResource("5_n7k41")
+collision_layer = 16
+
+[node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" parent_id_path=PackedInt32Array(1881215311, 902119216) index="0" unique_id=850418791]
+shape = SubResource("RectangleShape2D_ts6iu")
+
+[node name="KnockbackComponent" type="Node" parent="_Components" unique_id=1423247044 instance=ExtResource("6_acbew")]
+script = ExtResource("7_61vm1")
+config = SubResource("Resource_l7dds")
+
+[node name="HitStunComponent" type="Node" parent="_Components" unique_id=582038626 instance=ExtResource("9_uc2u6")]
+script = ExtResource("10_fng1o")
+config = SubResource("Resource_dosjs")
+
+[node name="HealthComponent" type="Node" parent="_Components" unique_id=861413027 instance=ExtResource("12_6qta4")]
+script = ExtResource("13_cckie")
+config = SubResource("Resource_2hf4c")
+
+[node name="HurtboxComponent" parent="_Components" unique_id=1704514174 instance=ExtResource("15_7vm87")]
+script = ExtResource("16_omt61")
+
+[node name="Area2D" parent="_Components/HurtboxComponent" index="0"]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D" index="0"]
+shape = SubResource("RectangleShape2D_y1qi5")
+
+[node name="ExperienceRewardComponent" type="Node" parent="_Components" unique_id=1573121718 instance=ExtResource("17_jt5ov")]
+script = ExtResource("18_32ydm")
+config = SubResource("Resource_ennoc")
+
+[node name="LootDropComponent" type="Node" parent="_Components" unique_id=1255550872 instance=ExtResource("20_o8a4w")]
+script = ExtResource("21_ilpu5")
+loot_bag_scene = ExtResource("22_rpxw5")
+loot_entries = Array[ExtResource("23_xdft6")]([SubResource("LootEntry_experience_tonic")])
+
+[node name="DamageNumberComponent" type="Node" parent="_Components" unique_id=1807531132 instance=ExtResource("25_x8tsv")]
+script = ExtResource("26_hwgvb")
+config = SubResource("Resource_hpmxc")
+
+[node name="HitReactionComponent" type="Node" parent="_Components" unique_id=1082949034 instance=ExtResource("28_d7tn1")]
+script = ExtResource("29_0l6c0")
+config = SubResource("Resource_bovnb")
+visual_path = NodePath("_Visual/AnimatedSprite2D")
+
+[node name="DeathComponent" type="Node" parent="_Components" unique_id=1309196294 instance=ExtResource("31_g5hig")]
+script = ExtResource("32_mcvil")
+config = SubResource("Resource_5aqgj")
+
+[node name="AnimationEventComponent" type="Node" parent="_Components" unique_id=32526411 instance=ExtResource("34_51khu")]
+script = ExtResource("35_rbowq")
+
+[node name="HitboxComponent" parent="_Components" unique_id=2120384271 instance=ExtResource("36_y4mvx")]
+position = Vector2(75, 0)
+script = ExtResource("37_lcruw")
+
+[node name="Area2D" parent="_Components/HitboxComponent" index="0"]
+collision_layer = 2
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D" index="0"]
+shape = SubResource("RectangleShape2D_ljsi5")
+
+[node name="AttackComponent" type="Node" parent="_Components" unique_id=919791736 instance=ExtResource("38_1hyti")]
+script = ExtResource("39_bsbws")
+config = SubResource("Resource_7aco4")
+animation_driven_damage_window = true
+timing_player_path = NodePath("../../_Visual/AnimationPlayer")
+
+[node name="ActorAudioComponent" type="Node2D" parent="_Components" unique_id=283931643 instance=ExtResource("41_4lyw6")]
+script = ExtResource("42_ynnk1")
+profile = SubResource("Resource_n7k41")
+
+[node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
+script = ExtResource("44_k2s8s")
+config = SubResource("Resource_4pfm3")
+
+[node name="EnemyGroundSensorComponent" parent="_Components" unique_id=1237370616 instance=ExtResource("46_u1mx2")]
+script = ExtResource("47_i1lub")
+config = SubResource("Resource_74n88")
+
+[node name="FloorRayCast2D" parent="_Components/EnemyGroundSensorComponent" index="0"]
+position = Vector2(71.666664, 0)
+target_position = Vector2(0, 178.33333)
+
+[node name="WallRayCast2D" parent="_Components/EnemyGroundSensorComponent" index="1"]
+target_position = Vector2(80, 0)
+
+[node name="EnemyAttackComponent" parent="_Components" unique_id=1624544429 instance=ExtResource("49_q4hqj")]
+script = ExtResource("50_csl6y")
+config = SubResource("Resource_qk27t")
+visual_path = NodePath("_Visual/AnimatedSprite2D")
+
+[node name="DetectionArea2D" parent="_Components/EnemyAttackComponent" index="0"]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" parent="_Components/EnemyAttackComponent/DetectionArea2D" index="0"]
+shape = SubResource("RectangleShape2D_acbew")
+
+[node name="EnemyChaseComponent" parent="_Components" unique_id=1195309917 instance=ExtResource("52_5oy6f")]
+script = ExtResource("53_otst0")
+config = SubResource("Resource_ryx8p")
+
+[node name="DetectionArea2D" parent="_Components/EnemyChaseComponent" index="0"]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" parent="_Components/EnemyChaseComponent/DetectionArea2D" index="0"]
+shape = SubResource("RectangleShape2D_61vm1")
+
+[node name="EnemyJumpComponent" type="Node" parent="_Components" unique_id=1882170636 instance=ExtResource("55_biaym")]
+script = ExtResource("56_b4g5x")
+config = SubResource("Resource_2lnw6")
+
+[node name="EnemyPatrolComponent" type="Node2D" parent="_Components" unique_id=717580652 instance=ExtResource("58_h2rr1")]
+script = ExtResource("59_2risg")
+config = SubResource("Resource_02qne")
+
+[node name="ActorStateComponent" type="Node" parent="_Components" unique_id=840729109 instance=ExtResource("61_ytwoa")]
+script = ExtResource("62_ekox5")
+
+[node name="EnemyVisualComponent" type="Node" parent="_Components" unique_id=373986775]
+script = ExtResource("63_512w1")
+
+[node name="_Visual" type="Node2D" parent="." unique_id=479603879]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="_Visual" unique_id=1597320744]
+position = Vector2(-1, -26.5)
+sprite_frames = ExtResource("64_kdgr2")
+animation = &"idle"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="_Visual" unique_id=1326347866]
+libraries/ = ExtResource("65_hi0s5")
+
+[node name="HealthBar" type="Node2D" parent="_Visual" unique_id=1674318933 instance=ExtResource("66_ii23j")]
+z_index = 10
+position = Vector2(0, -161.66667)
+scale = Vector2(4.166667, 4.166667)
+script = ExtResource("67_dwo2x")
+
+[node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]
+
+[node name="EnemyAuthoringChecks" type="Node" parent="." unique_id=2142964619]
+script = ExtResource("68_v5rm1")
+
+[node name="EnemyJumpReachPreview" type="Node2D" parent="." unique_id=1586734025]
+show_behind_parent = true
+z_index = -10
+position = Vector2(0, 120)
+script = ExtResource("69_wm230")
+show_standing_jump = false
+running_jump_color = Color(1, 0.45, 0.1, 0.9)
+
+[editable path="_Components/CharacterBodyComponent"]
+[editable path="_Components/HurtboxComponent"]
+[editable path="_Components/HitboxComponent"]
+[editable path="_Components/EnemyGroundSensorComponent"]
+[editable path="_Components/EnemyAttackComponent"]
+[editable path="_Components/EnemyChaseComponent"]

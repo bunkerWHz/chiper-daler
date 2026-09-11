@@ -40,6 +40,8 @@ godot --headless --path . --script tests/run_tests.gd
 
 ## Враг
 
+[Коллекция монстров и сцена проверки](Monster_Collection.md).
+
 Наземный шаблон — `game/enemy/GroundDummy.tscn`, летающий — `FlyDummy.tscn`.
 У обоих масштаб `1, 1` и не назначена графика. Готовые монстры коллекции —
 StoneMaw и AmberWasp — находятся в отдельных папках `game/enemy/monsters`.

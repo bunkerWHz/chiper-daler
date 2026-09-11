@@ -1,0 +1,154 @@
+[gd_resource type="AnimationLibrary" format=3]
+
+[sub_resource type="Animation" id="Animation_8mrsn"]
+resource_name = "airborne"
+loop_mode = 1
+step = 0.0555556
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"airborne"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_ms7cc"]
+resource_name = "attack"
+step = 0.0555556
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"attack"],
+"method": &"play"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../_Components/AnimationEventComponent")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.222222, 0.277778, 0.666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [&"attack_swing"],
+"method": &"emit_event"
+}, {
+"args": [&"hitbox_on"],
+"method": &"emit_event"
+}, {
+"args": [&"hitbox_off"],
+"method": &"emit_event"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_r0es6"]
+resource_name = "death"
+step = 0.0555556
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"death"],
+"method": &"play"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../_Components/AnimationEventComponent")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.722222),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"body_impact"],
+"method": &"emit_event"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_wib8l"]
+resource_name = "idle"
+loop_mode = 1
+step = 0.0555556
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"idle"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_1f841"]
+resource_name = "move"
+loop_mode = 1
+step = 0.0555556
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"move"],
+"method": &"play"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../_Components/AnimationEventComponent")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.222222, 0.722222),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [&"footstep"],
+"method": &"emit_event"
+}, {
+"args": [&"footstep"],
+"method": &"emit_event"
+}]
+}
+
+[resource]
+_data = {
+&"airborne": SubResource("Animation_8mrsn"),
+&"attack": SubResource("Animation_ms7cc"),
+&"death": SubResource("Animation_r0es6"),
+&"idle": SubResource("Animation_wib8l"),
+&"move": SubResource("Animation_1f841")
+}

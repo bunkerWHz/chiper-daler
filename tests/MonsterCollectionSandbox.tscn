@@ -1,0 +1,122 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/player/Player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://features/health/ui/HealthBarView.tscn" id="health"]
+[ext_resource type="PackedScene" path="res://features/progression/ui/PlayerResourceBarsView.tscn" id="resources"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/bog_stinger/BogStinger.tscn" id="monster_1"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/cave_imp/CaveImp.tscn" id="monster_3"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/venom_howler/VenomHowler.tscn" id="monster_4"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/ember_eye/EmberEye.tscn" id="monster_5"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/horned_wretch/HornedWretch.tscn" id="monster_7"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/ash_raptor/AshRaptor.tscn" id="monster_8"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/moss_crawler/MossCrawler.tscn" id="monster_9"]
+[ext_resource type="PackedScene" path="res://game/enemy/monsters/rust_cyclops/RustCyclops.tscn" id="monster_10"]
+
+[sub_resource type="RectangleShape2D" id="floor"]
+size = Vector2(4200, 80)
+
+[node name="MonsterCollectionSandbox" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("player")]
+position = Vector2(100, 560)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(1800, 640)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("floor")
+
+[node name="Visual" type="Polygon2D" parent="Floor"]
+polygon = PackedVector2Array(-2100, -40, 2100, -40, 2100, 40, -2100, 40)
+color = Color(0.2, 0.25, 0.3, 1)
+
+[node name="BogStinger" parent="." instance=ExtResource("monster_1")]
+position = Vector2(450, 510)
+
+[node name="Label1" type="Label" parent="."]
+offset_left = 370.0
+offset_top = 620.0
+offset_right = 570.0
+offset_bottom = 650.0
+text = "BogStinger"
+
+[node name="CaveImp" parent="." instance=ExtResource("monster_3")]
+position = Vector2(850, 510)
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 770.0
+offset_top = 620.0
+offset_right = 970.0
+offset_bottom = 650.0
+text = "CaveImp"
+
+[node name="VenomHowler" parent="." instance=ExtResource("monster_4")]
+position = Vector2(1250, 510)
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 1170.0
+offset_top = 620.0
+offset_right = 1370.0
+offset_bottom = 650.0
+text = "VenomHowler"
+
+[node name="EmberEye" parent="." instance=ExtResource("monster_5")]
+position = Vector2(1650, 510)
+
+[node name="Label5" type="Label" parent="."]
+offset_left = 1570.0
+offset_top = 620.0
+offset_right = 1770.0
+offset_bottom = 650.0
+text = "EmberEye"
+
+[node name="HornedWretch" parent="." instance=ExtResource("monster_7")]
+position = Vector2(2050, 540)
+
+[node name="Label7" type="Label" parent="."]
+offset_left = 1970.0
+offset_top = 620.0
+offset_right = 2170.0
+offset_bottom = 650.0
+text = "HornedWretch"
+
+[node name="AshRaptor" parent="." instance=ExtResource("monster_8")]
+position = Vector2(2450, 540)
+
+[node name="Label8" type="Label" parent="."]
+offset_left = 2370.0
+offset_top = 620.0
+offset_right = 2570.0
+offset_bottom = 650.0
+text = "AshRaptor"
+
+[node name="MossCrawler" parent="." instance=ExtResource("monster_9")]
+position = Vector2(2850, 540)
+
+[node name="Label9" type="Label" parent="."]
+offset_left = 2770.0
+offset_top = 620.0
+offset_right = 2970.0
+offset_bottom = 650.0
+text = "MossCrawler"
+
+[node name="RustCyclops" parent="." instance=ExtResource("monster_10")]
+position = Vector2(3250, 540)
+
+[node name="Label10" type="Label" parent="."]
+offset_left = 3170.0
+offset_top = 620.0
+offset_right = 3370.0
+offset_bottom = 650.0
+text = "RustCyclops"
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InteractionPrompt" type="Label" parent="UI" groups=["interaction_prompt"]]
+visible = false
+
+[node name="HealthBar" parent="UI" instance=ExtResource("health")]
+actor_path = NodePath("../../Player")
+
+[node name="PlayerResourceBars" parent="UI" instance=ExtResource("resources")]
+actor_path = NodePath("../../Player")
