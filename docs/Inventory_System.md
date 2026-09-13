@@ -136,6 +136,9 @@ the first compatible ammunition stack into the active set's offhand: arrows for
 bows and bolts for crossbows. Without compatible ammunition, the ranged weapon
 still equips and offhand remains empty. Non-ammunition offhands remain invalid
 while a two-handed weapon is active.
+This equips ammunition but does not yet connect inventory stacks to shot costs:
+RangedWeaponComponent currently spends its own arrow/bolt counters from its config.
+See [the component reference](Components.md#rangedweaponcomponent).
 
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
