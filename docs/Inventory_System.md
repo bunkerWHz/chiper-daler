@@ -89,16 +89,15 @@ scythe. The staff exposes cast/channel actions and intelligence scaling; the
 great hammer leads stagger and weight; the halberd leads reach; the scythe
 leans toward dexterity and critical damage.
 The current offhand catalog contains buckler and greatshield. Daggers are
-main-hand-only for now; the former parrying-dagger resource is retained as a
-legacy main-hand dagger but is excluded from the starting inventory. Shield
+main-hand-only for now. Shield
 block reduction and parry-window multipliers affect `GuardComponent`; stability
 remains reserved for the future stamina/poise system.
 
 The Player now owns a minimal stamina resource with spending, delayed
 regeneration, restoration, save-state support, and a temporary green HUD bar.
-Combat actions do not consume stamina yet. The starting inventory replaces the
-old sword, shield, focus, and spear with the new weapon/offhand batches; the
-legacy bow and crossbow remain only until their replacement resources exist.
+Combat actions do not consume stamina yet. The starting inventory uses the
+current training weapon/offhand catalog. TrainingBow and TrainingCrossbow
+remain provisional; replacing them is a planned content task.
 
 Armor uses a dedicated profile with light, heavy, and robe classes, set ID, and
 poise. The first comparison batch contains one chest item per class and is
@@ -126,9 +125,8 @@ buckler; set two starts with the bow.
 
 The training weapon catalog now covers sword, rapier, katana, dagger, axe,
 mace, greatsword, great hammer, spear, halberd, scythe, wand, staff, bow, and
-crossbow. The original Rusty Sword, Training Spear, Apprentice Focus, Short Bow,
-and Light Crossbow resources remain loadable for save compatibility but are no
-longer included in the starting inventory or weapon sets.
+crossbow. Superseded sample items have been removed; gameplay and tests use
+the current catalog without compatibility copies.
 
 Inventory icons support double-click equipment. The action fills the first free
 compatible slot and replaces slot zero when every compatible slot is occupied.
@@ -197,7 +195,9 @@ Gameplay systems use the `ItemData` query methods. Profiles are the only source
 of equipment, weapon, and consumable settings; missing profiles return neutral
 values. The old flat fields were removed after auditing all 51 item resources
 and migrating test fixtures. Runtime restoration keeps ItemData references in
-memory; the project has no disk save format to migrate. External resources made
+memory. Equipment restores only dictionary snapshots containing action mode,
+active weapon set, and equipped items; scalar slot snapshots are unsupported.
+The project has no disk save format to migrate. External resources made
 with the old flat fields must be converted to profiles before loading them.
 Durability is not part of the game and is not stored in item stats.
 

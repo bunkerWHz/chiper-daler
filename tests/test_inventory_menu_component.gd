@@ -334,12 +334,12 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_false(details.text.contains("Moveset:"))
 	assert_true(details.text.contains("Ammunition: Bolt"))
 	var shield := load(
-		"res://game/items/offhand/WoodenShield.tres"
+		"res://game/items/offhand/TrainingBuckler.tres"
 	) as ItemData
 	var shield_details := menu._detail_popup.get_item_text(shield)
-	assert_true(shield_details.contains("Offhand: Medium Shield"))
+	assert_true(shield_details.contains("Offhand: Buckler"))
 	assert_true(shield_details.contains("Actions: Guard, Parry"))
-	assert_true(shield_details.contains("Block 50%"))
+	assert_true(shield_details.contains("Block 30%"))
 	assert_true(equip_button.disabled)
 	menu._equip_item_by_double_click(crossbow.id)
 	assert_true(menu._action_feedback.visible)

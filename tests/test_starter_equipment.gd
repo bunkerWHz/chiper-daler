@@ -75,16 +75,6 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	]:
 		assert_eq(inventory.get_quantity(item_id), 1)
 	assert_eq(inventory.get_capacity(), 60)
-	for removed_id: StringName in [
-		&"rusty_sword",
-		&"wooden_shield",
-		&"apprentice_focus",
-		&"training_spear",
-		&"short_bow",
-		&"light_crossbow",
-		&"training_parrying_dagger",
-	]:
-		assert_eq(inventory.get_quantity(removed_id), 0)
 	assert_eq(inventory.get_quantity(&"health_potion"), 1)
 	assert_eq(inventory.get_quantity(&"mana_potion"), 1)
 	assert_eq(inventory.get_quantity(&"rage_potion"), 1)

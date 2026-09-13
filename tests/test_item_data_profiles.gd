@@ -65,24 +65,24 @@ func test_item_without_profiles_has_no_equipment_or_use_effect() -> void:
 	assert_eq(item.get_status_effect(), null)
 
 
-func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
+func test_training_weapons_and_shield_use_specialized_profiles() -> void:
 	var sword := load(
-		"res://game/items/weapons/RustySword.tres"
+		"res://game/items/weapons/TrainingSword.tres"
 	) as ItemData
 	var spear := load(
-		"res://game/items/weapons/TrainingSpear.tres"
+		"res://game/items/weapons/TrainingLongspear.tres"
 	) as ItemData
 	var bow := load(
-		"res://game/items/weapons/ShortBow.tres"
+		"res://game/items/weapons/TrainingBow.tres"
 	) as ItemData
 	var crossbow := load(
-		"res://game/items/weapons/LightCrossbow.tres"
+		"res://game/items/weapons/TrainingCrossbow.tres"
 	) as ItemData
 	var focus := load(
-		"res://game/items/weapons/ApprenticeFocus.tres"
+		"res://game/items/weapons/TrainingWand.tres"
 	) as ItemData
 	var shield := load(
-		"res://game/items/offhand/WoodenShield.tres"
+		"res://game/items/offhand/TrainingBuckler.tres"
 	) as ItemData
 
 	assert_eq(sword.weapon_profile.family, ItemWeaponProfile.Family.SWORD)
@@ -96,7 +96,7 @@ func test_sample_weapons_and_shield_use_specialized_profiles() -> void:
 	assert_eq(shield.weapon_profile, null)
 	assert_eq(
 		shield.offhand_profile.family,
-		ItemOffhandProfile.Family.MEDIUM_SHIELD
+		ItemOffhandProfile.Family.BUCKLER
 	)
 	assert_true(shield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
 
@@ -127,7 +127,7 @@ func test_one_handed_training_weapons_have_distinct_profiles() -> void:
 	assert_false(dagger.can_equip_in(ItemData.EquipSlot.OFF_HAND))
 
 
-func test_completed_training_weapon_catalog_replaces_legacy_samples() -> void:
+func test_training_weapon_catalog_has_expected_roles_and_ammunition() -> void:
 	var sword := load("res://game/items/weapons/TrainingSword.tres") as ItemData
 	var spear := load("res://game/items/weapons/TrainingLongspear.tres") as ItemData
 	var wand := load("res://game/items/weapons/TrainingWand.tres") as ItemData
@@ -223,12 +223,6 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	assert_true(greatshield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
 	assert_false(greatshield.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)
-	var legacy_dagger := load(
-		"res://game/items/weapons/TrainingParryingDagger.tres"
-	) as ItemData
-	assert_true(legacy_dagger.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
-	assert_false(legacy_dagger.can_equip_in(ItemData.EquipSlot.OFF_HAND))
-	assert_eq(legacy_dagger.weapon_profile.family, ItemWeaponProfile.Family.DAGGER)
 
 
 func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:

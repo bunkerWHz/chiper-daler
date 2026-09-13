@@ -500,9 +500,6 @@ func capture_runtime_state() -> Variant:
 
 func restore_runtime_state(state: Variant) -> void:
 	if not state is Dictionary:
-		var legacy_slot := int(state)
-		if legacy_slot >= 0 and legacy_slot < Slot.size():
-			equip(legacy_slot as Slot)
 		return
 	var candidate: Dictionary = {}
 	var equipped_state: Variant = state.get("equipped_items", {})

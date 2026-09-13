@@ -73,6 +73,15 @@ func test_equipment_without_player_input_can_equip_and_restore() -> void:
 	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.RING), ring.id)
 
 
+func test_unsupported_snapshot_does_not_change_equipment() -> void:
+	var setup := _create_equipped_actor()
+	var equipment := setup.equipment as EquipmentComponent
+	var before: Dictionary = equipment.capture_runtime_state()
+	for unsupported: Variant in [EquipmentComponent.Slot.BOW, null, "invalid"]:
+		equipment.restore_runtime_state(unsupported)
+		assert_eq(equipment.capture_runtime_state(), before)
+
+
 func test_removing_last_active_weapon_disables_melee_actions() -> void:
 	var setup := _create_equipped_actor()
 	var inventory := setup.inventory as InventoryComponent
@@ -182,7 +191,7 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	actor._collect_components()
 
 	var sword := _create_equippable(&"iron_sword", ItemData.EquipSlot.MAIN_HAND)
-	var bow := _create_equippable(&"short_bow", ItemData.EquipSlot.MAIN_HAND)
+	var bow := _create_equippable(&"test_bow", ItemData.EquipSlot.MAIN_HAND)
 	var shield := _create_equippable(&"wood_shield", ItemData.EquipSlot.OFF_HAND)
 	var helmet := _create_equippable(&"iron_helmet", ItemData.EquipSlot.HEAD)
 	var ring := _create_equippable(&"copper_ring", ItemData.EquipSlot.RING)
@@ -276,7 +285,7 @@ func test_paper_doll_supports_two_weapon_sets_and_slot_limits() -> void:
 	var lines := PackedStringArray()
 	overlay._append_equipment_info(lines)
 	assert_true(lines.has(
-		"Weapon Set: 2  Main: short_bow  Off: none"
+		"Weapon Set: 2  Main: test_bow  Off: none"
 	))
 
 	inventory.remove_item(sword.id)

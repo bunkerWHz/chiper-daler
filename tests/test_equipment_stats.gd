@@ -13,7 +13,7 @@ func test_attribute_requirements_gate_equipping() -> void:
 	var equipment := setup.equipment as EquipmentComponent
 	attributes.set_dexterity(1)
 	var crossbow := load(
-		"res://game/items/weapons/LightCrossbow.tres"
+		"res://game/items/weapons/TrainingCrossbow.tres"
 	) as ItemData
 	inventory.add_item(crossbow)
 
@@ -87,7 +87,7 @@ func test_weapon_damage_applies_before_heavy_multiplier() -> void:
 	var hitbox := setup.hitbox as HitboxComponent
 	var attack := setup.attack as AttackComponent
 	var sword := load(
-		"res://game/items/weapons/RustySword.tres"
+		"res://game/items/weapons/TrainingSword.tres"
 	) as ItemData
 	inventory.add_item(sword)
 	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
@@ -221,17 +221,17 @@ func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	actor._collect_components()
 
 	var bow := load(
-		"res://game/items/weapons/ShortBow.tres"
+		"res://game/items/weapons/TrainingBow.tres"
 	) as ItemData
 	var focus := load(
-		"res://game/items/weapons/ApprenticeFocus.tres"
+		"res://game/items/weapons/TrainingWand.tres"
 	) as ItemData
 	inventory.add_item(bow)
 	inventory.add_item(focus)
 	equipment.equip_inventory_item(bow.id, ItemData.EquipSlot.MAIN_HAND)
 	ranged._spawn_projectile(100.0, ranged.config.arrow_damage)
 	var arrow := world.get_child(world.get_child_count() - 1) as ThrownProjectile
-	assert_eq(arrow._damage, 26.0)
+	assert_eq(arrow._damage, 27.0)
 
 	equipment.equip_inventory_item(focus.id, ItemData.EquipSlot.MAIN_HAND)
 	magic._cast_spell()
