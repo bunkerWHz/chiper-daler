@@ -1218,7 +1218,10 @@ func test_enemy_platform_sandbox_has_reachable_and_unreachable_steps() -> void:
 
 	var sandbox := track(packed_scene.instantiate())
 	assert_true(sandbox.get_node_or_null("Player") != null)
-	assert_true(sandbox.get_node_or_null("Enemy") != null)
+	assert_true(sandbox.get_node_or_null("EnemySpawn") is Marker2D)
+	assert_false(sandbox.enemy_scenes.is_empty())
+	for enemy_scene: PackedScene in sandbox.enemy_scenes:
+		assert_true(enemy_scene != null)
 	assert_true(
 		sandbox.get_node_or_null("Platforms/MiddlePlatform") != null
 	)
