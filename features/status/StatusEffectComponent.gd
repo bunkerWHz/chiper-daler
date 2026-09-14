@@ -5,6 +5,8 @@ signal effect_applied(effect: StatusEffect)
 signal effect_removed(effect_id: StringName)
 signal effect_ticked(effect: StatusEffect, applied_damage: float)
 
+@export var dot_resistances: DotResistances = DotResistances.new()
+
 var _active_effects: Array[Dictionary] = []
 var _health: HealthComponent
 var _revision: int = 0
@@ -35,7 +37,10 @@ func _process(delta: float) -> void:
 					remove_effect(effect.effect_id)
 					break
 				entry["tick_elapsed"] = maxf(float(entry["tick_elapsed"]) - effect.tick_interval, 0.0)
-				var applied := _health.take_damage(effect.damage_per_tick)
+				var damage := effect.damage_per_tick
+				if dot_resistances != null:
+					damage = dot_resistances.reduce_damage(effect.effect_id, damage)
+				var applied := _health.take_damage(damage)
 				effect_ticked.emit(effect, applied)
 		if _active_effects.has(entry) and float(entry["remaining"]) == 0.0:
 			remove_effect(effect.effect_id)

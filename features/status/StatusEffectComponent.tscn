@@ -1,6 +1,12 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/status/StatusEffectComponent.gd" id="1_component"]
+[ext_resource type="Script" path="res://features/status/DotResistances.gd" id="2_resistances"]
+
+[sub_resource type="Resource" id="Resource_resistances"]
+resource_local_to_scene = true
+script = ExtResource("2_resistances")
 
 [node name="StatusEffectComponent" type="Node"]
 script = ExtResource("1_component")
+dot_resistances = SubResource("Resource_resistances")
