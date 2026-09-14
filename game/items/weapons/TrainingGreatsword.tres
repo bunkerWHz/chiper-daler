@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_greatsword"]
 script = ExtResource("2_stats")
 damage = 16.0
-strength_requirement = 7
-dexterity_requirement = 2
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_greatsword"]
 script = ExtResource("3_equipment")

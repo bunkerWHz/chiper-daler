@@ -233,7 +233,6 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	crossbow.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
 	crossbow.equipment_profile.stats = ItemStats.new()
 	crossbow.equipment_profile.stats.damage = 12.0
-	crossbow.equipment_profile.stats.dexterity_requirement = 3
 	crossbow.sell_price = 100
 	crossbow.weapon_profile = ItemWeaponProfile.new()
 	crossbow.weapon_profile.combat_mode = ItemData.CombatMode.CROSSBOW
@@ -323,7 +322,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	var equip_button := menu.get_node(
 		"CanvasLayer/Panel/Main/Actions/Equip"
 	) as Button
-	assert_true(details.text.contains("Requirements not met: DEX 3"))
+	assert_false(details.text.contains("Requires"))
 	assert_true(details.text.contains("Compared with Test Sword"))
 	assert_true(details.text.contains("Damage +7.0"))
 	assert_true(details.text.contains("Weapon: Crossbow  Two Handed"))
@@ -340,11 +339,11 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_true(shield_details.contains("Offhand: Buckler"))
 	assert_true(shield_details.contains("Actions: Guard, Parry"))
 	assert_true(shield_details.contains("Block 30%"))
-	assert_true(equip_button.disabled)
+	assert_false(equip_button.disabled)
 	menu._equip_item_by_double_click(crossbow.id)
-	assert_true(menu._action_feedback.visible)
-	assert_true(menu._action_feedback.text.contains("DEX 3"))
-	assert_false(equipment.is_item_equipped(crossbow.id))
+	assert_true(equipment.is_item_equipped(crossbow.id))
+	equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND)
+	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
 	menu._activate_weapon_set(1)
 	assert_false(menu._action_feedback.visible)
 	assert_eq(equipment.get_active_weapon_set(), 1)

@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_staff"]
 script = ExtResource("2_stats")
 damage = 10.0
-intelligence_requirement = 6
-wisdom_requirement = 3
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_staff"]
 script = ExtResource("3_equipment")

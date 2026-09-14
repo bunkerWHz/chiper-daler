@@ -214,13 +214,11 @@ func move_equipped_item(
 		return _reject_operation("There is no item in the source slot.")
 	if not source_item.can_equip_in(target_slot):
 		return _reject_operation("%s does not fit this slot." % source_item.display_name)
-	if not meets_item_requirements(source_item):
-		return _reject_operation("Requires %s." % get_requirement_failure(source_item))
 	var displaced := _loadout_item(_equipped_items, target_key)
 	var candidate := _equipped_items.duplicate()
 	candidate.erase(source_key)
 	candidate[target_key] = source_item.id
-	if displaced != null and displaced.can_equip_in(source_slot) and meets_item_requirements(displaced):
+	if displaced != null and displaced.can_equip_in(source_slot):
 		candidate[source_key] = displaced.id
 
 	var changed_sets: Array[int] = []
@@ -341,19 +339,6 @@ func is_ammunition_compatible(
 		and not main_hand.get_ammunition_type().is_empty()
 		and main_hand.get_ammunition_type() == ammunition.get_ammunition_type()
 	)
-
-
-func meets_item_requirements(item: ItemData) -> bool:
-	return (
-		_attributes_component == null
-		or _attributes_component.meets_item_requirements(item)
-	)
-
-
-func get_requirement_failure(item: ItemData) -> String:
-	if _attributes_component == null:
-		return ""
-	return _attributes_component.get_requirement_failure(item)
 
 
 func get_active_weapon_damage() -> float:
@@ -672,13 +657,7 @@ func _on_attributes_changed(
 	_endurance: int,
 	_wisdom: int
 ) -> void:
-	if _inventory_component == null:
-		return
-	var candidate := _equipped_items.duplicate()
-	_prune_unavailable_items(candidate)
-	_reconcile_changed_hands(candidate)
-	if not _commit_loadout(candidate):
-		_emit_equipment_load_changed()
+	_emit_equipment_load_changed()
 
 
 func _emit_equipment_load_changed() -> void:
@@ -719,8 +698,6 @@ func _get_loadout_failure(loadout: Dictionary) -> String:
 			return "This item is no longer in your inventory."
 		if not item.can_equip_in(slot):
 			return "%s does not fit this slot." % item.display_name
-		if not meets_item_requirements(item):
-			return "Requires %s." % get_requirement_failure(item)
 		counts[item.id] = int(counts.get(item.id, 0)) + 1
 		if int(counts[item.id]) > _inventory_component.get_quantity(item.id):
 			return "All copies of %s are already equipped." % item.display_name
@@ -775,7 +752,7 @@ func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int]) -> void:
 			if (
 				ammo.category == ItemData.Category.AMMUNITION
 				and ammo.can_equip_in(ItemData.EquipSlot.OFF_HAND)
-				and _offhand_fits(main, ammo) and meets_item_requirements(ammo)
+				and _offhand_fits(main, ammo)
 				and loadout.values().count(ammo.id) < _inventory_component.get_quantity(ammo.id)
 			):
 				loadout[off_key] = ammo.id
@@ -832,7 +809,7 @@ func _prune_unavailable_items(candidate: Dictionary) -> void:
 		var weapon_set := int(parts[2])
 		if (
 			not _is_valid_address(slot, int(parts[1]), weapon_set)
-			or not item.can_equip_in(slot) or not meets_item_requirements(item)
+			or not item.can_equip_in(slot)
 			or int(counts.get(item.id, 0)) >= _inventory_component.get_quantity(item.id)
 		):
 			candidate.erase(key)

@@ -6,36 +6,25 @@ func suite_name() -> String:
 	return "equipment_stats"
 
 
-func test_attribute_requirements_gate_equipping() -> void:
+func test_attributes_do_not_gate_equipping_or_remove_equipment() -> void:
 	var setup := _create_equipment_actor()
 	var attributes := setup.attributes as CharacterAttributesComponent
 	var inventory := setup.inventory as InventoryComponent
 	var equipment := setup.equipment as EquipmentComponent
-	attributes.set_dexterity(1)
-	var crossbow := load(
-		"res://game/items/weapons/TrainingCrossbow.tres"
-	) as ItemData
+	attributes.set_strength(0)
+	attributes.set_dexterity(0)
+	attributes.set_intelligence(0)
+	attributes.set_endurance(0)
+	attributes.set_wisdom(0)
+	var crossbow := load("res://game/items/weapons/TrainingCrossbow.tres") as ItemData
 	inventory.add_item(crossbow)
-
-	assert_false(equipment.meets_item_requirements(crossbow))
-	assert_eq(equipment.get_requirement_failure(crossbow), "DEX 3")
-	assert_false(equipment.equip_inventory_item(
-		crossbow.id, ItemData.EquipSlot.MAIN_HAND
-	))
-
-	attributes.set_dexterity(3)
-	assert_true(equipment.meets_item_requirements(crossbow))
-	assert_true(equipment.equip_inventory_item(
-		crossbow.id, ItemData.EquipSlot.MAIN_HAND
-	))
-	attributes.set_dexterity(1)
-	assert_true(equipment.get_equipped_item_id(
-		ItemData.EquipSlot.MAIN_HAND
-	).is_empty())
-	assert_eq(equipment.get_current_slot(), EquipmentComponent.Slot.MELEE)
+	assert_true(equipment.equip_inventory_item(crossbow.id, ItemData.EquipSlot.MAIN_HAND))
+	attributes.set_dexterity(10)
+	attributes.set_dexterity(0)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND), crossbow.id)
 
 
-func test_all_five_attributes_persist_and_gate_requirements() -> void:
+func test_all_five_attributes_persist() -> void:
 	var attributes := track(
 		CharacterAttributesComponent.new()
 	) as CharacterAttributesComponent
@@ -55,20 +44,6 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 		"attack_speed_multiplier": 1.5,
 	})
 
-	var item := _create_stat_item(
-		&"five_attribute_item", ItemData.EquipSlot.HEAD, 0.0, 0.0
-	)
-	item.equipment_profile.stats.strength_requirement = 2
-	item.equipment_profile.stats.dexterity_requirement = 3
-	item.equipment_profile.stats.intelligence_requirement = 4
-	item.equipment_profile.stats.endurance_requirement = 5
-	item.equipment_profile.stats.wisdom_requirement = 6
-	assert_false(attributes.meets_item_requirements(item))
-	assert_eq(
-		attributes.get_requirement_failure(item),
-		"STR 2, DEX 3, INT 4, END 5, WIS 6"
-	)
-
 	attributes.restore_runtime_state({
 		"strength": 6,
 		"dexterity": 6,
@@ -76,7 +51,6 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 		"endurance": 6,
 		"wisdom": 6,
 	})
-	assert_true(attributes.meets_item_requirements(item))
 	assert_eq(attributes.intelligence, 6)
 	assert_eq(attributes.endurance, 6)
 	assert_eq(attributes.wisdom, 6)

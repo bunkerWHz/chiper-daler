@@ -296,7 +296,6 @@ func _rebuild_details() -> void:
 	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
 		equip_slot == ItemData.EquipSlot.NONE
-		or (not equipped and not _equipment.meets_item_requirements(item))
 	)
 	_drop_button.disabled = item.is_key_item or item.is_flask()
 	_use_button.disabled = (

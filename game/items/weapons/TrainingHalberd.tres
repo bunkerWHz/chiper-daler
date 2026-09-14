@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_halberd"]
 script = ExtResource("2_stats")
 damage = 15.0
-strength_requirement = 6
-dexterity_requirement = 4
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_halberd"]
 script = ExtResource("3_equipment")

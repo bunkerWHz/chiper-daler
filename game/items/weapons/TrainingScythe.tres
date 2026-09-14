@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_scythe"]
 script = ExtResource("2_stats")
 damage = 13.0
-strength_requirement = 4
-dexterity_requirement = 6
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_scythe"]
 script = ExtResource("3_equipment")

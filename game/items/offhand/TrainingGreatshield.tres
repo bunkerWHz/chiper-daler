@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
 defense = 10.0
-strength_requirement = 8
-endurance_requirement = 6
 
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")

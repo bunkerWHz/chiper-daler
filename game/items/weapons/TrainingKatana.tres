@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_katana"]
 script = ExtResource("2_stats")
 damage = 9.0
-strength_requirement = 2
-dexterity_requirement = 4
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_katana"]
 script = ExtResource("3_equipment")

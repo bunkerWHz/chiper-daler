@@ -6,8 +6,8 @@ Items will require passive skill levels rather than base attributes: for example
 Sword Proficiency level 3 or Heavy Armor Training level 5. See
 [Actor stats and passive skill requirements](Actor_Stats.md#пассивные-навыки-и-требования-предметов).
 This decision supersedes earlier plans below for attribute requirements and
-weapon attribute scaling. Existing attribute checks still run until migration;
-passive skill checks are not implemented yet. Inactive weapon scaling fields
+weapon attribute scaling. Attribute requirement fields, checks, and UI hints have been removed.
+Passive skill checks are not implemented yet, so items currently have no skill-level gate. Inactive weapon scaling fields
 are retained legacy data, not planned functionality.
 
 ## Working decisions for version 0.1
@@ -87,13 +87,13 @@ maximum mana by 10. Mana restoration and the HUD use the derived maximum.
 The first one-handed content batch adds training rapier, katana, and dagger
 resources without adding them to the starting inventory. They share the
 temporary warrior visual but have distinct thrust/slash profiles, moveset IDs,
-actions, speed, reach, stagger, requirements, weight, and scaling. Critical
+actions, speed, reach, stagger, weight, and legacy scaling. Critical
 damage is weapon data and is applied to the active melee hitbox; the dagger has
 the strongest critical multiplier in this batch.
 The first strength-focused batch adds training battle axe, war hammer, and
 greatsword resources. All are two-handed and therefore reserve their weapon
 set's offhand, while their slash/strike type, speed, reach, stagger, weight,
-requirements, and scaling remain independent data.
+and legacy scaling remain independent data.
 The remaining two-handed batch adds training great hammer, staff, halberd, and
 scythe. The staff exposes cast/channel actions and intelligence scaling; the
 great hammer leads stagger and weight; the halberd leads reach; the scythe
@@ -153,11 +153,9 @@ See [the component reference](Components.md#rangedweaponcomponent).
 Equipped main-hand damage is added to melee, bow, crossbow, and magic base
 damage. Heavy melee attacks multiply the combined value. Defense from the
 active weapon set, armor, and accessories reduces incoming damage with
-`damage * 100 / (100 + defense)`. Strength, dexterity, intelligence, endurance,
-and wisdom requirements prevent equipping an item until the Actor has the
-required attributes. The inventory
-details panel shows these values and compares an item with the active equipped
-item in the same slot.
+`damage * 100 / (100 + defense)`. Base attributes do not restrict equipping
+items, and decreasing attributes does not unequip them. The inventory details
+panel shows item stats and compares them with the active item in the same slot.
 
 The functional menu can begin consumable use while paused, then closes and
 resumes the game so the full use action must complete. Health, mana, and rage
@@ -198,8 +196,8 @@ their configured maximum. Non-stackable items always occupy separate cells.
 rules. Optional focused resources contain behavior for a particular item
 family:
 
-- `ItemEquipmentProfile` declares every compatible equipment slot and stat
-  requirements/modifiers;
+- `ItemEquipmentProfile` declares every compatible equipment slot and item
+  stats;
 - `ItemWeaponProfile` declares combat mode and the temporary visual archetype;
 - `ItemConsumableProfile` declares the current use effect, value, status, and
   presentation effect.
@@ -251,7 +249,7 @@ available for assignment. The inventory grid uses five columns of icon-only
 paper-doll cells and vertical scrollbar without adding scrollable padding. This
 keeps both scrollbars adjacent to their grids without covering an item. A
 temporary item card appears on hover; clicking an item selects it and pins the
-card with its description, quantity, weight, value, requirements, stats, and
+card with its description, quantity, weight, value, stats, and
 equipment comparison. The panel also shows both weapon sets, armor and accessory
 slots as icon-only cells. Hovering, focusing with the keyboard, or selecting an
 equipped icon uses the same item card as the main grid. Compatible items can be

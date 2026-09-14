@@ -13,8 +13,6 @@ poise = 0.8
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
 defense = 4.5
-dexterity_requirement = 3
-endurance_requirement = 3
 
 [sub_resource type="Resource" id="equipment"]
 script = ExtResource("3")

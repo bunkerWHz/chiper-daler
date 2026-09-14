@@ -8,7 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_bow"]
 script = ExtResource("2_stats")
 damage = 9.0
-dexterity_requirement = 4
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_bow"]
 script = ExtResource("3_equipment")

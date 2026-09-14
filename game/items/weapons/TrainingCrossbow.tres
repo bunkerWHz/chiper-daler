@@ -8,8 +8,6 @@
 [sub_resource type="Resource" id="ItemStats_crossbow"]
 script = ExtResource("2_stats")
 damage = 13.0
-strength_requirement = 3
-dexterity_requirement = 3
 
 [sub_resource type="Resource" id="ItemEquipmentProfile_crossbow"]
 script = ExtResource("3_equipment")

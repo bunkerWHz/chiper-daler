@@ -69,22 +69,6 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 		item_stats.damage,
 		item_stats.defense,
 	])
-	var requirements := PackedStringArray()
-	if item_stats.strength_requirement > 0:
-		requirements.append("STR %d" % item_stats.strength_requirement)
-	if item_stats.dexterity_requirement > 0:
-		requirements.append("DEX %d" % item_stats.dexterity_requirement)
-	if item_stats.intelligence_requirement > 0:
-		requirements.append("INT %d" % item_stats.intelligence_requirement)
-	if item_stats.endurance_requirement > 0:
-		requirements.append("END %d" % item_stats.endurance_requirement)
-	if item_stats.wisdom_requirement > 0:
-		requirements.append("WIS %d" % item_stats.wisdom_requirement)
-	if not requirements.is_empty():
-		lines.append("Requires %s" % " / ".join(requirements))
-	var failure := _equipment.get_requirement_failure(item)
-	if not failure.is_empty():
-		lines.append("Requirements not met: %s" % failure)
 	var equip_slot := item.get_primary_equip_slot()
 	if equip_slot == ItemData.EquipSlot.NONE:
 		return

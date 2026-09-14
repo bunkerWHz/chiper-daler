@@ -236,7 +236,6 @@ func test_armor_classes_have_distinct_weight_defense_and_poise() -> void:
 	assert_true(heavy.get_equipment_stats().defense > light.get_equipment_stats().defense)
 	assert_true(heavy.armor_profile.poise > light.armor_profile.poise)
 	assert_true(light.weight > robe.weight)
-	assert_eq(robe.get_equipment_stats().intelligence_requirement, 5)
 	for chest: ItemData in [light, heavy, robe]:
 		assert_true(chest.can_equip_in(ItemData.EquipSlot.CHEST))
 		assert_false(chest.can_equip_in(ItemData.EquipSlot.HANDS))

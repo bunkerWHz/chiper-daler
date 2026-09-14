@@ -55,37 +55,6 @@ func get_wisdom_mana_bonus() -> float:
 	)
 
 
-func meets_item_requirements(item: ItemData) -> bool:
-	var item_stats := item.get_equipment_stats() if item != null else null
-	if item_stats == null:
-		return true
-	return (
-		strength >= item_stats.strength_requirement
-		and dexterity >= item_stats.dexterity_requirement
-		and intelligence >= item_stats.intelligence_requirement
-		and endurance >= item_stats.endurance_requirement
-		and wisdom >= item_stats.wisdom_requirement
-	)
-
-
-func get_requirement_failure(item: ItemData) -> String:
-	var item_stats := item.get_equipment_stats() if item != null else null
-	if item_stats == null:
-		return ""
-	var missing := PackedStringArray()
-	if strength < item_stats.strength_requirement:
-		missing.append("STR %d" % item_stats.strength_requirement)
-	if dexterity < item_stats.dexterity_requirement:
-		missing.append("DEX %d" % item_stats.dexterity_requirement)
-	if intelligence < item_stats.intelligence_requirement:
-		missing.append("INT %d" % item_stats.intelligence_requirement)
-	if endurance < item_stats.endurance_requirement:
-		missing.append("END %d" % item_stats.endurance_requirement)
-	if wisdom < item_stats.wisdom_requirement:
-		missing.append("WIS %d" % item_stats.wisdom_requirement)
-	return ", ".join(missing)
-
-
 func set_strength(value: int) -> void:
 	var resolved := maxi(value, 0)
 	if resolved == strength:
