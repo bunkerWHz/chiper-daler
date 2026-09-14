@@ -31,6 +31,8 @@ godot --headless --path . --script tests/run_tests.gd
 | Скорость, прыжки, разгон | MovementComponent → Config: Ground movement, Jumping, Acceleration |
 | Обычный и тяжёлый удар | AttackComponent → Config: Light attack, Heavy attack, Recovery and critical hit |
 | Базовый урон, отбрасывание, зона удара | HitboxComponent и его Area2D/CollisionShape2D |
+| Наложение горения, яда и других DOT при попадании | HitboxComponent → Status Effects |
+| Сопротивления каждому типу DOT | StatusEffectComponent → Dot Resistances → Resistance |
 | Сила, ловкость и другие базовые характеристики | CharacterAttributesComponent → Base attributes |
 | Здоровье и нагрузка от характеристик | CharacterAttributesComponent → Derived values |
 | Базовое здоровье | HealthComponent → Config |
@@ -60,6 +62,20 @@ godot --headless --path . --script tests/run_tests.gd
 через Engagement. Длительность самой атаки задаёт клип, как описано
 в [Enemy_Timing.md](Enemy_Timing.md). Предупреждения EnemyAuthoringChecks
 помогают найти пропущенные ресурсы и события до запуска.
+
+## DOT и сопротивления
+
+[Инструкция по DOT](DOT.md): создание новых типов, наложение через атаку или
+напрямую, время первого тика, повторное наложение и расчёт сопротивлений.
+
+Новые эффекты создаются в `features/status/DotEffectGenerator.tscn` кнопкой
+**Create DOT resource**. Генератор обновляет общий каталог: новый тип автоматически
+появляется в списках сопротивлений с 0%, сохраняя прежние настройки.
+Для ресурсов, созданных вручную, используйте **Refresh DOT catalog**.
+
+Первый урон DOT происходит через заданный интервал, а не при наложении.
+Сопротивление 30% превращает тик на 10 урона в 7; 100% убирает урон тиков,
+но не препятствует наложению эффекта и не уменьшает исходный удар.
 
 ## Предмет
 

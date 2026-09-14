@@ -11,6 +11,7 @@
 | Добавить уклонение или лестницу | [DodgeComponent](#dodgecomponent), [ClimbingComponent](#climbingcomponent) |
 | Сделать объект, который можно ударить | [HealthComponent](#healthcomponent), [HurtboxComponent](#hurtboxcomponent) |
 | Добавить ближнюю атаку | [AttackComponent](#attackcomponent), [HitboxComponent](#hitboxcomponent) |
+| Добавить DOT и сопротивления ему | [StatusEffectComponent](#statuseffectcomponent), [инструкция по DOT](DOT.md) |
 | Добавить блок или защиту брони | [GuardComponent](#guardcomponent), [EquipmentDefenseComponent](#equipmentdefensecomponent) |
 | Сделать нового врага | [Компоненты врагов](#enemies), копия GroundDummy или FlyDummy |
 | Дать врагу опыт и лут | [ExperienceRewardComponent](#experiencerewardcomponent), [LootDropComponent](#lootdropcomponent) |
@@ -192,7 +193,7 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Делает:** Принимает HitData, проверяет неуязвимость, применяет модификаторы урона, уменьшает здоровье и запускает реакции.
 - **Когда применять:** На цели ближнего удара или снаряда.
 - **Что требуется:** HealthComponent. Для обнаружения попаданий — сцена с Area2D и формой. Дополнительно: DamageModifier-наследники, Invulnerability, Knockback, HitStun.
-- **Настройки и ограничения:** Форма и физические слои задаются в сцене. `receive_hit()` возвращает фактически нанесённый урон. Сам Hurtbox не рисует полоску здоровья или эффект попадания.
+- **Настройки и ограничения:** Форма и физические слои задаются в сцене. `receive_hit()` возвращает фактически нанесённый урон. После успешного попадания передаёт `HitData.status_effects` в StatusEffectComponent цели, если он есть и цель жива. Сам Hurtbox не рисует полоску здоровья или эффект попадания.
 - **Файлы:** [Код](../features/combat/HurtboxComponent.gd) · [Сцена](../features/combat/HurtboxComponent.tscn).
 
 <a id="hitboxcomponent"></a>
@@ -202,7 +203,7 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Делает:** В активной зоне находит Hurtbox цели, формирует удар, ограничивает повторные попадания по цели в одном окне.
 - **Когда применять:** Для ближней атаки или управляемой опасной зоны.
 - **Что требуется:** Собственный Area2D с формой; у цели — HurtboxComponent. Дополнительно: CombatFactionComponent для фильтрации сторон.
-- **Настройки и ограничения:** Damage, Horizontal/Vertical Knockback, Critical Damage Multiplier и форма. Обычно включается AttackComponent; наличие узла не запускает атаку. Дальность оружия меняет рабочую геометрию ближнего хитбокса.
+- **Настройки и ограничения:** Damage, Horizontal/Vertical Knockback, Critical Damage Multiplier и форма. Массив Status Effects задаёт эффекты при успешном попадании; см. [наложение DOT](DOT.md#наложение). Обычно включается AttackComponent; наличие узла не запускает атаку. Дальность оружия меняет рабочую геометрию ближнего хитбокса.
 - **Файлы:** [Код](../features/combat/HitboxComponent.gd) · [Сцена](../features/combat/HitboxComponent.tscn).
 
 <a id="attackcomponent"></a>
@@ -579,13 +580,13 @@ Shape2D. После изменения масштаба проверяйте т�
 
 <a id="statuseffectcomponent"></a>
 
-### StatusEffectComponent — Временные статусы
+### StatusEffectComponent — Временные статусы, DOT и сопротивления
 
-- **Делает:** Хранит баффы/дебаффы по ID, уменьшает таймеры, обновляет повторный эффект и удаляет истёкшие.
-- **Когда применять:** Для временных состояний, на которые реагируют отображение или отдельная механика.
-- **Что требуется:** StatusEffect с ID, Polarity и Duration; обязательных соседей нет.
-- **Настройки и ограничения:** Сам не наносит периодический урон и не умножает характеристики. Повтор ID обновляет эффект, не создаёт стопку. Название «яд» или «ярость» не добавляет механику автоматически.
-- **Файлы:** [Код](../features/status/StatusEffectComponent.gd) · [Сцена](../features/status/StatusEffectComponent.tscn).
+- **Делает:** Хранит баффы/дебаффы по ID, обновляет и удаляет их; наносит периодический урон с учётом сопротивления соответствующему типу DOT.
+- **Когда применять:** Для горения, кровотечения, яда, новых именованных DOT и обычных временных состояний.
+- **Что требуется:** StatusEffect с ID, Polarity и Duration. Для DOT нужен включённый HealthComponent; для статусов без урона он необязателен.
+- **Настройки и ограничения:** Damage Per Tick и Tick Interval находятся в ресурсе эффекта; сопротивления 0–100% — в Dot Resistances → Resistance на компоненте цели. Список типов берётся из общего DotCatalog и расширяется генератором. Первый тик — через интервал, не сразу. Повтор ID обновляет длительность без стаков и при прежнем интервале сохраняет ближайший тик. При 100% сопротивления эффект остаётся, но урона нет. Компонент не умножает характеристики; Damage Per Tick = 0 оставляет обычный временный статус.
+- **Файлы:** [Код](../features/status/StatusEffectComponent.gd) · [Сцена](../features/status/StatusEffectComponent.tscn) · [Генератор](../features/status/DotEffectGenerator.tscn) · [Каталог](../game/status/DotCatalog.tres) · [Применение, тики и сопротивления](DOT.md).
 
 <a id="presentation"></a>
 
