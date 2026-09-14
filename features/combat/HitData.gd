@@ -5,6 +5,7 @@ var damage: float
 var source_actor: Actor
 var knockback_velocity: Vector2
 var is_critical: bool
+var status_effects: Array[StatusEffect] = []
 
 
 func _init(

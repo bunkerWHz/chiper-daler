@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="dot_status"]
+
 [ext_resource type="Script" path="res://game/enemy/enemy.gd" id="1_7yixw"]
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="2_id26x"]
 [ext_resource type="Script" path="res://features/combat/CombatFactionComponent.gd" id="3_t2yj6"]
@@ -278,3 +280,5 @@ script = ExtResource("59_4mxoq")
 [editable path="_Components/HitboxComponent"]
 [editable path="_Components/EnemyAttackComponent"]
 [editable path="_Components/EnemyChaseComponent"]
+
+[node name="StatusEffectComponent" parent="_Components" instance=ExtResource("dot_status")]

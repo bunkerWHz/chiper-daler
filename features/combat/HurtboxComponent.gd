@@ -77,6 +77,10 @@ func receive_hit(hit: HitData) -> float:
 	var applied_damage := _health_component.take_damage(modified_damage)
 
 	if applied_damage > 0.0:
+		var effects := actor.get_component(StatusEffectComponent) as StatusEffectComponent
+		if effects != null:
+			for effect: StatusEffect in hit.status_effects:
+				effects.apply_effect(effect)
 		if (
 			_invulnerability_component != null
 			and _invulnerability_component.is_enabled

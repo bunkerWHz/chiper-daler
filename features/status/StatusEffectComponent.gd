@@ -3,36 +3,69 @@ class_name StatusEffectComponent
 
 signal effect_applied(effect: StatusEffect)
 signal effect_removed(effect_id: StringName)
+signal effect_ticked(effect: StatusEffect, applied_damage: float)
 
 var _active_effects: Array[Dictionary] = []
+var _health: HealthComponent
+var _revision: int = 0
+
+
+func on_initialize() -> void:
+	_health = actor.get_component(HealthComponent) as HealthComponent
+	if _health != null and not _health.died.is_connected(clear_effects):
+		_health.died.connect(clear_effects)
 
 
 func _process(delta: float) -> void:
-	for index in range(_active_effects.size() - 1, -1, -1):
-		var entry := _active_effects[index]
+	if not is_enabled or not is_finite(delta) or delta <= 0.0:
+		return
+	# Signal handlers can remove, refresh or clear effects (including on death).
+	for entry: Dictionary in _active_effects.duplicate():
+		if not _active_effects.has(entry):
+			continue
+		var effect := entry["effect"] as StatusEffect
+		var elapsed := minf(delta, float(entry["remaining"]))
 		entry["remaining"] = maxf(float(entry["remaining"]) - delta, 0.0)
-
-		if float(entry["remaining"]) == 0.0:
-			var effect := entry["effect"] as StatusEffect
-			_active_effects.remove_at(index)
-			effect_removed.emit(effect.effect_id)
+		if effect.damage_per_tick > 0.0:
+			entry["tick_elapsed"] += elapsed
+			while float(entry["tick_elapsed"]) + 0.0000001 >= effect.tick_interval:
+				if not is_enabled or not _active_effects.has(entry):
+					break
+				if _health == null or not _health.is_enabled or _health.is_dead():
+					remove_effect(effect.effect_id)
+					break
+				entry["tick_elapsed"] = maxf(float(entry["tick_elapsed"]) - effect.tick_interval, 0.0)
+				var applied := _health.take_damage(effect.damage_per_tick)
+				effect_ticked.emit(effect, applied)
+		if _active_effects.has(entry) and float(entry["remaining"]) == 0.0:
+			remove_effect(effect.effect_id)
 
 
 func apply_effect(effect: StatusEffect) -> bool:
 	if not is_enabled or effect == null or not effect.is_valid():
 		return false
+	if _health != null and _health.is_dead():
+		return false
+	if effect.damage_per_tick > 0.0 and (_health == null or not _health.is_enabled):
+		return false
 
-	for entry: Dictionary in _active_effects:
+	var tick_elapsed := 0.0
+	for index in range(_active_effects.size()):
+		var entry := _active_effects[index]
 		var active := entry["effect"] as StatusEffect
 		if active.effect_id == effect.effect_id:
-			entry["effect"] = effect
-			entry["remaining"] = effect.duration
-			effect_applied.emit(effect)
-			return true
+			# Refresh duration without postponing the next tick through repeated hits.
+			if active.tick_interval == effect.tick_interval:
+				tick_elapsed = float(entry["tick_elapsed"])
+			_active_effects.remove_at(index)
+			break
 
+	_revision += 1
 	_active_effects.append({
-		"effect": effect,
+		"effect": effect.duplicate(true),
 		"remaining": effect.duration,
+		"tick_elapsed": tick_elapsed,
+		"revision": _revision,
 	})
 	effect_applied.emit(effect)
 	return true
@@ -51,11 +84,10 @@ func remove_effect(effect_id: StringName) -> bool:
 
 func clear_debuffs() -> int:
 	var removed := 0
-	for index in range(_active_effects.size() - 1, -1, -1):
-		var effect := _active_effects[index]["effect"] as StatusEffect
-		if effect.polarity == StatusEffect.Polarity.DEBUFF:
-			_active_effects.remove_at(index)
-			effect_removed.emit(effect.effect_id)
+	for entry: Dictionary in _active_effects.duplicate():
+		var effect := entry["effect"] as StatusEffect
+		if effect.polarity == StatusEffect.Polarity.DEBUFF and _active_effects.has(entry):
+			remove_effect(effect.effect_id)
 			removed += 1
 
 	return removed
@@ -88,8 +120,15 @@ func get_remaining(effect_id: StringName) -> float:
 
 
 func disable() -> void:
-	_active_effects.clear()
 	super.disable()
+	clear_effects()
+
+
+func clear_effects() -> void:
+	var removed := _active_effects.duplicate()
+	_active_effects.clear()
+	for entry: Dictionary in removed:
+		effect_removed.emit((entry["effect"] as StatusEffect).effect_id)
 
 
 func _has_polarity(polarity: StatusEffect.Polarity) -> bool:

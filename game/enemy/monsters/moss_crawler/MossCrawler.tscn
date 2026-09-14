@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="dot_status"]
+
 [ext_resource type="Script" path="res://game/enemy/enemy.gd" id="1_5blox"]
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="2_1ns7f"]
 [ext_resource type="Script" path="res://features/combat/CombatFactionComponent.gd" id="3_4hdyp"]
@@ -325,3 +327,5 @@ running_jump_color = Color(1, 0.45, 0.1, 0.9)
 [editable path="_Components/EnemyGroundSensorComponent"]
 [editable path="_Components/EnemyAttackComponent"]
 [editable path="_Components/EnemyChaseComponent"]
+
+[node name="StatusEffectComponent" parent="_Components" instance=ExtResource("dot_status")]

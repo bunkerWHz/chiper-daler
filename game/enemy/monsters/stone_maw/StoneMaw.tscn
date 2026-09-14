@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://ccakle0tc4uyd"]
 
+[ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="dot_status"]
+
 [ext_resource type="Script" uid="uid://s10rbldex2dp" path="res://game/enemy/enemy.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="2_body"]
 [ext_resource type="Script" uid="uid://03gndoxwykfv" path="res://features/enemy/EnemyMovementComponent.gd" id="3_movement"]
@@ -212,3 +214,5 @@ running_jump_color = Color(1, 0.45, 0.1, 0.9)
 [editable path="_Components/EnemyGroundSensorComponent"]
 [editable path="_Components/EnemyAttackComponent"]
 [editable path="_Components/EnemyChaseComponent"]
+
+[node name="StatusEffectComponent" parent="_Components" instance=ExtResource("dot_status")]

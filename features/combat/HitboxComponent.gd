@@ -5,6 +5,7 @@ signal hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
 signal critical_hit_landed(hurtbox: HurtboxComponent, applied_damage: float)
 
 @export_range(0.0, 100000.0, 1.0) var damage: float = 10.0
+@export var status_effects: Array[StatusEffect] = []
 @export_range(0.0, 1000.0, 1.0) var horizontal_knockback: float = 180.0
 @export_range(0.0, 1000.0, 1.0) var vertical_knockback: float = 100.0
 @export_range(1.0, 10.0, 0.1) var critical_damage_multiplier: float = 2.0
@@ -100,6 +101,7 @@ func _on_area_entered(other_area: Area2D) -> void:
 		knockback_velocity,
 		is_critical
 	)
+	hit.status_effects = status_effects
 	var applied_damage := hurtbox.receive_hit(hit)
 
 	if applied_damage > 0.0:
