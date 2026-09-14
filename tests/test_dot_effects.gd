@@ -167,7 +167,8 @@ func test_weaker_dot_cannot_replace_extend_or_change_next_tick() -> void:
 	effects.apply_effect(strong)
 	effects._process(0.75)
 	var weak := _dot(&"poison", 100.0)
-	weak.tick_interval = 0.1
+	weak.damage_per_tick = 20.0
+	weak.tick_interval = 10.0
 	assert_false(effects.apply_effect(weak))
 	assert_eq(effects.get_remaining(&"poison"), 1.25)
 	assert_eq(applied_count[0], 1)
@@ -179,8 +180,52 @@ func test_weaker_dot_cannot_replace_extend_or_change_next_tick() -> void:
 	assert_false(effects.has_effect(&"poison"))
 	# Rejected weak applications are not queued; a new application can now succeed.
 	assert_true(effects.apply_effect(weak))
-	effects._process(0.1)
-	assert_eq(health.get_current_health(), 75.0)
+	effects._process(10.0)
+	assert_eq(health.get_current_health(), 60.0)
+
+
+func test_higher_dps_with_smaller_ticks_replaces_slower_dot() -> void:
+	var target := _target()
+	var effects := target.get_component(StatusEffectComponent) as StatusEffectComponent
+	var slow := _dot(&"poison", 20.0)
+	slow.damage_per_tick = 6.0
+	slow.tick_interval = 10.0
+	effects.apply_effect(slow)
+	effects._process(0.75)
+	assert_true(effects.apply_effect(_dot(&"poison", 2.0)))
+	assert_eq(effects.get_remaining(&"poison"), 2.0)
+	effects._process(0.25)
+	assert_eq((target.get_component(HealthComponent) as HealthComponent).get_current_health(), 100.0)
+	effects._process(0.75)
+	assert_eq((target.get_component(HealthComponent) as HealthComponent).get_current_health(), 95.0)
+
+
+func test_equal_dps_with_different_intervals_retains_existing_ticks_in_both_orders() -> void:
+	for slow_first: bool in [true, false]:
+		var target := _target()
+		var effects := target.get_component(StatusEffectComponent) as StatusEffectComponent
+		var health := target.get_component(HealthComponent) as HealthComponent
+		var slow := _dot(&"poison", 4.0)
+		slow.damage_per_tick = 10.0
+		slow.tick_interval = 2.0
+		var fast := _dot(&"poison", 4.0)
+		var initial := slow if slow_first else fast
+		var incoming := fast if slow_first else slow
+		effects.apply_effect(initial)
+		effects._process(0.75)
+		incoming.duration = 6.0
+		var announced: Array[StatusEffect] = []
+		effects.effect_applied.connect(func(value: StatusEffect) -> void: announced.append(value))
+		assert_true(effects.apply_effect(incoming))
+		assert_eq(effects.get_remaining(&"poison"), 6.0)
+		assert_eq(announced[0].damage_per_tick, initial.damage_per_tick)
+		assert_eq(announced[0].tick_interval, initial.tick_interval)
+		assert_eq(announced[0].duration, 6.0)
+		assert_eq(initial.duration, 4.0)
+		effects._process(0.25)
+		assert_eq(health.get_current_health(), 100.0 if slow_first else 95.0)
+		effects._process(1.0)
+		assert_eq(health.get_current_health(), 90.0)
 
 
 func test_equal_strength_refreshes_duration_without_postponing_tick() -> void:

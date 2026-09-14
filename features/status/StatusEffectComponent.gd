@@ -55,27 +55,36 @@ func apply_effect(effect: StatusEffect) -> bool:
 		return false
 
 	var tick_elapsed := 0.0
+	var applied_effect := effect
 	for index in range(_active_effects.size()):
 		var entry := _active_effects[index]
 		var active := entry["effect"] as StatusEffect
 		if active.effect_id == effect.effect_id:
+			var active_dps := active.damage_per_tick / active.tick_interval
+			var incoming_dps := effect.damage_per_tick / effect.tick_interval
+			var equal_dps := is_equal_approx(incoming_dps, active_dps)
 			# A weaker DOT must not replace, extend or postpone the stronger one.
-			if effect.damage_per_tick < active.damage_per_tick:
+			if incoming_dps < active_dps and not equal_dps:
 				return false
-			# A stronger DOT starts fresh; equal strength preserves the next tick.
-			if effect.damage_per_tick == active.damage_per_tick and active.tick_interval == effect.tick_interval:
+			# Equal DPS refreshes only duration, retaining damage and tick cadence.
+			if equal_dps and active.damage_per_tick > 0.0:
+				applied_effect = active.duplicate(true) as StatusEffect
+				applied_effect.duration = effect.duration
+				tick_elapsed = float(entry["tick_elapsed"])
+			elif active.damage_per_tick == 0.0 and effect.damage_per_tick == 0.0 and active.tick_interval == effect.tick_interval:
+				# Ordinary non-damaging statuses keep their existing refresh behavior.
 				tick_elapsed = float(entry["tick_elapsed"])
 			_active_effects.remove_at(index)
 			break
 
 	_revision += 1
 	_active_effects.append({
-		"effect": effect.duplicate(true),
+		"effect": applied_effect.duplicate(true),
 		"remaining": effect.duration,
 		"tick_elapsed": tick_elapsed,
 		"revision": _revision,
 	})
-	effect_applied.emit(effect)
+	effect_applied.emit(applied_effect)
 	return true
 
 
