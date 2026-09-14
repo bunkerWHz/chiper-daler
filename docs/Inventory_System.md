@@ -1,5 +1,15 @@
 # Inventory System
 
+## Updated item requirement decision
+
+Items will require passive skill levels rather than base attributes: for example,
+Sword Proficiency level 3 or Heavy Armor Training level 5. See
+[Actor stats and passive skill requirements](Actor_Stats.md#пассивные-навыки-и-требования-предметов).
+This decision supersedes earlier plans below for attribute requirements and
+weapon attribute scaling. Existing attribute checks still run until migration;
+passive skill checks are not implemented yet. Inactive weapon scaling fields
+are retained legacy data, not planned functionality.
+
 ## Working decisions for version 0.1
 
 The inventory has two connected layers:
