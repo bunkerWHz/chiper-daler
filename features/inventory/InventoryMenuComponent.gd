@@ -17,6 +17,7 @@ enum SortMode {
 var _input: InputComponent
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
+var _equipment_swap: EquipmentSwapComponent
 var _quick_access: QuickAccessComponent
 var _inventory_drop: InventoryDropComponent
 var _attributes: CharacterAttributesComponent
@@ -50,6 +51,7 @@ func on_initialize() -> void:
 	_input = actor.get_component(InputComponent) as InputComponent
 	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
+	_equipment_swap = actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 	_quick_access = actor.get_component(QuickAccessComponent) as QuickAccessComponent
 	_inventory_drop = (
 		actor.get_component(InventoryDropComponent) as InventoryDropComponent
@@ -176,6 +178,8 @@ func _process(_delta: float) -> void:
 
 func open_inventory() -> void:
 	if not is_enabled or _panel == null or is_open():
+		return
+	if _equipment_swap != null and _equipment_swap.is_swapping():
 		return
 	_panel.visible = true
 	_action_feedback.hide()
@@ -575,7 +579,11 @@ func _unequip_equipped_item_by_double_click(
 
 
 func _activate_weapon_set(set_index: int) -> void:
-	_equipment.switch_weapon_set(set_index)
+	if _equipment_swap != null:
+		if _equipment_swap.request_swap(set_index):
+			close_inventory()
+	else:
+		_equipment.switch_weapon_set(set_index)
 	_rebuild()
 
 

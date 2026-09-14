@@ -24,9 +24,32 @@ Buffs and debuffs are not behavior states. They are independent
   `GroundHeavyAttack`, `GroundAttackRecovery`.
 - Air melee: `AirAttackWindup`, `AirLightAttack`, `AirHeavyAttack`.
 - Other actions: item use, throwing, ranged weapons, magic, guard, parry,
-  critical attacks, and interaction phases.
+  critical attacks, equipment swapping, and interaction phases.
 - Interrupting behaviors: hit, stun, knockdown, death, respawn, level up, and
   rest.
+
+## Equipment swapping
+
+`Idle -> EquipmentSwap -> Idle` is owned by EquipmentSwapComponent. It accepts
+a request only on the floor, at rest, with no movement command, hit stun or
+exclusive action. LocomotionConstraint blocks horizontal movement, jump and dodge;
+ExclusiveBehaviorGate prevents attacks and other exclusive actions from starting.
+The current weapon set stays active until the timer completes.
+
+Base duration is 2 seconds divided by the Actor's attack speed multiplier,
+sampled at start. HitStun's start event cancels the swap, leaving the old set;
+death, losing floor contact and disabling the component also cancel it.
+Repeated requests do not restart the timer. The existing hit/stun/death state
+priority remains in force. This is an ability-owned timer, not a second FSM.
+
+The `equipment_swap` animation clip is an empty placeholder in
+CharacterAnimationPlayer. AnimationComponent selects it and fits its playback
+to the action duration. EquipmentSwapView shows progress and remaining seconds
+above the player and hides immediately on cancellation/completion.
+
+The inventory's set buttons request the same action, then close the menu to
+resume gameplay. Opening inventory during the action is blocked; other pauses
+freeze the timer. Direct EquipmentComponent switching remains a low-level API.
 
 ## Melee transitions
 

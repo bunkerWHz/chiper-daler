@@ -408,6 +408,16 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Настройки и ограничения:** Отдельного Config нет; назначение клавиши — InputMap. Для экипировки, управляемой скриптом, не нужен.
 - **Файлы:** [Код](../features/equipment/EquipmentInputComponent.gd) · [Сцена](../features/equipment/EquipmentInputComponent.tscn).
 
+<a id="equipmentswapcomponent"></a>
+
+### EquipmentSwapComponent — Переодевание между наборами оружия
+
+- **Делает:** Ведёт состояние EquipmentSwap и таймер, применяет целевой набор только после завершения.
+- **Когда применять:** Для уязвимой смены двух наборов оружия игрока; подключён в Player.tscn.
+- **Что требуется:** EquipmentComponent и CharacterBodyComponent. Input проверяет отсутствие команды бега; HitStun отменяет смену при ударе, Health — при смерти. CharacterAttributes задаёт множитель скорости.
+- **Настройки и ограничения:** Base Duration = 2 секунды; итоговое время делится на Attack Speed Multiplier Actor и фиксируется при старте. Начать можно только стоя на земле. Во время действия заблокированы движение, прыжок, уклонение и другие эксклюзивные действия; повторная кнопка не сбрасывает таймер. Полоска EquipmentSwapView над головой показывает прогресс и секунды. Потеря земли, смерть, оглушение или отключение отменяют процесс с сохранением старого набора. Отдельное надевание вещей в инвентаре не входит в эту механику.
+- **Файлы:** [Код](../features/equipment/EquipmentSwapComponent.gd) · [Сцена](../features/equipment/EquipmentSwapComponent.tscn) · [Полоска](../features/equipment/ui/EquipmentSwapView.tscn) · [Правила и скорость](Actor_Stats.md#смена-комплекта-экипировки).
+
 <a id="inventorydropcomponent"></a>
 
 ### InventoryDropComponent — Выбрасывание предметов

@@ -23,6 +23,7 @@ var _respawn_component: PlayerRespawnComponent
 var _rest_component: RestComponent
 var _progression_component: ProgressionComponent
 var _status_effect_component: StatusEffectComponent
+var _equipment_swap: EquipmentSwapComponent
 
 var _state: ActorState.Behavior = ActorState.Behavior.IDLE
 var _statuses: int = ActorState.Status.NONE
@@ -45,6 +46,7 @@ func on_initialize() -> void:
 	_rest_component = actor.get_component(RestComponent) as RestComponent
 	_progression_component = actor.get_component(ProgressionComponent) as ProgressionComponent
 	_status_effect_component = actor.get_component(StatusEffectComponent) as StatusEffectComponent
+	_equipment_swap = actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 	refresh_state()
 
 
@@ -96,6 +98,8 @@ func _resolve_state() -> ActorState.Behavior:
 	if _rest_component != null and _rest_component.is_enabled:
 		if _rest_component.is_resting():
 			return ActorState.Behavior.RESTING
+	if _equipment_swap != null and _equipment_swap.is_enabled and _equipment_swap.is_swapping():
+		return ActorState.Behavior.EQUIPMENT_SWAP
 	if _attack_component != null and _attack_component.is_enabled:
 		if _attack_component.is_critical_attacking():
 			return ActorState.Behavior.CRITICAL_ATTACK

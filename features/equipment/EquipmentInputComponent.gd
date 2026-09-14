@@ -6,11 +6,13 @@ const EQUIPMENT_INPUT_PROCESS_PRIORITY := -90
 
 var _input: InputComponent
 var _equipment: EquipmentComponent
+var _swap: EquipmentSwapComponent
 
 
 func on_initialize() -> void:
 	_input = actor.get_component(InputComponent) as InputComponent
 	_equipment = actor.get_component(EquipmentComponent) as EquipmentComponent
+	_swap = actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 	if _input == null or _equipment == null:
 		push_error("EquipmentInputComponent requires InputComponent and EquipmentComponent")
 		disable()
@@ -24,4 +26,7 @@ func _process(_delta: float) -> void:
 	if not is_enabled or not _input.is_enabled or not _equipment.is_enabled:
 		return
 	if _input.consume_weapon_set_swap_pressed():
-		_equipment.cycle_weapon_set()
+		if _swap != null:
+			_swap.request_cycle()
+		else:
+			_equipment.cycle_weapon_set()

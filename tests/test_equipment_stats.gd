@@ -44,6 +44,7 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 	attributes.set_intelligence(3)
 	attributes.set_endurance(4)
 	attributes.set_wisdom(5)
+	attributes.attack_speed_multiplier = 1.5
 	var state := attributes.capture_runtime_state() as Dictionary
 	assert_eq(state, {
 		"strength": 1,
@@ -51,6 +52,7 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 		"intelligence": 3,
 		"endurance": 4,
 		"wisdom": 5,
+		"attack_speed_multiplier": 1.5,
 	})
 
 	var item := _create_stat_item(
@@ -78,6 +80,7 @@ func test_all_five_attributes_persist_and_gate_requirements() -> void:
 	assert_eq(attributes.intelligence, 6)
 	assert_eq(attributes.endurance, 6)
 	assert_eq(attributes.wisdom, 6)
+	assert_eq(attributes.get_attack_speed_multiplier(), 1.5)
 
 
 func test_weapon_damage_applies_before_heavy_multiplier() -> void:

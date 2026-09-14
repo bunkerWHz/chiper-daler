@@ -42,6 +42,9 @@ godot --headless --path . --script tests/run_tests.gd
 | Базовое здоровье | HealthComponent → Config |
 | Начальные предметы | InventoryComponent → Config |
 | Начальные наборы оружия | EquipmentComponent → Starting Main Hand Ids / Starting Off Hand Ids |
+| Время смены наборов оружия | EquipmentSwapComponent → Base Duration; CharacterAttributesComponent → Action Speed → Attack Speed Multiplier |
+| Полоска переодевания над головой | EquipmentSwapView в сцене игрока; Position задаёт положение |
+| Заготовка анимации переодевания | `_Visual/AnimationPlayer` → equipment_swap |
 | Рисунок персонажа и эффекты предметов | AnimationComponent → Character art / Item effects |
 | Клипы анимации | `_Visual/AnimationPlayer` |
 

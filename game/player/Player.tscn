@@ -33,6 +33,8 @@
 [ext_resource type="PackedScene" path="res://features/movement/ClimbingComponent.tscn" id="31_climbing"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentComponent.tscn" id="32_equipment"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
+[ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]
+[ext_resource type="PackedScene" path="res://features/equipment/ui/EquipmentSwapView.tscn" id="equipment_swap_view"]
 [ext_resource type="PackedScene" path="res://features/items/ItemUseComponent.tscn" id="33_item_use"]
 [ext_resource type="PackedScene" path="res://features/throwing/ThrowingComponent.tscn" id="34_throwing"]
 [ext_resource type="PackedScene" path="res://features/ranged/RangedWeaponComponent.tscn" id="35_ranged"]
@@ -137,6 +139,10 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="EquipmentComponent" parent="_Components" instance=ExtResource("32_equipment")]
 
 [node name="EquipmentInputComponent" parent="_Components" instance=ExtResource("equipment_input")]
+
+[node name="EquipmentSwapComponent" parent="_Components" instance=ExtResource("equipment_swap")]
+
+[node name="EquipmentSwapView" parent="." instance=ExtResource("equipment_swap_view")]
 
 [node name="EquipmentDefenseComponent" parent="_Components" instance=ExtResource("45_equipment_defense")]
 

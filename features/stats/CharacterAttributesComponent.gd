@@ -17,6 +17,13 @@ signal attributes_changed(
 @export_range(0, 999, 1) var wisdom: int = 5
 @export_group("Derived values")
 @export var derived_stats_config := CharacterDerivedStatsConfig.new()
+## Explicit speed until the DEX conversion formula is designed. Currently used by equipment swaps.
+@export_group("Action speed")
+@export_range(0.1, 10.0, 0.05) var attack_speed_multiplier: float = 1.0
+
+
+func get_attack_speed_multiplier() -> float:
+	return clampf(attack_speed_multiplier, 0.1, 10.0) if is_finite(attack_speed_multiplier) else 1.0
 
 
 func get_endurance_health_bonus() -> float:
@@ -126,6 +133,7 @@ func capture_runtime_state() -> Variant:
 		"intelligence": intelligence,
 		"endurance": endurance,
 		"wisdom": wisdom,
+		"attack_speed_multiplier": attack_speed_multiplier,
 	}
 
 
@@ -137,6 +145,7 @@ func restore_runtime_state(state: Variant) -> void:
 	intelligence = maxi(int(state.get("intelligence", intelligence)), 0)
 	endurance = maxi(int(state.get("endurance", endurance)), 0)
 	wisdom = maxi(int(state.get("wisdom", wisdom)), 0)
+	attack_speed_multiplier = float(state.get("attack_speed_multiplier", attack_speed_multiplier))
 	_emit_attributes_changed()
 
 

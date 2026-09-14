@@ -102,8 +102,13 @@ tracks/0/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_equipment_swap"]
+resource_name = "equipment_swap"
+length = 2.0
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8qxed"]
 _data = {
+&"equipment_swap": SubResource("Animation_equipment_swap"),
 &"attack": SubResource("Animation_jcbwc"),
 &"fall": SubResource("Animation_eveww"),
 &"guard": SubResource("Animation_w7uyl"),

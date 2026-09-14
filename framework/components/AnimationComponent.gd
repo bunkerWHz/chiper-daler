@@ -115,10 +115,18 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 
 func _play_animation(animation_name: StringName) -> void:
 	if _animation_player.has_animation(animation_name):
+		if animation_name == &"equipment_swap":
+			var swap := actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
+			if swap != null and swap.is_swapping() and swap.get_duration() > 0.0:
+				var clip_duration := _animation_player.get_animation(animation_name).length
+				_animation_player.play(animation_name, -1.0, clip_duration / swap.get_duration())
+				return
 		_animation_player.play(animation_name)
 
 
 func _get_animation_name(state: ActorState.Behavior) -> StringName:
+	if state == ActorState.Behavior.EQUIPMENT_SWAP:
+		return &"equipment_swap" if _animation_player != null and _animation_player.has_animation(&"equipment_swap") else &"idle"
 	if state in [
 		ActorState.Behavior.RUN,
 		ActorState.Behavior.DODGE,

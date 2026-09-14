@@ -44,6 +44,7 @@ enum Behavior {
 	RESPAWNING,
 	LEVEL_UP,
 	RESTING,
+	EQUIPMENT_SWAP,
 }
 
 enum Status {
