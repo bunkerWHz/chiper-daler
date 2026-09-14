@@ -59,8 +59,11 @@ func apply_effect(effect: StatusEffect) -> bool:
 		var entry := _active_effects[index]
 		var active := entry["effect"] as StatusEffect
 		if active.effect_id == effect.effect_id:
-			# Refresh duration without postponing the next tick through repeated hits.
-			if active.tick_interval == effect.tick_interval:
+			# A weaker DOT must not replace, extend or postpone the stronger one.
+			if effect.damage_per_tick < active.damage_per_tick:
+				return false
+			# A stronger DOT starts fresh; equal strength preserves the next tick.
+			if effect.damage_per_tick == active.damage_per_tick and active.tick_interval == effect.tick_interval:
 				tick_elapsed = float(entry["tick_elapsed"])
 			_active_effects.remove_at(index)
 			break
