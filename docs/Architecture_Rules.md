@@ -82,7 +82,8 @@ Capability Gates and Action Coordination
 -   Components that occupy the Actor expose
     `is_exclusive_behavior_active()`. `ExclusiveBehaviorGate` prevents another
     behavior from starting until the active one finishes. A rejected command
-    never cancels the behavior it found.
+    never cancels the behavior it found. A successful dodge explicitly may interrupt
+    equipment swapping, after all dodge availability checks pass.
 -   Dependencies remain directed. If component A already observes component B,
     B must not add a dependency back to A; use a signal or a focused capability
     contract instead.

@@ -20,6 +20,7 @@ var _body_component: CharacterBodyComponent
 var _facing_component: FacingComponent
 var _invulnerability_component: InvulnerabilityComponent
 var _attack_component: AttackComponent
+var _equipment_swap: EquipmentSwapComponent
 var _constraint_providers: Array[Component] = []
 var _active_timer: float = 0.0
 var _cooldown_timer: float = 0.0
@@ -61,6 +62,7 @@ func on_initialize() -> void:
 	_constraint_providers = LOCOMOTION_CONSTRAINT.collect_providers(
 		self.actor, self
 	)
+	_equipment_swap = actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 
 	if _input_component == null or not _input_component.is_enabled:
 		push_error("DodgeComponent requires an enabled InputComponent")
@@ -121,6 +123,9 @@ func try_start_dodge() -> bool:
 	)
 	_active_timer = config.duration
 	_cooldown_timer = config.cooldown
+	# Claim the action before cancellation signals release the equipment swap.
+	if _equipment_swap != null:
+		_equipment_swap.cancel_swap()
 
 	if is_air_dodge:
 		_air_dodge_available = false
@@ -140,7 +145,9 @@ func try_start_dodge() -> bool:
 func can_dodge() -> bool:
 	if not is_enabled or is_dodging() or _cooldown_timer > 0.0:
 		return false
-	if BEHAVIOR_GATE.is_blocked(actor, self):
+	var providers := BEHAVIOR_GATE.collect_providers(actor, self)
+	providers.erase(_equipment_swap)
+	if BEHAVIOR_GATE.has_active_behavior(providers):
 		return false
 	if _is_dodge_blocked():
 		return false

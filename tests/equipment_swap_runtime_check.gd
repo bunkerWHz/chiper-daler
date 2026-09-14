@@ -88,5 +88,18 @@ func _run() -> void:
 		await physics_frame
 	_check(equipment.get_active_weapon_set() == 1, "Completed swap must change equipment")
 	_check(not swap.is_swapping() and not view.visible, "Completed swap must release action and hide bar")
+	_check(swap.request_cycle(), "Player must begin another swap")
+	start_x = player.position.x
+	Input.action_press(&"dodge")
+	for frame in 3:
+		await physics_frame
+	Input.action_release(&"dodge")
+	_check((player.get_component(DodgeComponent) as DodgeComponent).is_dodging(), "Dodge must start during swap")
+	_check(state.get_state() == ActorState.Behavior.DODGE, "FSM must transition from swap to dodge")
+	_check(not swap.is_swapping() and not view.visible, "Dodge must cancel swap and hide bar")
+	_check(absf(player.position.x - start_x) > 0.1, "Dodge must move the player")
+	for frame in 160:
+		await physics_frame
+	_check(equipment.get_active_weapon_set() == 1, "Dodge-cancelled swap must never apply the target set")
 	print("Equipment swap runtime check: ", "FAIL" if _failed else "PASS")
 	quit(1 if _failed else 0)

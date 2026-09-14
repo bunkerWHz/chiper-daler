@@ -40,7 +40,10 @@ func _fixture() -> Dictionary:
 	var attack := AttackComponent.new()
 	attack.config = AttackConfig.new()
 	var hurtbox := HurtboxComponent.new()
-	for component: Component in [body, inventory, equipment, attributes, health, stun, swap, input, commands, state, hitbox, attack, hurtbox]:
+	var facing := FacingComponent.new()
+	var dodge := DodgeComponent.new()
+	dodge.config = DodgeConfig.new()
+	for component: Component in [body, inventory, equipment, attributes, health, stun, swap, input, commands, state, hitbox, attack, hurtbox, facing, dodge]:
 		components.add_child(component)
 	actor._collect_components()
 	var sword := load("res://game/items/weapons/TrainingSword.tres") as ItemData
@@ -48,7 +51,7 @@ func _fixture() -> Dictionary:
 	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
 	return {"actor": actor, "body": body, "equipment": equipment, "attributes": attributes,
 		"health": health, "stun": stun, "swap": swap, "input": input,
-		"commands": commands, "state": state, "attack": attack, "hurtbox": hurtbox}
+		"commands": commands, "state": state, "attack": attack, "hurtbox": hurtbox, "dodge": dodge}
 
 
 func test_swap_is_delayed_and_exposes_fsm_and_progress() -> void:
@@ -96,7 +99,7 @@ func test_running_airborne_and_attack_prevent_start() -> void:
 	assert_false(f.swap.request_cycle())
 
 
-func test_swap_blocks_attack_jump_dodge_and_movement() -> void:
+func test_swap_blocks_attack_jump_and_movement_but_allows_dodge() -> void:
 	var f := _fixture()
 	assert_true(f.swap.request_cycle())
 	assert_false(f.attack.can_attack())
@@ -104,10 +107,46 @@ func test_swap_blocks_attack_jump_dodge_and_movement() -> void:
 	var blocks := LocomotionConstraint.get_active_blocks(providers)
 	assert_true(LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.HORIZONTAL))
 	assert_true(LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.JUMP))
-	assert_true(LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.DODGE))
+	assert_false(LocomotionConstraint.has_block(blocks, LocomotionConstraint.Block.DODGE))
 	f.swap.cancel_swap()
 	assert_eq(f.swap.get_locomotion_blocks(), LocomotionConstraint.Block.NONE)
 	assert_true(f.attack.can_attack())
+
+
+func test_dodge_input_cancels_swap_and_moves_without_changing_equipment() -> void:
+	var f := _fixture()
+	var finished: Array[bool] = []
+	f.swap.swap_finished.connect(func(_target: int, completed: bool) -> void: finished.append(completed))
+	assert_true(f.swap.request_cycle())
+	f.swap._process(0.5)
+	assert_true(f.dodge.can_dodge())
+	assert_true(f.swap.is_swapping())
+	f.input._move_axis = -1.0
+	f.input._dodge_pressed = true
+	f.dodge._physics_process(0.01)
+	assert_true(f.dodge.is_dodging())
+	assert_false(f.swap.is_swapping())
+	assert_eq(finished, [false])
+	f.dodge.apply_velocity()
+	assert_true(f.body.get_velocity().x < 0.0)
+	f.swap._process(5.0)
+	assert_eq(f.equipment.get_active_weapon_set(), 0)
+
+
+func test_unavailable_dodge_preserves_swap_progress() -> void:
+	var f := _fixture()
+	assert_true(f.swap.request_cycle())
+	f.swap._process(0.5)
+	f.dodge._cooldown_timer = 1.0
+	assert_false(f.dodge.try_start_dodge())
+	assert_true(f.swap.is_swapping())
+	assert_eq(f.swap.get_remaining(), 1.5)
+	f.dodge._cooldown_timer = 0.0
+	f.dodge.disable()
+	assert_false(f.dodge.try_start_dodge())
+	assert_true(f.swap.is_swapping())
+	f.swap._process(1.5)
+	assert_eq(f.equipment.get_active_weapon_set(), 1)
 
 
 func test_enemy_hit_cancels_swap_and_stun_prevents_restarting() -> void:

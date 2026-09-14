@@ -32,9 +32,11 @@ Buffs and debuffs are not behavior states. They are independent
 
 `Idle -> EquipmentSwap -> Idle` is owned by EquipmentSwapComponent. It accepts
 a request only on the floor, at rest, with no movement command, hit stun or
-exclusive action. LocomotionConstraint blocks horizontal movement, jump and dodge;
+exclusive action. LocomotionConstraint blocks horizontal movement and jump;
 ExclusiveBehaviorGate prevents attacks and other exclusive actions from starting.
 The current weapon set stays active until the timer completes.
+A valid dodge interrupts the swap immediately (`EquipmentSwap -> Dodge`), hides
+the progress bar and keeps the old set. An unavailable dodge leaves the swap intact.
 
 Base duration is 2 seconds divided by the Actor's attack speed multiplier,
 sampled at start. HitStun's start event cancels the swap, leaving the old set;

@@ -101,7 +101,7 @@ func is_exclusive_behavior_active() -> bool:
 func get_locomotion_blocks() -> int:
 	if not is_swapping():
 		return LocomotionConstraint.Block.NONE
-	return LocomotionConstraint.Block.HORIZONTAL | LocomotionConstraint.Block.JUMP | LocomotionConstraint.Block.DODGE
+	return LocomotionConstraint.Block.HORIZONTAL | LocomotionConstraint.Block.JUMP
 
 
 func _process(delta: float) -> void:
