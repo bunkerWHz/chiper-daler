@@ -50,8 +50,8 @@ func get_item_text(item: ItemData) -> String:
 		])
 	else:
 		detail_lines.append("Qty: %d" % owned_quantity)
-	detail_lines.append("Weight: %.2f  Sell: %d" % [
-		item.weight,
+	detail_lines.append("Weight: %d  Sell: %d" % [
+		ceili(item.weight),
 		item.sell_price,
 	])
 	_append_weapon_profile(detail_lines, item.weapon_profile)

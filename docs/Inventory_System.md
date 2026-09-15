@@ -299,3 +299,12 @@ action, clicking outside the popup, or pressing Escape closes it. The permanent
 bottom action row is removed; left-click descriptions and double-click equipment
 remain available. Use retains its existing behavior of closing the inventory
 when a valid item use begins.
+
+### Weight display
+
+Inventory totals, equipment load, and item weight labels use whole numbers,
+rounded upward. Totals are summed at full precision before rounding, so 99.9
+is displayed as 100, not as a sum of individually rounded item weights.
+Underlying item weights and load calculations retain their precision. Thus a
+future 10% reduction of 111 would display 100 after applying the reduction;
+this display change does not introduce a weight-reduction item or effect.

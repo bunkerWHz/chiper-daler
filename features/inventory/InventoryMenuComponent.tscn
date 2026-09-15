@@ -114,7 +114,7 @@ size_flags_horizontal = 3
 [node name="Summary" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
-text = "Slots 0 / 0    Weight 0.00"
+text = "Slots 0 / 0    Weight 0"
 
 [node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2

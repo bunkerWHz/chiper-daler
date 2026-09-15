@@ -71,6 +71,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	potion.category = ItemData.Category.CONSUMABLE
 	potion.stackable = true
 	potion.max_stack_size = 10
+	potion.weight = 33.3
 	potion.usable_in_combat = true
 	potion.consumable_profile = ItemConsumableProfile.new()
 	potion.consumable_profile.use_effect = ItemData.UseEffect.HEAL
@@ -84,6 +85,8 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	) as GridContainer
 	assert_true(menu.is_open())
 	assert_eq(grid.get_child_count(), inventory.get_capacity())
+	assert_true(menu._inventory_summary.text.ends_with("Weight 100"))
+	assert_true(menu._detail_popup.get_item_text(potion).contains("Weight: 34"))
 	assert_eq((grid.get_child(0) as Button).text, "")
 	assert_eq((grid.get_child(0) as Button).icon, ItemData.PLACEHOLDER_ICON)
 	assert_eq((grid.get_child(1) as Button).icon, ItemData.PLACEHOLDER_ICON)

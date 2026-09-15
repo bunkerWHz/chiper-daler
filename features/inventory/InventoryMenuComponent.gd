@@ -614,11 +614,11 @@ func _rebuild_inventory_summary() -> void:
 	var visible_weight := 0.0
 	for stack: InventoryStack in visible_stacks:
 		visible_weight += stack.item.weight * stack.quantity
-	_inventory_summary.text = "Amber Shards: %d    Bag slots %d / %d    Weight %.2f" % [
+	_inventory_summary.text = "Amber Shards: %d    Bag slots %d / %d    Weight %d" % [
 		_inventory.get_amber(),
 		visible_stacks.size(),
 		_inventory.get_capacity(),
-		visible_weight,
+		ceili(visible_weight),
 	]
 
 
@@ -736,7 +736,7 @@ func _rebuild_equipment_text() -> void:
 	_equipment_text.text = (
 		"STR %d  DEX %d  INT %d\n"
 		+ "END %d  WIS %d  Defense %.1f\n"
-		+ "Load %.1f / %.1f (%.0f%%)"
+		+ "Load %d / %d (%.0f%%)"
 	) % [
 		strength,
 		dexterity,
@@ -744,8 +744,8 @@ func _rebuild_equipment_text() -> void:
 		endurance,
 		wisdom,
 		_equipment.get_total_defense(),
-		_equipment.get_total_equipped_weight(),
-		_equipment.get_max_equip_load(),
+		ceili(_equipment.get_total_equipped_weight()),
+		ceili(_equipment.get_max_equip_load()),
 		_equipment.get_equip_load_ratio() * 100.0,
 	]
 
