@@ -12,7 +12,9 @@ script = ExtResource("1_audio")
 profile = SubResource("AudioProfile_default")
 
 [node name="EffectsPlayer2D" type="AudioStreamPlayer2D" parent="."]
+bus = &"SFX"
 max_polyphony = 4
 
 [node name="VoicePlayer2D" type="AudioStreamPlayer2D" parent="."]
+bus = &"SFX"
 max_polyphony = 2

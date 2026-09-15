@@ -24,6 +24,30 @@ func _run() -> void:
 	menu._show_load()
 	check(menu._status.text == "Нет доступных сохранений.", "Empty save slot")
 	menu._show_settings()
+	var sfx_bus := AudioServer.get_bus_index(&"SFX")
+	var music_bus := AudioServer.get_bus_index(&"Music")
+	check(sfx_bus > 0 and music_bus > 0, "Category buses exist")
+	check(AudioServer.get_bus_send(sfx_bus) == &"Master", "SFX feeds master")
+	check(AudioServer.get_bus_send(music_bus) == &"Master", "Music feeds master")
+	menu._box.get_node("sfx_volume").value = 0
+	menu._box.get_node("music_volume").value = 42
+	check(AudioServer.is_bus_mute(sfx_bus), "SFX slider mutes effects at zero")
+	check(not AudioServer.is_bus_mute(music_bus), "SFX mute leaves music audible")
+	check(is_equal_approx(db_to_linear(AudioServer.get_bus_volume_db(music_bus)), 0.42), "Music slider applies gain")
+	flow.sfx_volume = 1.0
+	flow.music_volume = 1.0
+	flow.load_settings()
+	check(is_zero_approx(flow.sfx_volume) and is_equal_approx(flow.music_volume, 0.42), "Category volumes reload from disk")
+	menu._box.get_node("sfx_volume").value = 65
+	check(not AudioServer.is_bus_mute(sfx_bus), "Raising SFX unmutes effects")
+	check(is_equal_approx(db_to_linear(AudioServer.get_bus_volume_db(music_bus)), 0.42), "SFX change preserves music gain")
+	var audio_scene: Node = load("res://features/audio/ActorAudioComponent.tscn").instantiate()
+	check(audio_scene.get_node("EffectsPlayer2D").bus == &"SFX", "Actor effects route to SFX")
+	check(audio_scene.get_node("VoicePlayer2D").bus == &"SFX", "Actor voices route to SFX")
+	audio_scene.free()
+	var music_scene: AudioStreamPlayer = load("res://features/audio/BackgroundMusic.tscn").instantiate()
+	check(music_scene.bus == &"Music", "Background player routes to Music")
+	music_scene.free()
 	var picker := menu._box.get_node("ResolutionPicker") as OptionButton
 	var choices: Array[Vector2i] = flow.available_resolutions()
 	picker.select(0)

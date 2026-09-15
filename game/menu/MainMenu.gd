@@ -96,19 +96,9 @@ func _save() -> void:
 
 func _show_settings() -> void:
 	_clear("Настройки", "settings")
-	var volume_label := Label.new()
-	volume_label.text = "Общая громкость: %d%%" % roundi(GameFlow.volume * 100)
-	_box.add_child(volume_label)
-	var slider := HSlider.new()
-	slider.max_value = 100
-	slider.step = 1
-	slider.value = GameFlow.volume * 100
-	slider.custom_minimum_size.y = 36
-	_box.add_child(slider)
-	slider.value_changed.connect(func(value: float) -> void:
-		GameFlow.volume = value / 100.0
-		volume_label.text = "Общая громкость: %d%%" % roundi(value)
-		_store_settings())
+	var slider := _volume_slider("Общая громкость", &"volume")
+	_volume_slider("Звуковые эффекты (SFX)", &"sfx_volume")
+	_volume_slider("Фоновая музыка", &"music_volume")
 	var screen := CheckButton.new()
 	var resolution_label := Label.new()
 	resolution_label.text = "Разрешение окна"
@@ -146,6 +136,24 @@ func _show_settings() -> void:
 		_store_settings())
 	_button("Назад", show_main)
 	_focus.call_deferred(slider)
+
+
+func _volume_slider(title: String, property: StringName) -> HSlider:
+	var label := Label.new()
+	label.text = "%s: %d%%" % [title, roundi(float(GameFlow.get(property)) * 100)]
+	_box.add_child(label)
+	var slider := HSlider.new()
+	slider.name = property
+	slider.max_value = 100
+	slider.step = 1
+	slider.value = float(GameFlow.get(property)) * 100
+	slider.custom_minimum_size.y = 28
+	_box.add_child(slider)
+	slider.value_changed.connect(func(value: float) -> void:
+		GameFlow.set(property, value / 100.0)
+		label.text = "%s: %d%%" % [title, roundi(value)]
+		_store_settings())
+	return slider
 
 
 func _store_settings() -> void:

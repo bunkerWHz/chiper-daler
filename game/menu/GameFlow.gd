@@ -11,6 +11,8 @@ const RESOLUTIONS: Array[Vector2i] = [
 ]
 
 var volume: float = 0.8
+var sfx_volume: float = 1.0
+var music_volume: float = 1.0
 var fullscreen: bool = false
 var vsync: bool = true
 var resolution := Vector2i(1280, 720)
@@ -28,6 +30,8 @@ func load_settings() -> void:
 	var settings := ConfigFile.new()
 	if settings.load(SETTINGS_PATH) == OK:
 		volume = clampf(float(settings.get_value("audio", "volume", 0.8)), 0.0, 1.0)
+		sfx_volume = clampf(float(settings.get_value("audio", "sfx_volume", 1.0)), 0.0, 1.0)
+		music_volume = clampf(float(settings.get_value("audio", "music_volume", 1.0)), 0.0, 1.0)
 		fullscreen = bool(settings.get_value("video", "fullscreen", false))
 		vsync = bool(settings.get_value("video", "vsync", true))
 		var saved_resolution: Variant = settings.get_value("video", "resolution", Vector2i(1280, 720))
@@ -57,8 +61,9 @@ func _validate_resolution() -> void:
 
 
 func apply_settings() -> void:
-	AudioServer.set_bus_volume_db(0, linear_to_db(maxf(volume, 0.0001)))
-	AudioServer.set_bus_mute(0, volume <= 0.0)
+	_apply_bus_volume(&"Master", volume)
+	_apply_bus_volume(&"SFX", sfx_volume)
+	_apply_bus_volume(&"Music", music_volume)
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 		if not fullscreen:
@@ -70,10 +75,21 @@ func apply_settings() -> void:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED)
 
 
+func _apply_bus_volume(bus_name: StringName, value: float) -> void:
+	var index := AudioServer.get_bus_index(bus_name)
+	if index < 0:
+		push_error("Missing audio bus: " + bus_name)
+		return
+	AudioServer.set_bus_volume_db(index, linear_to_db(maxf(value, 0.0001)))
+	AudioServer.set_bus_mute(index, value <= 0.0)
+
+
 func save_settings() -> Error:
 	apply_settings()
 	var settings := ConfigFile.new()
 	settings.set_value("audio", "volume", volume)
+	settings.set_value("audio", "sfx_volume", sfx_volume)
+	settings.set_value("audio", "music_volume", music_volume)
 	settings.set_value("video", "fullscreen", fullscreen)
 	settings.set_value("video", "vsync", vsync)
 	settings.set_value("video", "resolution", resolution)
