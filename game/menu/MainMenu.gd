@@ -110,12 +110,33 @@ func _show_settings() -> void:
 		volume_label.text = "Общая громкость: %d%%" % roundi(value)
 		_store_settings())
 	var screen := CheckButton.new()
+	var resolution_label := Label.new()
+	resolution_label.text = "Разрешение окна"
+	_box.add_child(resolution_label)
+	var resolution_picker := OptionButton.new()
+	resolution_picker.name = "ResolutionPicker"
+	resolution_picker.custom_minimum_size.y = 40
+	var resolutions := GameFlow.available_resolutions()
+	for size: Vector2i in resolutions:
+		resolution_picker.add_item("%d × %d" % [size.x, size.y])
+	resolution_picker.select(resolutions.find(GameFlow.resolution))
+	resolution_picker.disabled = GameFlow.fullscreen
+	_box.add_child(resolution_picker)
+	resolution_picker.item_selected.connect(func(index: int) -> void:
+		GameFlow.resolution = resolutions[index]
+		_store_settings())
+	var resolution_note := Label.new()
+	resolution_note.text = "В полном экране — разрешение монитора."
+	resolution_note.add_theme_font_size_override("font_size", 16)
+	_box.add_child(resolution_note)
 	screen.text = "Полный экран"
 	screen.button_pressed = GameFlow.fullscreen
 	_box.add_child(screen)
 	screen.toggled.connect(func(value: bool) -> void:
 		GameFlow.fullscreen = value
-		_store_settings())
+		_store_settings()
+		resolution_picker.disabled = value
+		resolution_picker.select(resolutions.find(GameFlow.resolution)))
 	var sync := CheckButton.new()
 	sync.text = "Вертикальная синхронизация"
 	sync.button_pressed = GameFlow.vsync

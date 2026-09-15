@@ -4,22 +4,56 @@ const MENU := "res://game/menu/MainMenu.tscn"
 const FIRST_LEVEL := "res://tests/MovementSandbox.tscn"
 const SAVE_PATH := "user://checkpoint.cfg"
 const SETTINGS_PATH := "user://settings.cfg"
+const RESOLUTIONS: Array[Vector2i] = [
+	Vector2i(640, 360), Vector2i(960, 540), Vector2i(1280, 720),
+	Vector2i(1366, 768), Vector2i(1600, 900), Vector2i(1920, 1080),
+	Vector2i(2560, 1440), Vector2i(3840, 2160),
+]
 
 var volume: float = 0.8
 var fullscreen: bool = false
 var vsync: bool = true
+var resolution := Vector2i(1280, 720)
 var _pause_layer: CanvasLayer
 var _lease: PauseLease
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	load_settings()
+	apply_settings()
+
+
+func load_settings() -> void:
 	var settings := ConfigFile.new()
 	if settings.load(SETTINGS_PATH) == OK:
 		volume = clampf(float(settings.get_value("audio", "volume", 0.8)), 0.0, 1.0)
 		fullscreen = bool(settings.get_value("video", "fullscreen", false))
 		vsync = bool(settings.get_value("video", "vsync", true))
-	apply_settings()
+		var saved_resolution: Variant = settings.get_value("video", "resolution", Vector2i(1280, 720))
+		resolution = saved_resolution if saved_resolution is Vector2i else Vector2i(1280, 720)
+	_validate_resolution()
+
+
+func available_resolutions() -> Array[Vector2i]:
+	if DisplayServer.get_name() == "headless":
+		return RESOLUTIONS.duplicate()
+	var usable := DisplayServer.screen_get_usable_rect().size
+	var result: Array[Vector2i] = []
+	for size: Vector2i in RESOLUTIONS:
+		# Leave room for the window border and title bar.
+		if size.x <= usable.x - 16 and size.y <= usable.y - 48:
+			result.append(size)
+	return result if not result.is_empty() else [Vector2i(640, 360)]
+
+
+func _validate_resolution() -> void:
+	var choices := available_resolutions()
+	if resolution not in choices:
+		resolution = choices[0]
+		for size: Vector2i in choices:
+			if size.x <= 1280:
+				resolution = size
 
 
 func apply_settings() -> void:
@@ -27,6 +61,12 @@ func apply_settings() -> void:
 	AudioServer.set_bus_mute(0, volume <= 0.0)
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
+		if not fullscreen:
+			_validate_resolution()
+			if DisplayServer.window_get_size() != resolution:
+				DisplayServer.window_set_size(resolution)
+				var usable := DisplayServer.screen_get_usable_rect()
+				DisplayServer.window_set_position(usable.position + (usable.size - resolution) / 2)
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED)
 
 
@@ -36,6 +76,7 @@ func save_settings() -> Error:
 	settings.set_value("audio", "volume", volume)
 	settings.set_value("video", "fullscreen", fullscreen)
 	settings.set_value("video", "vsync", vsync)
+	settings.set_value("video", "resolution", resolution)
 	return settings.save(SETTINGS_PATH)
 
 

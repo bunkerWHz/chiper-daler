@@ -12,6 +12,10 @@ disk slot until the next manual save. Missing/invalid saves cannot be loaded.
 
 Master volume, fullscreen and VSync apply immediately and persist in
 `user://settings.cfg`. Buttons support Godot's standard keyboard/gamepad UI actions.
+Window resolution also persists. The list includes preset sizes that fit the current
+monitor's usable area, allowing space for window decorations. Fullscreen uses the
+monitor resolution; the window-size picker is disabled until windowed mode returns.
+The logical 1280×720 viewport stays unchanged so resolution does not alter gameplay.
 
 Replace the `Background/Color` node with a full-rect TextureRect, or add an animated
 scene beneath `Background`. Keep decorative Controls at `mouse_filter = Ignore`.

@@ -24,6 +24,27 @@ func _run() -> void:
 	menu._show_load()
 	check(menu._status.text == "Нет доступных сохранений.", "Empty save slot")
 	menu._show_settings()
+	var picker := menu._box.get_node("ResolutionPicker") as OptionButton
+	var choices: Array[Vector2i] = flow.available_resolutions()
+	picker.select(0)
+	picker.item_selected.emit(0)
+	check(flow.resolution == choices[0], "Picker applies resolution")
+	flow.resolution = Vector2i(1, 1)
+	flow.load_settings()
+	check(flow.resolution == choices[0], "Resolution reloads from disk")
+	if DisplayServer.get_name() != "headless":
+		await process_frame
+		check(DisplayServer.window_get_size() == choices[0], "Window resized")
+		flow.fullscreen = true
+		flow.apply_settings()
+		await process_frame
+		menu._show_settings()
+		check(menu._box.get_node("ResolutionPicker").disabled, "Fullscreen disables window size picker")
+		flow.fullscreen = false
+		flow.apply_settings()
+		await process_frame
+		check(DisplayServer.window_get_size() == choices[0], "Window size restored after fullscreen")
+	flow.resolution = choices[mini(1, choices.size() - 1)]
 	flow.volume = 0.35
 	check(flow.save_settings() == OK, "Settings write succeeds")
 	var settings := ConfigFile.new()
@@ -76,8 +97,10 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	if DisplayServer.get_name() != "headless":
+		current_scene._show_settings()
+		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://.godot/menu-preview.png")
+		root.get_texture().get_image().save_png("res://.godot/settings-preview.png")
 	DirAccess.remove_absolute(flow.SAVE_PATH)
 	DirAccess.remove_absolute(flow.SETTINGS_PATH)
 	DirAccess.remove_absolute("user://invalid.cfg")
