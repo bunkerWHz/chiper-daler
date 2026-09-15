@@ -2,6 +2,8 @@ extends Actor
 class_name RestPoint
 
 @export var spawn_offset: Vector2 = Vector2(0.0, -24.0)
+## Unique within this level; keep unchanged after releasing a level.
+@export var save_id: String = ""
 @export var shop_weapons: Array[ItemData] = [
 	preload("res://game/items/weapons/TrainingSword.tres"),
 	preload("res://game/items/weapons/TrainingBow.tres"),
@@ -29,8 +31,8 @@ func _on_interacted_by(interactor: Actor) -> void:
 		return
 
 	var rest := interactor.get_component(RestComponent) as RestComponent
-	if rest != null and rest.is_enabled:
-		rest.start_rest()
+	if rest == null or not rest.is_enabled or not rest.start_rest():
+		return
 
 	var respawn := (
 		interactor.get_component(PlayerRespawnComponent)
@@ -38,6 +40,8 @@ func _on_interacted_by(interactor: Actor) -> void:
 	)
 	if respawn != null and respawn.is_enabled:
 		respawn.set_checkpoint_position(global_position + spawn_offset)
+	if is_inside_tree():
+		get_node("/root/GameFlow").saves.rest_at(self, interactor)
 	if is_inside_tree() and _can_trade(interactor) and not is_instance_valid(_menu):
 		_menu = preload("res://features/rest/ShelterMenu.gd").new()
 		_menu.shelter = self

@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://game/player/Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://features/rest/RestPoint.tscn" id="2"]
+
+[node name="SaveTravelLevel" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1")]
+
+[node name="Shelter" parent="." instance=ExtResource("2")]
+save_id = "travel_shelter"
+position = Vector2(250, 100)

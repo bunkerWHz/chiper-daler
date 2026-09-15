@@ -217,8 +217,12 @@ func restore_runtime_state(state: Variant) -> void:
 			continue
 		var item: ItemData = entry.get("item") as ItemData
 		var quantity := int(entry.get("quantity", 0))
-		if item != null and item.is_valid() and quantity > 0:
-			add_item(item, quantity)
+		if item != null and item.is_valid() and quantity > 0 and _stacks.size() < config.capacity:
+			if item.is_flask() and has_item(item.id):
+				continue
+			var restored := mini(quantity, item.get_effective_stack_size())
+			_stacks.append(InventoryStack.new(item, restored))
+			item_added.emit(item, restored)
 
 	inventory_changed.emit()
 

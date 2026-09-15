@@ -94,6 +94,9 @@ func _restart_current_scene() -> void:
 	_restart_timer = null
 	restart_requested.emit()
 
+	if is_inside_tree() and get_node("/root/GameFlow").saves.active and get_node("/root/GameFlow").saves.respawn_at_checkpoint():
+		return
+
 	if _replace_actor_at_checkpoint():
 		return
 

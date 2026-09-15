@@ -11,6 +11,7 @@ enum Phase {
 
 signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal projectile_fired(phase: Phase, remaining_ammo: int)
+signal ammunition_changed
 
 const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
 const ARROW_TEXTURE := preload("res://assets/Test/Hero/Archer/Arrow.png")
@@ -124,6 +125,7 @@ func add_arrows(amount: int) -> int:
 
 	var previous := _arrows
 	_arrows = mini(_arrows + amount, config.arrow_count)
+	ammunition_changed.emit()
 	return _arrows - previous
 
 
@@ -133,6 +135,7 @@ func add_bolts(amount: int) -> int:
 
 	var previous := _bolts
 	_bolts = mini(_bolts + amount, config.bolt_count)
+	ammunition_changed.emit()
 	return _bolts - previous
 
 

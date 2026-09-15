@@ -6,6 +6,7 @@ signal level_completed(interactor: Actor)
 
 @export var require_enemy_clear: bool = true
 @export var next_scene: PackedScene
+@export var save_id: String = ""
 
 var _interactable: InteractableComponent
 var _marker: Polygon2D
@@ -13,6 +14,7 @@ var _is_completed: bool = false
 
 
 func _ready() -> void:
+	add_to_group(&"persistent_world")
 	_interactable = get_component(InteractableComponent) as InteractableComponent
 	_marker = get_node_or_null("Marker") as Polygon2D
 	if _interactable == null:
@@ -24,7 +26,12 @@ func _ready() -> void:
 
 
 func try_complete(interactor: Actor) -> bool:
-	if _is_completed or interactor == null:
+	if interactor == null:
+		return false
+	if _is_completed:
+		if next_scene != null and is_inside_tree():
+			_travel.call_deferred()
+			return true
 		return false
 
 	var remaining := get_remaining_enemy_count()
@@ -38,12 +45,36 @@ func try_complete(interactor: Actor) -> bool:
 	_interactable.interaction_name = "Level complete"
 	if _marker != null:
 		_marker.color = Color(0.35, 1.0, 0.45, 1.0)
+	if is_inside_tree():
+		get_node("/root/GameFlow").saves.set_flag(self, save_id, "completed", true)
 	level_completed.emit(interactor)
 
 	if next_scene != null and is_inside_tree():
-		get_tree().call_deferred(&"change_scene_to_packed", next_scene)
+		_travel.call_deferred()
 
 	return true
+
+
+func _travel() -> bool:
+	var error: Error
+	if get_node("/root/GameFlow").saves.active:
+		error = get_node("/root/GameFlow").saves.travel_to(next_scene)
+	else:
+		error = get_tree().change_scene_to_packed(next_scene)
+	if error != OK:
+		_interactable.enable_interaction()
+	return error == OK
+
+
+func restore_persistent_state() -> void:
+	if not get_node("/root/GameFlow").saves.get_flag(self, save_id, "completed"):
+		return
+	_is_completed = true
+	_interactable.interaction_name = "Continue" if next_scene != null else "Level complete"
+	if next_scene == null:
+		_interactable.disable_interaction()
+	if _marker != null:
+		_marker.color = Color(0.35, 1.0, 0.45, 1.0)
 
 
 func is_completed() -> bool:

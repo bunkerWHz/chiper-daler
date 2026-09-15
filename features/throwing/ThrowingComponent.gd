@@ -10,6 +10,7 @@ enum Phase {
 
 signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal throwable_released(direction: float, remaining_charges: int)
+signal charges_changed
 
 const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
 const BEHAVIOR_GATE := preload(
@@ -109,6 +110,7 @@ func add_charges(amount: int) -> int:
 
 	var previous := _remaining_charges
 	_remaining_charges = mini(_remaining_charges + amount, config.max_charges)
+	charges_changed.emit()
 	return _remaining_charges - previous
 
 

@@ -42,6 +42,7 @@ shape = SubResource("RectangleShape2D_floor")
 position = Vector2(322, 373)
 
 [node name="RestPoint" parent="." unique_id=1874341117 instance=ExtResource("8_rest_point")]
+save_id = "shelter_start"
 position = Vector2(270, 373)
 
 [node name="TestInteractable2" parent="." unique_id=1678913942 instance=ExtResource("2_2noc4")]
@@ -70,6 +71,7 @@ actor_path = NodePath("../../../Player")
 actor_path = NodePath("../../../Player")
 
 [node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
+save_id = "chest_start"
 position = Vector2(471, 370)
 
 [node name="TestLever" parent="." unique_id=288603096 instance=ExtResource("4_1ymdb")]
@@ -82,6 +84,7 @@ position = Vector2(534, 337)
 position = Vector2(420, 235)
 
 [node name="LevelExit" parent="." unique_id=268007414 instance=ExtResource("9_level_exit")]
+save_id = "exit_start"
 position = Vector2(778, 403)
 
 [node name="TestLadder" parent="." unique_id=1275535152 instance=ExtResource("7_climbable")]

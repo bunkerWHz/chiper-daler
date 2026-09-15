@@ -18,10 +18,16 @@ var vsync: bool = true
 var resolution := Vector2i(1280, 720)
 var _pause_layer: CanvasLayer
 var _lease: PauseLease
+var saves := preload("res://features/save/SaveService.gd").new()
+var _save_warning: CanvasLayer
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	saves.name = "Saves"
+	add_child(saves)
+	saves.save_finished.connect(_show_save_result)
+	get_tree().auto_accept_quit = false
 	load_settings()
 	apply_settings()
 
@@ -98,31 +104,11 @@ func save_settings() -> Error:
 
 
 func read_save(path: String = SAVE_PATH) -> Dictionary:
-	var data := ConfigFile.new()
-	if data.load(path) != OK or data.get_value("save", "version", 0) != 1:
-		return {}
-	var scene: Variant = data.get_value("save", "scene", "")
-	var position: Variant = data.get_value("save", "checkpoint")
-	if not scene is String or not scene.begins_with("res://") or not scene.ends_with(".tscn"):
-		return {}
-	if not ResourceLoader.exists(scene, "PackedScene") or not position is Vector2 or not position.is_finite():
-		return {}
-	return {"scene": scene, "checkpoint": position, "date": str(data.get_value("save", "date", ""))}
+	return saves.store.read_save(path)
 
 
 func save_checkpoint(path: String = SAVE_PATH) -> Error:
-	var scene := get_tree().current_scene
-	if scene == null:
-		return ERR_UNAVAILABLE
-	for node: Node in scene.find_children("*", "", true, false):
-		if node is PlayerRespawnComponent and node.is_enabled:
-			var data := ConfigFile.new()
-			data.set_value("save", "version", 1)
-			data.set_value("save", "scene", scene.scene_file_path)
-			data.set_value("save", "checkpoint", node.get_checkpoint_position())
-			data.set_value("save", "date", Time.get_datetime_string_from_system().replace("T", " "))
-			return data.save(path)
-	return ERR_UNAVAILABLE
+	return saves.save_now(path)
 
 
 func start_game(from_save: bool = false) -> Error:
@@ -133,9 +119,11 @@ func start_game(from_save: bool = false) -> Error:
 	var packed := load(scene_path) as PackedScene
 	if packed == null:
 		return ERR_CANT_OPEN
+	close_pause()
 	PlayerRespawnComponent.clear_saved_checkpoints()
 	if from_save:
 		PlayerRespawnComponent._scene_checkpoints[scene_path] = saved.checkpoint
+	saves.prepare(saved)
 	return get_tree().change_scene_to_packed(packed)
 
 
@@ -168,5 +156,49 @@ func close_pause() -> void:
 
 
 func return_to_menu() -> Error:
+	if saves.active:
+		var error := saves.save_now()
+		if error != OK:
+			return error
+	saves.active = false
 	close_pause()
 	return get_tree().change_scene_to_file(MENU)
+
+
+func quit_game() -> Error:
+	if saves.active:
+		var error := saves.save_now()
+		if error != OK:
+			return error
+	get_tree().quit()
+	return OK
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if quit_game() != OK and _pause_layer == null:
+			var event := InputEventAction.new()
+			event.action = "ui_cancel"
+			event.pressed = true
+			_unhandled_input(event)
+
+
+func _show_save_result(error: Error) -> void:
+	if error == OK:
+		if is_instance_valid(_save_warning):
+			_save_warning.queue_free()
+			_save_warning = null
+		return
+	if is_instance_valid(_save_warning):
+		return
+	_save_warning = CanvasLayer.new()
+	_save_warning.layer = 110
+	add_child(_save_warning)
+	var label := Label.new()
+	label.text = "Не удалось сохранить игру. Повторяем попытку…"
+	label.position = Vector2(20, 20)
+	label.add_theme_color_override("font_color", Color(1.0, 0.65, 0.35))
+	label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	label.add_theme_constant_override("shadow_offset_x", 1)
+	label.add_theme_constant_override("shadow_offset_y", 1)
+	_save_warning.add_child(label)

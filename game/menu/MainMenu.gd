@@ -8,6 +8,7 @@ var _page: String = "main"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	GameFlow.saves.save_finished.connect(_on_save_finished)
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
@@ -50,7 +51,7 @@ func show_main() -> void:
 	var first: Button
 	if is_pause_menu:
 		first = _button("Продолжить", GameFlow.close_pause)
-		_button("Сохранить контрольную точку", _save)
+		_button("Сохранить игру", _save)
 	else:
 		if not GameFlow.read_save().is_empty():
 			first = _button("Продолжить", _start.bind(true))
@@ -74,16 +75,18 @@ func _new_game() -> void:
 	if GameFlow.read_save().is_empty():
 		_start(false)
 	else:
-		_confirm("Начать заново? Старый слот останется\nдо следующего ручного сохранения.", _start.bind(false))
+		_confirm("Начать заново?\nТекущее прохождение будет заменено.", _start.bind(false))
 
 
 func _show_load() -> void:
 	_clear("Загрузить игру", "load")
 	var saved := GameFlow.read_save()
-	_status.text = "Нет доступных сохранений." if saved.is_empty() else "Контрольная точка • " + saved.date
-	var load_button := _button("Загрузить контрольную точку", _start.bind(true), saved.is_empty())
+	_status.text = "Нет доступных сохранений." if saved.is_empty() else "Сохранение • " + saved.date
+	if saved.get("recovered", false):
+		_status.text += "\nДоступна резервная копия."
+	var load_button := _button("Загрузить игру", _start.bind(true), saved.is_empty())
 	var note := Label.new()
-	note.text = "Прототип: уровень создаётся заново.\nПредметы и состояние врагов не сохраняются."
+	note.text = "Возвращение к последнему месту отдыха.\nПрогресс сохранён, обычные враги возрождаются."
 	note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_box.add_child(note)
 	var back := _button("Назад", show_main)
@@ -91,7 +94,12 @@ func _show_load() -> void:
 
 
 func _save() -> void:
-	_status.text = "Контрольная точка сохранена." if GameFlow.save_checkpoint() == OK else "Не удалось сохранить контрольную точку."
+	_status.text = "Игра сохранена." if GameFlow.save_checkpoint() == OK else "Не удалось сохранить игру. Повторите попытку."
+
+
+func _on_save_finished(error: Error) -> void:
+	if error != OK and is_instance_valid(_status):
+		_status.text = "Не удалось сохранить игру. Повторите попытку."
 
 
 func _show_settings() -> void:
@@ -161,16 +169,21 @@ func _store_settings() -> void:
 
 
 func _confirm_return() -> void:
-	_confirm("Вернуться в меню?\nНесохранённый прогресс будет потерян.", _return_to_menu)
+	_confirm("Сохранить прогресс и вернуться в меню?", _return_to_menu)
 
 
 func _return_to_menu() -> void:
 	if GameFlow.return_to_menu() != OK:
-		_status.text = "Не удалось открыть главное меню."
+		_status.text = "Не удалось сохранить игру или открыть меню."
 
 
 func _confirm_quit() -> void:
-	_confirm("Выйти из игры?" + ("\nНесохранённый прогресс будет потерян." if is_pause_menu else ""), get_tree().quit)
+	_confirm("Сохранить прогресс и выйти?" if is_pause_menu else "Выйти из игры?", _quit)
+
+
+func _quit() -> void:
+	if GameFlow.quit_game() != OK:
+		_status.text = "Не удалось сохранить игру. Выход отменён."
 
 
 func _confirm(message: String, action: Callable) -> void:
