@@ -134,17 +134,19 @@ func _run() -> void:
 	next_rest._on_interacted_by(player())
 	await settle()
 	check(flow.read_save().scene == current_scene.scene_file_path, "Rest in next level moves return destination")
-	# Death retains current currency and reloads the checkpoint level.
+	# Death moves 80% of the wallet to a persistent recovery marker.
 	inventory = player().get_component(InventoryComponent) as InventoryComponent
 	inventory.add_amber(77)
 	var expected_amber := inventory.get_amber()
+	player().global_position += Vector2(500, 0)
 	health = player().get_component(HealthComponent) as HealthComponent
 	health.take_damage(health.get_max_health() * 10)
 	var respawn := player().get_component(PlayerRespawnComponent) as PlayerRespawnComponent
 	respawn._restart_current_scene()
 	await settle()
 	paused = true
-	check((player().get_component(InventoryComponent) as InventoryComponent).get_amber() == expected_amber, "Death retains current progress")
+	check((player().get_component(InventoryComponent) as InventoryComponent).get_amber() == 0, "Death empties wallet")
+	check(flow.saves.lost_amber.get("amount", 0) == floori(expected_amber * 0.8), "Death leaves 80 percent for recovery")
 	health = player().get_component(HealthComponent) as HealthComponent
 	check(health.is_alive() and health.get_current_health() == health.get_max_health(), "Death creates healthy player")
 	# Recovery, migration and validation use separate files.

@@ -16,6 +16,15 @@ func get_amber() -> int:
 	return _amber
 
 
+## Death disables components before respawn signals; this operation must still work.
+func take_amber_on_death() -> int:
+	var amount := _amber
+	_amber = 0
+	if amount > 0:
+		inventory_changed.emit()
+	return amount
+
+
 func add_amber(amount: int) -> int:
 	if not is_enabled or amount <= 0:
 		return 0

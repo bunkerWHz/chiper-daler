@@ -1,6 +1,6 @@
 extends RefCounted
 
-const VERSION := 2
+const VERSION := 3
 const MAX_BYTES := 4 * 1024 * 1024
 var codec := preload("res://features/save/PlayerSaveData.gd").new()
 
@@ -24,7 +24,7 @@ func _read_file(path: String) -> Dictionary:
 	if data.parse(file.get_as_text()) != OK:
 		return {}
 	var version: Variant = data.get_value("save", "version", 0)
-	if not version is int or (version != 1 and version != VERSION):
+	if not version is int or version < 1 or version > VERSION:
 		return {}
 	var result := {}
 	for key: String in data.get_section_keys("save"):
@@ -38,14 +38,29 @@ func _read_file(path: String) -> Dictionary:
 		result.merge({"player": {}, "world": {}, "rest_id": "", "play_seconds": 0}, true)
 	if not result.get("rest_id") is String or not codec.validate(result.get("player")):
 		return {}
-	if version == VERSION and not result.player.has_all(codec.component_types.keys()):
+	if version >= 2 and not result.player.has_all(codec.component_types.keys()):
 		return {}
 	if not result.get("world") is Dictionary or not codec._plain_data(result.world):
 		return {}
 	if not codec._count(result.get("play_seconds")):
 		return {}
+	if version < 3:
+		result["lost_amber"] = {}
+	if not _valid_lost_amber(result.get("lost_amber")):
+		return {}
 	result["date"] = str(result.get("date", ""))
 	return result
+
+
+func _valid_lost_amber(loss: Variant) -> bool:
+	if not loss is Dictionary:
+		return false
+	if loss.is_empty():
+		return true
+	return (loss.get("scene") is String and loss.scene.begins_with("res://")
+		and loss.scene.ends_with(".tscn") and ResourceLoader.exists(loss.scene, "PackedScene")
+		and loss.get("position") is Vector2 and loss.position.is_finite()
+		and codec._count(loss.get("amount")) and loss.amount > 0)
 
 
 func write_save(path: String, snapshot: Dictionary) -> Error:

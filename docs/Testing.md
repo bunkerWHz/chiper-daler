@@ -9,6 +9,7 @@ $env:APPDATA = Join-Path $PWD '.godot/save-test-profile'
 $env:LOCALAPPDATA = $env:APPDATA
 New-Item -ItemType Directory -Force -Path $env:APPDATA | Out-Null
 godot --headless --path . --script tests/save_runtime_check.gd
+godot --headless --path . --script tests/lost_amber_runtime_check.gd
 ```
 
 Используйте отдельный сеанс терминала для этих переменных окружения.

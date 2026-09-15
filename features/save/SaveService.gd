@@ -6,6 +6,9 @@ const SAVE_PATH := "user://checkpoint.cfg"
 var store := preload("res://features/save/SaveStore.gd").new()
 var active := false
 var world: Dictionary = {}
+var lost_amber: Dictionary = {}
+var _lost_amber_marker: Area2D
+var _death_processed := false
 var checkpoint_scene := ""
 var checkpoint_position := Vector2.ZERO
 var rest_id := ""
@@ -40,6 +43,8 @@ func prepare(saved: Dictionary = {}) -> void:
 	_player = null
 	_pending = saved.get("player", {}).duplicate(true)
 	world = saved.get("world", {}).duplicate(true)
+	lost_amber = saved.get("lost_amber", {}).duplicate(true)
+	_remove_loss_marker()
 	checkpoint_scene = saved.get("scene", "")
 	checkpoint_position = saved.get("checkpoint", Vector2.ZERO)
 	rest_id = saved.get("rest_id", "")
@@ -79,11 +84,17 @@ func _on_scene_changed() -> void:
 		respawn.set_checkpoint_position(checkpoint_position)
 		_player.global_position = checkpoint_position
 	_bind_player()
+	_death_processed = false
+	_spawn_loss_marker()
 	_restoring = false
 	request_save()
 
 
 func _bind_player() -> void:
+	var respawn := _player.get_component(PlayerRespawnComponent) as PlayerRespawnComponent
+	var death_callback := _on_player_died.unbind(1)
+	if not respawn.restart_scheduled.is_connected(death_callback):
+		respawn.restart_scheduled.connect(death_callback)
 	# Coalesce synchronous operations (purchase + payment, reward + source flag)
 	# into one snapshot at the end of the current frame.
 	var signals := {
@@ -137,6 +148,7 @@ func save_now(path: String = SAVE_PATH) -> Error:
 		"scene": checkpoint_scene, "checkpoint": checkpoint_position,
 		"rest_id": rest_id, "player": store.codec.capture(_player),
 		"world": world.duplicate(true), "play_seconds": int(play_seconds),
+		"lost_amber": lost_amber.duplicate(true),
 		"date": Time.get_datetime_string_from_system().replace("T", " "),
 	}
 	last_error = store.write_save(path, snapshot)
@@ -146,6 +158,62 @@ func save_now(path: String = SAVE_PATH) -> Error:
 		push_warning("Could not save playthrough: " + error_string(last_error))
 	save_finished.emit(last_error)
 	return last_error
+
+
+func _on_player_died() -> void:
+	if not active or _death_processed or not is_instance_valid(_player):
+		return
+	var health := _player.get_component(HealthComponent) as HealthComponent
+	if health == null or not health.is_dead():
+		return
+	_death_processed = true
+	# Replace the previous loss even when this death has an empty wallet.
+	_remove_loss_marker()
+	lost_amber.clear()
+	var inventory := _player.get_component(InventoryComponent) as InventoryComponent
+	var total := inventory.take_amber_on_death()
+	# Round the recoverable portion down: 101 -> 80, 1 -> 0.
+	var recoverable := floori(float(total) * 0.8)
+	if recoverable > 0:
+		lost_amber = {"scene": get_tree().current_scene.scene_file_path,
+			"position": _player.global_position, "amount": recoverable}
+	_spawn_loss_marker.call_deferred()
+	request_save()
+
+
+func _remove_loss_marker() -> void:
+	if is_instance_valid(_lost_amber_marker):
+		_lost_amber_marker.hide()
+		_lost_amber_marker.queue_free()
+	_lost_amber_marker = null
+
+
+func _spawn_loss_marker() -> void:
+	_remove_loss_marker()
+	var scene := get_tree().current_scene
+	if not active or lost_amber.is_empty() or scene == null or scene.scene_file_path != lost_amber.scene:
+		return
+	_lost_amber_marker = preload("res://features/loot/LostAmberPickup.tscn").instantiate()
+	_lost_amber_marker.set("amount", lost_amber.amount)
+	# Anchored at the death position: no gravity, so the marker cannot drift away.
+	scene.add_child(_lost_amber_marker)
+	_lost_amber_marker.global_position = lost_amber.position
+
+
+func recover_lost_amber(marker: Area2D, collector: Actor) -> bool:
+	if not active or lost_amber.is_empty() or not is_instance_valid(marker) or marker != _lost_amber_marker or collector != _player or not is_instance_valid(collector):
+		return false
+	var health := collector.get_component(HealthComponent) as HealthComponent
+	var inventory := collector.get_component(InventoryComponent) as InventoryComponent
+	if health == null or health.is_dead() or inventory == null or not inventory.is_enabled:
+		return false
+	var amount: int = lost_amber.amount
+	# Clear the source before inventory signals, preventing double collection.
+	lost_amber.clear()
+	_remove_loss_marker()
+	inventory.add_amber(amount)
+	request_save()
+	return true
 
 
 func rest_at(point: RestPoint, visitor: Actor) -> void:

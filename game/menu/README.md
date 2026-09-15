@@ -11,6 +11,10 @@ to the last successful restpoint, refills health/mana/flasks and respawns ordina
 enemies. New Game replaces the slot after starting the level. Corrupt primaries
 fall back to the backup. The old version-1 checkpoint format remains readable.
 Save failures appear in-game and prevent exiting until a write succeeds.
+Death permanently removes 20% of carried amber (recoverable amount rounded down)
+and leaves the remainder at the death position. Approaching it recovers it;
+dying again destroys the previous unclaimed stash, even with an empty wallet.
+The marker and balance persist together in version-3 saves; versions 1 and 2 migrate.
 See [Save_System.md](../../docs/Save_System.md) for the schema, rules and TODO list.
 
 Master volume, fullscreen and VSync apply immediately and persist in
