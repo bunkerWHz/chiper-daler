@@ -7,13 +7,6 @@ const MENU_PROCESS_PRIORITY := -80
 const ALL_CATEGORIES := -1
 const ITEM_CELL_SCENE := preload("res://features/inventory/ui/ItemCell.tscn")
 
-enum SortMode {
-	NAME,
-	CATEGORY,
-	WEIGHT,
-	VALUE,
-}
-
 var _input: InputComponent
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
@@ -36,12 +29,10 @@ var _drop_quantity: SpinBox
 var _equipment_slots: GridContainer
 var _weapon_set_buttons: HBoxContainer
 var _category_filter: OptionButton
-var _sort_option: OptionButton
 var _inventory_summary: Label
 var _action_feedback: Label
 var _selected_item_id: StringName
 var _selected_category: int = ALL_CATEGORIES
-var _sort_mode: SortMode = SortMode.NAME
 var _details_pinned := false
 var _pinned_detail_position := Vector2.ZERO
 var _pause_lease: PauseLease
@@ -117,9 +108,6 @@ func _ready() -> void:
 	_category_filter = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Inventory/Toolbar/Category"
 	) as OptionButton
-	_sort_option = get_node_or_null(
-		"CanvasLayer/Panel/Main/Content/Inventory/Toolbar/Sort"
-	) as OptionButton
 	_inventory_summary = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Inventory/Summary"
 	) as Label
@@ -141,7 +129,6 @@ func _ready() -> void:
 		or _equipment_slots == null
 		or _weapon_set_buttons == null
 		or _category_filter == null
-		or _sort_option == null
 		or _inventory_summary == null
 		or close_button == null
 		or _action_feedback == null
@@ -445,14 +432,6 @@ func _setup_toolbar() -> void:
 	_category_filter.select(0)
 	_category_filter.item_selected.connect(_on_category_selected)
 
-	_sort_option.clear()
-	_sort_option.add_item("Name")
-	_sort_option.add_item("Category")
-	_sort_option.add_item("Weight")
-	_sort_option.add_item("Value")
-	_sort_option.select(SortMode.NAME)
-	_sort_option.item_selected.connect(_on_sort_selected)
-
 
 func _create_weapon_set_buttons() -> void:
 	_clear_dynamic_children(_weapon_set_buttons)
@@ -624,7 +603,6 @@ func _get_visible_stacks() -> Array[InventoryStack]:
 			or stack.item.category == _selected_category
 		):
 			result.append(stack)
-	result.sort_custom(_is_stack_before)
 	return result
 
 
@@ -649,24 +627,6 @@ func _get_unequipped_stacks() -> Array[InventoryStack]:
 	return result
 
 
-func _is_stack_before(left: InventoryStack, right: InventoryStack) -> bool:
-	match _sort_mode:
-		SortMode.CATEGORY:
-			if left.item.category != right.item.category:
-				return left.item.category < right.item.category
-		SortMode.WEIGHT:
-			if not is_equal_approx(left.item.weight, right.item.weight):
-				return left.item.weight < right.item.weight
-		SortMode.VALUE:
-			if left.item.sell_price != right.item.sell_price:
-				return left.item.sell_price > right.item.sell_price
-		SortMode.NAME:
-			pass
-	return left.item.display_name.naturalnocasecmp_to(
-		right.item.display_name
-	) < 0
-
-
 func _rarity_color(rarity: ItemData.Rarity) -> Color:
 	match rarity:
 		ItemData.Rarity.UNCOMMON:
@@ -683,11 +643,6 @@ func _rarity_color(rarity: ItemData.Rarity) -> Color:
 
 func _on_category_selected(index: int) -> void:
 	_selected_category = index - 1
-	_rebuild_grid()
-
-
-func _on_sort_selected(index: int) -> void:
-	_sort_mode = index as SortMode
 	_rebuild_grid()
 
 

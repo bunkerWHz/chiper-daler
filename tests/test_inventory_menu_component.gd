@@ -254,7 +254,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	inventory.add_item(crossbow)
 	menu._on_category_selected(ItemData.Category.WEAPON + 1)
 	assert_eq(grid.get_child_count(), 1)
-	menu._on_sort_selected(InventoryMenuComponent.SortMode.VALUE)
+	assert_false(menu.has_node("CanvasLayer/Panel/Main/Content/Inventory/Toolbar/Sort"))
 	assert_eq(
 		(grid.get_child(0) as InventoryDragButton).drag_payload.item_id,
 		crossbow.id

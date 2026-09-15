@@ -95,10 +95,6 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Sort" type="OptionButton" parent="CanvasLayer/Panel/Main/Content/Inventory/Toolbar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="Summary" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)

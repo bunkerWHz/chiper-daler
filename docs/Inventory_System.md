@@ -233,7 +233,7 @@ its bag can be collected normally.
 2. Paper-doll equipment with two weapon sets. *(implemented)*
 3. Eight quick-access slots and runtime switching. *(implemented)*
 4. Loot-bag and enemy-drop integration. *(implemented)*
-5. Paused inventory UI, item details, equipment, filtering, sorting, and quick
+5. Paused inventory UI, item details, equipment, filtering, and quick
    assignment. *(implemented)*
 6. Reactive eight-slot quick-access HUD. *(implemented)*
 7. Drag-and-drop between inventory, equipment, and configurable quick slots.
@@ -259,7 +259,7 @@ or swapping between slots. The panel includes actions for using, equipping,
 splitting, quick-slot assignment, and quantity-confirmed dropping. The same
 multi-stack bag is used by enemy drop tables; collecting it transfers everything
 that fits and leaves any remainder on the ground. The item grid can be filtered
-by category and sorted by name, category, weight, or value. Drag-and-drop
+by category and displayed in inventory order. Drag-and-drop
 supports equipping compatible slots, returning equipment to inventory, assigning
 or clearing quick slots, and rearranging quick-slot assignments. Manual item-grid
 ordering and selling remain later interaction work.
