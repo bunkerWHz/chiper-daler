@@ -9,6 +9,7 @@
 size = Vector2(86, 118)
 
 [node name="LootBag" type="Node2D" unique_id=1680541889]
+scale = Vector2(0.5, 0.5)
 script = ExtResource("1_bag")
 
 [node name="_Components" type="Node2D" parent="." unique_id=353358911]

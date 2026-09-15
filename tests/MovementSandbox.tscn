@@ -18,7 +18,7 @@ size = Vector2(400, 10)
 [node name="MovementSandbox" type="Node2D" unique_id=373401185]
 
 [node name="Player" parent="." unique_id=2130954343 instance=ExtResource("1_ff7wc")]
-position = Vector2(229, 364)
+position = Vector2(99, 351)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1257601977]
 position = Vector2(384, 388)
@@ -43,7 +43,7 @@ position = Vector2(322, 373)
 
 [node name="RestPoint" parent="." unique_id=1874341117 instance=ExtResource("8_rest_point")]
 save_id = "shelter_start"
-position = Vector2(270, 373)
+position = Vector2(150, 352)
 
 [node name="TestInteractable2" parent="." unique_id=1678913942 instance=ExtResource("2_2noc4")]
 position = Vector2(778, 403)
@@ -72,16 +72,16 @@ actor_path = NodePath("../../../Player")
 
 [node name="TestChest" parent="." unique_id=322226709 instance=ExtResource("3_v0veu")]
 save_id = "chest_start"
-position = Vector2(471, 370)
+position = Vector2(446, 368)
 
 [node name="TestLever" parent="." unique_id=288603096 instance=ExtResource("4_1ymdb")]
 position = Vector2(161, 323)
 
 [node name="Enemy" parent="." unique_id=492946956 instance=ExtResource("5_6luox")]
-position = Vector2(534, 337)
+position = Vector2(564.00006, 354)
 
 [node name="FlyingEnemy" parent="." instance=ExtResource("11_flying_enemy")]
-position = Vector2(420, 235)
+position = Vector2(531, 176.99998)
 
 [node name="LevelExit" parent="." unique_id=268007414 instance=ExtResource("9_level_exit")]
 save_id = "exit_start"
