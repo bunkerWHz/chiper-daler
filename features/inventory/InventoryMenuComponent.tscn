@@ -1,9 +1,8 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c5e1m0b5hndrn"]
 
-[ext_resource type="Script" path="res://features/inventory/InventoryMenuComponent.gd" id="1_menu"]
-
+[ext_resource type="Script" uid="uid://dtwn5rgt1yv42" path="res://features/inventory/InventoryMenuComponent.gd" id="1_menu"]
 [ext_resource type="PackedScene" path="res://features/inventory/ui/ItemDetailsView.tscn" id="2_details"]
-[ext_resource type="Theme" path="res://features/inventory/ui/InventoryTheme.tres" id="3_theme"]
+[ext_resource type="Theme" uid="uid://c2iqeh3n6cact" path="res://features/inventory/ui/InventoryTheme.tres" id="3_theme"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_item_actions"]
 content_margin_left = 8.0
@@ -21,16 +20,15 @@ corner_radius_top_right = 5
 corner_radius_bottom_left = 5
 corner_radius_bottom_right = 5
 
-[node name="InventoryMenuComponent" type="Node"]
+[node name="InventoryMenuComponent" type="Node" unique_id=75504532]
 script = ExtResource("1_menu")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1593460932]
 layer = 110
 
-[node name="Panel" type="Panel" parent="CanvasLayer"]
-layout_mode = 1
+[node name="Panel" type="Panel" parent="CanvasLayer" unique_id=1150701474]
+anchors_preset = -1
 anchor_left = 0.25
-anchor_top = 0.0
 anchor_right = 0.75
 anchor_bottom = 0.95
 offset_top = 92.0
@@ -38,7 +36,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_theme")
 
-[node name="Main" type="VBoxContainer" parent="CanvasLayer/Panel"]
+[node name="Main" type="VBoxContainer" parent="CanvasLayer/Panel" unique_id=1674130771]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,81 +49,81 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 6
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/Panel/Main" unique_id=710255329]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Header" unique_id=2100910916]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Inventory"
 
-[node name="Close" type="Button" parent="CanvasLayer/Panel/Main/Header"]
+[node name="Close" type="Button" parent="CanvasLayer/Panel/Main/Header" unique_id=615584997]
 layout_mode = 2
 text = "Close [I]"
 
-[node name="Content" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
+[node name="Content" type="HBoxContainer" parent="CanvasLayer/Panel/Main" unique_id=1760497201]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
+[node name="Equipment" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content" unique_id=983026304]
 custom_minimum_size = Vector2(232, 0)
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment" unique_id=1988705139]
 layout_mode = 2
 text = "Equipment"
 
-[node name="EquipmentText" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment"]
+[node name="EquipmentText" type="Label" parent="CanvasLayer/Panel/Main/Content/Equipment" unique_id=1614144866]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
 text = "STR 0  DEX 0    Defense 0.0"
 
-[node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Equipment"]
+[node name="WeaponSets" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Equipment" unique_id=1461454406]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="EquipmentScroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Equipment"]
+[node name="EquipmentScroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Equipment" unique_id=67612121]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll"]
+[node name="EquipmentSlots" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Equipment/EquipmentScroll" unique_id=519345994]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 3
 
-[node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content"]
+[node name="Inventory" type="VBoxContainer" parent="CanvasLayer/Panel/Main/Content" unique_id=648310671]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
+[node name="Title" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory" unique_id=457341130]
 layout_mode = 2
 text = "Items"
 
-[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Inventory"]
+[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer/Panel/Main/Content/Inventory" unique_id=155730089]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Category" type="OptionButton" parent="CanvasLayer/Panel/Main/Content/Inventory/Toolbar"]
+[node name="Category" type="OptionButton" parent="CanvasLayer/Panel/Main/Content/Inventory/Toolbar" unique_id=1599766]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Summary" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory"]
+[node name="Summary" type="Label" parent="CanvasLayer/Panel/Main/Content/Inventory" unique_id=296694350]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.72, 0.82, 1)
 text = "Slots 0 / 0    Weight 0"
 
-[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Inventory"]
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Panel/Main/Content/Inventory" unique_id=1716670919]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Grid" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Inventory/Scroll"]
+[node name="Grid" type="GridContainer" parent="CanvasLayer/Panel/Main/Content/Inventory/Scroll" unique_id=1668234131]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 5
 
-[node name="ActionFeedback" type="Label" parent="CanvasLayer/Panel/Main"]
+[node name="ActionFeedback" type="Label" parent="CanvasLayer/Panel/Main" unique_id=2041188737]
 visible = false
 layout_mode = 2
 theme_type_variation = &"ActionFeedback"
@@ -139,43 +137,43 @@ theme = ExtResource("3_theme")
 [node name="Actions" type="VBoxContainer" parent="CanvasLayer/ActionMenu"]
 layout_mode = 2
 
-[node name="Equip" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
+[node name="Equip" type="Button" parent="CanvasLayer/ActionMenu/Actions" unique_id=547371065]
 layout_mode = 2
+disabled = true
 text = "Equip"
-disabled = true
 
-[node name="Use" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
+[node name="Use" type="Button" parent="CanvasLayer/ActionMenu/Actions" unique_id=1317620902]
 layout_mode = 2
+disabled = true
 text = "Use"
-disabled = true
 
-[node name="Split" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
+[node name="Split" type="Button" parent="CanvasLayer/ActionMenu/Actions" unique_id=1314059512]
 layout_mode = 2
+disabled = true
 text = "Split Stack"
-disabled = true
 
-[node name="Drop" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
+[node name="Drop" type="Button" parent="CanvasLayer/ActionMenu/Actions" unique_id=1506002221]
 layout_mode = 2
-text = "Drop..."
 disabled = true
+text = "Drop..."
 
-[node name="DetailPopup" parent="CanvasLayer" instance=ExtResource("2_details")]
+[node name="DetailPopup" parent="CanvasLayer" unique_id=1298223742 instance=ExtResource("2_details")]
 
-[node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer"]
+[node name="DropDialog" type="ConfirmationDialog" parent="CanvasLayer" unique_id=1665368311]
 title = "Drop item"
 size = Vector2i(320, 140)
 
-[node name="Content" type="VBoxContainer" parent="CanvasLayer/DropDialog"]
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/DropDialog" unique_id=884078224]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 312.0
 offset_bottom = 90.0
 
-[node name="Prompt" type="Label" parent="CanvasLayer/DropDialog/Content"]
+[node name="Prompt" type="Label" parent="CanvasLayer/DropDialog/Content" unique_id=99758721]
 layout_mode = 2
 text = "Choose quantity to drop"
 
-[node name="Quantity" type="SpinBox" parent="CanvasLayer/DropDialog/Content"]
+[node name="Quantity" type="SpinBox" parent="CanvasLayer/DropDialog/Content" unique_id=148058065]
 layout_mode = 2
 min_value = 1.0
 max_value = 1.0

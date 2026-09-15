@@ -1,4 +1,4 @@
-[gd_resource type="AnimationLibrary" format=3]
+[gd_resource type="AnimationLibrary" format=3 uid="uid://diayf02ob62h2"]
 
 [sub_resource type="Animation" id="Animation_xttd4"]
 resource_name = "airborne"
