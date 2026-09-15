@@ -71,7 +71,8 @@ func apply_settings() -> void:
 			if DisplayServer.window_get_size() != resolution:
 				DisplayServer.window_set_size(resolution)
 				var usable := DisplayServer.screen_get_usable_rect()
-				DisplayServer.window_set_position(usable.position + (usable.size - resolution) / 2)
+				var center_offset := Vector2i(Vector2(usable.size - resolution) * 0.5)
+				DisplayServer.window_set_position(usable.position + center_offset)
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED)
 
 

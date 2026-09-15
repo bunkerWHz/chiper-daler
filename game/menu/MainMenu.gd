@@ -107,8 +107,8 @@ func _show_settings() -> void:
 	resolution_picker.name = "ResolutionPicker"
 	resolution_picker.custom_minimum_size.y = 40
 	var resolutions := GameFlow.available_resolutions()
-	for size: Vector2i in resolutions:
-		resolution_picker.add_item("%d × %d" % [size.x, size.y])
+	for window_size: Vector2i in resolutions:
+		resolution_picker.add_item("%d × %d" % [window_size.x, window_size.y])
 	resolution_picker.select(resolutions.find(GameFlow.resolution))
 	resolution_picker.disabled = GameFlow.fullscreen
 	_box.add_child(resolution_picker)
