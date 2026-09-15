@@ -37,9 +37,9 @@ ground cancels the action without spending the item.
 Paper-doll equipment currently supports two independent main/off-hand weapon
 sets; head, shoulder, chest, hands, belt, legs, and feet armor; four rings; two
 earrings; an amulet, artifact, and brooch; and three runes. The menu presents the
-active weapon set and wearable slots as a three-column, seven-row paper doll;
+viewed weapon set and wearable slots as a three-column, seven-row paper doll;
 the compact `Set 1` and `Set 2` buttons switch which hand slots are shown. The
-active set uses an amber background and border instead of an extra text label,
+viewed set uses an amber background and border instead of an extra text label,
 keeping the equipment column and its scrollbar tight to the item grid. Equipped
 copies appear only in the equipment area and are excluded
 from the main bag grid and its visible weight/slot summary. The inventory
@@ -280,3 +280,12 @@ duration. Successful rage use applies the provisional `rage` buff status. A
 second overlay plays the shared buff animation whenever any buff is applied,
 allowing both layers to coexist. These profiles and assets are deliberately
 temporary and can be replaced without changing equipment or item-use rules.
+
+### Browsing weapon sets while paused
+
+The Set 1 / Set 2 buttons select which set the inventory displays and edits.
+They keep the inventory open and the world paused, without requesting a combat
+weapon swap. Double-click, Equip/Unequip, drag-and-drop, and item comparisons
+use this viewed set. Opening the inventory initially selects the player's active
+set; closing it does not activate the viewed set. Use Tab outside the inventory
+to switch the character's active weapons.

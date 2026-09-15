@@ -1,6 +1,7 @@
 extends PanelContainer
 class_name ItemDetailsView
 
+var weapon_set: int = -1
 var _inventory: InventoryComponent
 var _equipment: EquipmentComponent
 var _flask_charges: FlaskChargesComponent
@@ -75,7 +76,7 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 	var equip_slot := item.get_primary_equip_slot()
 	if equip_slot == ItemData.EquipSlot.NONE:
 		return
-	var equipped := _equipment.get_equipped_item(equip_slot)
+	var equipped := _equipment.get_equipped_item(equip_slot, 0, weapon_set)
 	var equipped_stats := (
 		equipped.get_equipment_stats() if equipped != null else null
 	)

@@ -31,6 +31,7 @@ var _weapon_set_buttons: HBoxContainer
 var _category_filter: OptionButton
 var _inventory_summary: Label
 var _action_feedback: Label
+var _viewed_weapon_set: int = 0
 var _selected_item_id: StringName
 var _selected_category: int = ALL_CATEGORIES
 var _details_pinned := false
@@ -168,6 +169,8 @@ func open_inventory() -> void:
 		return
 	if _equipment_swap != null and _equipment_swap.is_swapping():
 		return
+	_viewed_weapon_set = _equipment.get_active_weapon_set()
+	_detail_popup.weapon_set = _viewed_weapon_set
 	_panel.visible = true
 	_action_feedback.hide()
 	_details_pinned = false
@@ -278,7 +281,7 @@ func _rebuild_details() -> void:
 		_detail_popup.visible = true
 		_position_detail_popup()
 		_pinned_detail_position = _detail_popup.position
-	var equipped := _equipment.is_item_equipped(item.id)
+	var equipped := _is_item_equipped_in_view(item)
 	var equip_slot := item.get_primary_equip_slot()
 	_equip_button.text = "Unequip" if equipped else "Equip"
 	_equip_button.disabled = (
@@ -356,18 +359,21 @@ func _equip_selected_item() -> void:
 	)
 	if item == null or equip_slot == ItemData.EquipSlot.NONE:
 		return
-	if _equipment.is_item_equipped(item.id):
-		_equipment.unequip_inventory_item(item.id)
+	if _is_item_equipped_in_view(item):
+		if equip_slot in [ItemData.EquipSlot.MAIN_HAND, ItemData.EquipSlot.OFF_HAND]:
+			_equipment.unequip_item(equip_slot, 0, _viewed_weapon_set)
+		else:
+			_equipment.unequip_inventory_item(item.id)
 		_rebuild()
 		return
 
 	var slot_index := 0
 	var capacity := _equipment.get_slot_capacity(equip_slot)
 	for index in capacity:
-		if _equipment.get_equipped_item_id(equip_slot, index).is_empty():
+		if _equipment.get_equipped_item_id(equip_slot, index, _viewed_weapon_set).is_empty():
 			slot_index = index
 			break
-	_equipment.equip_inventory_item(item.id, equip_slot, slot_index)
+	_equipment.equip_inventory_item(item.id, equip_slot, slot_index, _viewed_weapon_set)
 	_rebuild()
 
 
@@ -382,10 +388,10 @@ func _equip_item_by_double_click(item_id: StringName) -> void:
 	var equip_slot := item.get_primary_equip_slot()
 	var slot_index := 0
 	for index in _equipment.get_slot_capacity(equip_slot):
-		if _equipment.get_equipped_item_id(equip_slot, index).is_empty():
+		if _equipment.get_equipped_item_id(equip_slot, index, _viewed_weapon_set).is_empty():
 			slot_index = index
 			break
-	_equipment.equip_inventory_item(item.id, equip_slot, slot_index)
+	_equipment.equip_inventory_item(item.id, equip_slot, slot_index, _viewed_weapon_set)
 	_rebuild()
 
 
@@ -445,7 +451,7 @@ func _create_weapon_set_buttons() -> void:
 
 func _rebuild_equipment_slots() -> void:
 	_clear_dynamic_children(_equipment_slots)
-	var active_set := _equipment.get_active_weapon_set()
+	var active_set := _viewed_weapon_set
 	var layout: Array[Dictionary] = [
 		{"label": "Shoulder", "slot": ItemData.EquipSlot.SHOULDER},
 		{"label": "Helmet", "slot": ItemData.EquipSlot.HEAD},
@@ -557,23 +563,25 @@ func _unequip_equipped_item_by_double_click(
 
 
 func _activate_weapon_set(set_index: int) -> void:
-	if _equipment_swap != null:
-		if _equipment_swap.request_swap(set_index):
-			close_inventory()
-	else:
-		_equipment.switch_weapon_set(set_index)
+	if set_index < 0 or set_index >= EquipmentComponent.WEAPON_SET_COUNT:
+		return
+	_viewed_weapon_set = set_index
+	_detail_popup.weapon_set = set_index
+	_action_feedback.hide()
+	_detail_popup.hide()
+	_details_pinned = false
 	_rebuild()
 
 
 func _refresh_weapon_set_buttons() -> void:
-	var active_set := _equipment.get_active_weapon_set()
+	var active_set := _viewed_weapon_set
 	var set_index := 0
 	for button: Button in _weapon_set_buttons.get_children():
 		button.text = "Set %d" % (set_index + 1)
 		button.tooltip_text = (
-			"Active weapon set"
+			"Viewing this weapon set"
 			if set_index == active_set
-			else "Switch to weapon set %d" % (set_index + 1)
+			else "View and edit weapon set %d" % (set_index + 1)
 		)
 		button.theme_type_variation = (
 			&"ActiveWeaponSet" if set_index == active_set else &""
@@ -761,3 +769,9 @@ func _show_action_failure(reason: String) -> void:
 	if _action_feedback != null and is_open():
 		_action_feedback.text = reason
 		_action_feedback.show()
+
+func _is_item_equipped_in_view(item: ItemData) -> bool:
+	var slot := item.get_primary_equip_slot()
+	if slot in [ItemData.EquipSlot.MAIN_HAND, ItemData.EquipSlot.OFF_HAND]:
+		return _equipment.get_equipped_item_id(slot, 0, _viewed_weapon_set) == item.id
+	return _equipment.is_item_equipped(item.id)

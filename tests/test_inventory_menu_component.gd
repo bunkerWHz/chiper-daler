@@ -346,9 +346,12 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	equipment.equip_inventory_item(sword.id, ItemData.EquipSlot.MAIN_HAND)
 	menu._activate_weapon_set(1)
 	assert_false(menu._action_feedback.visible)
-	assert_eq(equipment.get_active_weapon_set(), 1)
+	assert_eq(equipment.get_active_weapon_set(), 0)
+	assert_eq(menu._viewed_weapon_set, 1)
+	assert_true(menu.is_open())
 	assert_eq(set_one_button.theme_type_variation, &"")
 	assert_eq(set_two_button.theme_type_variation, &"ActiveWeaponSet")
+	menu._activate_weapon_set(0)
 	menu._select_item(sword.id)
 	menu._equip_selected_item()
 	assert_false(equipment.is_item_equipped(sword.id))
@@ -430,3 +433,44 @@ func _create_equipment_item(
 	item.display_name = display_name
 	item.category = ItemData.Category.ARMOR
 	return item
+
+func test_view_and_edit_second_set_keeps_pause_and_active_weapon() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var was_paused := tree.paused
+	var player := track(preload("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
+	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
+	var swap := player.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var original_set := equipment.get_active_weapon_set()
+	var original_weapon := equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND)
+	var other_set := 1 - original_set
+	var item := preload("res://tests/fixtures/ItemFixtures.gd").equippable(&"menu_spare_weapon", ItemData.EquipSlot.MAIN_HAND)
+	item.category = ItemData.Category.WEAPON
+	inventory.add_item(item)
+	menu.open_inventory()
+	(menu._weapon_set_buttons.get_child(other_set) as Button).pressed.emit()
+	assert_true(menu.is_open())
+	assert_true(tree.paused)
+	assert_false(swap.is_swapping())
+	assert_eq(equipment.get_active_weapon_set(), original_set)
+	assert_eq(menu._detail_popup.weapon_set, other_set)
+	menu._equip_item_by_double_click(item.id)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, other_set), item.id)
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, original_set), original_weapon)
+	menu._select_item(item.id)
+	menu._equip_selected_item()
+	assert_true(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, other_set).is_empty())
+	menu._equip_selected_item()
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND, 0, other_set), item.id)
+	assert_true(tree.paused)
+	assert_true(menu.is_open())
+	assert_false(swap.is_swapping())
+	assert_eq(equipment.get_active_weapon_set(), original_set)
+	menu.close_inventory()
+	assert_eq(tree.paused, was_paused)
+	assert_false(swap.is_swapping())
+	assert_eq(equipment.get_active_weapon_set(), original_set)
+	tree.root.remove_child(player)
+	tree.paused = was_paused
