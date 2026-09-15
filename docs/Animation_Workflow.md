@@ -47,6 +47,14 @@ Player clips are `idle`, `run`, `jump`, `fall`, `attack`, and `guard`. The
 temporary visual component switches the renderer's serialized frame resource
 when the equipped weapon changes; it does not build frames at runtime.
 
+## Stone Golem asset setup
+
+`game/enemy/monsters/stone_golem/StoneGolem.tscn` is a passive boss composition
+with owned character/effect SpriteFrames and frame-keyed AnimationPlayer clips.
+Use `tests/StoneGolemPreview.tscn` to inspect every animation and effect.
+The per-boss README documents source frame counts (block 8, armor buff 10),
+the reversed appearance clip, native collision sizes and the future combat work.
+
 ## When to add AnimationTree
 
 Do not add `AnimationTree` merely to duplicate the gameplay FSM. Add it when the
