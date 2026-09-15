@@ -14,6 +14,7 @@ signal rest_finished
 @export var config: RestConfig
 
 var _health: HealthComponent
+var _magic: MagicComponent
 var _status_effects: StatusEffectComponent
 var _flask_charges: FlaskChargesComponent
 var _timer: float = 0.0
@@ -34,6 +35,7 @@ func on_initialize() -> void:
 	_status_effects = (
 		actor.get_component(StatusEffectComponent) as StatusEffectComponent
 	)
+	_magic = actor.get_component(MagicComponent) as MagicComponent
 	_flask_charges = (
 		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
 	)
@@ -62,6 +64,8 @@ func start_rest() -> bool:
 	_health.heal(_health.get_max_health())
 	if _status_effects != null and _status_effects.is_enabled:
 		_status_effects.clear_debuffs()
+	if _magic != null and _magic.is_enabled:
+		_magic.restore_mana(_magic.get_max_mana())
 	if _flask_charges != null and _flask_charges.is_enabled:
 		_flask_charges.refill_all()
 	rest_started.emit()

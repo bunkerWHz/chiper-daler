@@ -116,3 +116,23 @@ func test_rest_does_not_start_during_another_exclusive_behavior() -> void:
 
 func _on_rest_finished() -> void:
 	_rest_finished_count += 1
+
+func test_rest_refills_mana_and_rejected_rest_does_not() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var player := track(preload("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var magic := player.get_component(MagicComponent) as MagicComponent
+	var rest := player.get_component(RestComponent) as RestComponent
+	var health := player.get_component(HealthComponent) as HealthComponent
+	magic.restore_runtime_state(0.0)
+	health.take_damage(10.0)
+	assert_true(rest.start_rest())
+	assert_eq(magic.get_mana(), magic.get_max_mana())
+	assert_eq(health.get_current_health(), health.get_max_health())
+	magic.restore_runtime_state(1.0)
+	assert_false(rest.start_rest())
+	assert_eq(magic.get_mana(), 1.0)
+	rest._process(rest.config.duration)
+	assert_true(rest.start_rest())
+	assert_eq(magic.get_mana(), magic.get_max_mana())
+	tree.root.remove_child(player)
