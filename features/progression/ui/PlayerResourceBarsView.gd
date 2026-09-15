@@ -6,6 +6,7 @@ class_name PlayerResourceBarsView
 @export_range(0.1, 3600.0, 0.1) var fallback_rage_duration: float = 10.0
 
 var _magic: MagicComponent
+var _inventory: InventoryComponent
 var _stamina: StaminaComponent
 var _progression: ProgressionComponent
 var _status_effects: StatusEffectComponent
@@ -45,6 +46,12 @@ func _ready() -> void:
 
 
 func _bind_actor(target_actor: Actor) -> void:
+	if is_instance_valid(_inventory) and _inventory.inventory_changed.is_connected(_refresh_amber):
+		_inventory.inventory_changed.disconnect(_refresh_amber)
+	_inventory = target_actor.get_component(InventoryComponent) as InventoryComponent
+	if _inventory != null:
+		_inventory.inventory_changed.connect(_refresh_amber)
+	_refresh_amber()
 	_disconnect_respawn()
 	_respawn_component = (
 		target_actor.get_component(PlayerRespawnComponent)
@@ -71,6 +78,12 @@ func _disconnect_respawn() -> void:
 	):
 		_respawn_component.actor_respawned.disconnect(_on_actor_respawned)
 	_respawn_component = null
+
+
+func _refresh_amber() -> void:
+	var label := get_node_or_null("MarginContainer/Bars/AmberValue") as Label
+	if label != null:
+		label.text = "AMBER SHARDS  %d" % (_inventory.get_amber() if is_instance_valid(_inventory) else 0)
 
 
 func _on_actor_respawned(replacement: Actor) -> void:

@@ -8,6 +8,44 @@ signal inventory_changed
 @export var config: InventoryConfig
 
 var _stacks: Array[InventoryStack] = []
+var _amber: int = 0
+var _weapon_upgrades: Dictionary = {}
+
+
+func get_amber() -> int:
+	return _amber
+
+
+func add_amber(amount: int) -> int:
+	if not is_enabled or amount <= 0:
+		return 0
+	_amber += amount
+	inventory_changed.emit()
+	return amount
+
+
+func spend_amber(amount: int) -> bool:
+	if not is_enabled or amount <= 0 or _amber < amount:
+		return false
+	_amber -= amount
+	inventory_changed.emit()
+	return true
+
+
+func get_weapon_upgrade(item_id: StringName) -> int:
+	return int(_weapon_upgrades.get(item_id, 0))
+
+
+func upgrade_weapon(item_id: StringName) -> bool:
+	var item := get_item_data(item_id)
+	if not is_enabled or item == null or item.category != ItemData.Category.WEAPON:
+		return false
+	var level := get_weapon_upgrade(item_id)
+	if level >= 5:
+		return false
+	_weapon_upgrades[item_id] = level + 1
+	inventory_changed.emit()
+	return true
 
 
 func on_initialize() -> void:
@@ -154,15 +192,27 @@ func capture_runtime_state() -> Variant:
 			"item": stack.item,
 			"quantity": stack.quantity,
 		})
-	return result
+	return {"stacks": result, "amber": _amber, "weapon_upgrades": _weapon_upgrades.duplicate()}
 
 
 func restore_runtime_state(state: Variant) -> void:
-	if not state is Array:
+	var entries: Variant = state
+	if state is Array:
+		_amber = 0
+		_weapon_upgrades.clear()
+	if state is Dictionary:
+		entries = state.get("stacks", [])
+		_amber = maxi(int(state.get("amber", 0)), 0)
+		_weapon_upgrades.clear()
+		var upgrades: Variant = state.get("weapon_upgrades", {})
+		if upgrades is Dictionary:
+			for key: Variant in upgrades:
+				_weapon_upgrades[StringName(key)] = clampi(int(upgrades[key]), 0, 5)
+	if not entries is Array:
 		return
 
 	_stacks.clear()
-	for entry: Variant in state:
+	for entry: Variant in entries:
 		if not entry is Dictionary:
 			continue
 		var item: ItemData = entry.get("item") as ItemData

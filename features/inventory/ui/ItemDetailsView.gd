@@ -27,6 +27,9 @@ func get_item_text(item: ItemData) -> String:
 		ItemData.Category.keys()[item.category].capitalize(),
 	])
 	detail_lines.append(item.description)
+	var upgrade := _inventory.get_weapon_upgrade(item.id)
+	if upgrade > 0:
+		detail_lines.append("Amber upgrade: +%d (+%d%% weapon damage)" % [upgrade, upgrade * 10])
 	var owned_quantity := _inventory.get_quantity(item.id)
 	var equipped_quantity := _equipment.get_equipped_item_count(item.id)
 	if item.is_flask():
@@ -66,7 +69,7 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 	if item_stats == null:
 		return
 	lines.append("Damage: %.1f  Defense: %.1f" % [
-		item_stats.damage,
+		item_stats.damage * (1.0 + 0.1 * _inventory.get_weapon_upgrade(item.id)),
 		item_stats.defense,
 	])
 	var equip_slot := item.get_primary_equip_slot()
@@ -80,7 +83,7 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 		return
 	lines.append("Compared with %s: Damage %+.1f / Defense %+.1f" % [
 		equipped.display_name,
-		item_stats.damage - equipped_stats.damage,
+		item_stats.damage * (1.0 + 0.1 * _inventory.get_weapon_upgrade(item.id)) - equipped_stats.damage * (1.0 + 0.1 * _inventory.get_weapon_upgrade(equipped.id)),
 		item_stats.defense - equipped_stats.defense,
 	])
 

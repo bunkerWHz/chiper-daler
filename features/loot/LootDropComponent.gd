@@ -11,6 +11,9 @@ var _has_dropped: bool = false
 
 
 func on_initialize() -> void:
+	if loot_entries.is_empty():
+		disable()
+		return
 	if loot_bag_scene == null or not _has_valid_entry():
 		push_error("LootDropComponent requires a loot bag scene and valid loot")
 		disable()

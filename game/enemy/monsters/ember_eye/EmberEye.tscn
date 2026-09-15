@@ -25,7 +25,6 @@
 [ext_resource type="Script" path="res://features/loot/LootDropComponent.gd" id="21_2yunp"]
 [ext_resource type="PackedScene" path="res://features/loot/LootBag.tscn" id="22_pca3h"]
 [ext_resource type="Script" path="res://features/loot/LootEntry.gd" id="23_evl7p"]
-[ext_resource type="Resource" path="res://game/items/consumables/ExperienceTonic.tres" id="24_eidh6"]
 [ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="25_nvosc"]
 [ext_resource type="Script" path="res://features/combat/DamageNumberComponent.gd" id="26_buecx"]
 [ext_resource type="Script" path="res://features/combat/DamageNumberConfig.gd" id="27_at3g8"]
@@ -81,10 +80,6 @@ size = Vector2(125, 130)
 
 [sub_resource type="Resource" id="Resource_s40u5"]
 script = ExtResource("19_4uc0b")
-
-[sub_resource type="Resource" id="LootEntry_experience_tonic"]
-script = ExtResource("23_evl7p")
-item = ExtResource("24_eidh6")
 
 [sub_resource type="Resource" id="Resource_4hnvh"]
 script = ExtResource("27_at3g8")
@@ -179,7 +174,7 @@ config = SubResource("Resource_s40u5")
 [node name="LootDropComponent" type="Node" parent="_Components" unique_id=234071524 instance=ExtResource("20_u4577")]
 script = ExtResource("21_2yunp")
 loot_bag_scene = ExtResource("22_pca3h")
-loot_entries = Array[ExtResource("23_evl7p")]([SubResource("LootEntry_experience_tonic")])
+loot_entries = Array[ExtResource("23_evl7p")]([])
 
 [node name="DamageNumberComponent" type="Node" parent="_Components" unique_id=986397828 instance=ExtResource("25_nvosc")]
 script = ExtResource("26_buecx")

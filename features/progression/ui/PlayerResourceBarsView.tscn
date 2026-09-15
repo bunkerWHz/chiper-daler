@@ -185,3 +185,9 @@ theme_override_styles/background = SubResource("BarBackground")
 theme_override_styles/fill = SubResource("RageFill")
 max_value = 10.0
 show_percentage = false
+
+[node name="AmberValue" type="Label" parent="MarginContainer/Bars"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "AMBER SHARDS  0"

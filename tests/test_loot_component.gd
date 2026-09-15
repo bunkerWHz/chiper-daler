@@ -96,16 +96,10 @@ func test_persistent_flasks_cannot_enter_loot_tables_or_bags() -> void:
 	assert_true(bag.is_empty())
 
 
-func test_default_enemy_loot_uses_collectible_non_flask_item() -> void:
-	var drop_scene := load(
-		"res://features/loot/LootDropComponent.tscn"
-	) as PackedScene
-	var drop := track(drop_scene.instantiate()) as LootDropComponent
-
-	assert_eq(drop.loot_entries.size(), 1)
-	assert_true(drop.loot_entries[0].is_valid())
-	assert_false(drop.loot_entries[0].item.is_flask())
-	assert_eq(drop.loot_entries[0].item.id, &"experience_tonic")
+func test_default_enemy_loot_has_no_experience_tome() -> void:
+	var scene := load("res://features/loot/LootDropComponent.tscn") as PackedScene
+	var drop := track(scene.instantiate()) as LootDropComponent
+	assert_true(drop.loot_entries.is_empty())
 
 
 func test_full_inventory_leaves_remainder_in_bag() -> void:

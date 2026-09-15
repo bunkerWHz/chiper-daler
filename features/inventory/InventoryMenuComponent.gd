@@ -608,7 +608,8 @@ func _rebuild_inventory_summary() -> void:
 	var visible_weight := 0.0
 	for stack: InventoryStack in visible_stacks:
 		visible_weight += stack.item.weight * stack.quantity
-	_inventory_summary.text = "Bag slots %d / %d    Weight %.2f" % [
+	_inventory_summary.text = "Amber Shards: %d    Bag slots %d / %d    Weight %.2f" % [
+		_inventory.get_amber(),
 		visible_stacks.size(),
 		_inventory.get_capacity(),
 		visible_weight,

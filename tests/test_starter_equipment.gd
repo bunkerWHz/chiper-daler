@@ -81,7 +81,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 	assert_eq(flasks.get_charges(&"health_potion"), 3)
 	assert_eq(flasks.get_charges(&"mana_potion"), 3)
 	assert_eq(flasks.get_charges(&"rage_potion"), 3)
-	assert_eq(inventory.get_quantity(&"experience_tonic"), 2)
+	assert_eq(inventory.get_quantity(&"experience_tonic"), 0)
 	assert_eq(inventory.get_quantity(&"training_arrows"), 20)
 	assert_eq(inventory.get_quantity(&"training_bolts"), 12)
 	assert_true(inventory.get_item_data(&"mana_potion").usable_in_combat)
@@ -90,7 +90,7 @@ func test_real_items_fill_starting_weapon_sets() -> void:
 		inventory.get_item_data(&"training_halberd").get_visual_archetype(),
 		ItemData.VisualArchetype.LANCER
 	)
-	assert_true(inventory.get_item_data(&"experience_tonic").usable_in_combat)
+	assert_true(inventory.get_item_data(&"experience_tonic") == null)
 	assert_eq(
 		equipment.get_equipped_item_id(
 			ItemData.EquipSlot.MAIN_HAND, 0, 0

@@ -344,7 +344,9 @@ func is_ammunition_compatible(
 func get_active_weapon_damage() -> float:
 	var item := get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
 	var item_stats := item.get_equipment_stats() if item != null else null
-	return item_stats.damage if item_stats != null else 0.0
+	if item_stats == null:
+		return 0.0
+	return item_stats.damage * (1.0 + 0.1 * _inventory_component.get_weapon_upgrade(item.id))
 
 
 func get_active_weapon_reach_multiplier() -> float:

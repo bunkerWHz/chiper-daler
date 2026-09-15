@@ -25,8 +25,10 @@ func _run() -> void:
 	health.config = HealthConfig.new()
 	components.add_child(health)
 	var drop := (load("res://features/loot/LootDropComponent.tscn") as PackedScene).instantiate() as LootDropComponent
-	drop.loot_entries[0] = drop.loot_entries[0].duplicate() as LootEntry
-	drop.loot_entries[0].drop_chance = 1.0
+	var entry := LootEntry.new()
+	entry.item = preload("res://game/items/weapons/TrainingSword.tres")
+	entry.drop_chance = 1.0
+	drop.loot_entries = [entry]
 	components.add_child(drop)
 	world.add_child(enemy)
 	# Kill from a physics query callback, matching HitboxComponent.area_entered.
