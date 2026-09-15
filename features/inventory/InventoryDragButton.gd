@@ -4,6 +4,7 @@ class_name InventoryDragButton
 signal data_dropped(data: Dictionary)
 signal drag_finished(successful: bool, pointer_position: Vector2)
 signal double_clicked
+signal context_requested
 
 const KIND_INVENTORY_ITEM: StringName = &"inventory_item"
 const KIND_EQUIPPED_ITEM: StringName = &"equipped_item"
@@ -36,6 +37,11 @@ func _notification(what: int) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button := event as InputEventMouseButton
+		if mouse_button.button_index == MOUSE_BUTTON_RIGHT and mouse_button.pressed:
+			_drag_armed = false
+			accept_event()
+			context_requested.emit()
+			return
 		if mouse_button.button_index == MOUSE_BUTTON_LEFT:
 			if mouse_button.pressed and mouse_button.double_click:
 				_drag_armed = false

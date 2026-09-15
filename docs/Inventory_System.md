@@ -289,3 +289,13 @@ weapon swap. Double-click, Equip/Unequip, drag-and-drop, and item comparisons
 use this viewed set. Opening the inventory initially selects the player's active
 set; closing it does not activate the viewed set. Use Tab outside the inventory
 to switch the character's active weapons.
+
+### Item context actions
+
+Right-click an item in the bag or equipment to open Equip/Unequip, Use,
+Split Stack, and Drop beside the pointer. This replaces the pinned description
+and keeps the inventory paused. Unavailable actions are disabled. Selecting an
+action, clicking outside the popup, or pressing Escape closes it. The permanent
+bottom action row is removed; left-click descriptions and double-click equipment
+remain available. Use retains its existing behavior of closing the inventory
+when a valid item use begins.

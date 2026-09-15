@@ -5,6 +5,22 @@
 [ext_resource type="PackedScene" path="res://features/inventory/ui/ItemDetailsView.tscn" id="2_details"]
 [ext_resource type="Theme" path="res://features/inventory/ui/InventoryTheme.tres" id="3_theme"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_item_actions"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.055, 0.06, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.44, 0.52, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_left = 5
+corner_radius_bottom_right = 5
+
 [node name="InventoryMenuComponent" type="Node"]
 script = ExtResource("1_menu")
 
@@ -115,25 +131,30 @@ layout_mode = 2
 theme_type_variation = &"ActionFeedback"
 autowrap_mode = 2
 
-[node name="Actions" type="HBoxContainer" parent="CanvasLayer/Panel/Main"]
+[node name="ActionMenu" type="PopupPanel" parent="CanvasLayer"]
+size = Vector2i(190, 160)
+theme_override_styles/panel = SubResource("StyleBoxFlat_item_actions")
+theme = ExtResource("3_theme")
+
+[node name="Actions" type="VBoxContainer" parent="CanvasLayer/ActionMenu"]
 layout_mode = 2
 
-[node name="Equip" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
+[node name="Equip" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
 layout_mode = 2
 text = "Equip"
 disabled = true
 
-[node name="Use" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
+[node name="Use" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
 layout_mode = 2
 text = "Use"
 disabled = true
 
-[node name="Split" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
+[node name="Split" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
 layout_mode = 2
 text = "Split Stack"
 disabled = true
 
-[node name="Drop" type="Button" parent="CanvasLayer/Panel/Main/Actions"]
+[node name="Drop" type="Button" parent="CanvasLayer/ActionMenu/Actions"]
 layout_mode = 2
 text = "Drop..."
 disabled = true

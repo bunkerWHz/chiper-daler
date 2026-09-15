@@ -320,7 +320,7 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 		"CanvasLayer/DetailPopup/Margin/Details"
 	) as Label
 	var equip_button := menu.get_node(
-		"CanvasLayer/Panel/Main/Actions/Equip"
+		"CanvasLayer/ActionMenu/Actions/Equip"
 	) as Button
 	assert_false(details.text.contains("Requires"))
 	assert_true(details.text.contains("Compared with Test Sword"))
@@ -472,5 +472,50 @@ func test_view_and_edit_second_set_keeps_pause_and_active_weapon() -> void:
 	assert_eq(tree.paused, was_paused)
 	assert_false(swap.is_swapping())
 	assert_eq(equipment.get_active_weapon_set(), original_set)
+	tree.root.remove_child(player)
+	tree.paused = was_paused
+
+func test_right_click_replaces_pinned_details_with_item_actions() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var was_paused := tree.paused
+	var player := track(preload("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
+	var item := preload("res://tests/fixtures/ItemFixtures.gd").equippable(&"context_weapon", ItemData.EquipSlot.MAIN_HAND)
+	item.category = ItemData.Category.WEAPON
+	inventory.add_item(item)
+	menu.open_inventory()
+	menu._select_item(item.id)
+	assert_true(menu._detail_popup.visible)
+	var cell: InventoryDragButton
+	for child in menu._grid.get_children():
+		if child.drag_payload.get("item_id", &"") == item.id:
+			cell = child
+	assert_true(cell != null)
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_RIGHT
+	click.pressed = true
+	cell._gui_input(click)
+	assert_true(menu._action_menu.visible)
+	assert_false(menu._detail_popup.visible)
+	assert_false(menu._details_pinned)
+	assert_eq(menu._selected_item_id, item.id)
+	assert_true(tree.paused)
+	menu.show_item_details(item.id)
+	menu.hide_hover_details()
+	assert_false(menu._detail_popup.visible)
+	assert_false(menu._equip_button.disabled)
+	menu._equip_button.pressed.emit()
+	assert_false(menu._action_menu.visible)
+	assert_true(equipment.is_item_equipped(item.id))
+	assert_true(menu.is_open())
+	assert_true(tree.paused)
+	menu._open_item_actions(item.id)
+	assert_eq(menu._equip_button.text, "Unequip")
+	menu.close_inventory()
+	assert_false(menu._action_menu.visible)
+	assert_eq(tree.paused, was_paused)
 	tree.root.remove_child(player)
 	tree.paused = was_paused

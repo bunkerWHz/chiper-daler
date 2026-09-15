@@ -17,6 +17,7 @@ var _attributes: CharacterAttributesComponent
 var _item_use: ItemUseComponent
 var _flask_charges: FlaskChargesComponent
 var _panel: Control
+var _action_menu: PopupPanel
 var _grid: GridContainer
 var _equipment_text: Label
 var _detail_popup: ItemDetailsView
@@ -75,6 +76,7 @@ func _ready() -> void:
 		return
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_panel = get_node_or_null("CanvasLayer/Panel") as Control
+	_action_menu = get_node_or_null("CanvasLayer/ActionMenu") as PopupPanel
 	_grid = get_node_or_null(
 		"CanvasLayer/Panel/Main/Content/Inventory/Scroll/Grid"
 	) as GridContainer
@@ -85,16 +87,16 @@ func _ready() -> void:
 		"CanvasLayer/DetailPopup"
 	) as ItemDetailsView
 	_equip_button = get_node_or_null(
-		"CanvasLayer/Panel/Main/Actions/Equip"
+		"CanvasLayer/ActionMenu/Actions/Equip"
 	) as Button
 	_drop_button = get_node_or_null(
-		"CanvasLayer/Panel/Main/Actions/Drop"
+		"CanvasLayer/ActionMenu/Actions/Drop"
 	) as Button
 	_use_button = get_node_or_null(
-		"CanvasLayer/Panel/Main/Actions/Use"
+		"CanvasLayer/ActionMenu/Actions/Use"
 	) as Button
 	_split_button = get_node_or_null(
-		"CanvasLayer/Panel/Main/Actions/Split"
+		"CanvasLayer/ActionMenu/Actions/Split"
 	) as Button
 	_drop_dialog = get_node_or_null("CanvasLayer/DropDialog") as ConfirmationDialog
 	_drop_quantity = get_node_or_null(
@@ -118,6 +120,7 @@ func _ready() -> void:
 	_action_feedback = get_node_or_null("CanvasLayer/Panel/Main/ActionFeedback") as Label
 	if (
 		_panel == null
+		or _action_menu == null
 		or _grid == null
 		or _equipment_text == null
 		or _detail_popup == null
@@ -183,6 +186,8 @@ func open_inventory() -> void:
 
 func close_inventory() -> void:
 	var was_open := is_open()
+	if _action_menu != null:
+		_action_menu.hide()
 	if _drop_dialog != null:
 		_drop_dialog.hide()
 	if _panel != null:
@@ -237,6 +242,7 @@ func _rebuild_grid() -> void:
 		button.drop_target = InventoryDragButton.TARGET_INVENTORY
 		button.data_dropped.connect(_on_inventory_data_dropped)
 		button.pressed.connect(_select_item.bind(stack.item.id))
+		button.context_requested.connect(_open_item_actions.bind(stack.item.id))
 		button.double_clicked.connect(
 			_equip_item_by_double_click.bind(stack.item.id)
 		)
@@ -258,6 +264,7 @@ func _rebuild_grid() -> void:
 
 
 func _select_item(item_id: StringName) -> void:
+	_action_menu.hide()
 	_action_feedback.hide()
 	_selected_item_id = item_id
 	_details_pinned = true
@@ -268,6 +275,7 @@ func _select_item(item_id: StringName) -> void:
 func _rebuild_details() -> void:
 	var item := _inventory.get_item_data(_selected_item_id)
 	if item == null:
+		_action_menu.hide()
 		_details_pinned = false
 		_detail_popup.visible = false
 		_equip_button.disabled = true
@@ -319,6 +327,9 @@ func show_quick_slot_details(slot_index: int) -> void:
 
 
 func hide_hover_details() -> void:
+	if _action_menu.visible:
+		_detail_popup.hide()
+		return
 	if _details_pinned:
 		var selected := _inventory.get_item_data(_selected_item_id)
 		if selected != null:
@@ -330,6 +341,8 @@ func hide_hover_details() -> void:
 
 
 func _show_details_text(text: String) -> void:
+	if _action_menu.visible:
+		return
 	_detail_popup.set_text(text)
 	_detail_popup.visible = true
 	_position_detail_popup()
@@ -351,6 +364,7 @@ func _position_detail_popup() -> void:
 
 
 func _equip_selected_item() -> void:
+	_action_menu.hide()
 	var item := _inventory.get_item_data(_selected_item_id)
 	var equip_slot := (
 		item.get_primary_equip_slot()
@@ -401,6 +415,7 @@ func _drop_selected_item() -> void:
 
 
 func _request_drop_selected_item() -> void:
+	_action_menu.hide()
 	var quantity := _inventory.get_quantity(_selected_item_id)
 	if quantity <= 0:
 		return
@@ -421,11 +436,13 @@ func _confirm_drop_selected_item() -> void:
 
 
 func _use_selected_item() -> void:
+	_action_menu.hide()
 	if _item_use != null and _item_use.begin_inventory_item_use(_selected_item_id):
 		close_inventory()
 
 
 func _split_selected_stack() -> void:
+	_action_menu.hide()
 	if _inventory.split_stack(_selected_item_id):
 		_rebuild()
 
@@ -520,6 +537,7 @@ func _add_equipment_slot_button(
 		_on_equipment_data_dropped.bind(slot, index, weapon_set)
 	)
 	if item != null:
+		button.context_requested.connect(_open_item_actions.bind(item.id))
 		button.drag_payload = {
 			"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,
 			"item_id": item.id,
@@ -563,6 +581,7 @@ func _unequip_equipped_item_by_double_click(
 
 
 func _activate_weapon_set(set_index: int) -> void:
+	_action_menu.hide()
 	if set_index < 0 or set_index >= EquipmentComponent.WEAPON_SET_COUNT:
 		return
 	_viewed_weapon_set = set_index
@@ -775,3 +794,18 @@ func _is_item_equipped_in_view(item: ItemData) -> bool:
 	if slot in [ItemData.EquipSlot.MAIN_HAND, ItemData.EquipSlot.OFF_HAND]:
 		return _equipment.get_equipped_item_id(slot, 0, _viewed_weapon_set) == item.id
 	return _equipment.is_item_equipped(item.id)
+
+func _open_item_actions(item_id: StringName) -> void:
+	if not is_open() or _inventory.get_item_data(item_id) == null:
+		return
+	_selected_item_id = item_id
+	_details_pinned = false
+	_detail_popup.hide()
+	_action_feedback.hide()
+	_rebuild_grid()
+	_rebuild_details()
+	var popup_size := Vector2i(190, 160)
+	var viewport_size := Vector2i(get_viewport().get_visible_rect().size)
+	var position := Vector2i(get_viewport().get_mouse_position())
+	position = position.clamp(Vector2i.ZERO, (viewport_size - popup_size).max(Vector2i.ZERO))
+	_action_menu.popup(Rect2i(position, popup_size))
