@@ -1,0 +1,46 @@
+[gd_scene format=4]
+
+[ext_resource type="TileSet" path="res://assets/tilesets/mossy/MossyTileSet.tres" id="1_hfqw1"]
+
+[node name="TileSetWorkshop" type="Node2D" unique_id=1808062753]
+editor_description = "Mossy TileSet editing bench. Select Terrain/Solid, then TileSet. See levels/workshops/README.md. Visual samples only; collisions and terrains are not configured."
+
+[node name="Terrain" type="Node2D" parent="." unique_id=463339963]
+
+[node name="BackDecor" type="TileMapLayer" parent="Terrain" unique_id=758393653]
+z_index = -20
+tile_set = ExtResource("1_hfqw1")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="Solid" type="TileMapLayer" parent="Terrain" unique_id=1264650224]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAACAAAAAAACAAAAAAAAAAEAAAAAAAEAAAABAAEAAAABAAEAAAACAAEAAAACAAEAAAAAAAIAAAAAAAIAAAABAAIAAAABAAIAAAACAAIAAAACAAIAAAAEAAAAAAADAAAAAAAEAAEAAAADAAEAAAAEAAIAAAADAAIAAAAGAAEAAAADAAMAAAA=")
+tile_set = ExtResource("1_hfqw1")
+navigation_enabled = false
+
+[node name="OneWayPlatforms" type="TileMapLayer" parent="Terrain" unique_id=1510423088]
+editor_description = "Empty test area. One-way collision must be authored on suitable tiles in the TileSet."
+tile_set = ExtResource("1_hfqw1")
+navigation_enabled = false
+
+[node name="FrontDecor" type="TileMapLayer" parent="Terrain" unique_id=1935154959]
+z_index = 20
+tile_set = ExtResource("1_hfqw1")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="PreviewCamera" type="Camera2D" parent="." unique_id=112089764]
+position = Vector2(1792, 768)
+zoom = Vector2(0.28, 0.28)
+
+[node name="Instructions" type="CanvasLayer" parent="." unique_id=73004709]
+
+[node name="Guide" type="Label" parent="Instructions" unique_id=974742418]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 24.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 18
+text = "Mossy — мастерская тайлсета
+Редактор: Terrain/Solid → TileSet — настройка, TileMap — рисование.
+Образцы: блок 3×3, колонна, одиночный тайл. Коллизии и Terrain ещё не настроены."
