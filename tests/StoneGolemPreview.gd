@@ -41,6 +41,10 @@ func _ready() -> void:
 	replay.text = "Проиграть заново"
 	replay.pressed.connect(play_selected)
 	panel.add_child(replay)
+	var interrupt := Button.new()
+	interrupt.text = "Сбить каст лазера"
+	interrupt.pressed.connect(interrupt_laser_cast)
+	panel.add_child(interrupt)
 	var facing := CheckButton.new()
 	facing.text = "Смотреть влево"
 	facing.toggled.connect(_set_facing)
@@ -76,6 +80,23 @@ func _set_facing(flipped: bool) -> void:
 	var effect := golem.get_node("_Visual/LaserBeam") as AnimatedSprite2D
 	effect.flip_h = flipped
 	effect.position.x = -251.0 if flipped else -49.0
+
+
+func interrupt_laser_cast() -> bool:
+	if timeline.current_animation not in [&"laser", &"laser_cast"]:
+		return false
+	# The last character-frame key is the release boundary, shared with the beam.
+	var cast := timeline.get_animation(&"laser")
+	var track := cast.find_track(^"AnimatedSprite2D:frame", Animation.TYPE_VALUE)
+	var release_time := cast.track_get_key_time(track, cast.track_get_key_count(track) - 1)
+	if timeline.current_animation_position >= release_time:
+		status.text = "Луч уже выпущен."
+		return false
+	timeline.stop()
+	timeline.play(&"idle")
+	timeline.advance(0.0)
+	status.text = "Каст сбит — луч не выпущен."
+	return true
 
 
 func _process(delta: float) -> void:
