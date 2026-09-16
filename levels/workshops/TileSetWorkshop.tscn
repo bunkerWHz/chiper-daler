@@ -1,9 +1,10 @@
 [gd_scene format=4]
 
 [ext_resource type="TileSet" path="res://assets/tilesets/mossy/MossyTileSet.tres" id="1_hfqw1"]
+[ext_resource type="TileSet" path="res://assets/tilesets/mossy/MossyOneWayTileSet.tres" id="2_one_way"]
 
 [node name="TileSetWorkshop" type="Node2D" unique_id=1808062753]
-editor_description = "Mossy Ground: complete 47-tile corner/side terrain and 8 reusable patterns. See levels/workshops/README.md. Collision is not configured."
+editor_description = "Mossy workshop: solid terrain and separate one-way platforms. Enable Debug > Visible Collision Shapes when running. See README.md."
 
 [node name="Terrain" type="Node2D" parent="." unique_id=463339963]
 
@@ -19,8 +20,9 @@ tile_set = ExtResource("1_hfqw1")
 navigation_enabled = false
 
 [node name="OneWayPlatforms" type="TileMapLayer" parent="Terrain" unique_id=1510423088]
-editor_description = "Empty test area. One-way collision must be authored on suitable tiles in the TileSet."
-tile_set = ExtResource("1_hfqw1")
+editor_description = "One-way platforms: separate TileSet, 4 tiles, 2 patterns. Jump through from below; land from above."
+tile_map_data = PackedByteArray("AAAIAA4AAAAAAAMAAAAJAA4AAAABAAMAAAAKAA4AAAABAAMAAAALAA4AAAABAAMAAAAMAA4AAAACAAMAAAAQAA4AAAADAAMAAAA=")
+tile_set = ExtResource("2_one_way")
 navigation_enabled = false
 
 [node name="FrontDecor" type="TileMapLayer" parent="Terrain" unique_id=1935154959]
@@ -30,8 +32,8 @@ collision_enabled = false
 navigation_enabled = false
 
 [node name="PreviewCamera" type="Camera2D" parent="." unique_id=112089764]
-position = Vector2(7680, 3072)
-zoom = Vector2(0.075, 0.075)
+position = Vector2(7680, 3840)
+zoom = Vector2(0.07, 0.07)
 
 [node name="Instructions" type="CanvasLayer" parent="." unique_id=73004709]
 
@@ -41,7 +43,7 @@ offset_top = 20.0
 offset_right = 24.0
 offset_bottom = 20.0
 theme_override_font_sizes/font_size = 18
-text = "Mossy — Terrain и паттерны
-Terrain/Solid → TileMap → Terrains → Mossy Ground → Connect.
-Patterns: блок, широкий блок, платформа, колонна; ступени, арка, кольцо, крест.
-Коллизии пока не настроены."
+text = "Mossy — земля и платформы
+Solid → Terrains → Mossy Ground → Connect; готовые формы → Patterns.
+OneWayPlatforms → Patterns: проходимые снизу платформы (нижний ряд).
+Debug → Visible Collision Shapes: показать физические границы."
