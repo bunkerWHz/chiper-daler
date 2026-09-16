@@ -14,5 +14,5 @@
 `workshops/BWForestTileSetWorkshop.tscn` — такой же стенд для чёрно-белого
 набора BWForest, с собственными ресурсами земли и односторонних платформ.
 
-`workshops/CaveTileSetWorkshop.tscn` — каталог модульных деталей пещеры:
-сплошные блоки, односторонние платформы и декор. [Инструкция Cave](workshops/Cave.md).
+`workshops/CaveTileSetWorkshop.tscn` — основа и облицовка пещеры, готовые
+колонна, уступ, стена и потолок, отдельные платформы. [Инструкция Cave](workshops/Cave.md).

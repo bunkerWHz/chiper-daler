@@ -71,8 +71,9 @@
 Чёрно-белый вариант: `assets/tilesets/bw_forest/BWForestTileSet.tres`, стенд —
 `levels/workshops/BWForestTileSetWorkshop.tscn`. Оба набора имеют одинаковую
 сетку, паттерны, автосоединение и коллизии, но независимые ресурсы.
-Набор Cave находится в `assets/tilesets/cave/`; это модульные детали без
-автосоединения Terrain. Стенд: `levels/workshops/CaveTileSetWorkshop.tscn`,
+Набор Cave находится в `assets/tilesets/cave/`: физическая заливка отдельно
+от каменной облицовки без коллизий; готовые конструкции — в `game/level/cave/`.
+Автосоединения Terrain нет. Стенд: `levels/workshops/CaveTileSetWorkshop.tscn`,
 [правила размещения](../levels/workshops/Cave.md).
 Мастерская хранит образцы раскладки, внешний `.tres` — настройки самого набора.
 

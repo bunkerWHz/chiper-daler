@@ -8,8 +8,9 @@
 | BWForest | `BWForestTileSetWorkshop.tscn` | `assets/tilesets/bw_forest/` |
 | Cave | `CaveTileSetWorkshop.tscn` | `assets/tilesets/cave/` |
 
-Cave — модульные каменные детали с собственной нарезкой, паттернами
-и коллизиями, без Terrain Connect. [Инструкция Cave](Cave.md).
+Cave — чёрная физическая основа, каменная облицовка без коллизий,
+готовые конструкции и самостоятельные платформы. Без Terrain Connect.
+[Инструкция Cave](Cave.md).
 Дальнейшие настройки Forest относятся к GreenForest и BWForest.
 
 BWForest использует `assets/GreenForest Assets/BWForest/bw_tileset.png`.

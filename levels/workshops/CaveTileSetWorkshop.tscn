@@ -1,50 +1,84 @@
-[gd_scene format=4]
+[gd_scene format=3]
 
-[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveTileSet.tres" id="1_nprda"]
-[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveOneWayTileSet.tres" id="2_sljo4"]
-[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveDecorTileSet.tres" id="3_7ok6y"]
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveFillTileSet.tres" id="1_ec4pc"]
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveTileSet.tres" id="2_g4gx5"]
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveOneWayTileSet.tres" id="3_hmsn5"]
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveTrimTileSet.tres" id="4_7mipj"]
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveDecorTileSet.tres" id="5_gl0lc"]
+[ext_resource type="PackedScene" path="res://game/level/cave/CaveColumn.tscn" id="6_ufl07"]
+[ext_resource type="PackedScene" path="res://game/level/cave/CaveLedge.tscn" id="7_lgljo"]
+[ext_resource type="PackedScene" path="res://game/level/cave/CaveWall.tscn" id="8_k31lj"]
+[ext_resource type="PackedScene" path="res://game/level/cave/CaveCeiling.tscn" id="9_ufi5n"]
 
-[node name="CaveTileSetWorkshop" type="Node2D" unique_id=640844092]
-editor_description = "Native-size modular Cave pieces. Select a layer and use Patterns. No terrain auto-connect; see Cave.md."
+[node name="CaveTileSetWorkshop" type="Node2D" unique_id=1216484531]
 
-[node name="Terrain" type="Node2D" parent="." unique_id=724296807]
+[node name="Terrain" type="Node2D" parent="." unique_id=944245830]
 
-[node name="Solid" type="TileMapLayer" parent="Terrain" unique_id=996553306]
-tile_map_data = PackedByteArray("AAAQAAwAAAAAAAAAAAAwAAwAAQAAAAAAAABQAAwAAgAAAAAAAABwAAwAAwAAAAAAAACQAAwABAAAAAAAAAAQACQABQAAAAAAAAAwACQABgAAAAAAAABQACQABwAAAAAAAABwACQACAAAAAAAAACQACQACQAAAAAAAAAQADwACgAAAAAAAAAwADwACwAAAAAAAABQADwADAAAAAAAAABwADwADQAAAAAAAACQADwADgAAAAAAAAAQAFQADwAAAAAAAAAwAFQAEAAAAAAAAABQAFQAEQAAAAAAAABwAFQAEgAAAAAAAACQAFQAEwAAAAAAAAAQAGwAFAAAAAAAAAAwAGwAFQAAAAAAAABQAGwAFgAAAAAAAABwAGwAFwAAAAAAAACQAGwAGAAAAAAAAAAQAIQAGQAAAAAAAAAwAIQAGgAAAAAAAABQAIQAGwAAAAAAAABwAIQAHAAAAAAAAACQAIQAHQAAAAAAAAAQAJwAHgAAAAAAAAAwAJwAHwAAAAAAAABQAJwAIAAAAAAAAABwAJwAIQAAAAAAAACQAJwAIgAAAAAAAAAQALQAIwAAAAAAAAAwALQAJAAAAAAAAAA=")
-tile_set = ExtResource("1_nprda")
+[node name="Solid" type="TileMapLayer" parent="Terrain" unique_id=432328458]
+tile_set = ExtResource("1_ec4pc")
 navigation_enabled = false
 
-[node name="OneWayPlatforms" type="TileMapLayer" parent="Terrain" unique_id=141221423]
-tile_map_data = PackedByteArray("AAAQAEgA//////////8wAEgA//////////9QAEgA//////////9wAEgA//////////+QAEgA//////////8QAGAA//////////8wAGAA//////////9QAGAA//////////9wAGAA//////////+QAGAA//////////8QAHgA//////////8QANQAAAAAAAAAAAAwANQAAQAAAAAAAABQANQAAgAAAAAAAABwANQAAwAAAAAAAACQANQABAAAAAAAAAAQAOwABQAAAAAAAAAwAOwABgAAAAAAAABQAOwABwAAAAAAAABwAOwACAAAAAAAAACQAOwACQAAAAAAAAAQAAQBCgAAAAAAAAA=")
-tile_set = ExtResource("2_sljo4")
+[node name="StandalonePlatforms" type="TileMapLayer" parent="Terrain" unique_id=1773154120]
+tile_map_data = PackedByteArray(0, 0, 23, 0, 12, 0, 26, 0, 0, 0, 0, 0, 0, 0)
+tile_set = ExtResource("2_g4gx5")
 navigation_enabled = false
 
-[node name="BackDecor" type="TileMapLayer" parent="Terrain" unique_id=1973376339]
+[node name="OneWayPlatforms" type="TileMapLayer" parent="Terrain" unique_id=1414074684]
+tile_map_data = PackedByteArray(0, 0, 22, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0)
+tile_set = ExtResource("3_hmsn5")
+navigation_enabled = false
+
+[node name="Trim" type="TileMapLayer" parent="Terrain" unique_id=2137738612]
+z_index = 10
+tile_set = ExtResource("4_7mipj")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="BackDecor" type="TileMapLayer" parent="Terrain" unique_id=1929154158]
 z_index = -20
-tile_map_data = PackedByteArray("AAAQAGEA//////////8wAGEA//////////9QAGEA//////////9wAGEA//////////+QAGEA//////////8QAHkA//////////8wAHkA//////////9QAHkA//////////9wAHkA//////////+QAHkA//////////8QAJEA//////////8wAJEA//////////9QAJEA//////////9wAJEA//////////+QAJEA//////////8QAKkA//////////8wAKkA//////////9QAKkA//////////9wAKkA//////////+QAKkA//////////8QAMEA//////////8wAMEA//////////9QAMEA//////////9wAMEA//////////+QAMEA//////////8QANkA//////////8wANkA//////////9QANkA//////////9wANkA//////////+QANkA//////////8QAPEA//////////8wAPEA//////////9QAPEA//////////9wAPEA//////////+QAPEA//////////8QAAkB//////////8wAAkB//////////9QAAkB//////////9wAAkB//////////+QAAkB//////////8QACEB//////////8wACEB//////////9QACEB//////////9wACEB//////////+QACEB//////////8QADkB//////////8wADkB//////////9QADkB//////////9wADkB//////////+QADkB//////////8QAFEB//////////8wAFEB//////////9QAFEB//////////9wAFEB//////////+QAFEB//////////8QAGkB//////////8wAGkB//////////9QAGkB//////////9wAGkB//////////+QAGkB//////////8QAIEB//////////8wAIEB//////////9QAIEB//////////8QACQBAAAAAAAAAAAwACQBAQAAAAAAAABQACQBAgAAAAAAAABwACQBAwAAAAAAAACQACQBBAAAAAAAAAAQADwBBQAAAAAAAAAwADwBBgAAAAAAAABQADwBBwAAAAAAAABwADwBCAAAAAAAAACQADwBCQAAAAAAAAAQAFQBCgAAAAAAAAAwAFQBCwAAAAAAAABQAFQBDAAAAAAAAABwAFQBDQAAAAAAAACQAFQBDgAAAAAAAAAQAGwBDwAAAAAAAAAwAGwBEAAAAAAAAABQAGwBEQAAAAAAAABwAGwBEgAAAAAAAACQAGwBEwAAAAAAAAAQAIQBFAAAAAAAAAAwAIQBFQAAAAAAAABQAIQBFgAAAAAAAABwAIQBFwAAAAAAAACQAIQBGAAAAAAAAAAQAJwBGQAAAAAAAAAwAJwBGgAAAAAAAABQAJwBGwAAAAAAAABwAJwBHAAAAAAAAACQAJwBHQAAAAAAAAAQALQBHgAAAAAAAAAwALQBHwAAAAAAAABQALQBIAAAAAAAAABwALQBIQAAAAAAAACQALQBIgAAAAAAAAAQAMwBIwAAAAAAAAAwAMwBJAAAAAAAAABQAMwBJQAAAAAAAABwAMwBJgAAAAAAAACQAMwBJwAAAAAAAAAQAOQBKAAAAAAAAAAwAOQBKQAAAAAAAABQAOQBKgAAAAAAAABwAOQBKwAAAAAAAACQAOQBLAAAAAAAAAAQAPwBLQAAAAAAAAAwAPwBLgAAAAAAAABQAPwBLwAAAAAAAABwAPwBMAAAAAAAAACQAPwBMQAAAAAAAAAQABQCMgAAAAAAAAAwABQCMwAAAAAAAABQABQCNAAAAAAAAABwABQCNQAAAAAAAACQABQCNgAAAAAAAAAQACwCNwAAAAAAAAAwACwCOAAAAAAAAABQACwCOQAAAAAAAABwACwCOgAAAAAAAACQACwCOwAAAAAAAAAQAEQCPAAAAAAAAAAwAEQCPQAAAAAAAABQAEQCPgAAAAAAAAA=")
-tile_set = ExtResource("3_7ok6y")
+tile_set = ExtResource("5_gl0lc")
 collision_enabled = false
 navigation_enabled = false
 
-[node name="FrontDecor" type="TileMapLayer" parent="Terrain" unique_id=731187975]
+[node name="FrontDecor" type="TileMapLayer" parent="Terrain" unique_id=139687113]
 z_index = 20
-tile_set = ExtResource("3_7ok6y")
+tile_set = ExtResource("5_gl0lc")
 collision_enabled = false
 navigation_enabled = false
 
-[node name="PreviewCamera" type="Camera2D" parent="." unique_id=98044292]
-position = Vector2(5120, 3072)
-zoom = Vector2(0.105, 0.105)
+[node name="Structures" type="Node2D" parent="." unique_id=1551546871]
 
-[node name="Instructions" type="CanvasLayer" parent="." unique_id=688091596]
+[node name="CaveColumn" type="Node2D" parent="Structures" unique_id=1870958540 instance=ExtResource("6_ufl07")]
+editor_description = "One solid rectangle with nonphysical stone trim. Native pixel sizes, unit sprite/collision scales. See levels/workshops/Cave.md."
+metadata/geometry_size = Vector2i(768, 1152)
 
-[node name="Guide" type="Label" parent="Instructions" unique_id=1882002414]
+[node name="CaveLedge" type="Node2D" parent="Structures" unique_id=47956137 instance=ExtResource("7_lgljo")]
+editor_description = "One solid rectangle with nonphysical stone trim. Native pixel sizes, unit sprite/collision scales. See levels/workshops/Cave.md."
+position = Vector2(1024, 896)
+metadata/geometry_size = Vector2i(1152, 384)
+
+[node name="CaveWall" type="Node2D" parent="Structures" unique_id=192071526 instance=ExtResource("8_k31lj")]
+editor_description = "One solid rectangle with nonphysical stone trim. Native pixel sizes, unit sprite/collision scales. See levels/workshops/Cave.md."
+position = Vector2(2560, 0)
+metadata/geometry_size = Vector2i(384, 1152)
+
+[node name="CaveCeiling" type="Node2D" parent="Structures" unique_id=1915951006 instance=ExtResource("9_ufi5n")]
+editor_description = "One solid rectangle with nonphysical stone trim. Native pixel sizes, unit sprite/collision scales. See levels/workshops/Cave.md."
+position = Vector2(1024, -448)
+metadata/geometry_size = Vector2i(1152, 384)
+
+[node name="PreviewCamera" type="Camera2D" parent="." unique_id=830778670]
+position = Vector2(1472, 416)
+zoom = Vector2(0.32, 0.32)
+
+[node name="Instructions" type="CanvasLayer" parent="." unique_id=1687061102]
+
+[node name="Guide" type="Label" parent="Instructions" unique_id=972280717]
 offset_left = 20.0
 offset_top = 16.0
 offset_right = 20.0
 offset_bottom = 16.0
 theme_override_font_sizes/font_size = 18
-text = "Cave — готовые каменные детали
-Выберите Solid, OneWayPlatforms или BackDecor → TileMap → Patterns.
-Одна деталь = один штамп. Сетка 64 px; рисунки сохранены в исходном размере.
-Автосоединения Terrain нет. Коллизии: Debug → Visible Collision Shapes."
+text = "Cave — основа и облицовка
+Готовые конструкции: Structures. Основа: Terrain/Solid → Patterns.
+Камни без физики: Trim. Отдельные площадки: StandalonePlatforms / OneWayPlatforms."

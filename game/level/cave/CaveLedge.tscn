@@ -1,0 +1,123 @@
+[gd_scene format=4]
+
+[ext_resource type="TileSet" path="res://assets/tilesets/cave/CaveFillTileSet.tres" id="1_22wm5"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - Floor.png" id="2_7mr8f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6kvrl"]
+size = Vector2(1152, 384)
+
+[node name="CaveLedge" type="Node2D" unique_id=47956137]
+editor_description = "One solid rectangle with nonphysical stone trim. Native pixel sizes, unit sprite/collision scales. See levels/workshops/Cave.md."
+metadata/geometry_size = Vector2i(1152, 384)
+
+[node name="Fill" type="TileMapLayer" parent="." unique_id=1357501918]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAALAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAANAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAACAAEAAAAAAAAAAAADAAEAAAAAAAAAAAAEAAEAAAAAAAAAAAAFAAEAAAAAAAAAAAAGAAEAAAAAAAAAAAAHAAEAAAAAAAAAAAAIAAEAAAAAAAAAAAAJAAEAAAAAAAAAAAAKAAEAAAAAAAAAAAALAAEAAAAAAAAAAAAMAAEAAAAAAAAAAAANAAEAAAAAAAAAAAAOAAEAAAAAAAAAAAAPAAEAAAAAAAAAAAAQAAEAAAAAAAAAAAARAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAAEAAIAAAAAAAAAAAAFAAIAAAAAAAAAAAAGAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAIAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAIAAAAAAAAAAAAOAAIAAAAAAAAAAAAPAAIAAAAAAAAAAAAQAAIAAAAAAAAAAAARAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAFAAMAAAAAAAAAAAAGAAMAAAAAAAAAAAAHAAMAAAAAAAAAAAAIAAMAAAAAAAAAAAAJAAMAAAAAAAAAAAAKAAMAAAAAAAAAAAALAAMAAAAAAAAAAAAMAAMAAAAAAAAAAAANAAMAAAAAAAAAAAAOAAMAAAAAAAAAAAAPAAMAAAAAAAAAAAAQAAMAAAAAAAAAAAARAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAAQAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAAJAAQAAAAAAAAAAAAKAAQAAAAAAAAAAAALAAQAAAAAAAAAAAAMAAQAAAAAAAAAAAANAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAAQAAQAAAAAAAAAAAARAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAABAAUAAAAAAAAAAAACAAUAAAAAAAAAAAADAAUAAAAAAAAAAAAEAAUAAAAAAAAAAAAFAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAAAAAAAAAAIAAUAAAAAAAAAAAAJAAUAAAAAAAAAAAAKAAUAAAAAAAAAAAALAAUAAAAAAAAAAAAMAAUAAAAAAAAAAAANAAUAAAAAAAAAAAAOAAUAAAAAAAAAAAAPAAUAAAAAAAAAAAAQAAUAAAAAAAAAAAARAAUAAAAAAAAAAAA=")
+tile_set = ExtResource("1_22wm5")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="Geometry" type="StaticBody2D" parent="." unique_id=192156225]
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry" unique_id=957421680]
+position = Vector2(576, 192)
+shape = SubResource("RectangleShape2D_6kvrl")
+
+[node name="Trim" type="Node2D" parent="." unique_id=240584619]
+z_index = 10
+
+[node name="Left0" type="Sprite2D" parent="Trim" unique_id=805286051]
+position = Vector2(-12, 0)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1720, 53, 216, 354)
+region_filter_clip_enabled = true
+
+[node name="Left1" type="Sprite2D" parent="Trim" unique_id=1985325682]
+position = Vector2(-12, 334)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1720, 53, 216, 50)
+region_filter_clip_enabled = true
+
+[node name="Right0" type="Sprite2D" parent="Trim" unique_id=970855969]
+position = Vector2(948, 0)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1344, 86, 216, 354)
+region_filter_clip_enabled = true
+
+[node name="Right1" type="Sprite2D" parent="Trim" unique_id=721538540]
+position = Vector2(948, 334)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1344, 86, 216, 50)
+region_filter_clip_enabled = true
+
+[node name="Bottom0" type="Sprite2D" parent="Trim" unique_id=2045855146]
+position = Vector2(0, 179)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1276, 533, 353, 217)
+region_filter_clip_enabled = true
+
+[node name="Bottom1" type="Sprite2D" parent="Trim" unique_id=573784234]
+position = Vector2(333, 179)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1276, 533, 353, 217)
+region_filter_clip_enabled = true
+
+[node name="Bottom2" type="Sprite2D" parent="Trim" unique_id=530979458]
+position = Vector2(666, 179)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1276, 533, 353, 217)
+region_filter_clip_enabled = true
+
+[node name="Bottom3" type="Sprite2D" parent="Trim" unique_id=505495097]
+position = Vector2(999, 179)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(1276, 533, 153, 217)
+region_filter_clip_enabled = true
+
+[node name="Top0" type="Sprite2D" parent="Trim" unique_id=96353031]
+position = Vector2(0, -12)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(495, 72, 377, 75)
+region_filter_clip_enabled = true
+
+[node name="Top1" type="Sprite2D" parent="Trim" unique_id=1044831024]
+position = Vector2(357, -12)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(495, 72, 377, 75)
+region_filter_clip_enabled = true
+
+[node name="Top2" type="Sprite2D" parent="Trim" unique_id=4931313]
+position = Vector2(714, -12)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(495, 72, 377, 75)
+region_filter_clip_enabled = true
+
+[node name="Top3" type="Sprite2D" parent="Trim" unique_id=482196639]
+position = Vector2(1071, -12)
+texture = ExtResource("2_7mr8f")
+centered = false
+region_enabled = true
+region_rect = Rect2(495, 72, 81, 75)
+region_filter_clip_enabled = true
