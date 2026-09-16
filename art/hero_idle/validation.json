@@ -1,0 +1,25 @@
+{
+  "source": "C:\\Users\\bunkerWHz\\Desktop\\Blender drow\\CutOutAnim.blend",
+  "action": "Hero_Idle_Unarmed",
+  "blender_fps": 24,
+  "playback_frames": [
+    1,
+    48
+  ],
+  "closing_key": 49,
+  "export_fps": 12,
+  "export_frames": 24,
+  "frame_size": [
+    512,
+    512
+  ],
+  "max_leg_vertex_drift": 5.092623081992585e-07,
+  "loop_matrix_error": 0.0,
+  "textures_packed": true,
+  "png_validation": {
+    "count": 24,
+    "rgba": true,
+    "all_inside_frame": true,
+    "motion_present": true
+  }
+}
