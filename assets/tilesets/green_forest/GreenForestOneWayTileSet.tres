@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/Mossy Assets/Mossy Tileset/Mossy - TileSet.png" id="1_x7161"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/GreenForest Tileset/GreenForest - TileSet.png" id="1_x7161"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_fs057"]
 resource_name = "One-way platform 5x1"
@@ -11,7 +11,7 @@ resource_name = "One-way single platform"
 tile_data = PackedInt32Array(0, 196608, 3)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5j33p"]
-resource_name = "Mossy one-way platforms"
+resource_name = "GreenForest one-way platforms"
 texture = ExtResource("1_x7161")
 texture_region_size = Vector2i(512, 512)
 0:3/0 = 0
@@ -32,7 +32,7 @@ texture_region_size = Vector2i(512, 512)
 3:3/0/physics_layer_0/polygon_0/one_way_margin = 8.0
 
 [resource]
-resource_name = "MossyOneWayTileSet"
+resource_name = "GreenForestOneWayTileSet"
 tile_size = Vector2i(512, 512)
 physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 0

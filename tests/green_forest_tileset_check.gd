@@ -1,5 +1,5 @@
 extends SceneTree
-## Run: godot --headless --path . --script tests/mossy_tileset_check.gd
+## Run: godot --headless --path . --script tests/green_forest_tileset_check.gd
 
 const BITS = [
 	TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER,
@@ -15,7 +15,7 @@ var failures := 0
 
 
 func _initialize() -> void:
-	var tiles := load("res://assets/tilesets/mossy/MossyTileSet.tres") as TileSet
+	var tiles := load("res://assets/tilesets/green_forest/GreenForestTileSet.tres") as TileSet
 	_check(tiles != null, "TileSet loads")
 	if tiles == null:
 		quit(1)

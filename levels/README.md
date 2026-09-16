@@ -8,5 +8,5 @@
 Шаблон хранит структуру и настройки слоёв, но не содержит игрового контента
 и не подключает механики автоматически.
 
-`workshops/TileSetWorkshop.tscn` — стенд настройки Mossy TileSet с визуальными
+`workshops/TileSetWorkshop.tscn` — стенд настройки GreenForest TileSet с визуальными
 образцами. [Инструкция мастерской](workshops/README.md).

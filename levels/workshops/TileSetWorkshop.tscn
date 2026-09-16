@@ -1,10 +1,10 @@
 [gd_scene format=4]
 
-[ext_resource type="TileSet" path="res://assets/tilesets/mossy/MossyTileSet.tres" id="1_hfqw1"]
-[ext_resource type="TileSet" path="res://assets/tilesets/mossy/MossyOneWayTileSet.tres" id="2_one_way"]
+[ext_resource type="TileSet" path="res://assets/tilesets/green_forest/GreenForestTileSet.tres" id="1_hfqw1"]
+[ext_resource type="TileSet" path="res://assets/tilesets/green_forest/GreenForestOneWayTileSet.tres" id="2_one_way"]
 
 [node name="TileSetWorkshop" type="Node2D" unique_id=1808062753]
-editor_description = "Mossy workshop: solid terrain and separate one-way platforms. Enable Debug > Visible Collision Shapes when running. See README.md."
+editor_description = "GreenForest workshop: solid terrain and separate one-way platforms. Enable Debug > Visible Collision Shapes when running. See README.md."
 
 [node name="Terrain" type="Node2D" parent="." unique_id=463339963]
 
@@ -43,7 +43,7 @@ offset_top = 20.0
 offset_right = 24.0
 offset_bottom = 20.0
 theme_override_font_sizes/font_size = 18
-text = "Mossy — земля и платформы
-Solid → Terrains → Mossy Ground → Connect; готовые формы → Patterns.
+text = "GreenForest — земля и платформы
+Solid → Terrains → GreenForest Ground → Connect; готовые формы → Patterns.
 OneWayPlatforms → Patterns: проходимые снизу платформы (нижний ряд).
 Debug → Visible Collision Shapes: показать физические границы."

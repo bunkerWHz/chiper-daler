@@ -1,5 +1,5 @@
 extends SceneTree
-## Run: godot --headless --path . --script tests/mossy_collision_check.gd
+## Run: godot --headless --path . --script tests/green_forest_collision_check.gd
 
 var failures := 0
 
@@ -9,8 +9,8 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	var solid := load("res://assets/tilesets/mossy/MossyTileSet.tres") as TileSet
-	var platforms := load("res://assets/tilesets/mossy/MossyOneWayTileSet.tres") as TileSet
+	var solid := load("res://assets/tilesets/green_forest/GreenForestTileSet.tres") as TileSet
+	var platforms := load("res://assets/tilesets/green_forest/GreenForestOneWayTileSet.tres") as TileSet
 	var workshop: Node = load("res://levels/workshops/TileSetWorkshop.tscn").instantiate()
 	_check(workshop.get_node("Terrain/Solid").tile_set == solid, "Workshop uses shared solid resource")
 	_check(workshop.get_node("Terrain/OneWayPlatforms").tile_set == platforms, "Workshop uses shared one-way resource")

@@ -67,7 +67,7 @@
 
 Для настройки общего ресурса используем
 `levels/workshops/TileSetWorkshop.tscn` — [инструкция мастерской](../levels/workshops/README.md).
-Первый подключённый набор: `assets/tilesets/mossy/MossyTileSet.tres`.
+Первый подключённый набор: `assets/tilesets/green_forest/GreenForestTileSet.tres`.
 Мастерская хранит образцы раскладки, внешний `.tres` — настройки самого набора.
 
 TileSet — ресурс с изображениями и свойствами тайлов; TileMapLayer — слой карты.

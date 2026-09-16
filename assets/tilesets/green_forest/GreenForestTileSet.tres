@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/Mossy Assets/Mossy Tileset/Mossy - TileSet.png" id="1_texture"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/GreenForest Tileset/GreenForest - TileSet.png" id="1_texture"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_vqjxq"]
 resource_name = "Block 3x3"
@@ -34,8 +34,8 @@ tile_data = PackedInt32Array(0, 262144, 4, 1, 65536, 3, 2, 65536, 3, 3, 65536, 3
 resource_name = "Cross 5x5"
 tile_data = PackedInt32Array(2, 196608, 0, 65538, 196608, 1, 131072, 0, 3, 131073, 65536, 3, 131074, 327680, 5, 131075, 65536, 3, 131076, 131072, 3, 196610, 196608, 1, 262146, 196608, 2)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mossy"]
-resource_name = "Mossy terrain (512px)"
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_green_forest"]
+resource_name = "GreenForest terrain (512px)"
 texture = ExtResource("1_texture")
 texture_region_size = Vector2i(512, 512)
 0:0/0 = 0
@@ -426,14 +426,14 @@ texture_region_size = Vector2i(512, 512)
 6:6/0/terrains_peering_bit/top_side = 0
 
 [resource]
-resource_name = "MossyTileSet"
+resource_name = "GreenForestTileSet"
 tile_size = Vector2i(512, 512)
 physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
-terrain_set_0/terrain_0/name = "Mossy Ground"
+terrain_set_0/terrain_0/name = "GreenForest Ground"
 terrain_set_0/terrain_0/color = Color(0.25, 0.65, 0.3, 1)
-sources/0 = SubResource("TileSetAtlasSource_mossy")
+sources/0 = SubResource("TileSetAtlasSource_green_forest")
 pattern_0 = SubResource("TileMapPattern_vqjxq")
 pattern_1 = SubResource("TileMapPattern_f6l7q")
 pattern_2 = SubResource("TileMapPattern_q0tp8")
