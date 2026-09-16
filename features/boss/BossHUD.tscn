@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="Background"]
+bg_color = Color(0.055, 0.04, 0.035, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.56, 0.46, 0.29, 1)
+
+[sub_resource type="StyleBoxFlat" id="Fill"]
+bg_color = Color(0.57, 0.08, 0.06, 1)
+border_width_top = 3
+border_width_bottom = 3
+border_color = Color(0.28, 0.035, 0.025, 1)
+
+[node name="BossHUD" type="CanvasLayer"]
+layer = 15
+
+[node name="Screen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="IntroName" type="Label" parent="Screen"]
+layout_mode = 0
+anchor_top = 0.38
+anchor_right = 1.0
+anchor_bottom = 0.62
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94, 0.86, 0.68, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 54
+text = "Boss"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Health" type="VBoxContainer" parent="Screen"]
+visible = false
+anchor_left = 0.15
+anchor_top = 1.0
+anchor_right = 0.85
+anchor_bottom = 1.0
+offset_top = -108.0
+offset_bottom = -48.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="Screen/Health"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94, 0.86, 0.68, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+text = "Boss"
+
+[node name="Bar" type="ProgressBar" parent="Screen/Health"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("Background")
+theme_override_styles/fill = SubResource("Fill")
+value = 100.0
+show_percentage = false

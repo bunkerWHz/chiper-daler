@@ -50,9 +50,9 @@
 [ext_resource type="Script" path="res://features/status/DotResistances.gd" id="65_oloo2"]
 [ext_resource type="SpriteFrames" path="res://game/enemy/monsters/stone_golem/SpriteFrames.tres" id="66_jsl2h"]
 [ext_resource type="AnimationLibrary" path="res://game/enemy/monsters/stone_golem/AnimationLibrary.tres" id="67_icuaa"]
-[ext_resource type="PackedScene" path="res://features/health/ui/WorldHealthBarView.tscn" id="68_x07fu"]
-[ext_resource type="Script" path="res://features/health/ui/WorldHealthBarView.gd" id="69_p84pt"]
 [ext_resource type="Script" path="res://features/enemy/EnemyAuthoringChecks.gd" id="70_k27dv"]
+
+[ext_resource type="PackedScene" path="res://features/boss/BossEncounter.tscn" id="71_boss"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q4iij"]
 size = Vector2(48, 46)
@@ -217,11 +217,6 @@ animation = &"idle"
 [node name="AnimationPlayer" type="AnimationPlayer" parent="_Visual" unique_id=1990581720]
 libraries/ = ExtResource("67_icuaa")
 
-[node name="HealthBar" type="Node2D" parent="_Visual" unique_id=769406164 instance=ExtResource("68_x07fu")]
-z_index = 10
-position = Vector2(0, -32)
-script = ExtResource("69_p84pt")
-
 [node name="LaserBeam" type="AnimatedSprite2D" parent="_Visual" unique_id=1391325017]
 visible = false
 position = Vector2(-49, -47)
@@ -237,6 +232,9 @@ position = Vector2(1, -14)
 [node name="ProjectileOrigin" type="Marker2D" parent="_Sockets" unique_id=923760650]
 position = Vector2(28.5, -10)
 
+[node name="BossEncounter" parent="." instance=ExtResource("71_boss")]
+boss_name = "Stone Golem"
+
 [node name="EnemyAuthoringChecks" type="Node" parent="." unique_id=299564297]
 script = ExtResource("70_k27dv")
 
@@ -244,3 +242,5 @@ script = ExtResource("70_k27dv")
 [editable path="_Components/HurtboxComponent"]
 [editable path="_Components/HitboxComponent"]
 [editable path="_Components/EnemyGroundSensorComponent"]
+
+[editable path="BossEncounter"]

@@ -21,7 +21,7 @@ func _ready() -> void:
 	# Presentation only: no damage, death, or autonomous actions in the preview.
 	for component: Component in golem.get_components():
 		component.disable()
-	golem.get_node("_Visual/HealthBar").hide()
+	golem.get_node("BossEncounter/Arena").monitoring = false
 	var canvas := CanvasLayer.new()
 	add_child(canvas)
 	var panel := VBoxContainer.new()
