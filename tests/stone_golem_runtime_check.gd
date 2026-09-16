@@ -39,7 +39,13 @@ func _run() -> void:
 	var effects := load(ROOT + "EffectSpriteFrames.tres") as SpriteFrames
 	check(effects.get_frame_count(&"laser_beam") == 14, "14 laser frames")
 	check((effects.get_frame_texture(&"laser_beam", 0) as AtlasTexture).region.position.y == 100, "Empty laser row excluded")
-	check(effects.get_frame_count(&"arm_projectile_glowing") == 6, "Six glowing projectile frames")
+	check(not effects.has_animation(&"arm_projectile"), "Projectile is not a character effect")
+	var projectile := load(ROOT + "ArmProjectile.tscn").instantiate() as Area2D
+	var projectile_sprite := projectile.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	check(projectile_sprite.sprite_frames.get_frame_count(&"glowing") == 6, "Six glowing frames belong to projectile")
+	check(projectile_sprite.sprite_frames.get_frame_texture(&"idle", 0).get_size() == Vector2(35, 14), "Projectile art excludes transparent padding")
+	check(projectile.scale == Vector2(3, 3) and projectile_sprite.scale == Vector2.ONE, "Projectile uses native scale convention")
+	projectile.free()
 	var world := Node2D.new()
 	root.add_child(world)
 	var floor_body := StaticBody2D.new()
@@ -59,6 +65,7 @@ func _run() -> void:
 	check(not golem.has_component(EnemyAttackComponent), "No autonomous boss combat in asset phase")
 	(golem.get_component(EnemyVisualComponent) as EnemyVisualComponent).disable()
 	var timeline := golem.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+	check(not timeline.has_animation(&"arm_projectile") and not golem.has_node("_Visual/ArmProjectile"), "Projectile removed from boss animation and visual tree")
 	for name: String in counts:
 		timeline.play(name)
 		timeline.advance(0)
@@ -83,5 +90,13 @@ func _run() -> void:
 		check(current_scene.timeline.current_animation == current_scene.CLIPS[i], "Preview selects clip")
 	current_scene._set_facing(true)
 	check(current_scene.sprite.flip_h, "Preview faces left via flip_h")
+	current_scene.picker.select(current_scene.CLIPS.find("ranged_attack"))
+	current_scene.play_selected()
+	current_scene.timeline.seek(0.51, true)
+	current_scene._process(0.0)
+	check(is_instance_valid(current_scene._projectile), "Ranged attack launches separate preview projectile")
+	var projectile_x: float = current_scene._projectile.position.x
+	current_scene._process(0.1)
+	check(current_scene._projectile.position.x < projectile_x, "Left-facing preview shoots to the left")
 	print("Stone Golem: %d checks, %d failures" % [checks, failures])
 	quit(1 if failures else 0)

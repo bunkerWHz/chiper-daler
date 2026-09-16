@@ -1,0 +1,66 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/Enemies/StoneGolem/PNG Sequences/Weapons/arm_projectile_glowing.png" id="1_qix88"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/StoneGolem/PNG Sequences/Weapons/arm_projectile.png" id="2_k1u2u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o233f"]
+atlas = ExtResource("1_qix88")
+region = Rect2(60, 30, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7rcks"]
+atlas = ExtResource("1_qix88")
+region = Rect2(160, 30, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_44ip7"]
+atlas = ExtResource("1_qix88")
+region = Rect2(260, 30, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_71ss0"]
+atlas = ExtResource("1_qix88")
+region = Rect2(60, 130, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5n4el"]
+atlas = ExtResource("1_qix88")
+region = Rect2(160, 130, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jqj1"]
+atlas = ExtResource("1_qix88")
+region = Rect2(260, 130, 35, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_duu6q"]
+atlas = ExtResource("2_k1u2u")
+region = Rect2(60, 30, 35, 14)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o233f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7rcks")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_44ip7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_71ss0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5n4el")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0jqj1")
+}],
+"loop": 1,
+"name": &"glowing",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_duu6q")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 10.0
+}]

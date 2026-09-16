@@ -1,32 +1,6 @@
 [gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/Enemies/StoneGolem/PNG Sequences/Weapons/arm_projectile.png" id="1_rl176"]
-[ext_resource type="Texture2D" path="res://assets/Enemies/StoneGolem/PNG Sequences/Weapons/arm_projectile_glowing.png" id="2_3lwbr"]
 [ext_resource type="Texture2D" path="res://assets/Enemies/StoneGolem/PNG Sequences/Weapons/Laser_sheet.png" id="3_7g521"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6jiat"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(0, 0, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4s087"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(100, 0, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vg4ol"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(200, 0, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lajw2"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(0, 100, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5lfdi"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(100, 100, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_quc1q"]
-atlas = ExtResource("2_3lwbr")
-region = Rect2(200, 100, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ls3h1"]
 atlas = ExtResource("3_7g521")
@@ -86,37 +60,6 @@ region = Rect2(0, 1400, 300, 100)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("1_rl176")
-}],
-"loop": 1,
-"name": &"arm_projectile",
-"speed": 10.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6jiat")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4s087")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vg4ol")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lajw2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5lfdi")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_quc1q")
-}],
-"loop": 1,
-"name": &"arm_projectile_glowing",
-"speed": 10.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ls3h1")

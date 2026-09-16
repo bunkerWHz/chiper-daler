@@ -83,11 +83,11 @@ fade_visual = false
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hccc2"]
 size = Vector2(22, 28)
 
-[sub_resource type="Resource" id="Resource_inyn6"]
+[sub_resource type="Resource" id="Resource_ss007"]
 resource_local_to_scene = true
 script = ExtResource("38_xk6v7")
 
-[sub_resource type="Resource" id="Resource_gotdt"]
+[sub_resource type="Resource" id="Resource_q4iij"]
 resource_local_to_scene = true
 script = ExtResource("41_a171y")
 
@@ -100,7 +100,7 @@ ledge_check_distance = 30.0
 floor_check_depth = 35.0
 wall_check_distance = 28.0
 
-[sub_resource type="Resource" id="Resource_0a2g5"]
+[sub_resource type="Resource" id="Resource_byrwi"]
 resource_local_to_scene = true
 script = ExtResource("65_oloo2")
 
@@ -174,13 +174,13 @@ shape = SubResource("RectangleShape2D_hccc2")
 
 [node name="AttackComponent" type="Node" parent="_Components" unique_id=1760840394 instance=ExtResource("36_8bds3")]
 script = ExtResource("37_86twp")
-config = SubResource("Resource_inyn6")
+config = SubResource("Resource_ss007")
 animation_driven_damage_window = true
 timing_player_path = NodePath("../../_Visual/AnimationPlayer")
 
 [node name="ActorAudioComponent" type="Node2D" parent="_Components" unique_id=701836818 instance=ExtResource("39_tvved")]
 script = ExtResource("40_8wfye")
-profile = SubResource("Resource_gotdt")
+profile = SubResource("Resource_q4iij")
 
 [node name="EnemyMovementComponent" type="Node" parent="_Components" unique_id=751057728]
 script = ExtResource("42_iymtx")
@@ -205,7 +205,7 @@ script = ExtResource("61_o2mfc")
 
 [node name="StatusEffectComponent" type="Node" parent="_Components" unique_id=385113650 instance=ExtResource("62_3sa6y")]
 script = ExtResource("63_acv5l")
-dot_resistances = SubResource("Resource_0a2g5")
+dot_resistances = SubResource("Resource_byrwi")
 
 [node name="_Visual" type="Node2D" parent="." unique_id=479603879]
 
@@ -229,17 +229,13 @@ sprite_frames = ExtResource("52_ss007")
 animation = &"laser_beam"
 centered = false
 
-[node name="ArmProjectile" type="AnimatedSprite2D" parent="_Visual" unique_id=1193771404]
-visible = false
-position = Vector2(-49, -47)
-sprite_frames = ExtResource("52_ss007")
-animation = &"arm_projectile"
-centered = false
-
 [node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]
 
 [node name="LaserOrigin" type="Marker2D" parent="_Sockets" unique_id=1190989272]
 position = Vector2(1, -14)
+
+[node name="ProjectileOrigin" type="Marker2D" parent="_Sockets" unique_id=923760650]
+position = Vector2(28.5, -10)
 
 [node name="EnemyAuthoringChecks" type="Node" parent="." unique_id=299564297]
 script = ExtResource("70_k27dv")

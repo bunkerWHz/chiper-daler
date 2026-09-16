@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="SpriteFrames" path="res://game/enemy/monsters/stone_golem/ArmProjectileFrames.tres" id="1_rov30"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v7ayt"]
+size = Vector2(35, 14)
+
+[node name="ArmProjectile" type="Area2D" unique_id=1378308834]
+texture_filter = 1
+scale = Vector2(3, 3)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1313360896]
+sprite_frames = ExtResource("1_rov30")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1516440255]
+shape = SubResource("RectangleShape2D_v7ayt")

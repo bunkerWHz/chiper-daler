@@ -3,14 +3,18 @@ extends Node2D
 const CLIPS := [
 	"idle", "move", "glowing", "ranged_attack", "melee_attack", "laser_cast",
 	"laser_beam", "laser", "armor_buff", "block", "defeated", "appearance",
-	"arm_projectile", "arm_projectile_glowing",
 ]
+const PROJECTILE := preload("res://game/enemy/monsters/stone_golem/ArmProjectile.tscn")
 @onready var golem: Actor = $StoneGolem
 @onready var timeline: AnimationPlayer = $StoneGolem/_Visual/AnimationPlayer
 @onready var sprite: AnimatedSprite2D = $StoneGolem/_Visual/AnimatedSprite2D
 var picker: OptionButton
 var status: Label
 var _flipped := false
+var _projectile: Area2D
+var _shot_released := false
+var _shot_direction := 1.0
+var _shot_distance := 0.0
 
 
 func _ready() -> void:
@@ -55,6 +59,8 @@ func _ready() -> void:
 
 
 func play_selected() -> void:
+	_clear_projectile()
+	_shot_released = false
 	var clip: String = CLIPS[picker.selected]
 	timeline.stop()
 	timeline.play(clip)
@@ -67,7 +73,36 @@ func _set_facing(flipped: bool) -> void:
 	_flipped = flipped
 	golem.position.x = 860.0 if flipped else 420.0
 	sprite.flip_h = flipped
-	for effect: AnimatedSprite2D in [golem.get_node("_Visual/LaserBeam"), golem.get_node("_Visual/ArmProjectile")]:
-		effect.flip_h = flipped
-		var width := 300.0 if effect.name == &"LaserBeam" else 100.0
-		effect.position.x = 49.0 - width if flipped else -49.0
+	var effect := golem.get_node("_Visual/LaserBeam") as AnimatedSprite2D
+	effect.flip_h = flipped
+	effect.position.x = -251.0 if flipped else -49.0
+
+
+func _process(delta: float) -> void:
+	if timeline.current_animation == &"ranged_attack" and timeline.current_animation_position >= 0.5 and not _shot_released:
+		_release_preview_projectile()
+	if is_instance_valid(_projectile):
+		var distance := 480.0 * delta * timeline.speed_scale
+		_projectile.position.x += distance * _shot_direction
+		_shot_distance += distance
+		if _shot_distance >= 600.0:
+			_clear_projectile()
+
+
+func _release_preview_projectile() -> void:
+	_shot_released = true
+	_shot_distance = 0.0
+	_shot_direction = -1.0 if _flipped else 1.0
+	_projectile = PROJECTILE.instantiate() as Area2D
+	var origin := golem.get_node("_Sockets/ProjectileOrigin") as Marker2D
+	var local_origin := origin.position
+	local_origin.x *= _shot_direction
+	add_child(_projectile)
+	_projectile.global_position = golem.to_global(local_origin)
+	_projectile.get_node("AnimatedSprite2D").flip_h = _flipped
+
+
+func _clear_projectile() -> void:
+	if is_instance_valid(_projectile):
+		_projectile.queue_free()
+	_projectile = null
