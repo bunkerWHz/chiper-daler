@@ -1,0 +1,891 @@
+[gd_resource type="TileSet" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - BigRocks1.png" id="1_2i46r"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - RockCombinations1.png" id="2_q6t76"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - SmallRocks.png" id="3_pnxco"]
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_18lpn"]
+resource_name = "BigRock 01"
+tile_data = PackedInt32Array(0, 0, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_3cd5y"]
+resource_name = "BigRock 02"
+tile_data = PackedInt32Array(0, 1, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_01tuu"]
+resource_name = "RockGroup 02"
+tile_data = PackedInt32Array(0, 10, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_okmbj"]
+resource_name = "RockGroup 03"
+tile_data = PackedInt32Array(0, 11, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_cdeyu"]
+resource_name = "RockGroup 04"
+tile_data = PackedInt32Array(0, 12, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_q2tuj"]
+resource_name = "RockGroup 05"
+tile_data = PackedInt32Array(0, 13, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xeut2"]
+resource_name = "RockGroup 06"
+tile_data = PackedInt32Array(0, 14, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_jdwcv"]
+resource_name = "RockGroup 07"
+tile_data = PackedInt32Array(0, 15, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ethql"]
+resource_name = "RockGroup 08"
+tile_data = PackedInt32Array(0, 16, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_dylyc"]
+resource_name = "RockGroup 09"
+tile_data = PackedInt32Array(0, 17, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_qe5w4"]
+resource_name = "RockGroup 10"
+tile_data = PackedInt32Array(0, 18, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_agfty"]
+resource_name = "RockGroup 11"
+tile_data = PackedInt32Array(0, 19, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_fcdde"]
+resource_name = "BigRock 03"
+tile_data = PackedInt32Array(0, 2, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_p14ak"]
+resource_name = "RockGroup 12"
+tile_data = PackedInt32Array(0, 20, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_81kr0"]
+resource_name = "RockGroup 13"
+tile_data = PackedInt32Array(0, 21, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_gth6v"]
+resource_name = "RockGroup 14"
+tile_data = PackedInt32Array(0, 22, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ogax1"]
+resource_name = "RockGroup 15"
+tile_data = PackedInt32Array(0, 23, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_220gg"]
+resource_name = "RockGroup 16"
+tile_data = PackedInt32Array(0, 24, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_q8y0o"]
+resource_name = "SmallRock 01"
+tile_data = PackedInt32Array(0, 25, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_itd5c"]
+resource_name = "SmallRock 02"
+tile_data = PackedInt32Array(0, 26, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_wy35l"]
+resource_name = "SmallRock 03"
+tile_data = PackedInt32Array(0, 27, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_nb2n7"]
+resource_name = "SmallRock 04"
+tile_data = PackedInt32Array(0, 28, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_lpq1x"]
+resource_name = "SmallRock 05"
+tile_data = PackedInt32Array(0, 29, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_vc3oh"]
+resource_name = "BigRock 04"
+tile_data = PackedInt32Array(0, 3, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_lmj5s"]
+resource_name = "SmallRock 06"
+tile_data = PackedInt32Array(0, 30, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_j8ks7"]
+resource_name = "SmallRock 07"
+tile_data = PackedInt32Array(0, 31, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_g0cdk"]
+resource_name = "SmallRock 08"
+tile_data = PackedInt32Array(0, 32, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ejvh2"]
+resource_name = "SmallRock 09"
+tile_data = PackedInt32Array(0, 33, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_y4q3q"]
+resource_name = "SmallRock 10"
+tile_data = PackedInt32Array(0, 34, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_djcij"]
+resource_name = "SmallRock 11"
+tile_data = PackedInt32Array(0, 35, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_lg6am"]
+resource_name = "SmallRock 12"
+tile_data = PackedInt32Array(0, 36, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_mwn7h"]
+resource_name = "SmallRock 13"
+tile_data = PackedInt32Array(0, 37, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_kqowm"]
+resource_name = "SmallRock 14"
+tile_data = PackedInt32Array(0, 38, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_dtfeb"]
+resource_name = "SmallRock 15"
+tile_data = PackedInt32Array(0, 39, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_r3o2g"]
+resource_name = "BigRock 05"
+tile_data = PackedInt32Array(0, 4, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_s78op"]
+resource_name = "SmallRock 16"
+tile_data = PackedInt32Array(0, 40, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_blbyg"]
+resource_name = "SmallRock 17"
+tile_data = PackedInt32Array(0, 41, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_jnsnd"]
+resource_name = "SmallRock 18"
+tile_data = PackedInt32Array(0, 42, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_wimc6"]
+resource_name = "SmallRock 19"
+tile_data = PackedInt32Array(0, 43, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ud72o"]
+resource_name = "SmallRock 20"
+tile_data = PackedInt32Array(0, 44, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xgji8"]
+resource_name = "SmallRock 21"
+tile_data = PackedInt32Array(0, 45, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_k23cw"]
+resource_name = "SmallRock 22"
+tile_data = PackedInt32Array(0, 46, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_puika"]
+resource_name = "SmallRock 23"
+tile_data = PackedInt32Array(0, 47, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_3pm6m"]
+resource_name = "SmallRock 24"
+tile_data = PackedInt32Array(0, 48, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ufo8o"]
+resource_name = "SmallRock 25"
+tile_data = PackedInt32Array(0, 49, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_advnv"]
+resource_name = "BigRock 06"
+tile_data = PackedInt32Array(0, 5, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_kjocn"]
+resource_name = "SmallRock 26"
+tile_data = PackedInt32Array(0, 50, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_1ntkh"]
+resource_name = "SmallRock 27"
+tile_data = PackedInt32Array(0, 51, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_itnl8"]
+resource_name = "SmallRock 28"
+tile_data = PackedInt32Array(0, 52, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_pttuq"]
+resource_name = "SmallRock 29"
+tile_data = PackedInt32Array(0, 53, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_mvlih"]
+resource_name = "SmallRock 30"
+tile_data = PackedInt32Array(0, 54, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_wjge4"]
+resource_name = "SmallRock 31"
+tile_data = PackedInt32Array(0, 55, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_wagcr"]
+resource_name = "SmallRock 32"
+tile_data = PackedInt32Array(0, 56, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_wtoq6"]
+resource_name = "SmallRock 33"
+tile_data = PackedInt32Array(0, 57, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_nj51v"]
+resource_name = "SmallRock 34"
+tile_data = PackedInt32Array(0, 58, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_gl6ry"]
+resource_name = "SmallRock 35"
+tile_data = PackedInt32Array(0, 59, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_c667i"]
+resource_name = "BigRock 07"
+tile_data = PackedInt32Array(0, 6, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ou7kx"]
+resource_name = "SmallRock 36"
+tile_data = PackedInt32Array(0, 60, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_bjhxf"]
+resource_name = "SmallRock 37"
+tile_data = PackedInt32Array(0, 61, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_taqip"]
+resource_name = "SmallRock 38"
+tile_data = PackedInt32Array(0, 62, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xkkq8"]
+resource_name = "BigRock 08"
+tile_data = PackedInt32Array(0, 7, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_j2ew6"]
+resource_name = "BigRock 09"
+tile_data = PackedInt32Array(0, 8, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_q35w8"]
+resource_name = "RockGroup 01"
+tile_data = PackedInt32Array(0, 9, 0)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y44xp"]
+resource_name = "BigRock 01"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(1770, 11)
+texture_region_size = Vector2i(250, 209)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20cvx"]
+resource_name = "BigRock 02"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(765, 20)
+texture_region_size = Vector2i(388, 257)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ja2qu"]
+resource_name = "RockGroup 02"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(988, 76)
+texture_region_size = Vector2i(472, 360)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rbcnp"]
+resource_name = "RockGroup 03"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1489, 86)
+texture_region_size = Vector2i(392, 247)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2q5qi"]
+resource_name = "RockGroup 04"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(636, 100)
+texture_region_size = Vector2i(312, 258)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dprc7"]
+resource_name = "RockGroup 05"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1584, 370)
+texture_region_size = Vector2i(297, 270)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_llnra"]
+resource_name = "RockGroup 06"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(29, 453)
+texture_region_size = Vector2i(435, 403)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_laa6b"]
+resource_name = "RockGroup 07"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(521, 457)
+texture_region_size = Vector2i(430, 260)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kr4ig"]
+resource_name = "RockGroup 08"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1278, 463)
+texture_region_size = Vector2i(247, 206)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nl053"]
+resource_name = "RockGroup 09"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(991, 468)
+texture_region_size = Vector2i(242, 248)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rvdfu"]
+resource_name = "RockGroup 10"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1309, 747)
+texture_region_size = Vector2i(695, 375)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kquy3"]
+resource_name = "RockGroup 11"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(633, 818)
+texture_region_size = Vector2i(574, 375)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_egtsq"]
+resource_name = "BigRock 03"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(25, 21)
+texture_region_size = Vector2i(729, 569)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sj06w"]
+resource_name = "RockGroup 12"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(32, 882)
+texture_region_size = Vector2i(576, 292)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jvmn6"]
+resource_name = "RockGroup 13"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(44, 1233)
+texture_region_size = Vector2i(576, 597)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vroxo"]
+resource_name = "RockGroup 14"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1164, 1249)
+texture_region_size = Vector2i(361, 646)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ew7ev"]
+resource_name = "RockGroup 15"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(701, 1286)
+texture_region_size = Vector2i(423, 671)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d6pby"]
+resource_name = "RockGroup 16"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(1569, 1298)
+texture_region_size = Vector2i(399, 632)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_38xem"]
+resource_name = "SmallRock 01"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1827, 66)
+texture_region_size = Vector2i(173, 254)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s5wuu"]
+resource_name = "SmallRock 02"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1640, 73)
+texture_region_size = Vector2i(145, 348)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jrlqv"]
+resource_name = "SmallRock 03"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(912, 75)
+texture_region_size = Vector2i(173, 169)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4b2m1"]
+resource_name = "SmallRock 04"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1155, 75)
+texture_region_size = Vector2i(188, 165)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ewkr1"]
+resource_name = "SmallRock 05"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(104, 78)
+texture_region_size = Vector2i(134, 130)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wrjsp"]
+resource_name = "BigRock 04"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(1415, 57)
+texture_region_size = Vector2i(318, 503)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6g1nk"]
+resource_name = "SmallRock 06"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1371, 82)
+texture_region_size = Vector2i(176, 153)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kvsm6"]
+resource_name = "SmallRock 07"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(699, 97)
+texture_region_size = Vector2i(173, 139)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gcqls"]
+resource_name = "SmallRock 08"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(321, 117)
+texture_region_size = Vector2i(123, 82)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sv1et"]
+resource_name = "SmallRock 09"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(523, 133)
+texture_region_size = Vector2i(123, 72)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rhygt"]
+resource_name = "SmallRock 10"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(87, 275)
+texture_region_size = Vector2i(189, 143)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_002mt"]
+resource_name = "SmallRock 11"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(729, 283)
+texture_region_size = Vector2i(123, 157)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_r7elg"]
+resource_name = "SmallRock 12"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1169, 300)
+texture_region_size = Vector2i(378, 175)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7hl"]
+resource_name = "SmallRock 13"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(918, 305)
+texture_region_size = Vector2i(165, 128)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kaqin"]
+resource_name = "SmallRock 14"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(539, 325)
+texture_region_size = Vector2i(88, 79)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e72nl"]
+resource_name = "SmallRock 15"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(322, 334)
+texture_region_size = Vector2i(117, 67)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cjf2u"]
+resource_name = "BigRock 05"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(1776, 254)
+texture_region_size = Vector2i(237, 760)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nwawv"]
+resource_name = "SmallRock 16"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1864, 468)
+texture_region_size = Vector2i(121, 181)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dmlh0"]
+resource_name = "SmallRock 17"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(897, 476)
+texture_region_size = Vector2i(188, 271)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_062p0"]
+resource_name = "SmallRock 18"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(367, 478)
+texture_region_size = Vector2i(185, 267)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mjes6"]
+resource_name = "SmallRock 19"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(630, 478)
+texture_region_size = Vector2i(176, 267)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_72qhg"]
+resource_name = "SmallRock 20"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1627, 479)
+texture_region_size = Vector2i(172, 158)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qkwl5"]
+resource_name = "SmallRock 21"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(95, 519)
+texture_region_size = Vector2i(196, 181)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ux7p"]
+resource_name = "SmallRock 22"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1199, 557)
+texture_region_size = Vector2i(310, 267)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sjepg"]
+resource_name = "SmallRock 23"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1663, 692)
+texture_region_size = Vector2i(306, 147)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tb8fk"]
+resource_name = "SmallRock 24"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(825, 886)
+texture_region_size = Vector2i(134, 179)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xfls6"]
+resource_name = "SmallRock 25"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1234, 889)
+texture_region_size = Vector2i(132, 173)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k5qf5"]
+resource_name = "BigRock 06"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(808, 310)
+texture_region_size = Vector2i(581, 251)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dji5p"]
+resource_name = "SmallRock 26"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1644, 891)
+texture_region_size = Vector2i(135, 169)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vken6"]
+resource_name = "SmallRock 27"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1033, 895)
+texture_region_size = Vector2i(126, 161)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u7bxw"]
+resource_name = "SmallRock 28"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1441, 922)
+texture_region_size = Vector2i(135, 107)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2hbba"]
+resource_name = "SmallRock 29"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(38, 930)
+texture_region_size = Vector2i(729, 569)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5mh7h"]
+resource_name = "SmallRock 30"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1827, 1013)
+texture_region_size = Vector2i(190, 382)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sw2ip"]
+resource_name = "SmallRock 31"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1612, 1154)
+texture_region_size = Vector2i(190, 242)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_c4k07"]
+resource_name = "SmallRock 32"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(811, 1163)
+texture_region_size = Vector2i(731, 412)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jtpmu"]
+resource_name = "SmallRock 33"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1613, 1426)
+texture_region_size = Vector2i(190, 590)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wvayt"]
+resource_name = "SmallRock 34"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(38, 1620)
+texture_region_size = Vector2i(347, 389)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8o7op"]
+resource_name = "SmallRock 35"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1828, 1643)
+texture_region_size = Vector2i(190, 368)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w2v0t"]
+resource_name = "BigRock 07"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(401, 629)
+texture_region_size = Vector2i(693, 390)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2d18r"]
+resource_name = "SmallRock 36"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(1213, 1650)
+texture_region_size = Vector2i(371, 366)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5wgh7"]
+resource_name = "SmallRock 37"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(837, 1680)
+texture_region_size = Vector2i(312, 329)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_eec4e"]
+resource_name = "SmallRock 38"
+texture = ExtResource("3_pnxco")
+margins = Vector2i(425, 1752)
+texture_region_size = Vector2i(388, 257)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o8x0s"]
+resource_name = "BigRock 08"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(24, 632)
+texture_region_size = Vector2i(347, 389)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k1hbs"]
+resource_name = "BigRock 09"
+texture = ExtResource("1_2i46r")
+margins = Vector2i(1113, 636)
+texture_region_size = Vector2i(603, 383)
+use_texture_padding = false
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fecnl"]
+resource_name = "RockGroup 01"
+texture = ExtResource("2_q6t76")
+margins = Vector2i(26, 70)
+texture_region_size = Vector2i(575, 344)
+use_texture_padding = false
+0:0/0 = 0
+
+[resource]
+resource_name = "CaveDecorTileSet"
+tile_size = Vector2i(64, 64)
+sources/0 = SubResource("TileSetAtlasSource_y44xp")
+sources/1 = SubResource("TileSetAtlasSource_20cvx")
+sources/2 = SubResource("TileSetAtlasSource_egtsq")
+sources/3 = SubResource("TileSetAtlasSource_wrjsp")
+sources/4 = SubResource("TileSetAtlasSource_cjf2u")
+sources/5 = SubResource("TileSetAtlasSource_k5qf5")
+sources/6 = SubResource("TileSetAtlasSource_w2v0t")
+sources/7 = SubResource("TileSetAtlasSource_o8x0s")
+sources/8 = SubResource("TileSetAtlasSource_k1hbs")
+sources/9 = SubResource("TileSetAtlasSource_fecnl")
+sources/10 = SubResource("TileSetAtlasSource_ja2qu")
+sources/11 = SubResource("TileSetAtlasSource_rbcnp")
+sources/12 = SubResource("TileSetAtlasSource_2q5qi")
+sources/13 = SubResource("TileSetAtlasSource_dprc7")
+sources/14 = SubResource("TileSetAtlasSource_llnra")
+sources/15 = SubResource("TileSetAtlasSource_laa6b")
+sources/16 = SubResource("TileSetAtlasSource_kr4ig")
+sources/17 = SubResource("TileSetAtlasSource_nl053")
+sources/18 = SubResource("TileSetAtlasSource_rvdfu")
+sources/19 = SubResource("TileSetAtlasSource_kquy3")
+sources/20 = SubResource("TileSetAtlasSource_sj06w")
+sources/21 = SubResource("TileSetAtlasSource_jvmn6")
+sources/22 = SubResource("TileSetAtlasSource_vroxo")
+sources/23 = SubResource("TileSetAtlasSource_ew7ev")
+sources/24 = SubResource("TileSetAtlasSource_d6pby")
+sources/25 = SubResource("TileSetAtlasSource_38xem")
+sources/26 = SubResource("TileSetAtlasSource_s5wuu")
+sources/27 = SubResource("TileSetAtlasSource_jrlqv")
+sources/28 = SubResource("TileSetAtlasSource_4b2m1")
+sources/29 = SubResource("TileSetAtlasSource_ewkr1")
+sources/30 = SubResource("TileSetAtlasSource_6g1nk")
+sources/31 = SubResource("TileSetAtlasSource_kvsm6")
+sources/32 = SubResource("TileSetAtlasSource_gcqls")
+sources/33 = SubResource("TileSetAtlasSource_sv1et")
+sources/34 = SubResource("TileSetAtlasSource_rhygt")
+sources/35 = SubResource("TileSetAtlasSource_002mt")
+sources/36 = SubResource("TileSetAtlasSource_r7elg")
+sources/37 = SubResource("TileSetAtlasSource_dw7hl")
+sources/38 = SubResource("TileSetAtlasSource_kaqin")
+sources/39 = SubResource("TileSetAtlasSource_e72nl")
+sources/40 = SubResource("TileSetAtlasSource_nwawv")
+sources/41 = SubResource("TileSetAtlasSource_dmlh0")
+sources/42 = SubResource("TileSetAtlasSource_062p0")
+sources/43 = SubResource("TileSetAtlasSource_mjes6")
+sources/44 = SubResource("TileSetAtlasSource_72qhg")
+sources/45 = SubResource("TileSetAtlasSource_qkwl5")
+sources/46 = SubResource("TileSetAtlasSource_6ux7p")
+sources/47 = SubResource("TileSetAtlasSource_sjepg")
+sources/48 = SubResource("TileSetAtlasSource_tb8fk")
+sources/49 = SubResource("TileSetAtlasSource_xfls6")
+sources/50 = SubResource("TileSetAtlasSource_dji5p")
+sources/51 = SubResource("TileSetAtlasSource_vken6")
+sources/52 = SubResource("TileSetAtlasSource_u7bxw")
+sources/53 = SubResource("TileSetAtlasSource_2hbba")
+sources/54 = SubResource("TileSetAtlasSource_5mh7h")
+sources/55 = SubResource("TileSetAtlasSource_sw2ip")
+sources/56 = SubResource("TileSetAtlasSource_c4k07")
+sources/57 = SubResource("TileSetAtlasSource_jtpmu")
+sources/58 = SubResource("TileSetAtlasSource_wvayt")
+sources/59 = SubResource("TileSetAtlasSource_8o7op")
+sources/60 = SubResource("TileSetAtlasSource_2d18r")
+sources/61 = SubResource("TileSetAtlasSource_5wgh7")
+sources/62 = SubResource("TileSetAtlasSource_eec4e")
+pattern_0 = SubResource("TileMapPattern_18lpn")
+pattern_1 = SubResource("TileMapPattern_3cd5y")
+pattern_2 = SubResource("TileMapPattern_fcdde")
+pattern_3 = SubResource("TileMapPattern_vc3oh")
+pattern_4 = SubResource("TileMapPattern_r3o2g")
+pattern_5 = SubResource("TileMapPattern_advnv")
+pattern_6 = SubResource("TileMapPattern_c667i")
+pattern_7 = SubResource("TileMapPattern_xkkq8")
+pattern_8 = SubResource("TileMapPattern_j2ew6")
+pattern_9 = SubResource("TileMapPattern_q35w8")
+pattern_10 = SubResource("TileMapPattern_01tuu")
+pattern_11 = SubResource("TileMapPattern_okmbj")
+pattern_12 = SubResource("TileMapPattern_cdeyu")
+pattern_13 = SubResource("TileMapPattern_q2tuj")
+pattern_14 = SubResource("TileMapPattern_xeut2")
+pattern_15 = SubResource("TileMapPattern_jdwcv")
+pattern_16 = SubResource("TileMapPattern_ethql")
+pattern_17 = SubResource("TileMapPattern_dylyc")
+pattern_18 = SubResource("TileMapPattern_qe5w4")
+pattern_19 = SubResource("TileMapPattern_agfty")
+pattern_20 = SubResource("TileMapPattern_p14ak")
+pattern_21 = SubResource("TileMapPattern_81kr0")
+pattern_22 = SubResource("TileMapPattern_gth6v")
+pattern_23 = SubResource("TileMapPattern_ogax1")
+pattern_24 = SubResource("TileMapPattern_220gg")
+pattern_25 = SubResource("TileMapPattern_q8y0o")
+pattern_26 = SubResource("TileMapPattern_itd5c")
+pattern_27 = SubResource("TileMapPattern_wy35l")
+pattern_28 = SubResource("TileMapPattern_nb2n7")
+pattern_29 = SubResource("TileMapPattern_lpq1x")
+pattern_30 = SubResource("TileMapPattern_lmj5s")
+pattern_31 = SubResource("TileMapPattern_j8ks7")
+pattern_32 = SubResource("TileMapPattern_g0cdk")
+pattern_33 = SubResource("TileMapPattern_ejvh2")
+pattern_34 = SubResource("TileMapPattern_y4q3q")
+pattern_35 = SubResource("TileMapPattern_djcij")
+pattern_36 = SubResource("TileMapPattern_lg6am")
+pattern_37 = SubResource("TileMapPattern_mwn7h")
+pattern_38 = SubResource("TileMapPattern_kqowm")
+pattern_39 = SubResource("TileMapPattern_dtfeb")
+pattern_40 = SubResource("TileMapPattern_s78op")
+pattern_41 = SubResource("TileMapPattern_blbyg")
+pattern_42 = SubResource("TileMapPattern_jnsnd")
+pattern_43 = SubResource("TileMapPattern_wimc6")
+pattern_44 = SubResource("TileMapPattern_ud72o")
+pattern_45 = SubResource("TileMapPattern_xgji8")
+pattern_46 = SubResource("TileMapPattern_k23cw")
+pattern_47 = SubResource("TileMapPattern_puika")
+pattern_48 = SubResource("TileMapPattern_3pm6m")
+pattern_49 = SubResource("TileMapPattern_ufo8o")
+pattern_50 = SubResource("TileMapPattern_kjocn")
+pattern_51 = SubResource("TileMapPattern_1ntkh")
+pattern_52 = SubResource("TileMapPattern_itnl8")
+pattern_53 = SubResource("TileMapPattern_pttuq")
+pattern_54 = SubResource("TileMapPattern_mvlih")
+pattern_55 = SubResource("TileMapPattern_wjge4")
+pattern_56 = SubResource("TileMapPattern_wagcr")
+pattern_57 = SubResource("TileMapPattern_wtoq6")
+pattern_58 = SubResource("TileMapPattern_nj51v")
+pattern_59 = SubResource("TileMapPattern_gl6ry")
+pattern_60 = SubResource("TileMapPattern_ou7kx")
+pattern_61 = SubResource("TileMapPattern_bjhxf")
+pattern_62 = SubResource("TileMapPattern_taqip")

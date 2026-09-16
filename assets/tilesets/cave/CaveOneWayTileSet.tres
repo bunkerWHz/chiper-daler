@@ -1,0 +1,196 @@
+[gd_resource type="TileSet" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - Platforms.png" id="1_xelag"]
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_cs8cu"]
+resource_name = "Platform 01"
+tile_data = PackedInt32Array(0, 0, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ffr5f"]
+resource_name = "Platform 02"
+tile_data = PackedInt32Array(0, 1, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_15x3e"]
+resource_name = "Platform 11"
+tile_data = PackedInt32Array(0, 10, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_evwku"]
+resource_name = "Platform 03"
+tile_data = PackedInt32Array(0, 2, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_sd6kw"]
+resource_name = "Platform 04"
+tile_data = PackedInt32Array(0, 3, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_27jwp"]
+resource_name = "Platform 05"
+tile_data = PackedInt32Array(0, 4, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_jl7x3"]
+resource_name = "Platform 06"
+tile_data = PackedInt32Array(0, 5, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_dl0ix"]
+resource_name = "Platform 07"
+tile_data = PackedInt32Array(0, 6, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_7x81d"]
+resource_name = "Platform 08"
+tile_data = PackedInt32Array(0, 7, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_a6nrk"]
+resource_name = "Platform 09"
+tile_data = PackedInt32Array(0, 8, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_hpjkc"]
+resource_name = "Platform 10"
+tile_data = PackedInt32Array(0, 9, 0)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v7sig"]
+resource_name = "Platform 01"
+texture = ExtResource("1_xelag")
+margins = Vector2i(231, 21)
+texture_region_size = Vector2i(393, 191)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184.5, -83.5, 184.5, -83.5, 184.5, -71.5, -184.5, -71.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6c03b"]
+resource_name = "Platform 02"
+texture = ExtResource("1_xelag")
+margins = Vector2i(21, 24)
+texture_region_size = Vector2i(193, 191)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-84.5, -83.5, 84.5, -83.5, 84.5, -71.5, -84.5, -71.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ht5vj"]
+resource_name = "Platform 11"
+texture = ExtResource("1_xelag")
+margins = Vector2i(266, 900)
+texture_region_size = Vector2i(392, 108)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184, -42, 184, -42, 184, -30, -184, -30)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yjpvc"]
+resource_name = "Platform 03"
+texture = ExtResource("1_xelag")
+margins = Vector2i(670, 54)
+texture_region_size = Vector2i(310, 327)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-143, -151.5, 143, -151.5, 143, -139.5, -143, -139.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y71ln"]
+resource_name = "Platform 04"
+texture = ExtResource("1_xelag")
+margins = Vector2i(26, 224)
+texture_region_size = Vector2i(565, 365)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-270.5, -170.5, 270.5, -170.5, 270.5, -158.5, -270.5, -158.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n2d1h"]
+resource_name = "Platform 05"
+texture = ExtResource("1_xelag")
+margins = Vector2i(615, 397)
+texture_region_size = Vector2i(392, 367)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184, -171.5, 184, -171.5, 184, -159.5, -184, -159.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xqle7"]
+resource_name = "Platform 06"
+texture = ExtResource("1_xelag")
+margins = Vector2i(46, 643)
+texture_region_size = Vector2i(194, 367)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-85, -171.5, 85, -171.5, 85, -159.5, -85, -159.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5wmxy"]
+resource_name = "Platform 07"
+texture = ExtResource("1_xelag")
+margins = Vector2i(274, 644)
+texture_region_size = Vector2i(305, 65)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-140.5, -20.5, 140.5, -20.5, 140.5, -8.5, -140.5, -8.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ks2eb"]
+resource_name = "Platform 08"
+texture = ExtResource("1_xelag")
+margins = Vector2i(293, 720)
+texture_region_size = Vector2i(268, 160)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-122, -68, 122, -68, 122, -56, -122, -56)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bmcwe"]
+resource_name = "Platform 09"
+texture = ExtResource("1_xelag")
+margins = Vector2i(631, 791)
+texture_region_size = Vector2i(354, 67)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-165, -21.5, 165, -21.5, 165, -9.5, -165, -9.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y5j5b"]
+resource_name = "Platform 10"
+texture = ExtResource("1_xelag")
+margins = Vector2i(721, 888)
+texture_region_size = Vector2i(194, 103)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-85, -39.5, 85, -39.5, 85, -27.5, -85, -27.5)
+0:0/0/physics_layer_0/polygon_0/one_way = true
+0:0/0/physics_layer_0/polygon_0/one_way_margin = 4.0
+
+[resource]
+resource_name = "CaveOneWayTileSet"
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_v7sig")
+sources/1 = SubResource("TileSetAtlasSource_6c03b")
+sources/2 = SubResource("TileSetAtlasSource_yjpvc")
+sources/3 = SubResource("TileSetAtlasSource_y71ln")
+sources/4 = SubResource("TileSetAtlasSource_n2d1h")
+sources/5 = SubResource("TileSetAtlasSource_xqle7")
+sources/6 = SubResource("TileSetAtlasSource_5wmxy")
+sources/7 = SubResource("TileSetAtlasSource_ks2eb")
+sources/8 = SubResource("TileSetAtlasSource_bmcwe")
+sources/9 = SubResource("TileSetAtlasSource_y5j5b")
+sources/10 = SubResource("TileSetAtlasSource_ht5vj")
+pattern_0 = SubResource("TileMapPattern_cs8cu")
+pattern_1 = SubResource("TileMapPattern_ffr5f")
+pattern_2 = SubResource("TileMapPattern_evwku")
+pattern_3 = SubResource("TileMapPattern_sd6kw")
+pattern_4 = SubResource("TileMapPattern_27jwp")
+pattern_5 = SubResource("TileMapPattern_jl7x3")
+pattern_6 = SubResource("TileMapPattern_dl0ix")
+pattern_7 = SubResource("TileMapPattern_7x81d")
+pattern_8 = SubResource("TileMapPattern_a6nrk")
+pattern_9 = SubResource("TileMapPattern_hpjkc")
+pattern_10 = SubResource("TileMapPattern_15x3e")

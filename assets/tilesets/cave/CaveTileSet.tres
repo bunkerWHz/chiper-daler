@@ -1,0 +1,810 @@
+[gd_resource type="TileSet" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - Floor.png" id="1_v8seo"]
+[ext_resource type="Texture2D" path="res://assets/GreenForest Assets/Cave/Cave - Platforms.png" id="2_7dkmc"]
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_oyuoa"]
+resource_name = "Floor 01"
+tile_data = PackedInt32Array(0, 0, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_n6sbd"]
+resource_name = "Floor 02"
+tile_data = PackedInt32Array(0, 1, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_2mitw"]
+resource_name = "Floor 11"
+tile_data = PackedInt32Array(0, 10, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_7ngwv"]
+resource_name = "Floor 12"
+tile_data = PackedInt32Array(0, 11, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_bl4fc"]
+resource_name = "Floor 13"
+tile_data = PackedInt32Array(0, 12, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_a4j0j"]
+resource_name = "Floor 14"
+tile_data = PackedInt32Array(0, 13, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_b5iuf"]
+resource_name = "Floor 15"
+tile_data = PackedInt32Array(0, 14, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_b5vlv"]
+resource_name = "Floor 16"
+tile_data = PackedInt32Array(0, 15, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_rnpgs"]
+resource_name = "Floor 17"
+tile_data = PackedInt32Array(0, 16, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xbeij"]
+resource_name = "Floor 18"
+tile_data = PackedInt32Array(0, 17, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_fb8mc"]
+resource_name = "Floor 19"
+tile_data = PackedInt32Array(0, 18, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_vwt8q"]
+resource_name = "Floor 20"
+tile_data = PackedInt32Array(0, 19, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_0f88e"]
+resource_name = "Floor 03"
+tile_data = PackedInt32Array(0, 2, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ber16"]
+resource_name = "Floor 21"
+tile_data = PackedInt32Array(0, 20, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_bsrt5"]
+resource_name = "Floor 22"
+tile_data = PackedInt32Array(0, 21, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xidos"]
+resource_name = "Floor 23"
+tile_data = PackedInt32Array(0, 22, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_vplld"]
+resource_name = "Floor 24"
+tile_data = PackedInt32Array(0, 23, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_5vuwf"]
+resource_name = "Floor 25"
+tile_data = PackedInt32Array(0, 24, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_p6pdv"]
+resource_name = "Floor 26"
+tile_data = PackedInt32Array(0, 25, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_rsx20"]
+resource_name = "Platform 01"
+tile_data = PackedInt32Array(0, 26, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_i38al"]
+resource_name = "Platform 02"
+tile_data = PackedInt32Array(0, 27, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_syb1k"]
+resource_name = "Platform 03"
+tile_data = PackedInt32Array(0, 28, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_2iopv"]
+resource_name = "Platform 04"
+tile_data = PackedInt32Array(0, 29, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_8hugn"]
+resource_name = "Floor 04"
+tile_data = PackedInt32Array(0, 3, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ick7n"]
+resource_name = "Platform 05"
+tile_data = PackedInt32Array(0, 30, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_ylamh"]
+resource_name = "Platform 06"
+tile_data = PackedInt32Array(0, 31, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_322nj"]
+resource_name = "Platform 07"
+tile_data = PackedInt32Array(0, 32, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_qifgs"]
+resource_name = "Platform 08"
+tile_data = PackedInt32Array(0, 33, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_xn4xt"]
+resource_name = "Platform 09"
+tile_data = PackedInt32Array(0, 34, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_exbgy"]
+resource_name = "Platform 10"
+tile_data = PackedInt32Array(0, 35, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_uhioe"]
+resource_name = "Platform 11"
+tile_data = PackedInt32Array(0, 36, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_gbt2r"]
+resource_name = "Floor 05"
+tile_data = PackedInt32Array(0, 4, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_1af43"]
+resource_name = "Floor 06"
+tile_data = PackedInt32Array(0, 5, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_54ixw"]
+resource_name = "Floor 07"
+tile_data = PackedInt32Array(0, 6, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_qrbo6"]
+resource_name = "Floor 08"
+tile_data = PackedInt32Array(0, 7, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_7nrmf"]
+resource_name = "Floor 09"
+tile_data = PackedInt32Array(0, 8, 0)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_vdo2r"]
+resource_name = "Floor 10"
+tile_data = PackedInt32Array(0, 9, 0)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_afpdu"]
+resource_name = "Floor 01"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1720, 53)
+texture_region_size = Vector2i(216, 354)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-71, 170, -94, 154, -101, 92, -100, 92, -1, 167)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-8, -174, -8, -175, 42, -171, 42, -170)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(102, 52, 106, 114, 105, 114, -88, 61)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-1, 167, -71, 171, -71, 170)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-99, -120, 102, -111, 101, -22, 100, -22, -92, -26, -103, -59, -103, -96, -100, -120)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(105, 114, 101, 154, 100, 154)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(42, -170, 80, -158, 80, -157)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-88, 61, -89, 61, -106, 28, -106, 10, -92, -25, 84, 5, 102, 29, 102, 52)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-71, 170, -94, 157, -94, 154)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(105, 114, 100, 154, 87, 175, 75, 175, 1, 167, -88, 61)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-99, -120, -72, -160, -70, -160, 102, -111)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(84, 5, 85, 5, 102, 29)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-1, 167, -100, 92, -88, 61, 1, 167)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(84, 5, -92, -25, -92, -26, 100, -22)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(102, -111, -70, -160, -8, -174, 42, -170, 80, -157, 102, -114)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lg2ml"]
+resource_name = "Floor 02"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(495, 72)
+texture_region_size = Vector2i(377, 75)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-176.5, -25.5, 176.5, -25.5, 176.5, 25.5, -176.5, 25.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ifyeu"]
+resource_name = "Floor 11"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1276, 533)
+texture_region_size = Vector2i(353, 217)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-159.5, 70.5, -174.5, 5.5, -173.5, 5.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(154.5, 94.5, 92.5, 101.5, 92.5, 100.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(167.5, 1.5, 171.5, 71.5, 170.5, 71.5, 24.5, -105.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(24.5, -105.5, 24.5, -106.5, 129.5, -106.5, 129.5, -105.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-173.5, 5.5, -170.5, -41.5, -169.5, -41.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-58.5, 103.5, -95.5, 103.5, -119.5, 100.5, -119.5, 99.5, -99.5, -103.5, -25.5, 92.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(129.5, -105.5, 174.5, -88.5, 174.5, -86.5, 167.5, -0.5, 24.5, -105.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-169.5, -41.5, -152.5, -84.5, -150.5, -84.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-99.5, -103.5, 24.5, -105.5, 61.5, 88.5, 61.5, 89.5, 28.5, 106.5, 10.5, 106.5, -24.5, 92.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(170.5, 71.5, 157.5, 94.5, 154.5, 94.5, 24.5, -105.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-119.5, 99.5, -159.5, 72.5, -159.5, 70.5, -99.5, -103.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(24.5, -105.5, 167.5, -0.5, 167.5, 1.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(24.5, -105.5, 154.5, 94.5, 92.5, 100.5, 61.5, 88.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-99.5, -103.5, -24.5, 92.5, -25.5, 92.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-99.5, -103.5, -159.5, 70.5, -173.5, 5.5, -169.5, -41.5, -150.5, -84.5, -107.5, -103.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ssopg"]
+resource_name = "Floor 12"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1662, 536)
+texture_region_size = Vector2i(354, 217)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-28, -105.5, -28, -106.5, 25, -92.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(160, -70.5, 175, -5.5, 174, -5.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-167, -1.5, -171, -71.5, -170, -71.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(59, -103.5, 96, -103.5, 126, -97.5, 160, -70.5, 174, -5.5, 170, 41.5, 100, 103.5, -129, 106.5, -129, 105.5, 26, -92.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(174, -5.5, 171, 41.5, 170, 41.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(96, -103.5, 126, -98.5, 126, -97.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-129, 105.5, -160, 98.5, -160, 97.5, -144, -96.5, -110, -101.5, -92, -101.5, -61, -88.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(170, 41.5, 158, 79.5, 157, 79.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-170, -71.5, -164, -85.5, -163, -85.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-61, -88.5, -61, -89.5, -28, -105.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-144, -96.5, -160, 97.5, -175, 86.5, -175, 74.5, -167, 0.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(126, -97.5, 160, -72.5, 160, -70.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(170, 41.5, 157, 79.5, 108, 103.5, 100, 103.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(25, -92.5, 26, -92.5, -129, 105.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-28, -105.5, 25, -92.5, -129, 105.5, -61, -88.5)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(-144, -96.5, -167, 0.5, -167, -1.5)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(-144, -96.5, -167, -1.5, -170, -71.5, -163, -85.5, -151, -96.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_biicp"]
+resource_name = "Floor 13"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(747, 674)
+texture_region_size = Vector2i(230, 75)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-103, -25.5, 103, -25.5, 103, 25.5, -103, 25.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iasra"]
+resource_name = "Floor 14"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(79, 675)
+texture_region_size = Vector2i(291, 80)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-133.5, -28, 133.5, -28, 133.5, 28, -133.5, 28)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_846n4"]
+resource_name = "Floor 15"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(411, 676)
+texture_region_size = Vector2i(302, 75)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-139, -25.5, 139, -25.5, 139, 25.5, -139, 25.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rrd2x"]
+resource_name = "Floor 16"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1012, 677)
+texture_region_size = Vector2i(224, 74)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-100, -25, 100, -25, 100, 25, -100, 25)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4h6nh"]
+resource_name = "Floor 17"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(54, 799)
+texture_region_size = Vector2i(1469, 164)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(723.5, 0, 732.5, 12, 731.5, 12)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(582.5, -36, 723.5, 0, 731.5, 12, 649.5, 48, 645.5, 48)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-276.5, -79, -276.5, -80, -57.5, -53)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(190.5, 54, 88.5, 58, 88.5, 57, 130.5, -60)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-389.5, 63, -502.5, 67, -502.5, 66, -473.5, -69, -378.5, -65)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(539.5, 61, 322.5, 63, 322.5, 62)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(130.5, -60, 290.5, -58, 290.5, -57, 249.5, 54, 190.5, 54)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(290.5, -57, 582.5, -37, 582.5, -36, 577.5, 61, 539.5, 61)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-34.5, -53, -20.5, 51, -20.5, 52, -276.5, 80, -57.5, -53)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-378.5, -65, -378.5, -66, -276.5, -79, -57.5, -53, -276.5, 80, -285.5, 80)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-605.5, -51, -502.5, 66, -638.5, 46, -638.5, 45, -610.5, -51)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(582.5, -36, 723.5, -1, 723.5, 0)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(582.5, -36, 645.5, 48, 577.5, 61)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(290.5, -57, 539.5, 61, 322.5, 62, 249.5, 54)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-34.5, -53, 88.5, -60, 130.5, -60, 88.5, 57, -20.5, 51)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(-378.5, -65, -285.5, 80, -379.5, 63)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(-378.5, -65, -379.5, 63, -389.5, 63)
+0:0/0/physics_layer_0/polygon_17/points = PackedVector2Array(-502.5, -69, -473.5, -69, -502.5, 66, -605.5, -51)
+0:0/0/physics_layer_0/polygon_18/points = PackedVector2Array(-715.5, -14, -610.5, -51, -638.5, 45, -706.5, 25, -732.5, 10, -732.5, 2)
+0:0/0/physics_layer_0/polygon_19/points = PackedVector2Array(-638.5, 45, -706.5, 26, -706.5, 25)
+0:0/0/physics_layer_0/polygon_20/points = PackedVector2Array(-715.5, -14, -732.5, 2, -717.5, -14)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ptnn1"]
+resource_name = "Floor 18"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1867, 858)
+texture_region_size = Vector2i(125, 380)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-3.5, -187, -3.5, -188, 32.5, -175, 32.5, -174)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(57.5, -149, 60.5, -138, 59.5, -138)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(44.5, 61, 52.5, 95, 51.5, 95)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(40.5, 129, 44.5, 154, 43.5, 154)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-60.5, 103, -58.5, -123, -57.5, -123, 38.5, -4, 38.5, -2)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-57.5, -123, -36.5, -171, -35.5, -171)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-38.5, 188, -46.5, 184, -46.5, 183)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(43.5, 154, 30.5, 169, 26.5, 169, 40.5, 129)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-55.5, 165, -60.5, 127, -60.5, 103, 40.5, 124, 40.5, 129, 26.5, 169, -29.5, 188, -38.5, 188, -46.5, 183)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(32.5, -174, 57.5, -151, 57.5, -149, -57.5, -123, -35.5, -171, -3.5, -187)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-57.5, -123, 57.5, -149, 59.5, -138, 38.5, -4)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-60.5, 103, 38.5, -2, 52.5, 38, 52.5, 40, 44.5, 58)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-60.5, 103, 44.5, 58, 44.5, 61)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-60.5, 103, 44.5, 61, 51.5, 95, 40.5, 124)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-55.5, 165, -46.5, 183, -55.5, 170)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_skf7y"]
+resource_name = "Floor 19"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1666, 859)
+texture_region_size = Vector2i(144, 376)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-41, 167, -70, 129, -69, 129)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(31, -185, 31, -186, 54, -178, 54, -176)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(46, 168, -11, 186, -11, 185, 62, 144)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-44, -12, -55, -54, -54, -54, -43, -12)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-47, 39, -52, 19, -51, 19, 69, 70)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-55, 84, -59, 64, -58, 64, 62, 144)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-48, -71, -54, -102, -53, -102, -47, -71)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-41, -132, -45, -155, -44, -155)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-53, -102, -41, -129, 70, -124, 70, 70, 69, 70, -47, -71)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-47, 43, 69, 70, 63, 144, 62, 144, -58, 64)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-11, 185, -41, 168, -41, 167, 62, 144)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(62, 144, 48, 168, 46, 168)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-41, 167, -69, 129, -55, 85, 62, 144)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-41, -132, -44, -155, -31, -169, -27, -169)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-41, -132, -27, -169, 31, -185, 54, -176, 70, -136, 70, -124, -41, -129)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(-54, -54, -47, -71, 69, 70, -43, -12)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(-51, 19, -43, -12, 69, 70)
+0:0/0/physics_layer_0/polygon_17/points = PackedVector2Array(-47, 43, -47, 39, 69, 70)
+0:0/0/physics_layer_0/polygon_18/points = PackedVector2Array(-55, 85, -55, 84, 62, 144)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ayetb"]
+resource_name = "Floor 20"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(66, 1067)
+texture_region_size = Vector2i(1425, 260)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(700.5, 10, 710.5, 32, 709.5, 32)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-703.5, 40, -710.5, 20, -709.5, 20)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(346.5, -29, 477.5, -40, 477.5, -39, 474.5, 118, 413.5, 118, 303.5, 108)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-2.5, -63, 154.5, -73, 154.5, -72)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-251.5, -127, -251.5, -128, -206.5, -126, -206.5, -125)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-2.5, -63, 0.5, 126, -103.5, 128, -103.5, 127, -10.5, -63)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(596.5, -16, 651.5, -15, 651.5, -14, 618.5, 91, 615.5, 91)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-372.5, 114, -437.5, 114, -508.5, 108, -508.5, 107, -461.5, -121, -456.5, -121, -302.5, 107)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(169.5, 108, 169.5, 109, 17.5, 126, 0.5, 126, -2.5, -63, 154.5, -72)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-547.5, -88, -508.5, 107, -645.5, 78, -645.5, 77, -552.5, -88)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-645.5, 77, -683.5, 61, -683.5, 60, -552.5, -88)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(700.5, 10, 709.5, 32, 680.5, 62, 678.5, 62, 651.5, -14)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(651.5, -14, 700.5, 9, 700.5, 10)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(651.5, -14, 678.5, 62, 618.5, 91)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(596.5, -16, 615.5, 91, 556.5, 108, 588.5, -16)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(477.5, -39, 588.5, -16, 556.5, 108, 550.5, 108)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(477.5, -39, 550.5, 108, 474.5, 118)
+0:0/0/physics_layer_0/polygon_17/points = PackedVector2Array(337.5, -29, 346.5, -29, 303.5, 108)
+0:0/0/physics_layer_0/polygon_18/points = PackedVector2Array(154.5, -72, 337.5, -29, 303.5, 108, 169.5, 108)
+0:0/0/physics_layer_0/polygon_19/points = PackedVector2Array(-95.5, -82, -91.5, -82, -10.5, -63, -103.5, 127, -300.5, 107)
+0:0/0/physics_layer_0/polygon_20/points = PackedVector2Array(-456.5, -121, -251.5, -127, -206.5, -125, -95.5, -82, -300.5, 107, -302.5, 107)
+0:0/0/physics_layer_0/polygon_21/points = PackedVector2Array(-547.5, -88, -461.5, -121, -508.5, 107)
+0:0/0/physics_layer_0/polygon_22/points = PackedVector2Array(-552.5, -88, -683.5, 60, -703.5, 42, -703.5, 40, -577.5, -68)
+0:0/0/physics_layer_0/polygon_23/points = PackedVector2Array(-703.5, 40, -709.5, 20, -647.5, -40, -645.5, -40)
+0:0/0/physics_layer_0/polygon_24/points = PackedVector2Array(-577.5, -68, -577.5, -69, -552.5, -88)
+0:0/0/physics_layer_0/polygon_25/points = PackedVector2Array(-577.5, -68, -703.5, 40, -645.5, -40)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_doq2v"]
+resource_name = "Floor 03"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(78, 73)
+texture_region_size = Vector2i(364, 74)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-170, -25, 170, -25, 170, 25, -170, 25)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kas0i"]
+resource_name = "Floor 21"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1630, 1310)
+texture_region_size = Vector2i(375, 125)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-52.5, -42.5, -33.5, -48.5, -33.5, -47.5, -146.5, 51.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(165.5, -32.5, 185.5, 34.5, 184.5, 34.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-139.5, -59.5, -139.5, -60.5, -96.5, -49.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-178.5, 23.5, -185.5, -9.5, -184.5, -9.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(127.5, -43.5, 150.5, -47.5, 150.5, -46.5, -22.5, 59.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-92.5, -49.5, -73.5, -52.5, -73.5, -51.5, -146.5, 51.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(165.5, -35.5, 165.5, -32.5, 109.5, 58.5, -22.5, 60.5, -22.5, 59.5, 150.5, -46.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-22.5, 59.5, -146.5, 52.5, -146.5, 51.5, -33.5, -47.5, -2.5, -40.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-2.5, -40.5, -2.5, -41.5, 28.5, -53.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-184.5, -9.5, -172.5, -31.5, -171.5, -31.5, -178.5, 23.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(165.5, -32.5, 184.5, 34.5, 169.5, 52.5, 166.5, 52.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(165.5, -32.5, 166.5, 52.5, 136.5, 58.5, 109.5, 58.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(120.5, -43.5, 127.5, -43.5, -22.5, 59.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(79.5, -54.5, 92.5, -54.5, 120.5, -43.5, -22.5, 59.5, 58.5, -46.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(55.5, -46.5, 58.5, -46.5, -22.5, 59.5)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(28.5, -53.5, 41.5, -53.5, 55.5, -46.5, -22.5, 59.5, -2.5, -40.5)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(-54.5, -42.5, -52.5, -42.5, -146.5, 51.5)
+0:0/0/physics_layer_0/polygon_17/points = PackedVector2Array(-73.5, -51.5, -54.5, -42.5, -146.5, 51.5)
+0:0/0/physics_layer_0/polygon_18/points = PackedVector2Array(-96.5, -49.5, -92.5, -49.5, -146.5, 51.5)
+0:0/0/physics_layer_0/polygon_19/points = PackedVector2Array(-171.5, -31.5, -139.5, -59.5, -96.5, -49.5, -146.5, 51.5, -178.5, 26.5, -178.5, 23.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lur1u"]
+resource_name = "Floor 22"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(853, 1409)
+texture_region_size = Vector2i(679, 163)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-327.5, 9.5, -337.5, -11.5, -336.5, -11.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(335.5, -5.5, 337.5, 3.5, 336.5, 3.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(18.5, -78.5, 18.5, -79.5, 110.5, -60.5, 110.5, 60.5, 26.5, 79.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-111.5, 58.5, -185.5, 59.5, -185.5, 58.5, -165.5, -58.5, -93.5, -58.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(118.5, -60.5, 194.5, -55.5, 194.5, -54.5, 187.5, 55.5, 110.5, 60.5, 110.5, -60.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-93.5, -58.5, -93.5, -59.5, 18.5, -78.5, 26.5, 79.5, 18.5, 79.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-257.5, -41.5, -185.5, 58.5, -287.5, 39.5, -287.5, 38.5, -284.5, -41.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(110.5, 60.5, 110.5, 61.5, 26.5, 79.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(194.5, -54.5, 335.5, -6.5, 335.5, -5.5, 317.5, 14.5, 314.5, 14.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(335.5, -5.5, 336.5, 3.5, 317.5, 14.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(194.5, -54.5, 314.5, 14.5, 194.5, 55.5, 187.5, 55.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-93.5, -58.5, 18.5, 79.5, -93.5, 58.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-93.5, -58.5, -93.5, 58.5, -111.5, 58.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-187.5, -58.5, -165.5, -58.5, -185.5, 58.5, -257.5, -41.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-321.5, -27.5, -284.5, -41.5, -287.5, 38.5, -327.5, 11.5, -327.5, 9.5)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(-321.5, -27.5, -327.5, 9.5, -336.5, -11.5, -323.5, -27.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vivc2"]
+resource_name = "Floor 23"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(19, 1425)
+texture_region_size = Vector2i(710, 207)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(344, 32.5, 353, 50.5, 352, 50.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-10, -100.5, -10, -101.5, 164, -51.5, 164, -50.5, 63, 101.5, 23, 101.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-351, 58.5, -353, 48.5, -352, 48.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-10, -100.5, 23, 101.5, -256, 93.5, -256, 92.5, -134, -85.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(278, -7.5, 344, 32.5, 352, 50.5, 322, 65.5, 316, 65.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-250, -35.5, -248, -35.5, -256, 92.5, -327, 76.5, -327, 75.5, -307, 19.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(164, -50.5, 278, -8.5, 278, -7.5, 63, 101.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(-351, 58.5, -352, 48.5, -307, 19.5, -327, 75.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-205, -48.5, -205, -49.5, -138, -85.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(278, -7.5, 344, 31.5, 344, 32.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(278, -7.5, 316, 65.5, 63, 101.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-138, -85.5, -134, -85.5, -256, 92.5, -205, -48.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-248, -35.5, -205, -48.5, -256, 92.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-327, 75.5, -351, 60.5, -351, 58.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-250, -35.5, -307, 19.5, -307, 18.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7ltgs"]
+resource_name = "Floor 24"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1631, 1495)
+texture_region_size = Vector2i(378, 110)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(169, -35, 187, 5, 186, 5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-167, 32, -187, -27, -186, -27)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-125, 41, -152, 46, -152, 45, -72, -46)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-61, 44, -61, 45, -95, 51, -95, 50, -72, -46)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(3, 37, 2, -52, 2, -53, 142, -48, 142, -47, 4, 37)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-35, 50, -41, 50, -61, 44, -72, -46, -72, -47, 2, -52, 3, 37)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(142, -47, 169, -36, 169, -35, 132, 53, 4, 37)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(186, 5, 179, 21, 178, 21)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-167, 32, -186, -27, -170, -43, -168, -43)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-167, 32, -168, -43, -147, -51, -113, -51, -72, -46, -152, 45)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-152, 45, -167, 35, -167, 32)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-123, 41, -125, 41, -72, -46)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-95, 50, -123, 41, -72, -46)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(132, 53, 169, -35, 186, 5, 178, 21, 142, 53)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_flk1t"]
+resource_name = "Floor 25"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(820, 1653)
+texture_region_size = Vector2i(795, 309)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(384.5, 34.5, 395.5, 49.5, 394.5, 49.5)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-69.5, -151.5, -69.5, -152.5, -27.5, -147.5, -27.5, -146.5)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(54.5, 152.5, 53.5, 152.5, -159.5, 148.5, -159.5, 147.5, -116.5, -145.5, -69.5, -151.5, -27.5, -146.5, 200.5, -33.5)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-163.5, -130.5, -159.5, 147.5, -248.5, 132.5, -248.5, 131.5, -166.5, -130.5)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-248.5, 131.5, -337.5, 104.5, -337.5, 103.5, -166.5, -130.5)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(203.5, -33.5, 384.5, 33.5, 384.5, 34.5, 374.5, 77.5, 372.5, 77.5)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(384.5, 34.5, 394.5, 49.5, 374.5, 77.5)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(203.5, -33.5, 372.5, 77.5, 319.5, 108.5, 314.5, 108.5)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(203.5, -33.5, 314.5, 108.5, 54.5, 152.5, 200.5, -33.5)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-121.5, -145.5, -116.5, -145.5, -159.5, 147.5, -163.5, -130.5)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-166.5, -130.5, -337.5, 103.5, -385.5, 66.5, -385.5, 64.5)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-166.5, -130.5, -385.5, 64.5, -395.5, 45.5, -227.5, -86.5)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-227.5, -86.5, -227.5, -87.5, -166.5, -130.5)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-317.5, -58.5, -227.5, -86.5, -395.5, 45.5, -395.5, 31.5)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-320.5, -58.5, -317.5, -58.5, -395.5, 31.5, -338.5, -45.5)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(-338.5, -45.5, -395.5, 31.5, -340.5, -45.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mxsas"]
+resource_name = "Floor 26"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(13, 1752)
+texture_region_size = Vector2i(795, 242)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(383.5, 25, 395.5, 38, 394.5, 38)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-80.5, -118, -80.5, -119, -29.5, -116, -29.5, -115, -71.5, 119)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-163.5, -102, -71.5, 119, -192.5, 112, -192.5, 111, -167.5, -102)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(383.5, 25, 394.5, 38, 376.5, 59, 374.5, 59, 210.5, -39)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(-224.5, -69, -192.5, 111, -331.5, 83, -331.5, 82, -307.5, -49)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(91.5, -72, 210.5, -40, 210.5, -39, 45.5, 119, 87.5, -72)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(210.5, -39, 383.5, 24, 383.5, 25)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(210.5, -39, 374.5, 59, 320.5, 84, 315.5, 84)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(210.5, -39, 315.5, 84, 45.5, 119)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-29.5, -115, 87.5, -72, 45.5, 119, -71.5, 119)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-163.5, -102, -80.5, -118, -71.5, 119)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-224.5, -70, -167.5, -102, -192.5, 111, -224.5, -69)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-311.5, -49, -307.5, -49, -331.5, 82, -379.5, 57, -379.5, 56, -341.5, -34)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(-341.5, -34, -379.5, 56, -395.5, 36, -395.5, 23, -343.5, -34)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_meqdy"]
+resource_name = "Platform 01"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(231, 21)
+texture_region_size = Vector2i(393, 191)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184.5, -83.5, 184.5, -83.5, 184.5, 83.5, -184.5, 83.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1ydgh"]
+resource_name = "Platform 02"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(21, 24)
+texture_region_size = Vector2i(193, 191)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-84.5, -83.5, 84.5, -83.5, 84.5, 83.5, -84.5, 83.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bpcl5"]
+resource_name = "Platform 03"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(670, 54)
+texture_region_size = Vector2i(310, 327)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-143, -151.5, 143, -151.5, 143, 151.5, -143, 151.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_km6jq"]
+resource_name = "Platform 04"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(26, 224)
+texture_region_size = Vector2i(565, 365)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-270.5, -170.5, 270.5, -170.5, 270.5, 170.5, -270.5, 170.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xm5b0"]
+resource_name = "Floor 04"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(954, 76)
+texture_region_size = Vector2i(149, 64)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(67.5, -29, 72.5, -5, 71.5, -5, -63.5, -29)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-69.5, 20, -72.5, -21, -71.5, -21)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-63.5, -29, -63.5, -30, 67.5, -30, 67.5, -29)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(59.5, 30, -45.5, 30, -45.5, 29)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(71.5, -5, 69.5, 21, 68.5, 21, -63.5, -29)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(-63.5, -29, 68.5, 21, 59.5, 30, -45.5, 29, -69.5, 24, -69.5, 20)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-63.5, -29, -69.5, 20, -71.5, -21)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vhj62"]
+resource_name = "Platform 05"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(615, 397)
+texture_region_size = Vector2i(392, 367)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184, -171.5, 184, -171.5, 184, 171.5, -184, 171.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pvaa5"]
+resource_name = "Platform 06"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(46, 643)
+texture_region_size = Vector2i(194, 367)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-85, -171.5, 85, -171.5, 85, 171.5, -85, 171.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7da41"]
+resource_name = "Platform 07"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(274, 644)
+texture_region_size = Vector2i(305, 65)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-140.5, -20.5, 140.5, -20.5, 140.5, 20.5, -140.5, 20.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u3nkn"]
+resource_name = "Platform 08"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(293, 720)
+texture_region_size = Vector2i(268, 160)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-122, -68, 122, -68, 122, 68, -122, 68)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bml02"]
+resource_name = "Platform 09"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(631, 791)
+texture_region_size = Vector2i(354, 67)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-165, -21.5, 165, -21.5, 165, 21.5, -165, 21.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t8ekg"]
+resource_name = "Platform 10"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(721, 888)
+texture_region_size = Vector2i(194, 103)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-85, -39.5, 85, -39.5, 85, 39.5, -85, 39.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p6kcm"]
+resource_name = "Platform 11"
+texture = ExtResource("2_7dkmc")
+margins = Vector2i(266, 900)
+texture_region_size = Vector2i(392, 108)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-184, -42, 184, -42, 184, 42, -184, 42)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3hq8o"]
+resource_name = "Floor 05"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(1344, 86)
+texture_region_size = Vector2i(216, 354)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(70, 160, 5, 175, 5, 174)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(71, -170, 91, -159, 101, -92, 100, -92, 1, -167)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-87, -174, -87, -175, -1, -167)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-102, -52, -106, -114, -105, -114)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(1, -167, 71, -171, 71, -170)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(106, -28, 106, -10, 105, -10)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(100, 115, -104, 100, -101, 22, -100, 22, 92, 26, 103, 59, 103, 96, 101, 115)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(5, 174, -42, 171, -42, 170)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(-105, -114, -101, -154, -100, -154)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(-42, 170, -80, 158, -80, 157)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(71, -170, 91, -160, 91, -159)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(88, -61, 89, -61, 106, -28, 105, -10, 92, 25, -84, -5, -102, -29, -102, -52)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-102, -52, -105, -114, -100, -154, -87, -174, -1, -167, 88, -61)
+0:0/0/physics_layer_0/polygon_13/points = PackedVector2Array(100, 115, 72, 160, 70, 160, -104, 100)
+0:0/0/physics_layer_0/polygon_14/points = PackedVector2Array(-84, -5, -85, -5, -102, -29)
+0:0/0/physics_layer_0/polygon_15/points = PackedVector2Array(1, -167, 100, -92, 88, -61, -1, -167)
+0:0/0/physics_layer_0/polygon_16/points = PackedVector2Array(-84, -5, 92, 25, 92, 26, -100, 22)
+0:0/0/physics_layer_0/polygon_17/points = PackedVector2Array(-104, 100, 70, 160, 5, 174, -42, 170, -80, 157, -104, 108)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1wyyt"]
+resource_name = "Floor 06"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(907, 175)
+texture_region_size = Vector2i(427, 140)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(196.5, -19, 211.5, 3, 210.5, 3)
+0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-32.5, -67, -32.5, -68, 2.5, -67, 2.5, -66, -3.5, 68)
+0:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(92.5, -47, 143.5, -45, 143.5, -44, 139.5, 45, 70.5, 49, 84.5, -47)
+0:0/0/physics_layer_0/polygon_3/points = PackedVector2Array(-104.5, 42, -112.5, 42, -164.5, 36, -164.5, 35, -160.5, -36, -104.5, -42)
+0:0/0/physics_layer_0/polygon_4/points = PackedVector2Array(70.5, 49, 70.5, 50, -3.5, 68, 2.5, -66)
+0:0/0/physics_layer_0/polygon_5/points = PackedVector2Array(196.5, -19, 210.5, 3, 193.5, 22, 191.5, 22, 143.5, -44)
+0:0/0/physics_layer_0/polygon_6/points = PackedVector2Array(-104.5, -42, -104.5, -43, -32.5, -67)
+0:0/0/physics_layer_0/polygon_7/points = PackedVector2Array(143.5, -44, 196.5, -20, 196.5, -19)
+0:0/0/physics_layer_0/polygon_8/points = PackedVector2Array(143.5, -44, 191.5, 22, 143.5, 45, 139.5, 45)
+0:0/0/physics_layer_0/polygon_9/points = PackedVector2Array(2.5, -66, 84.5, -47, 70.5, 49)
+0:0/0/physics_layer_0/polygon_10/points = PackedVector2Array(-32.5, -67, -3.5, 68, -32.5, 68, -104.5, 42, -104.5, -42)
+0:0/0/physics_layer_0/polygon_11/points = PackedVector2Array(-198.5, -17, -164.5, -36, -160.5, -36, -164.5, 35, -211.5, 6, -211.5, 4)
+0:0/0/physics_layer_0/polygon_12/points = PackedVector2Array(-198.5, -17, -211.5, 4, -200.5, -17)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tjmqu"]
+resource_name = "Floor 07"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(69, 212)
+texture_region_size = Vector2i(363, 74)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-169.5, -25, 169.5, -25, 169.5, 25, -169.5, 25)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8yguq"]
+resource_name = "Floor 08"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(503, 214)
+texture_region_size = Vector2i(378, 75)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-177, -25.5, 177, -25.5, 177, 25.5, -177, 25.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s3xla"]
+resource_name = "Floor 09"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(71, 359)
+texture_region_size = Vector2i(989, 83)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-482.5, -29.5, 482.5, -29.5, 482.5, 29.5, -482.5, 29.5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7a4h4"]
+resource_name = "Floor 10"
+texture = ExtResource("1_v8seo")
+margins = Vector2i(76, 511)
+texture_region_size = Vector2i(795, 82)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-385.5, -29, 385.5, -29, 385.5, 29, -385.5, 29)
+
+[resource]
+resource_name = "CaveTileSet"
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_afpdu")
+sources/1 = SubResource("TileSetAtlasSource_lg2ml")
+sources/2 = SubResource("TileSetAtlasSource_doq2v")
+sources/3 = SubResource("TileSetAtlasSource_xm5b0")
+sources/4 = SubResource("TileSetAtlasSource_3hq8o")
+sources/5 = SubResource("TileSetAtlasSource_1wyyt")
+sources/6 = SubResource("TileSetAtlasSource_tjmqu")
+sources/7 = SubResource("TileSetAtlasSource_8yguq")
+sources/8 = SubResource("TileSetAtlasSource_s3xla")
+sources/9 = SubResource("TileSetAtlasSource_7a4h4")
+sources/10 = SubResource("TileSetAtlasSource_ifyeu")
+sources/11 = SubResource("TileSetAtlasSource_ssopg")
+sources/12 = SubResource("TileSetAtlasSource_biicp")
+sources/13 = SubResource("TileSetAtlasSource_iasra")
+sources/14 = SubResource("TileSetAtlasSource_846n4")
+sources/15 = SubResource("TileSetAtlasSource_rrd2x")
+sources/16 = SubResource("TileSetAtlasSource_4h6nh")
+sources/17 = SubResource("TileSetAtlasSource_ptnn1")
+sources/18 = SubResource("TileSetAtlasSource_skf7y")
+sources/19 = SubResource("TileSetAtlasSource_ayetb")
+sources/20 = SubResource("TileSetAtlasSource_kas0i")
+sources/21 = SubResource("TileSetAtlasSource_lur1u")
+sources/22 = SubResource("TileSetAtlasSource_vivc2")
+sources/23 = SubResource("TileSetAtlasSource_7ltgs")
+sources/24 = SubResource("TileSetAtlasSource_flk1t")
+sources/25 = SubResource("TileSetAtlasSource_mxsas")
+sources/26 = SubResource("TileSetAtlasSource_meqdy")
+sources/27 = SubResource("TileSetAtlasSource_1ydgh")
+sources/28 = SubResource("TileSetAtlasSource_bpcl5")
+sources/29 = SubResource("TileSetAtlasSource_km6jq")
+sources/30 = SubResource("TileSetAtlasSource_vhj62")
+sources/31 = SubResource("TileSetAtlasSource_pvaa5")
+sources/32 = SubResource("TileSetAtlasSource_7da41")
+sources/33 = SubResource("TileSetAtlasSource_u3nkn")
+sources/34 = SubResource("TileSetAtlasSource_bml02")
+sources/35 = SubResource("TileSetAtlasSource_t8ekg")
+sources/36 = SubResource("TileSetAtlasSource_p6kcm")
+pattern_0 = SubResource("TileMapPattern_oyuoa")
+pattern_1 = SubResource("TileMapPattern_n6sbd")
+pattern_2 = SubResource("TileMapPattern_0f88e")
+pattern_3 = SubResource("TileMapPattern_8hugn")
+pattern_4 = SubResource("TileMapPattern_gbt2r")
+pattern_5 = SubResource("TileMapPattern_1af43")
+pattern_6 = SubResource("TileMapPattern_54ixw")
+pattern_7 = SubResource("TileMapPattern_qrbo6")
+pattern_8 = SubResource("TileMapPattern_7nrmf")
+pattern_9 = SubResource("TileMapPattern_vdo2r")
+pattern_10 = SubResource("TileMapPattern_2mitw")
+pattern_11 = SubResource("TileMapPattern_7ngwv")
+pattern_12 = SubResource("TileMapPattern_bl4fc")
+pattern_13 = SubResource("TileMapPattern_a4j0j")
+pattern_14 = SubResource("TileMapPattern_b5iuf")
+pattern_15 = SubResource("TileMapPattern_b5vlv")
+pattern_16 = SubResource("TileMapPattern_rnpgs")
+pattern_17 = SubResource("TileMapPattern_xbeij")
+pattern_18 = SubResource("TileMapPattern_fb8mc")
+pattern_19 = SubResource("TileMapPattern_vwt8q")
+pattern_20 = SubResource("TileMapPattern_ber16")
+pattern_21 = SubResource("TileMapPattern_bsrt5")
+pattern_22 = SubResource("TileMapPattern_xidos")
+pattern_23 = SubResource("TileMapPattern_vplld")
+pattern_24 = SubResource("TileMapPattern_5vuwf")
+pattern_25 = SubResource("TileMapPattern_p6pdv")
+pattern_26 = SubResource("TileMapPattern_rsx20")
+pattern_27 = SubResource("TileMapPattern_i38al")
+pattern_28 = SubResource("TileMapPattern_syb1k")
+pattern_29 = SubResource("TileMapPattern_2iopv")
+pattern_30 = SubResource("TileMapPattern_ick7n")
+pattern_31 = SubResource("TileMapPattern_ylamh")
+pattern_32 = SubResource("TileMapPattern_322nj")
+pattern_33 = SubResource("TileMapPattern_qifgs")
+pattern_34 = SubResource("TileMapPattern_xn4xt")
+pattern_35 = SubResource("TileMapPattern_exbgy")
+pattern_36 = SubResource("TileMapPattern_uhioe")
