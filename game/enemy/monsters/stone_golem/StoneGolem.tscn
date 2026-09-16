@@ -226,7 +226,7 @@ script = ExtResource("69_p84pt")
 visible = false
 position = Vector2(-49, -47)
 sprite_frames = ExtResource("52_ss007")
-animation = &"laser_beam"
+animation = &"laser"
 centered = false
 
 [node name="_Sockets" type="Node2D" parent="." unique_id=1976353636]

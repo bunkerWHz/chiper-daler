@@ -26,7 +26,7 @@ func _run() -> void:
 	check(sprite.scale == Vector2.ONE and not sprite.flip_h, "Native right-facing sprite")
 	var frames := sprite.sprite_frames
 	var counts := {"idle": 4, "move": 4, "glowing": 8, "ranged_attack": 9,
-		"melee_attack": 7, "laser_cast": 7, "armor_buff": 10, "block": 8,
+		"melee_attack": 7, "laser": 7, "armor_buff": 10, "block": 8,
 		"defeated": 14, "appearance": 14, "attack": 7, "death": 14}
 	for name: String in counts:
 		check(frames.get_frame_count(name) == counts[name], name + " frame count")
@@ -37,8 +37,8 @@ func _run() -> void:
 	for i in 14:
 		check((frames.get_frame_texture(&"appearance", i) as AtlasTexture).region == (frames.get_frame_texture(&"death", 13-i) as AtlasTexture).region, "Appearance reverses defeat")
 	var effects := load(ROOT + "EffectSpriteFrames.tres") as SpriteFrames
-	check(effects.get_frame_count(&"laser_beam") == 14, "14 laser frames")
-	check((effects.get_frame_texture(&"laser_beam", 0) as AtlasTexture).region.position.y == 100, "Empty laser row excluded")
+	check(effects.get_frame_count(&"laser") == 14, "14 laser frames")
+	check((effects.get_frame_texture(&"laser", 0) as AtlasTexture).region.position.y == 100, "Empty laser row excluded")
 	check(not effects.has_animation(&"arm_projectile"), "Projectile is not a character effect")
 	var projectile := load(ROOT + "ArmProjectile.tscn").instantiate() as Area2D
 	var projectile_sprite := projectile.get_node("AnimatedSprite2D") as AnimatedSprite2D
@@ -65,6 +65,8 @@ func _run() -> void:
 	check(not golem.has_component(EnemyAttackComponent), "No autonomous boss combat in asset phase")
 	(golem.get_component(EnemyVisualComponent) as EnemyVisualComponent).disable()
 	var timeline := golem.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+	check(not timeline.has_animation(&"laser_cast") and not timeline.has_animation(&"laser_beam"), "Only one laser clip in AnimationPlayer")
+	check(not frames.has_animation(&"laser_cast"), "No separate cast animation in character SpriteFrames")
 	check(not timeline.has_animation(&"arm_projectile") and not golem.has_node("_Visual/ArmProjectile"), "Projectile removed from boss animation and visual tree")
 	for name: String in counts:
 		timeline.play(name)
@@ -88,6 +90,7 @@ func _run() -> void:
 	check(change_scene_to_file("res://tests/StoneGolemPreview.tscn") == OK, "Preview opens")
 	await process_frame
 	await process_frame
+	check("laser_cast" not in current_scene.CLIPS and "laser_beam" not in current_scene.CLIPS, "Preview exposes only combined laser")
 	for i in current_scene.CLIPS.size():
 		current_scene.picker.select(i)
 		current_scene.play_selected()

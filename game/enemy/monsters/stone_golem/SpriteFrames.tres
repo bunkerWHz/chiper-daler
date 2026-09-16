@@ -649,7 +649,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_mbnqk")
 }],
 "loop": 0,
-"name": &"laser_cast",
+"name": &"laser",
 "speed": 10.0
 }, {
 "frames": [{

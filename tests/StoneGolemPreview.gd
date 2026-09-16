@@ -1,8 +1,8 @@
 extends Node2D
 
 const CLIPS := [
-	"idle", "move", "glowing", "ranged_attack", "melee_attack", "laser_cast",
-	"laser_beam", "laser", "armor_buff", "block", "defeated", "appearance",
+	"idle", "move", "glowing", "ranged_attack", "melee_attack",
+	"laser", "armor_buff", "block", "defeated", "appearance",
 ]
 const PROJECTILE := preload("res://game/enemy/monsters/stone_golem/ArmProjectile.tscn")
 @onready var golem: Actor = $StoneGolem
@@ -83,7 +83,7 @@ func _set_facing(flipped: bool) -> void:
 
 
 func interrupt_laser_cast() -> bool:
-	if timeline.current_animation not in [&"laser", &"laser_cast"]:
+	if timeline.current_animation != &"laser":
 		return false
 	# The last character-frame key is the release boundary, shared with the beam.
 	var cast := timeline.get_animation(&"laser")
