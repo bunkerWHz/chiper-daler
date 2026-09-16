@@ -1,0 +1,49 @@
+[gd_scene format=4]
+
+[ext_resource type="TileSet" path="res://assets/tilesets/bw_forest/BWForestTileSet.tres" id="1_hfqw1"]
+[ext_resource type="TileSet" path="res://assets/tilesets/bw_forest/BWForestOneWayTileSet.tres" id="2_one_way"]
+
+[node name="BWForestTileSetWorkshop" type="Node2D"]
+editor_description = "BWForest workshop: solid terrain and separate one-way platforms. Enable Debug > Visible Collision Shapes when running. See README.md."
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="BackDecor" type="TileMapLayer" parent="Terrain"]
+z_index = -20
+tile_set = ExtResource("1_hfqw1")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="Solid" type="TileMapLayer" parent="Terrain"]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAACAAAAAAACAAAAAAAAAAEAAAAAAAEAAAABAAEAAAABAAEAAAACAAEAAAACAAEAAAAAAAIAAAAAAAIAAAABAAIAAAABAAIAAAACAAIAAAACAAIAAAAEAAAA//////////8EAAEA//////////8EAAIA//////////8GAAEA//////////8IAAAAAAAAAAAAAAAJAAAAAAABAAAAAAAKAAAAAAABAAAAAAALAAAAAAABAAAAAAAMAAAAAAABAAAAAAANAAAAAAACAAAAAAAIAAEAAAAAAAEAAAAJAAEAAAABAAEAAAAKAAEAAAABAAEAAAALAAEAAAABAAEAAAAMAAEAAAABAAEAAAANAAEAAAACAAEAAAAIAAIAAAAAAAIAAAAJAAIAAAABAAIAAAAKAAIAAAABAAIAAAALAAIAAAABAAIAAAAMAAIAAAABAAIAAAANAAIAAAACAAIAAAAQAAAAAAAAAAMAAAARAAAAAAABAAMAAAASAAAAAAABAAMAAAATAAAAAAABAAMAAAAUAAAAAAACAAMAAAAYAAAAAAADAAAAAAAYAAEAAAADAAEAAAAYAAIAAAADAAEAAAAYAAMAAAADAAEAAAAYAAQAAAADAAIAAAAEAAcAAAADAAAAAAADAAgAAAAAAAAAAAAEAAgAAAABAAUAAAACAAkAAAAAAAAAAAADAAkAAAAFAAEAAAAEAAkAAAACAAEAAAAAAAoAAAAAAAMAAAABAAoAAAABAAMAAAACAAoAAAADAAUAAAADAAoAAAABAAIAAAAEAAoAAAACAAIAAAAIAAcAAAAAAAAAAAAJAAcAAAABAAAAAAAKAAcAAAABAAAAAAALAAcAAAABAAAAAAAMAAcAAAACAAAAAAAIAAgAAAAAAAEAAAAJAAgAAAAEAAAAAAAKAAgAAAABAAIAAAALAAgAAAAFAAAAAAAMAAgAAAACAAEAAAAIAAkAAAAAAAEAAAAJAAkAAAACAAEAAAALAAkAAAAAAAEAAAAMAAkAAAACAAEAAAAIAAoAAAAAAAIAAAAJAAoAAAACAAIAAAALAAoAAAAAAAIAAAAMAAoAAAACAAIAAAAQAAcAAAAEAAQAAAARAAcAAAABAAMAAAASAAcAAAABAAMAAAATAAcAAAABAAMAAAAUAAcAAAAGAAQAAAAQAAgAAAADAAEAAAAUAAgAAAADAAEAAAAQAAkAAAADAAEAAAAUAAkAAAADAAEAAAAQAAoAAAADAAEAAAAUAAoAAAADAAEAAAAQAAsAAAAEAAYAAAARAAsAAAABAAMAAAASAAsAAAABAAMAAAATAAsAAAABAAMAAAAUAAsAAAAGAAYAAAAaAAcAAAADAAAAAAAaAAgAAAADAAEAAAAYAAkAAAAAAAMAAAAZAAkAAAABAAMAAAAaAAkAAAAFAAUAAAAbAAkAAAABAAMAAAAcAAkAAAACAAMAAAAaAAoAAAADAAEAAAAaAAsAAAADAAIAAAA=")
+tile_set = ExtResource("1_hfqw1")
+navigation_enabled = false
+
+[node name="OneWayPlatforms" type="TileMapLayer" parent="Terrain"]
+editor_description = "One-way platforms: separate TileSet, 4 tiles, 2 patterns. Jump through from below; land from above."
+tile_map_data = PackedByteArray("AAAIAA4AAAAAAAMAAAAJAA4AAAABAAMAAAAKAA4AAAABAAMAAAALAA4AAAABAAMAAAAMAA4AAAACAAMAAAAQAA4AAAADAAMAAAA=")
+tile_set = ExtResource("2_one_way")
+navigation_enabled = false
+
+[node name="FrontDecor" type="TileMapLayer" parent="Terrain"]
+z_index = 20
+tile_set = ExtResource("1_hfqw1")
+collision_enabled = false
+navigation_enabled = false
+
+[node name="PreviewCamera" type="Camera2D" parent="."]
+position = Vector2(7680, 3840)
+zoom = Vector2(0.07, 0.07)
+
+[node name="Instructions" type="CanvasLayer" parent="."]
+
+[node name="Guide" type="Label" parent="Instructions"]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 24.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 18
+text = "BWForest — земля и платформы
+Solid → Terrains → BWForest Ground → Connect; готовые формы → Patterns.
+OneWayPlatforms → Patterns: проходимые снизу платформы (нижний ряд).
+Debug → Visible Collision Shapes: показать физические границы."

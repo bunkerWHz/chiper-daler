@@ -1,5 +1,6 @@
 extends SceneTree
 ## Run: godot --headless --path . --script tests/green_forest_tileset_check.gd
+## Add -- --bw-forest to check the BWForest variant with the same assertions.
 
 const BITS = [
 	TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER,
@@ -15,7 +16,10 @@ var failures := 0
 
 
 func _initialize() -> void:
-	var tiles := load("res://assets/tilesets/green_forest/GreenForestTileSet.tres") as TileSet
+	var path := "res://assets/tilesets/green_forest/GreenForestTileSet.tres"
+	if OS.get_cmdline_user_args().has("--bw-forest"):
+		path = "res://assets/tilesets/bw_forest/BWForestTileSet.tres"
+	var tiles := load(path) as TileSet
 	_check(tiles != null, "TileSet loads")
 	if tiles == null:
 		quit(1)

@@ -68,6 +68,9 @@
 Для настройки общего ресурса используем
 `levels/workshops/TileSetWorkshop.tscn` — [инструкция мастерской](../levels/workshops/README.md).
 Первый подключённый набор: `assets/tilesets/green_forest/GreenForestTileSet.tres`.
+Чёрно-белый вариант: `assets/tilesets/bw_forest/BWForestTileSet.tres`, стенд —
+`levels/workshops/BWForestTileSetWorkshop.tscn`. Оба набора имеют одинаковую
+сетку, паттерны, автосоединение и коллизии, но независимые ресурсы.
 Мастерская хранит образцы раскладки, внешний `.tres` — настройки самого набора.
 
 TileSet — ресурс с изображениями и свойствами тайлов; TileMapLayer — слой карты.

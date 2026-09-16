@@ -1,5 +1,6 @@
 extends SceneTree
 ## Run: godot --headless --path . --script tests/green_forest_collision_check.gd
+## Add -- --bw-forest to check the BWForest variant with the same assertions.
 
 var failures := 0
 
@@ -9,9 +10,16 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	var solid := load("res://assets/tilesets/green_forest/GreenForestTileSet.tres") as TileSet
-	var platforms := load("res://assets/tilesets/green_forest/GreenForestOneWayTileSet.tres") as TileSet
-	var workshop: Node = load("res://levels/workshops/TileSetWorkshop.tscn").instantiate()
+	var directory := "res://assets/tilesets/green_forest/"
+	var prefix := "GreenForest"
+	var workshop_path := "res://levels/workshops/TileSetWorkshop.tscn"
+	if OS.get_cmdline_user_args().has("--bw-forest"):
+		directory = "res://assets/tilesets/bw_forest/"
+		prefix = "BWForest"
+		workshop_path = "res://levels/workshops/BWForestTileSetWorkshop.tscn"
+	var solid := load(directory + prefix + "TileSet.tres") as TileSet
+	var platforms := load(directory + prefix + "OneWayTileSet.tres") as TileSet
+	var workshop: Node = load(workshop_path).instantiate()
 	_check(workshop.get_node("Terrain/Solid").tile_set == solid, "Workshop uses shared solid resource")
 	_check(workshop.get_node("Terrain/OneWayPlatforms").tile_set == platforms, "Workshop uses shared one-way resource")
 	for path in ["Terrain/BackDecor", "Terrain/FrontDecor"]:

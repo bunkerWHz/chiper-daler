@@ -10,3 +10,6 @@
 
 `workshops/TileSetWorkshop.tscn` — стенд настройки GreenForest TileSet с визуальными
 образцами. [Инструкция мастерской](workshops/README.md).
+
+`workshops/BWForestTileSetWorkshop.tscn` — такой же стенд для чёрно-белого
+набора BWForest, с собственными ресурсами земли и односторонних платформ.

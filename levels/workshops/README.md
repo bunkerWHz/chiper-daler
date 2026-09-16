@@ -1,5 +1,31 @@
 # Мастерские уровней
 
+## Выбор набора
+
+| Набор | Сцена мастерской | Папка ресурсов |
+| --- | --- | --- |
+| GreenForest | `TileSetWorkshop.tscn` | `assets/tilesets/green_forest/` |
+| BWForest | `BWForestTileSetWorkshop.tscn` | `assets/tilesets/bw_forest/` |
+
+BWForest использует `assets/GreenForest Assets/BWForest/bw_tileset.png`.
+Его ресурсы — `BWForestTileSet.tres` и `BWForestOneWayTileSet.tres`.
+Размер изображения 3584 × 3584, сетка 512 × 512, 47 сочетаний Terrain,
+восемь паттернов земли, два паттерна односторонних платформ и все коллизии
+совпадают с GreenForest. Для рисования выберите **BWForest Ground → Connect**.
+Инструкции ниже применимы к обоим наборам с соответствующим именем Terrain.
+
+Ресурсы независимы: можно использовать оба набора одновременно в разных
+TileMapLayer. После последующих правок коллизий или паттернов одного набора
+второй не обновляется автоматически. Остальная графика BWForest (декорации,
+растительность и отдельное изображение платформ) пока не подключена к TileSet.
+
+Проверить BWForest теми же тестами:
+
+```sh
+godot --headless --path . --script tests/green_forest_tileset_check.gd -- --bw-forest
+godot --headless --path . --script tests/green_forest_collision_check.gd -- --bw-forest
+```
+
 ## TileSetWorkshop
 
 Откройте `TileSetWorkshop.tscn` в Godot. Это отдельный стенд для редактирования
