@@ -31,19 +31,19 @@ func test_bow_aims_and_looses_arrow_on_primary_release() -> void:
 	assert_eq(actor_state.get_state(), ActorState.Behavior.IDLE)
 
 
-func test_crossbow_aims_with_primary_and_fires_with_secondary() -> void:
+func test_crossbow_fires_on_primary_release() -> void:
 	var setup := _create_ranged_actor()
 	var input := setup.input as InputComponent
 	var equipment := setup.equipment as EquipmentComponent
 	var ranged := setup.ranged as RangedWeaponComponent
 	var actor_state := setup.actor_state as ActorStateComponent
-	equipment.equip(EquipmentComponent.Slot.CROSSBOW)
+	preload("res://tests/AimingTestFactory.gd").select_weapon(setup, EquipmentComponent.Slot.CROSSBOW)
 	input._attack_just_pressed = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_state(), ActorState.Behavior.AIM_CROSSBOW)
 
-	input._guard_just_pressed = true
+	input._attack_released = true
 	ranged._process(0.0)
 	actor_state.refresh_state()
 	assert_eq(actor_state.get_state(), ActorState.Behavior.FIRE_CROSSBOW)
@@ -76,10 +76,13 @@ func test_ranged_aim_cancels_when_active_weapon_context_changes() -> void:
 	equipment.switch_weapon_set(1)
 	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
 
+	var equipment_connections := equipment.equipment_changed.get_connections().size()
+	var loadout_connections := equipment.loadout_item_changed.get_connections().size()
+	var swap_connections := equipment.weapon_set_changed.get_connections().size()
 	actor._collect_components()
-	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
-	assert_eq(equipment.loadout_item_changed.get_connections().size(), 1)
-	assert_eq(equipment.weapon_set_changed.get_connections().size(), 1)
+	assert_eq(equipment.equipment_changed.get_connections().size(), equipment_connections)
+	assert_eq(equipment.loadout_item_changed.get_connections().size(), loadout_connections)
+	assert_eq(equipment.weapon_set_changed.get_connections().size(), swap_connections)
 
 
 func test_bow_profile_requires_aim_and_fire_actions() -> void:
@@ -94,6 +97,7 @@ func test_bow_profile_requires_aim_and_fire_actions() -> void:
 	bow.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
 	bow.weapon_profile = ItemWeaponProfile.new()
 	bow.weapon_profile.combat_mode = ItemData.CombatMode.BOW
+	bow.weapon_profile.ammunition_type = &"arrow"
 	bow.weapon_profile.available_actions = ItemWeaponProfile.Action.AIM
 	inventory.add_item(bow)
 	assert_true(equipment.equip_inventory_item(
@@ -106,7 +110,7 @@ func test_bow_profile_requires_aim_and_fire_actions() -> void:
 	input._attack_released = true
 	ranged._process(0.0)
 	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
-	assert_eq(ranged.get_arrow_count(), ranged.config.arrow_count)
+	assert_eq(ranged.get_arrow_count(), 20)
 
 	bow.weapon_profile.available_actions |= ItemWeaponProfile.Action.FIRE
 	input._attack_just_pressed = true
@@ -114,35 +118,10 @@ func test_bow_profile_requires_aim_and_fire_actions() -> void:
 	input._attack_released = true
 	ranged._process(0.0)
 	assert_eq(ranged.get_phase(), RangedWeaponComponent.Phase.BOW_LOOSE)
-	assert_eq(ranged.get_arrow_count(), ranged.config.arrow_count - 1)
+	assert_eq(ranged.get_arrow_count(), 19)
 
 
 func _create_ranged_actor() -> Dictionary:
-	var actor := track(Actor.new()) as Actor
-	var components := Node2D.new()
-	components.name = "_Components"
-	actor.add_child(components)
-	var input := InputComponent.new()
-	var inventory := InventoryComponent.new()
-	inventory.config = InventoryConfig.new()
-	var equipment := EquipmentComponent.new()
-	var facing := FacingComponent.new()
-	var ranged := RangedWeaponComponent.new()
-	ranged.config = RangedWeaponConfig.new()
-	var actor_state := ActorStateComponent.new()
-
-	for component: Component in [
-		input, inventory, equipment, facing, ranged, actor_state
-	]:
-		components.add_child(component)
-
-	actor._collect_components()
-	return {
-		"actor": actor,
-		"input": input,
-		"inventory": inventory,
-		"equipment": equipment,
-		"facing": facing,
-		"ranged": ranged,
-		"actor_state": actor_state,
-	}
+	var setup := preload("res://tests/AimingTestFactory.gd").create()
+	track(setup.root)
+	return setup

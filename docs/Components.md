@@ -464,17 +464,17 @@ Shape2D. После изменения масштаба проверяйте т�
 
 - **Делает:** Ведёт прицеливание, выпуск снаряда и восстановление, учитывает действия оружия и боеприпасы.
 - **Когда применять:** Для текущей стрельбы игрока.
-- **Что требуется:** InputComponent, EquipmentComponent, FacingComponent, RangedWeaponConfig. Equipment определяет разрешённые действия оружия.
-- **Настройки и ограничения:** Config: длительности, скорость, урон и жизнь снаряда. Сейчас выстрелы расходуют собственные счётчики Arrow Count / Bolt Count, а не стопки Inventory; совместимость надетых боеприпасов проверяет Equipment. Перезарядка арбалета не реализована; TrainingBow/TrainingCrossbow ждут замены.
+- **Что требуется:** InputComponent, EquipmentComponent, FacingComponent, InventoryComponent, AimingComponent, RangedWeaponConfig. Equipment определяет разрешённые действия оружия.
+- **Настройки и ограничения:** Config: длительности, скорость, гравитация, урон и жизнь снаряда. Лук и арбалет выпускают снаряд при отпускании J, расходуя совместимые боеприпасы из OFF_HAND в инвентаре. K отменяет прицеливание. Отдельной перезарядки нет.
 - **Файлы:** [Код](../features/ranged/RangedWeaponComponent.gd) · [Сцена](../features/ranged/RangedWeaponComponent.tscn) · [RangedWeaponConfig](../features/ranged/RangedWeaponConfig.gd).
 
 <a id="magiccomponent"></a>
 
 ### MagicComponent — Мана и магическое действие
 
-- **Делает:** Хранит ману, ведёт зарядку, применение и поддержание магии, создаёт снаряд.
+- **Делает:** Хранит ману, ведёт подготовку, применение и поддержание магии, создаёт снаряд. Подготовка направленного заклинания использует общий прицел и завершается отпусканием кнопки.
 - **Когда применять:** Для нынешнего магического режима игрока и восстановления маны.
-- **Что требуется:** InputComponent, EquipmentComponent, FacingComponent, MagicConfig; CharacterAttributes добавляет максимум маны от Wisdom.
+- **Что требуется:** InputComponent, EquipmentComponent, FacingComponent, MagicConfig; AimingComponent для направленного выстрела; CharacterAttributes добавляет максимум маны от Wisdom.
 - **Настройки и ограничения:** Config: стоимость, длительности, снаряд и базовый максимум. Итоговый максимум читайте через `get_max_mana()`. Это текущая магическая способность, не универсальный каталог независимых заклинаний.
 - **Файлы:** [Код](../features/magic/MagicComponent.gd) · [Сцена](../features/magic/MagicComponent.tscn) · [MagicConfig](../features/magic/MagicConfig.gd).
 
@@ -482,10 +482,10 @@ Shape2D. После изменения масштаба проверяйте т�
 
 ### ThrowingComponent — Бросок снаряда
 
-- **Делает:** Ведёт прицеливание, бросок и восстановление; расходует собственный запас зарядов.
-- **Когда применять:** Для нынешнего режима THROWABLE.
-- **Что требуется:** InputComponent, EquipmentComponent, FacingComponent, ThrowingConfig.
-- **Настройки и ограничения:** Config: Max Charges, скорость, урон, отбрасывание, длительности. Сейчас расходуется собственный счётчик, а не произвольные стопки ItemData; назначение предмета в быстрый слот само по себе не создаёт новую механику.
+- **Делает:** Ведёт прицеливание, бросок и восстановление; расходует один выбранный метательный предмет из инвентаря.
+- **Когда применять:** Для предметов THROWABLE в быстром слоте, одновременно с оружием в руках.
+- **Что требуется:** InputComponent, EquipmentComponent, InventoryComponent, QuickAccessComponent, AimingComponent, ThrowingConfig.
+- **Настройки и ограничения:** ThrowingConfig задаёт длительности. ItemData.projectile_profile задаёт скорость, гравитацию, урон, отбрасывание, время жизни и текстуру. Пустой/некорректный профиль не разрешает бросок. При смене быстрого слота подготовка отменяется.
 - **Файлы:** [Код](../features/throwing/ThrowingComponent.gd) · [Сцена](../features/throwing/ThrowingComponent.tscn) · [ThrowingConfig](../features/throwing/ThrowingConfig.gd).
 
 <a id="interaction"></a>
@@ -834,6 +834,7 @@ Shape2D. После изменения масштаба проверяйте т�
 | [ItemArmorProfile](../features/inventory/profiles/ItemArmorProfile.gd) | Класс/набор брони и заготовка устойчивости Poise |
 | [ItemConsumableProfile](../features/inventory/profiles/ItemConsumableProfile.gd) | Эффект использования, величина, статус и визуальный эффект |
 | [ItemFlaskProfile](../features/inventory/profiles/ItemFlaskProfile.gd) | Максимум зарядов постоянной фляги |
+| [ItemProjectileProfile](../features/inventory/profiles/ItemProjectileProfile.gd) | Полёт, урон, отбрасывание и текстура метательного предмета |
 | [ItemAmmunitionProfile](../features/inventory/profiles/ItemAmmunitionProfile.gd) | Тип боеприпаса для совместимости с оружием |
 | [InventoryStack](../features/inventory/InventoryStack.gd), [QuickAccessSlot](../features/inventory/QuickAccessSlot.gd) | Данные одной стопки и одного быстрого слота; владельцы состояния — Inventory/QuickAccess |
 | [LootEntry](../features/loot/LootEntry.gd) | Предмет, диапазон количества и шанс одной записи дропа |
@@ -929,7 +930,17 @@ HitStop замедляет игровое время, CameraShake смещает
 типовой урон, scaling, stagger и poise. Stamina пока не связана с затратами
 действий. Статусы требуют отдельного потребителя эффекта, а уровни — отдельного
 решения о росте характеристик. Текущий визуал игрока и шкалы ресурсов временные.
-Лук и арбалет запланированы к замене. Дискового сохранения нет.
+Общее прицеливание подключено к дальним атакам; дисковое сохранение описано в Save_System.md.
+
+## Общее прицеливание
+
+`features/aiming/AimingComponent.tscn` подключён к Player. Зависимости:
+InputComponent, FacingComponent; настройки — AimingConfig. Владелец действия
+вызывает begin_aim/end_aim и читает get_direction/get_launch_position.
+Компонент хранит угол возвышения, ограничивает перемещение при подготовке
+и отменяет сессию при паузе, потере фокуса или отключении. AimingView рисует
+указатель; бросок, лук, арбалет и направленная магия используют один прицел.
+См. [Aiming.md](Aiming.md) для управления и ограничений прототипа.
 
 ## Как поддерживать справочник
 

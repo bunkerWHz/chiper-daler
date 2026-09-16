@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://features/aiming/AimingComponent.gd" id="1"]
+[ext_resource type="Script" path="res://features/aiming/AimingConfig.gd" id="2"]
+[ext_resource type="Script" path="res://features/aiming/AimingView.gd" id="3"]
+
+[sub_resource type="Resource" id="Config"]
+script = ExtResource("2")
+
+[node name="AimingComponent" type="Node"]
+script = ExtResource("1")
+config = SubResource("Config")
+
+[node name="AimingView" type="Node2D" parent="."]
+script = ExtResource("3")

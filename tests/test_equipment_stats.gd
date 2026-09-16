@@ -182,6 +182,9 @@ func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
+	var aim := AimingComponent.new()
+	aim.config = AimingConfig.new()
+	components.add_child(aim)
 	var ranged := RangedWeaponComponent.new()
 	ranged.config = RangedWeaponConfig.new()
 	var magic := MagicComponent.new()
@@ -211,6 +214,7 @@ func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	assert_eq(arrow._damage, 27.0)
 
 	equipment.equip_inventory_item(focus.id, ItemData.EquipSlot.MAIN_HAND)
+	aim.begin_aim(magic)
 	magic._cast_spell()
 	var spell := world.get_child(world.get_child_count() - 1) as ThrownProjectile
 	assert_eq(spell._damage, 35.0)

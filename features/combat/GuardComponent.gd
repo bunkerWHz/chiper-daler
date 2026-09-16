@@ -117,6 +117,11 @@ func _process(delta: float) -> void:
 		_finish_parry()
 	if not _allows_guard() and not _allows_parry():
 		return
+	# Another action may own the secondary input as its cancel command.
+	if BEHAVIOR_GATE.is_blocked(actor, self):
+		stop_guard()
+		_finish_parry()
+		return
 	if not _is_grounded():
 		stop_guard()
 		_finish_parry()

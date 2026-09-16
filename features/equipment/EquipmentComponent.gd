@@ -498,6 +498,10 @@ func restore_runtime_state(state: Variant) -> void:
 	var next_mode := int(state.get("action_slot", _current_slot))
 	if next_mode < 0 or next_mode >= Slot.size():
 		next_mode = int(_current_slot)
+	# Old quick-slot saves used a throwable/item context instead of the held weapon.
+	if next_mode == Slot.THROWABLE or next_mode == Slot.ITEM:
+		next_mode = get_item_action_slot(_loadout_item(candidate, _make_equipment_key(
+			ItemData.EquipSlot.MAIN_HAND, 0, next_set)))
 	_commit_loadout(candidate, next_set, next_mode)
 
 

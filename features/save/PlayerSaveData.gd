@@ -7,8 +7,6 @@ var component_types := {
 	"progression": ProgressionComponent,
 	"equipment": EquipmentComponent,
 	"quick_access": QuickAccessComponent,
-	"ranged": RangedWeaponComponent,
-	"throwing": ThrowingComponent,
 }
 
 var items: Dictionary = {}
@@ -82,7 +80,8 @@ func validate(data: Variant) -> bool:
 	if not catalog_valid or not data is Dictionary or not _plain_data(data):
 		return false
 	for key: String in data:
-		if not component_types.has(key):
+		# Legacy separate ammo counters are validated but no longer restored.
+		if not component_types.has(key) and key not in ["ranged", "throwing"]:
 			return false
 		if key == "throwing":
 			if not _count(data[key]):

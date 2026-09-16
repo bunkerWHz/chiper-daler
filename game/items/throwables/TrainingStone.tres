@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
+
+[sub_resource type="Resource" id="Projectile"]
+script = ExtResource("projectile")
+
+[resource]
+script = ExtResource("item")
+id = &"training_stone"
+display_name = "Training Stone"
+description = "Throw on release. Hold to aim with mouse movement or W/S."
+category = 6
+stackable = true
+max_stack_size = 99
+usable_in_combat = true
+projectile_profile = SubResource("Projectile")

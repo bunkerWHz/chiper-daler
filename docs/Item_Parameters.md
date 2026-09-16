@@ -14,6 +14,11 @@
 
 ## Текущие параметры
 
+Метательные предметы используют `ItemData.projectile_profile` (ItemProjectileProfile):
+texture, speed, gravity, lifetime, damage и knockback работают при выпуске.
+Предмет назначается в быстрый слот и расходуется по одной единице при отпускании R.
+См. [Aiming.md](Aiming.md).
+
 | Поле ItemWeaponProfile | Статус | Где используется |
 | --- | --- | --- |
 | combat_mode | Работает | EquipmentComponent выбирает доступный режим действий |
@@ -22,7 +27,7 @@
 | handedness | Работает | Занятость рук и совместимость экипировки |
 | available_actions | Частично работает | Attack, Guard, RangedWeapon и Magic проверяют доступные действия; RELOAD пока не используется |
 | critical_damage_multiplier | Работает для ближнего боя | AttackComponent передаёт множитель в HitboxComponent |
-| ammunition_type | Частично работает | EquipmentComponent подбирает совместимые боеприпасы; RangedWeaponComponent пока расходует собственные счётчики стрел/болтов, не стопки инвентаря |
+| ammunition_type | Работает | EquipmentComponent подбирает совместимые боеприпасы; RangedWeaponComponent расходует надетую в OFF_HAND стопку инвентаря |
 | primary_damage_type | Запланировано | Разных расчётов для slash/pierce/strike/magic пока нет |
 | moveset_id | Запланировано | Выбор набора движений по идентификатору не реализован |
 | attack_speed_multiplier | Запланировано | Длительности берутся из конфигурации атаки |

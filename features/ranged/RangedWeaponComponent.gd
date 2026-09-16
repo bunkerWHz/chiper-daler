@@ -27,8 +27,9 @@ var _facing_component: FacingComponent
 var _phase: Phase = Phase.NONE
 var _phase_timer: float = 0.0
 var _cooldown_timer: float = 0.0
-var _arrows: int = 0
-var _bolts: int = 0
+var _inventory: InventoryComponent
+var _ammo_id: StringName
+var _aim: AimingComponent
 
 
 func on_initialize() -> void:
@@ -46,8 +47,8 @@ func on_initialize() -> void:
 		or config.arrow_damage < 0.0
 		or config.bolt_damage < 0.0
 		or config.knockback < 0.0
-		or config.arrow_count < 0
-		or config.bolt_count < 0
+		or config.arrow_gravity < 0.0
+		or config.bolt_gravity < 0.0
 	):
 		push_error("RangedWeaponComponent has an invalid config")
 		disable()
@@ -71,8 +72,16 @@ func on_initialize() -> void:
 		disable()
 		return
 
-	_arrows = config.arrow_count
-	_bolts = config.bolt_count
+	_inventory = actor.get_component(InventoryComponent) as InventoryComponent
+	_aim = actor.get_component(AimingComponent) as AimingComponent
+	if _aim != null and not _aim.aim_cancelled.is_connected(_on_aim_cancelled):
+		_aim.aim_cancelled.connect(_on_aim_cancelled)
+	if _inventory == null or not _inventory.is_enabled or _aim == null or not _aim.is_enabled:
+		push_error("RangedWeaponComponent requires enabled inventory and aiming")
+		disable()
+		return
+	if not _inventory.inventory_changed.is_connected(_on_inventory_changed):
+		_inventory.inventory_changed.connect(_on_inventory_changed)
 	if not _equipment_component.equipment_changed.is_connected(
 		_on_equipment_changed
 	):
@@ -112,47 +121,34 @@ func is_exclusive_behavior_active() -> bool:
 
 
 func get_arrow_count() -> int:
-	return _arrows
+	return _count_ammunition(&"arrow")
 
 
 func get_bolt_count() -> int:
-	return _bolts
+	return _count_ammunition(&"bolt")
 
 
-func add_arrows(amount: int) -> int:
-	if not is_enabled or amount <= 0:
-		return 0
+func _count_ammunition(kind: StringName) -> int:
+	var total := 0
+	if _inventory == null:
+		return total
+	for stack: InventoryStack in _inventory.get_stacks():
+		if stack.item.category == ItemData.Category.AMMUNITION and stack.item.get_ammunition_type() == kind:
+			total += stack.quantity
+	return total
 
-	var previous := _arrows
-	_arrows = mini(_arrows + amount, config.arrow_count)
+
+func _get_ammunition() -> ItemData:
+	var item := _equipment_component.get_equipped_item(ItemData.EquipSlot.OFF_HAND)
+	if item == null or not _equipment_component.is_ammunition_compatible(item):
+		return null
+	return item if _inventory.has_item(item.id) else null
+
+
+func _on_inventory_changed() -> void:
+	if (_phase == Phase.BOW_AIM or _phase == Phase.CROSSBOW_AIM) and not _inventory.has_item(_ammo_id):
+		cancel_aim()
 	ammunition_changed.emit()
-	return _arrows - previous
-
-
-func add_bolts(amount: int) -> int:
-	if not is_enabled or amount <= 0:
-		return 0
-
-	var previous := _bolts
-	_bolts = mini(_bolts + amount, config.bolt_count)
-	ammunition_changed.emit()
-	return _bolts - previous
-
-
-func capture_runtime_state() -> Variant:
-	return {
-		"arrows": _arrows,
-		"bolts": _bolts,
-	}
-
-
-func restore_runtime_state(state: Variant) -> void:
-	if not state is Dictionary:
-		return
-
-	_arrows = clampi(int(state.get("arrows", _arrows)), 0, config.arrow_count)
-	_bolts = clampi(int(state.get("bolts", _bolts)), 0, config.bolt_count)
-
 
 func cancel_aim() -> void:
 	if _phase == Phase.BOW_AIM or _phase == Phase.CROSSBOW_AIM:
@@ -165,54 +161,43 @@ func disable() -> void:
 
 
 func _process_bow_input() -> void:
-	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
-		if (
-			_arrows > 0
-			and _equipment_component.allows_bow_aim()
-			and _cooldown_timer <= 0.0
-			and not BEHAVIOR_GATE.is_blocked(actor, self)
-		):
-			_set_phase(Phase.BOW_AIM, 0.0)
-	elif _phase == Phase.BOW_AIM:
-		if _input_component.consume_guard_just_pressed():
-			cancel_aim()
-		elif _input_component.consume_attack_released():
-			if not _equipment_component.allows_bow_fire():
-				cancel_aim()
-				return
-			_arrows -= 1
-			_spawn_projectile(
-				config.arrow_speed,
-				config.arrow_damage,
-				ARROW_TEXTURE
-			)
-			projectile_fired.emit(Phase.BOW_LOOSE, _arrows)
-			_set_phase(Phase.BOW_LOOSE, config.release_duration)
-			_cooldown_timer = config.shot_cooldown
+	_process_weapon_input(true)
 
 
 func _process_crossbow_input() -> void:
-	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
-		if (
-			_bolts > 0
-			and _equipment_component.allows_crossbow_aim()
-			and _cooldown_timer <= 0.0
-			and not BEHAVIOR_GATE.is_blocked(actor, self)
-		):
-			_set_phase(Phase.CROSSBOW_AIM, 0.0)
-	elif _phase == Phase.CROSSBOW_AIM:
-		if _input_component.consume_guard_just_pressed():
-			if not _equipment_component.allows_crossbow_fire():
-				cancel_aim()
-				return
-			_bolts -= 1
-			_spawn_projectile(config.bolt_speed, config.bolt_damage)
-			projectile_fired.emit(Phase.CROSSBOW_FIRE, _bolts)
-			_set_phase(Phase.CROSSBOW_FIRE, config.release_duration)
-			_cooldown_timer = config.shot_cooldown
-		elif _input_component.consume_attack_pressed():
-			cancel_aim()
+	_process_weapon_input(false)
 
+
+func _process_weapon_input(bow: bool) -> void:
+	var aiming_phase := Phase.BOW_AIM if bow else Phase.CROSSBOW_AIM
+	if _phase == Phase.NONE and _input_component.consume_attack_pressed():
+		var ammo := _get_ammunition()
+		var allowed := _equipment_component.allows_bow_aim() if bow else _equipment_component.allows_crossbow_aim()
+		if ammo != null and allowed and _cooldown_timer <= 0.0 and not BEHAVIOR_GATE.is_blocked(actor, self):
+			_ammo_id = ammo.id
+			_set_phase(aiming_phase, 0.0)
+	if _phase == aiming_phase:
+		if _input_component.consume_guard_just_pressed():
+			cancel_aim()
+		elif _input_component.consume_attack_released():
+			_fire(bow)
+
+
+func _fire(bow: bool) -> void:
+	var ammo := _get_ammunition()
+	var allowed := _equipment_component.allows_bow_fire() if bow else _equipment_component.allows_crossbow_fire()
+	if ammo == null or ammo.id != _ammo_id or not allowed or actor.get_parent() == null:
+		cancel_aim()
+		return
+	# Release before inventory callbacks reconcile an exhausted offhand stack.
+	var release_phase := Phase.BOW_LOOSE if bow else Phase.CROSSBOW_FIRE
+	_set_phase(release_phase, config.release_duration)
+	_spawn_projectile(config.arrow_speed if bow else config.bolt_speed,
+		config.arrow_damage if bow else config.bolt_damage,
+		ARROW_TEXTURE if bow else null, config.arrow_gravity if bow else config.bolt_gravity)
+	_inventory.remove_item(ammo.id, 1)
+	projectile_fired.emit(release_phase, _inventory.get_quantity(ammo.id))
+	_cooldown_timer = config.shot_cooldown
 
 func _update_release(delta: float) -> void:
 	if _phase != Phase.BOW_LOOSE and _phase != Phase.CROSSBOW_FIRE:
@@ -227,7 +212,8 @@ func _update_release(delta: float) -> void:
 func _spawn_projectile(
 	speed: float,
 	damage: float,
-	visual_texture: Texture2D = null
+	visual_texture: Texture2D = null,
+	gravity: float = 0.0
 ) -> void:
 	var parent := actor.get_parent()
 
@@ -236,15 +222,16 @@ func _spawn_projectile(
 
 	var projectile := PROJECTILE_SCENE.instantiate() as ThrownProjectile
 	parent.add_child(projectile)
-	projectile.global_position = actor.global_position
-	projectile.setup(
+	projectile.global_position = _aim.get_launch_position()
+	projectile.setup_direction(
 		actor,
-		float(_facing_component.get_direction()),
+		_aim.get_direction(),
 		speed,
 		damage + _equipment_component.get_active_weapon_damage(),
 		config.knockback,
 		config.projectile_lifetime,
-		visual_texture
+		visual_texture,
+		gravity
 	)
 
 
@@ -253,16 +240,27 @@ func _set_phase(new_phase: Phase, duration: float) -> void:
 		return
 
 	var previous_phase := _phase
+	if _aim != null:
+		if new_phase == Phase.BOW_AIM or new_phase == Phase.CROSSBOW_AIM:
+			if not _aim.begin_aim(self):
+				return
+		else:
+			_aim.end_aim(self)
 	_phase = new_phase
 	_phase_timer = duration
 	phase_changed.emit(previous_phase, _phase)
+
+
+func _on_aim_cancelled(owner: Component) -> void:
+	if owner == self:
+		cancel_aim()
 
 
 func _on_equipment_changed(
 	_previous_slot: EquipmentComponent.Slot,
 	_current_slot: EquipmentComponent.Slot
 ) -> void:
-	_set_phase(Phase.NONE, 0.0)
+	cancel_aim()
 
 
 func _on_loadout_item_changed(
@@ -273,11 +271,11 @@ func _on_loadout_item_changed(
 	_current_item_id: StringName
 ) -> void:
 	if (
-		equip_slot == ItemData.EquipSlot.MAIN_HAND
+		equip_slot in [ItemData.EquipSlot.MAIN_HAND, ItemData.EquipSlot.OFF_HAND]
 		and weapon_set == _equipment_component.get_active_weapon_set()
 	):
-		_set_phase(Phase.NONE, 0.0)
+		cancel_aim()
 
 
 func _on_weapon_set_changed(_previous_set: int, _current_set: int) -> void:
-	_set_phase(Phase.NONE, 0.0)
+	cancel_aim()

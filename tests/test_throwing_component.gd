@@ -50,37 +50,12 @@ func test_secondary_action_cancels_throwing_aim() -> void:
 	assert_eq(throwing.get_phase(), ThrowingComponent.Phase.NONE)
 	assert_eq(throwing.get_remaining_charges(), 5)
 
+	var connections := equipment.loadout_item_changed.get_connections().size()
 	actor._collect_components()
-	assert_eq(equipment.equipment_changed.get_connections().size(), 1)
+	assert_eq(equipment.loadout_item_changed.get_connections().size(), connections)
 
 
 func _create_throwing_actor() -> Dictionary:
-	var actor := track(Actor.new()) as Actor
-	var components := Node2D.new()
-	components.name = "_Components"
-	actor.add_child(components)
-	var input := InputComponent.new()
-	var equipment := EquipmentComponent.new()
-	var facing := FacingComponent.new()
-	var throwing := ThrowingComponent.new()
-	throwing.config = ThrowingConfig.new()
-	var actor_state := ActorStateComponent.new()
-
-	for component: Component in [
-		input,
-		equipment,
-		facing,
-		throwing,
-		actor_state,
-	]:
-		components.add_child(component)
-
-	actor._collect_components()
-	return {
-		"actor": actor,
-		"input": input,
-		"equipment": equipment,
-		"facing": facing,
-		"throwing": throwing,
-		"actor_state": actor_state,
-	}
+	var setup := preload("res://tests/AimingTestFactory.gd").create()
+	track(setup.root)
+	return setup

@@ -68,8 +68,9 @@ func _run() -> void:
 		quick.clear_slot(index)
 	check(quick.assign_item(3, &"mana_potion"), "Assign custom quick slot")
 	check(quick.activate_slot(3), "Select custom quick slot")
-	(player().get_component(RangedWeaponComponent) as RangedWeaponComponent).restore_runtime_state({"arrows": 3, "bolts": 2})
-	(player().get_component(ThrowingComponent) as ThrowingComponent).restore_runtime_state(1)
+	inventory.remove_item(&"training_arrows", maxi(inventory.get_quantity(&"training_arrows") - 3, 0))
+	inventory.remove_item(&"training_bolts", maxi(inventory.get_quantity(&"training_bolts") - 2, 0))
+	inventory.remove_item(&"training_stone", maxi(inventory.get_quantity(&"training_stone") - 1, 0))
 	var stackable: ItemData
 	for candidate: ItemData in flow.saves.store.codec.items.values():
 		if candidate.stackable and not candidate.is_flask() and candidate.get_effective_stack_size() >= 8:

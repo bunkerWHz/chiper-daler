@@ -11,6 +11,8 @@ var _lifetime: float = 0.0
 var _has_hit: bool = false
 var _default_visual: CanvasItem
 var _projectile_sprite: Sprite2D
+var _gravity: float = 0.0
+var _orient_to_velocity: bool = false
 
 
 func _ready() -> void:
@@ -51,11 +53,26 @@ func _apply_visual(texture: Texture2D, direction: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	position += _velocity * delta
+	position += _velocity * delta + Vector2.DOWN * _gravity * delta * delta * 0.5
+	_velocity.y += _gravity * delta
+	if _orient_to_velocity and not _velocity.is_zero_approx():
+		rotation = _velocity.angle()
 	_lifetime = maxf(_lifetime - delta, 0.0)
 
 	if _lifetime == 0.0:
 		queue_free()
+
+
+func setup_direction(
+	source_actor: Actor, direction: Vector2, speed: float, damage: float,
+	knockback: float, lifetime: float, visual_texture: Texture2D = null,
+	gravity: float = 0.0
+) -> void:
+	setup(source_actor, 1.0, speed, damage, knockback, lifetime, visual_texture)
+	_velocity = direction.normalized() * speed
+	_gravity = gravity
+	_orient_to_velocity = true
+	rotation = direction.angle()
 
 
 func _on_area_entered(area: Area2D) -> void:

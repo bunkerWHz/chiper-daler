@@ -42,6 +42,18 @@ var _quick_slot_request: int = -1
 var _quick_slot_cycle_request: int = 0
 var _weapon_set_swap_pressed := false
 var _inventory_pressed: bool = false
+var _aim_mouse_motion: float = 0.0
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and not get_tree().paused:
+		_aim_mouse_motion += event.relative.y
+
+
+func consume_aim_mouse_motion() -> float:
+	var motion := _aim_mouse_motion
+	_aim_mouse_motion = 0.0
+	return motion
 
 
 func _ready() -> void:

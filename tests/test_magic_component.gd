@@ -8,13 +8,18 @@ func suite_name() -> String:
 
 func test_magic_charge_cast_recovery_and_channeling_states() -> void:
 	_phase_events.clear()
-	var actor := track(Actor.new()) as Actor
+	var world := track(Node2D.new()) as Node2D
+	var actor := Actor.new()
+	world.add_child(actor)
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
+	var aim := AimingComponent.new()
+	aim.config = AimingConfig.new()
+	components.add_child(aim)
 	var magic := MagicComponent.new()
 	magic.config = MagicConfig.new()
 	var state := ActorStateComponent.new()
@@ -55,13 +60,18 @@ func test_magic_charge_cast_recovery_and_channeling_states() -> void:
 
 
 func test_magic_cancels_on_active_loadout_and_weapon_set_changes() -> void:
-	var actor := track(Actor.new()) as Actor
+	var world := track(Node2D.new()) as Node2D
+	var actor := Actor.new()
+	world.add_child(actor)
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
 	var input := InputComponent.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
+	var aim := AimingComponent.new()
+	aim.config = AimingConfig.new()
+	components.add_child(aim)
 	var magic := MagicComponent.new()
 	magic.config = MagicConfig.new()
 	for component: Component in [input, equipment, facing, magic]:
@@ -94,7 +104,9 @@ func test_magic_cancels_on_active_loadout_and_weapon_set_changes() -> void:
 
 
 func test_magic_profile_separates_cast_and_channel_actions() -> void:
-	var actor := track(Actor.new()) as Actor
+	var world := track(Node2D.new()) as Node2D
+	var actor := Actor.new()
+	world.add_child(actor)
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
@@ -103,6 +115,9 @@ func test_magic_profile_separates_cast_and_channel_actions() -> void:
 	inventory.config = InventoryConfig.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
+	var aim := AimingComponent.new()
+	aim.config = AimingConfig.new()
+	components.add_child(aim)
 	var magic := MagicComponent.new()
 	magic.config = MagicConfig.new()
 	for component: Component in [
@@ -138,7 +153,9 @@ func test_magic_profile_separates_cast_and_channel_actions() -> void:
 
 
 func test_wisdom_changes_runtime_maximum_mana() -> void:
-	var actor := track(Actor.new()) as Actor
+	var world := track(Node2D.new()) as Node2D
+	var actor := Actor.new()
+	world.add_child(actor)
 	var components := Node2D.new()
 	components.name = "_Components"
 	actor.add_child(components)
@@ -146,6 +163,9 @@ func test_wisdom_changes_runtime_maximum_mana() -> void:
 	var attributes := CharacterAttributesComponent.new()
 	var equipment := EquipmentComponent.new()
 	var facing := FacingComponent.new()
+	var aim := AimingComponent.new()
+	aim.config = AimingConfig.new()
+	components.add_child(aim)
 	var magic := MagicComponent.new()
 	magic.config = MagicConfig.new()
 	for component: Component in [

@@ -3,6 +3,10 @@
 [ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
 [ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
 [ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="weapon"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
+
+[sub_resource type="Resource" id="projectile"]
+script = ExtResource("projectile")
 
 [sub_resource type="Resource" id="weapon"]
 script = ExtResource("weapon")
@@ -17,3 +21,4 @@ stackable = true
 max_stack_size = 20
 usable_in_combat = true
 weapon_profile = SubResource("weapon")
+projectile_profile = SubResource("projectile")

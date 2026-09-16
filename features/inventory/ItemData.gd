@@ -101,6 +101,11 @@ enum UseVisualEffect {
 @export var armor_profile: ItemArmorProfile
 @export var consumable_profile: ItemConsumableProfile
 @export var ammunition_profile: ItemAmmunitionProfile
+@export var projectile_profile: ItemProjectileProfile
+
+
+func get_projectile_profile() -> ItemProjectileProfile:
+	return projectile_profile
 
 
 func is_valid() -> bool:

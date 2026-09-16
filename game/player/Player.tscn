@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://game/player/player.gd" id="1_wv0h6"]
+[ext_resource type="PackedScene" path="res://features/aiming/AimingComponent.tscn" id="aiming"]
 [ext_resource type="PackedScene" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
 [ext_resource type="Script" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
 [ext_resource type="PackedScene" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
@@ -68,6 +69,8 @@ remove_actor_on_finish = false
 script = ExtResource("1_wv0h6")
 
 [node name="_Components" type="Node2D" parent="." unique_id=939943652]
+
+[node name="AimingComponent" parent="_Components" instance=ExtResource("aiming")]
 
 [node name="CombatFactionComponent" parent="_Components" instance=ExtResource("25_faction")]
 faction = 1

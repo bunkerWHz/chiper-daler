@@ -1,7 +1,8 @@
 extends Resource
 class_name MagicConfig
 
-@export_range(0.01, 3.0, 0.01) var charge_time: float = 0.4
+@export_range(0.0, 3000.0) var projectile_gravity: float = 0.0
+
 @export_range(0.01, 2.0, 0.01) var cast_duration: float = 0.12
 @export_range(0.01, 3.0, 0.01) var recovery_duration: float = 0.3
 @export_range(1.0, 2000.0, 1.0) var projectile_speed: float = 600.0

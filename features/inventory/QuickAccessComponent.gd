@@ -245,7 +245,7 @@ func _activate_item(item_id: StringName) -> bool:
 	var item := _inventory.get_item_data(item_id)
 	if item == null or not item.usable_in_combat:
 		return false
-	if item.category == ItemData.Category.CONSUMABLE:
+	if item.category in [ItemData.Category.CONSUMABLE, ItemData.Category.THROWABLE]:
 		return true
 	var action_slot := _equipment.get_item_action_slot(item)
 	return _equipment.equip(action_slot) or (

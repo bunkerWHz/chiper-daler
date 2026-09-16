@@ -20,18 +20,19 @@ var _timer: float = 0.0
 var _mana: float = 0.0
 var _max_mana: float = 1.0
 var _attributes: CharacterAttributesComponent
+var _aim: AimingComponent
 
 
 func on_initialize() -> void:
 	if (
 		config == null
-		or config.charge_time <= 0.0
 		or config.cast_duration <= 0.0
 		or config.recovery_duration <= 0.0
 		or config.projectile_speed <= 0.0
 		or config.projectile_lifetime <= 0.0
 		or config.damage < 0.0
 		or config.knockback < 0.0
+		or config.projectile_gravity < 0.0
 		or config.max_mana <= 0
 		or config.cast_mana_cost <= 0
 		or config.cast_mana_cost > config.max_mana
@@ -68,6 +69,9 @@ func on_initialize() -> void:
 	else:
 		_attributes = null
 	_max_mana = _calculate_max_mana()
+	_aim = actor.get_component(AimingComponent) as AimingComponent
+	if _aim != null and not _aim.aim_cancelled.is_connected(_on_aim_cancelled):
+		_aim.aim_cancelled.connect(_on_aim_cancelled)
 	_mana = _max_mana
 	mana_changed.emit(_mana, _max_mana)
 	if not _equipment.equipment_changed.is_connected(_on_equipment_changed):
@@ -89,11 +93,12 @@ func _process(delta: float) -> void:
 	if _phase == Phase.NONE:
 		if (
 			_input.consume_attack_pressed()
+			and _aim != null and _aim.is_enabled
 			and _equipment.allows_magic_cast()
 			and _mana >= config.cast_mana_cost
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
-			_set_phase(Phase.CHARGE, config.charge_time)
+			_set_phase(Phase.CHARGE, 0.0)
 		elif (
 			_input.consume_guard_just_pressed()
 			and _equipment.allows_magic_channel()
@@ -101,11 +106,14 @@ func _process(delta: float) -> void:
 			and not BEHAVIOR_GATE.is_blocked(actor, self)
 		):
 			_set_phase(Phase.CHANNELING, 0.0)
-	elif _phase == Phase.CHARGE and _input.consume_attack_released():
-		if _equipment.allows_magic_cast():
-			_cast_spell()
-		else:
+	if _phase == Phase.CHARGE:
+		if _input.consume_guard_just_pressed():
 			_set_phase(Phase.NONE, 0.0)
+		elif _input.consume_attack_released():
+			if _equipment.allows_magic_cast():
+				_cast_spell()
+			else:
+				_set_phase(Phase.NONE, 0.0)
 	elif _phase == Phase.CHANNELING:
 		_set_mana(_mana - config.channel_mana_per_second * delta)
 		if not _input.is_guard_pressed() or _mana == 0.0:
@@ -151,27 +159,30 @@ func disable() -> void:
 
 
 func _cast_spell() -> void:
+	if _aim == null or not _aim.is_aiming() or actor.get_parent() == null or _mana < config.cast_mana_cost:
+		_set_phase(Phase.NONE, 0.0)
+		return
 	_set_mana(_mana - config.cast_mana_cost)
 	var parent := actor.get_parent()
 	if parent != null:
 		var projectile := preload("res://features/throwing/ThrownProjectile.tscn").instantiate() as ThrownProjectile
 		parent.add_child(projectile)
-		projectile.global_position = actor.global_position
-		projectile.setup(
+		projectile.global_position = _aim.get_launch_position()
+		projectile.setup_direction(
 			actor,
-			float(_facing.get_direction()),
+			_aim.get_direction(),
 			config.projectile_speed,
 			config.damage + _equipment.get_active_weapon_damage(),
 			config.knockback,
-			config.projectile_lifetime
+			config.projectile_lifetime,
+			null,
+			config.projectile_gravity
 		)
 	_set_phase(Phase.CAST, config.cast_duration)
 
 
 func _update_phase(delta: float) -> void:
-	if _phase == Phase.CHARGE:
-		_timer = maxf(_timer - delta, 0.0)
-	elif _phase == Phase.CAST or _phase == Phase.RECOVERY:
+	if _phase == Phase.CAST or _phase == Phase.RECOVERY:
 		_timer = maxf(_timer - delta, 0.0)
 		if _timer == 0.0:
 			_set_phase(Phase.RECOVERY if _phase == Phase.CAST else Phase.NONE, config.recovery_duration if _phase == Phase.CAST else 0.0)
@@ -183,9 +194,20 @@ func _set_phase(value: Phase, duration: float) -> void:
 		return
 
 	var previous_phase := _phase
+	if _aim != null:
+		if value == Phase.CHARGE:
+			if not _aim.begin_aim(self):
+				return
+		else:
+			_aim.end_aim(self)
 	_phase = value
 	_timer = duration
 	phase_changed.emit(previous_phase, _phase)
+
+
+func _on_aim_cancelled(owner: Component) -> void:
+	if owner == self and _phase == Phase.CHARGE:
+		_set_phase(Phase.NONE, 0.0)
 
 
 func _set_mana(value: float) -> void:

@@ -1,6 +1,6 @@
 extends RefCounted
 
-const VERSION := 3
+const VERSION := 4
 const MAX_BYTES := 4 * 1024 * 1024
 var codec := preload("res://features/save/PlayerSaveData.gd").new()
 
