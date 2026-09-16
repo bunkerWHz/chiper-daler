@@ -235,6 +235,9 @@ func _rebuild_grid() -> void:
 	for stack: InventoryStack in stacks:
 		var button := ITEM_CELL_SCENE.instantiate() as InventoryDragButton
 		button.icon = stack.item.get_display_icon()
+		var quantity_label := button.get_node("Quantity") as Label
+		quantity_label.text = str(stack.quantity)
+		quantity_label.visible = stack.quantity > 1
 		button.tooltip_text = stack.item.display_name
 		if stack.item.id == _selected_item_id:
 			button.theme_type_variation = &"SelectedItemCell"
