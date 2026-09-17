@@ -121,6 +121,41 @@ func test_bow_profile_requires_aim_and_fire_actions() -> void:
 	assert_eq(ranged.get_arrow_count(), 19)
 
 
+func test_item_settings_control_projectile_and_cooldown() -> void:
+	for slot: int in [EquipmentComponent.Slot.BOW, EquipmentComponent.Slot.CROSSBOW]:
+		var setup := _create_ranged_actor()
+		preload("res://tests/AimingTestFactory.gd").select_weapon(setup, slot)
+		var item: ItemData = setup.equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+		var original := item.weapon_profile
+		item.weapon_profile = original.duplicate(true)
+		var settings := item.weapon_profile.ranged
+		settings.projectile_speed = 975.0
+		settings.projectile_gravity = 125.0
+		settings.projectile_damage = 31.0
+		settings.projectile_lifetime = 3.5
+		settings.knockback = 210.0
+		settings.shot_cooldown = 0.8
+		settings.release_duration = 0.2
+		setup.input._attack_just_pressed = true
+		setup.ranged._process(0.0)
+		setup.input._attack_released = true
+		setup.ranged._process(0.0)
+		var projectile := setup.root.get_child(1) as ThrownProjectile
+		assert_true(is_equal_approx(projectile._velocity.length(), 975.0))
+		assert_eq(projectile._gravity, 125.0)
+		assert_eq(projectile._damage, 31.0 + setup.equipment.get_active_weapon_damage())
+		assert_eq(projectile._lifetime, 3.5)
+		assert_eq(projectile._knockback, 210.0)
+		assert_eq(setup.ranged._phase_timer, 0.2)
+		assert_eq(setup.ranged._cooldown_timer, 0.8)
+		setup.ranged._process(0.3)
+		setup.input._attack_just_pressed = true
+		setup.ranged._process(0.0)
+		assert_eq(setup.ranged.get_phase(), RangedWeaponComponent.Phase.NONE)
+		assert_ne(original.ranged.projectile_speed, 975.0)
+		item.weapon_profile = original
+
+
 func _create_ranged_actor() -> Dictionary:
 	var setup := preload("res://tests/AimingTestFactory.gd").create()
 	track(setup.root)

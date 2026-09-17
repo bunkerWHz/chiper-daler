@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+
+[sub_resource type="Resource" id="ItemStats_bow"]
+script = ExtResource("2_stats")
+damage = 9.0
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_bow"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_bow")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_bow"]
+script = ExtResource("4_weapon")
+combat_mode = 3
+visual_archetype = 2
+family = 14
+handedness = 1
+available_actions = 48
+ammunition_type = &"arrow"
+reach_multiplier = 1.2
+primary_damage_type = 2
+moveset_id = &"bow_basic"
+dexterity_scaling = 1.0
+
+[resource]
+script = ExtResource("1_item")
+icon = ExtResource("icon")
+display_name = "New Bow"
+description = "A two-handed bow that rewards dexterity and careful aim."
+category = 0
+weight = 2.2
+sell_price = 34
+equipment_profile = SubResource("ItemEquipmentProfile_bow")
+weapon_profile = SubResource("ItemWeaponProfile_bow")

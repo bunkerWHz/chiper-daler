@@ -191,13 +191,17 @@ func _fire(bow: bool) -> void:
 		return
 	# Release before inventory callbacks reconcile an exhausted offhand stack.
 	var release_phase := Phase.BOW_LOOSE if bow else Phase.CROSSBOW_FIRE
-	_set_phase(release_phase, config.release_duration)
-	_spawn_projectile(config.arrow_speed if bow else config.bolt_speed,
-		config.arrow_damage if bow else config.bolt_damage,
-		ARROW_TEXTURE if bow else null, config.arrow_gravity if bow else config.bolt_gravity)
+	var weapon := _equipment_component.get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
+	var settings := weapon.weapon_profile.ranged
+	if settings == null or not settings.is_valid():
+		cancel_aim()
+		return
+	_set_phase(release_phase, settings.release_duration)
+	_spawn_projectile(settings.projectile_speed, settings.projectile_damage,
+		ARROW_TEXTURE if bow else null, settings.projectile_gravity, settings)
 	_inventory.remove_item(ammo.id, 1)
 	projectile_fired.emit(release_phase, _inventory.get_quantity(ammo.id))
-	_cooldown_timer = config.shot_cooldown
+	_cooldown_timer = settings.shot_cooldown
 
 func _update_release(delta: float) -> void:
 	if _phase != Phase.BOW_LOOSE and _phase != Phase.CROSSBOW_FIRE:
@@ -213,7 +217,8 @@ func _spawn_projectile(
 	speed: float,
 	damage: float,
 	visual_texture: Texture2D = null,
-	gravity: float = 0.0
+	gravity: float = 0.0,
+	settings: ItemRangedProfile = null
 ) -> void:
 	var parent := actor.get_parent()
 
@@ -228,8 +233,8 @@ func _spawn_projectile(
 		_aim.get_direction(),
 		speed,
 		damage + _equipment_component.get_active_weapon_damage(),
-		config.knockback,
-		config.projectile_lifetime,
+		settings.knockback if settings != null else config.knockback,
+		settings.projectile_lifetime if settings != null else config.projectile_lifetime,
 		visual_texture,
 		gravity
 	)

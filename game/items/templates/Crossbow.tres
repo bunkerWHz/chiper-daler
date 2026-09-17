@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="1_item"]
+[ext_resource type="Script" path="res://features/inventory/ItemStats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
+
+[ext_resource type="Texture2D" path="res://assets/icon_placeholder.png" id="icon"]
+
+[sub_resource type="Resource" id="ItemStats_crossbow"]
+script = ExtResource("2_stats")
+damage = 13.0
+
+[sub_resource type="Resource" id="ItemEquipmentProfile_crossbow"]
+script = ExtResource("3_equipment")
+allowed_slots = Array[int]([1])
+stats = SubResource("ItemStats_crossbow")
+
+[sub_resource type="Resource" id="ItemWeaponProfile_crossbow"]
+script = ExtResource("4_weapon")
+combat_mode = 4
+visual_archetype = 2
+family = 15
+handedness = 1
+available_actions = 112
+ammunition_type = &"bolt"
+reach_multiplier = 1.3
+primary_damage_type = 2
+moveset_id = &"crossbow_basic"
+attack_speed_multiplier = 0.7
+stagger_power = 1.2
+strength_scaling = 0.3
+dexterity_scaling = 0.7
+
+[resource]
+script = ExtResource("1_item")
+icon = ExtResource("icon")
+display_name = "New Crossbow"
+description = "A two-handed crossbow with slow reloads and powerful bolts."
+category = 0
+weight = 3.8
+sell_price = 44
+equipment_profile = SubResource("ItemEquipmentProfile_crossbow")
+weapon_profile = SubResource("ItemWeaponProfile_crossbow")

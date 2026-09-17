@@ -1,8 +1,10 @@
 extends Resource
 class_name RangedWeaponConfig
 
+## Legacy component defaults. Equipped weapons use ItemWeaponProfile.ranged.
+
 @export_range(0.0, 3000.0) var arrow_gravity: float = 350.0
-@export_range(0.0, 3000.0) var bolt_gravity: float = 0.0
+@export_range(0.0, 3000.0) var bolt_gravity: float = 50.0
 
 @export_range(0.01, 2.0, 0.01) var release_duration: float = 0.12
 @export_range(0.0, 5.0, 0.01) var shot_cooldown: float = 0.3

@@ -1,3 +1,4 @@
+@tool
 extends Resource
 class_name ItemWeaponProfile
 
@@ -45,7 +46,13 @@ enum Action {
 	CHANNEL = 1 << 8,
 }
 
-@export var combat_mode: ItemData.CombatMode = ItemData.CombatMode.NONE
+@export var combat_mode: ItemData.CombatMode = ItemData.CombatMode.NONE:
+	set(value):
+		combat_mode = value
+		if ranged == null and value in [ItemData.CombatMode.BOW, ItemData.CombatMode.CROSSBOW]:
+			ranged = ItemRangedProfile.create_defaults(value == ItemData.CombatMode.CROSSBOW)
+## Per-item flight and firing settings. Created when selecting Bow or Crossbow.
+@export var ranged: ItemRangedProfile
 @export var visual_archetype: ItemData.VisualArchetype = (
 	ItemData.VisualArchetype.DEFAULT
 )
