@@ -1,6 +1,8 @@
 # Unarmed hero: run, jump, fall
 
-Separate animation source: `Hero_Movement.blend`. Contains the preserved `Hero_Idle_Unarmed` action plus three new actions. The original `art/hero_idle/Hero_Idle.blend` and original user artwork are unchanged. Textures remain packed. Uses the existing weights, bone names, sprite camera, unlit painted materials and screen-right facing artwork.
+Separate animation source: `Hero_Movement.blend`. Contains the preserved `Hero_Idle_Unarmed` action plus three new actions. The Idle animation keys and original user artwork are unchanged. Textures remain packed. Uses the existing weights, bone names, sprite camera, unlit painted materials and screen-right facing artwork.
+
+Depth-order update: the near arm (`arm_left`) now sits at X = -0.42, between torso (X ≈ -0.572) and head (X = -0.3). Both the Idle and Movement working scenes and their sprite exports have this correction; the original desktop source artwork remains untouched.
 
 | Action | Frames | FPS | Duration | Loop |
 | --- | --- | --- | --- | --- |

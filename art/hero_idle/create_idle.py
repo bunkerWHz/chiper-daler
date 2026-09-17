@@ -12,6 +12,8 @@ rig = bpy.data.objects['Armature']
 scene = bpy.context.scene
 assert not rig.animation_data or not rig.animation_data.action, 'Do not replace an existing action'
 source = bpy.data.filepath
+# Camera looks from +X: near arm in front of torso, behind the head.
+bpy.data.objects['arm_left'].location.x = -0.42
 for img in bpy.data.images:
     if img.source == 'FILE' and not img.packed_file:
         img.pack()
