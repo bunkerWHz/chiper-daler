@@ -1,0 +1,13 @@
+{
+  "meshes": 63,
+  "bones": 33,
+  "vertices": 12450,
+  "triangles": 24484,
+  "unweighted": 0,
+  "bad_weight_sums": 0,
+  "pose_checks": {
+    "forearm.L": 0.12830478038472465,
+    "shin.L": 0.1884617208066578,
+    "head": 0.3074228384276711
+  }
+}
