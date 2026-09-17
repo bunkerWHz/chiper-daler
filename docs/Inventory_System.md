@@ -1,5 +1,7 @@
 # Inventory System
 
+The 2026-09-17 [item creation design](Item_Creation_Design.md) defines the target weapon/armor fields and defaults. Future attack formulas use character attributes and buffs; item base values remain fixed. Legacy per-item scaling coefficients are not being enabled by this decision.
+
 ## Updated item requirement decision
 
 Items will require passive skill levels rather than base attributes: for example,
