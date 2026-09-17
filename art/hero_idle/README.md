@@ -8,7 +8,7 @@ Open `Hero_Idle.blend` and play frames **1–48 at 24 fps**. The action is `Hero
 
 The sprite camera is orthographic, facing the YZ artwork plane from +X. The character faces screen-right. Original camera and original material datablocks are retained; assigned sprite materials use unlit painted colour and texture alpha. No Godot scene or physical sizing was changed.
 
-The near arm (`arm_left`) is at X = -0.42: in front of the torso (X ≈ -0.572), behind the head (X = -0.3). This depth order is shared with the movement scene and exported sprites.
+The near arm (`arm_right`) is at X = -0.42: in front of the torso (X ≈ -0.572), behind the head (X = -0.3). This depth order is shared with the movement scene and exported sprites.
 
 ## Outputs
 

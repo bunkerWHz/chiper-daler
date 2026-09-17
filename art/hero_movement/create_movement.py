@@ -9,7 +9,8 @@ OUT = Path(r'C:/Users/bunkerWHz/Documents/chiper-daler/art/hero_movement')
 OUT.mkdir(parents=True, exist_ok=True)
 rig = bpy.data.objects['Armature']
 scene = bpy.context.scene
-bpy.data.objects['arm_left'].location.x = -0.42
+bpy.data.objects['arm_left'].location.x = -2.672689437866211
+bpy.data.objects['arm_right'].location.x = -0.42
 assert 'Hero_Idle_Unarmed' in bpy.data.actions
 assert not any(n in bpy.data.actions for n in ('Hero_Run_Unarmed','Hero_Jump_Unarmed','Hero_Fall_Unarmed'))
 rest = {b.name:b.matrix_local.copy() for b in rig.data.bones}
