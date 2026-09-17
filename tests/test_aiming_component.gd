@@ -18,7 +18,7 @@ func test_tap_uses_default_angle_once_for_every_weapon() -> void:
 		assert_false(s.aim.is_aiming())
 		assert_eq(s.root.get_child_count(), 2)
 		var projectile := s.root.get_child(1) as ThrownProjectile
-		assert_true(projectile._velocity.normalized().is_equal_approx(Vector2(sqrt(3.0) / 2.0, -0.5)))
+		assert_true(projectile._velocity.normalized().is_equal_approx(Vector2.RIGHT.rotated(deg_to_rad(-15.0))))
 		assert_true(projectile.global_position.is_equal_approx(s.aim.get_launch_position()))
 		ability._process(0.0)
 		assert_eq(s.root.get_child_count(), 2)
@@ -30,11 +30,11 @@ func test_mouse_keys_limits_and_turn_share_one_angle() -> void:
 	s.input._vertical_axis = -1.0
 	s.aim._process(s.aim.config.hold_delay)
 	s.aim._process(0.25)
-	assert_true(is_equal_approx(s.aim._angle, 52.5))
+	assert_true(is_equal_approx(s.aim._angle, 37.5))
 	s.input._vertical_axis = 0.0
 	s.input._aim_mouse_motion = 10.0
 	s.aim._process(0.0)
-	assert_true(is_equal_approx(s.aim._angle, 50.0))
+	assert_true(is_equal_approx(s.aim._angle, 35.0))
 	var right: Vector2 = s.aim.get_direction()
 	s.input._move_axis = -1.0
 	s.facing._physics_process(0.0)
@@ -53,7 +53,7 @@ func test_small_stick_deflection_changes_angle_more_slowly() -> void:
 	s.aim._process(s.aim.config.hold_delay)
 	s.input._vertical_axis = -0.5
 	s.aim._process(0.5)
-	assert_true(is_equal_approx(s.aim._angle, 52.5))
+	assert_true(is_equal_approx(s.aim._angle, 37.5))
 
 
 func test_hold_indicator_delay_and_new_session_reset() -> void:
@@ -62,16 +62,16 @@ func test_hold_indicator_delay_and_new_session_reset() -> void:
 	s.input._aim_mouse_motion = -200.0
 	s.aim._process(s.aim.config.hold_delay * 0.5)
 	assert_false(s.aim.is_indicator_visible())
-	assert_true(is_equal_approx(s.aim._angle, 30.0))
+	assert_true(is_equal_approx(s.aim._angle, 15.0))
 	s.aim._process(s.aim.config.hold_delay)
 	assert_true(s.aim.is_indicator_visible())
 	s.input._aim_mouse_motion = -100.0
 	s.aim._process(0.0)
-	assert_true(s.aim._angle > 30.0)
+	assert_true(s.aim._angle > 15.0)
 	s.aim.end_aim(s.throwing)
 	assert_false(s.aim.is_indicator_visible())
 	s.aim.begin_aim(s.throwing)
-	assert_true(is_equal_approx(s.aim._angle, 30.0))
+	assert_true(is_equal_approx(s.aim._angle, 15.0))
 
 
 func test_held_launch_matches_indicator_for_every_weapon() -> void:

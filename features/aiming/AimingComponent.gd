@@ -9,7 +9,7 @@ signal aim_cancelled(owner: Component)
 var _input: InputComponent
 var _facing: FacingComponent
 var _owner: Component
-var _angle: float = 30.0
+var _angle: float = 15.0
 var _elapsed: float = 0.0
 
 
