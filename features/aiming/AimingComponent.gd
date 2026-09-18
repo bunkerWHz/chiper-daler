@@ -11,7 +11,7 @@ signal launch_position_requested
 var _input: InputComponent
 var _facing: FacingComponent
 var _owner: Component
-var _angle: float = 15.0
+var _angle: float = 5.0
 var _elapsed: float = 0.0
 var _launch_origin: Node2D
 
