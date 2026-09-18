@@ -20,8 +20,8 @@ func test_view_tracks_mana_experience_and_rage_duration() -> void:
 	)
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	var visual := (
-		player.get_component(TemporaryPlayerVisualComponent)
-		as TemporaryPlayerVisualComponent
+		player.get_component(DarklightVisualComponent)
+		as DarklightVisualComponent
 	)
 	equipment._ready()
 	visual._ready()

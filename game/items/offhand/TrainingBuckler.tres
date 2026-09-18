@@ -5,6 +5,8 @@
 [ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3"]
 [ext_resource type="Script" uid="uid://es3haxq63ksv" path="res://features/inventory/profiles/ItemOffhandProfile.gd" id="4"]
 
+[ext_resource type="PackedScene" path="res://game/player/darklight/equipment/Buckler.tscn" id="darklight_visual"]
+
 [sub_resource type="Resource" id="stats"]
 script = ExtResource("2")
 defense = 2.0
@@ -24,6 +26,7 @@ guard_stability = 0.5
 
 [resource]
 script = ExtResource("1")
+equipped_visual = ExtResource("darklight_visual")
 id = &"training_buckler"
 display_name = "Training Buckler"
 description = "A light shield with a generous parry window but modest block."

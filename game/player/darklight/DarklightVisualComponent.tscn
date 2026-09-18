@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/player/darklight/DarklightVisualComponent.gd" id="1_visual"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/HealEffectSpriteFrames.tres" id="5_heal"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/ManaEffectSpriteFrames.tres" id="6_mana"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/RageEffectSpriteFrames.tres" id="7_rage"]
+[ext_resource type="SpriteFrames" path="res://game/player/animations/BuffEffectSpriteFrames.tres" id="8_buff"]
+
+[node name="DarklightVisualComponent" type="Node"]
+script = ExtResource("1_visual")
+heal_effect_frames = ExtResource("5_heal")
+mana_effect_frames = ExtResource("6_mana")
+rage_effect_frames = ExtResource("7_rage")
+buff_effect_frames = ExtResource("8_buff")

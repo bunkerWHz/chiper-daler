@@ -22,33 +22,19 @@ func suite_name() -> String:
 	return "animation_pipeline"
 
 
-func test_player_uses_serialized_frames_and_animation_player() -> void:
+func test_player_uses_serialized_skeleton_and_ik_animations() -> void:
 	var packed := load("res://game/player/Player.tscn") as PackedScene
 	var player := track(packed.instantiate()) as Node
-	var sprite := player.get_node("_Visual/AnimatedSprite2D") as AnimatedSprite2D
-	var animation_player := (
-		player.get_node("_Visual/AnimationPlayer") as AnimationPlayer
-	)
-	var archer_frames := load(
-		"res://game/player/animations/ArcherSpriteFrames.tres"
-	) as SpriteFrames
-	var lancer_frames := load(
-		"res://game/player/animations/LancerSpriteFrames.tres"
-	) as SpriteFrames
-
-	assert_true(animation_player.has_animation(&"attack"))
-	assert_eq(
-		sprite.sprite_frames.resource_path,
-		"res://game/player/animations/WarriorSpriteFrames.tres"
-	)
-	assert_eq(
-		archer_frames.resource_path,
-		"res://game/player/animations/ArcherSpriteFrames.tres"
-	)
-	assert_eq(
-		lancer_frames.resource_path,
-		"res://game/player/animations/LancerSpriteFrames.tres"
-	)
+	var rig := player.get_node("_Visual/DarklightRig")
+	var animation_player := rig.get_node("AnimationPlayer") as AnimationPlayer
+	assert_true(rig.get_node("CharacterContainer/Skeleton2D") is Skeleton2D)
+	for clip: StringName in [&"idle", &"run", &"jump", &"fall", &"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack", &"dodge", &"block"]:
+		assert_true(animation_player.has_animation(clip))
+	for clip: StringName in animation_player.get_animation_list():
+		var animation := animation_player.get_animation(clip)
+		for index in animation.get_track_count():
+			var track_path := animation.track_get_path(index)
+			assert_true(rig.has_node(NodePath(track_path.get_concatenated_names())), "Unresolved animation track: " + str(track_path))
 
 
 func test_enemies_use_serialized_frames_and_animation_player() -> void:

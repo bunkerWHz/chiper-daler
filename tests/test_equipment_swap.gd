@@ -215,6 +215,6 @@ func test_player_contains_swap_component_world_bar_and_placeholder_clip() -> voi
 	var player := track((load("res://game/player/Player.tscn") as PackedScene).instantiate()) as Actor
 	assert_true(player.get_node("_Components/EquipmentSwapComponent") is EquipmentSwapComponent)
 	assert_true(player.get_node("EquipmentSwapView") is EquipmentSwapView)
-	var animation := player.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+	var animation := player.get_node("_Visual/DarklightRig/AnimationPlayer") as AnimationPlayer
 	assert_true(animation.has_animation(&"equipment_swap"))
 	assert_eq(animation.get_animation(&"equipment_swap").get_track_count(), 0)

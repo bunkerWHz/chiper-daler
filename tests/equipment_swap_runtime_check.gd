@@ -45,7 +45,7 @@ func _run() -> void:
 	var state := player.get_component(ActorStateComponent) as ActorStateComponent
 	var body := player.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	var view := player.get_node("EquipmentSwapView") as EquipmentSwapView
-	var animation := player.get_node("_Visual/AnimationPlayer") as AnimationPlayer
+	var animation := player.get_node("_Visual/DarklightRig/AnimationPlayer") as AnimationPlayer
 	_check(body.is_on_floor(), "Player must settle on the floor")
 	_check(swap.request_cycle(), "Standing player must begin changing equipment")
 	var start_x := player.position.x
@@ -76,8 +76,10 @@ func _run() -> void:
 	menu.open_inventory()
 	_check(paused, "Inventory pauses the game")
 	menu._activate_weapon_set(1)
-	_check(not paused and not menu.is_open(), "Menu request must return to gameplay")
-	_check(swap.is_swapping() and equipment.get_active_weapon_set() == 0, "Menu must also use delayed swapping")
+	_check(paused and menu.is_open(), "Viewing an inventory set must keep the menu open")
+	_check(not swap.is_swapping() and equipment.get_active_weapon_set() == 0, "Viewing an inventory set must not equip it")
+	menu.close_inventory()
+	_check(swap.request_swap(1), "Gameplay must start the delayed swap after closing inventory")
 	_check(is_equal_approx(swap.get_duration(), 1.0), "Double attack speed must halve swap duration")
 	menu.open_inventory()
 	_check(not paused, "Inventory cannot interrupt the action with a pause")

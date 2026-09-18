@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
 [ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
+[ext_resource type="PackedScene" path="res://game/player/darklight/equipment/Sword.tscn" id="darklight_visual"]
+[ext_resource type="Texture2D" path="res://assets/Characters/Darklight/equipment/SwordIcon.png" id="darklight_icon"]
+
 [sub_resource type="Resource" id="ItemStats_katana"]
 script = ExtResource("2_stats")
 damage = 9.0
@@ -31,6 +34,8 @@ dexterity_scaling = 0.8
 
 [resource]
 script = ExtResource("1_item")
+equipped_visual = ExtResource("darklight_visual")
+icon = ExtResource("darklight_icon")
 id = &"training_katana"
 display_name = "Training Katana"
 description = "A curved blade for testing fast slashing movesets."

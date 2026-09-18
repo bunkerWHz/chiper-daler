@@ -36,16 +36,20 @@ instead of the animation timeline.
 
 ## Editing the player
 
-1. Open `game/player/Player.tscn`.
-2. Select `_Components/AnimationComponent` to assign the temporary Warrior,
-   Archer, Lancer, and overlay-effect `SpriteFrames` resources.
-3. Select `_Visual/AnimatedSprite2D` to inspect the currently configured base
-   renderer.
-4. Select `_Visual/AnimationPlayer` to edit the semantic player clips.
+`game/player/Player.tscn` now renders the Skeleton2D-based Darklight character.
+Open `game/player/darklight/DarklightRig.tscn`, select `AnimationPlayer`, and
+animate `CharacterContainer/Anim Targets`. The original rig includes skinned
+polygons, bone attachments and SoupIK controls.
 
-Player clips are `idle`, `run`, `jump`, `fall`, `attack`, and `guard`. The
-temporary visual component switches the renderer's serialized frame resource
-when the equipped weapon changes; it does not build frames at runtime.
+`DarklightVisualComponent` maps the existing `ActorStateComponent` behavior to
+clips. Gameplay components remain the authority for action durations and damage.
+Equipment visuals are scene instances attached to the hand bones, assigned with
+`ItemData.equipped_visual`; changes to the active inventory loadout update them.
+
+See [Darklight authoring notes](../game/player/darklight/README.md) for size,
+facing, attachment setup, source provenance and missing-animation fallbacks.
+The old `TemporaryPlayerVisualComponent` and Warrior/Archer/Lancer resources
+remain available as legacy assets, but are no longer used by the player scene.
 
 ## Stone Golem asset setup
 

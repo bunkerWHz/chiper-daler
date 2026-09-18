@@ -95,3 +95,15 @@ godot --headless --path . --script tests/enemy_sandbox_spawn_check.gd
 посылает сигнал завершения смерти и проверяет появление следующего монстра
 из очереди. Основной набор отдельно проверяет состав платформ, точку
 появления и назначенные сцены монстров.
+
+## Darklight integration
+
+```sh
+godot --headless --path . --script tests/run_tests.gd -- darklight_visual animation_pipeline equipment_swap
+godot --headless --max-fps 60 --path . --script tests/darklight_runtime_check.gd
+```
+
+For visual QA run the second command without `--headless`. It writes
+`.godot/darklight_right.png`, `darklight_left.png`, and `darklight_bow.png`.
+Use `--max-fps 60` for runtime checks that wait physics frames while gameplay
+components also advance timers in `_process`.

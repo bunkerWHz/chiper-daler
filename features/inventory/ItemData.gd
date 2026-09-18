@@ -82,6 +82,8 @@ enum UseVisualEffect {
 @export var display_name: String = "New Item"
 @export_multiline var description: String
 @export var icon: Texture2D
+## Optional native-size hand visual. Author the grip at the scene origin.
+@export var equipped_visual: PackedScene
 @export_group("Category and rarity")
 @export var category: Category = Category.MATERIAL
 @export var rarity: Rarity = Rarity.COMMON
