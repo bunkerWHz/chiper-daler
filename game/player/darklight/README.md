@@ -10,8 +10,8 @@ loaded.
 
 Author all future player rig and animation changes in this repository's
 `game/player/darklight/DarklightRig.tscn`, not the external source project.
-The legacy Warrior/Archer/Lancer art and `TemporaryPlayerVisualComponent` are
-reference assets only and are not the basis for new player work.
+The legacy Warrior/Archer/Lancer character art and `TemporaryPlayerVisualComponent`
+have been removed. Their history remains in Git; new player work uses this rig.
 
 Open `DarklightRig.tscn` directly. Select `AnimationPlayer` and edit the clips by
 moving `CharacterContainer/Anim Targets`. The original Skeleton2D, Bone2D rest

@@ -41,7 +41,7 @@ texture, speed, gravity, lifetime, damage и knockback работают при �
 | Поле ItemWeaponProfile | Статус | Где используется |
 | --- | --- | --- |
 | combat_mode | Работает | EquipmentComponent выбирает доступный режим действий |
-| visual_archetype | Только старый визуал | Используется TemporaryPlayerVisualComponent; на основного героя Darklight не влияет |
+| visual_archetype | Устаревшее поле | Сохранено для совместимости ресурсов; потребитель старого визуала удалён, на Darklight не влияет |
 | family | Описание | Название семейства в карточке, отдельных правил семейства нет |
 | handedness | Работает | Занятость рук и совместимость экипировки |
 | available_actions | Частично работает | Attack, Guard, RangedWeapon и Magic проверяют доступные действия; RELOAD пока не используется |

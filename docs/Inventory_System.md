@@ -293,7 +293,7 @@ Armor and accessories affect stats; replacing body artwork is not implemented.
 Item-use and buff effects retain separate AnimatedSprite2D overlays driven by
 gameplay signals. Damage, consumption and status duration remain in gameplay
 components. The old TemporaryPlayerVisualComponent and Warrior/Archer/Lancer
-assets are legacy references only.
+character assets have been removed; their history remains in Git.
 
 See [item authoring](../game/items/README.md) and
 [Darklight rig authoring](../game/player/darklight/README.md).

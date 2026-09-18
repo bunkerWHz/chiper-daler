@@ -639,16 +639,6 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Настройки и ограничения:** Equipped Texture подменяет картинку руки; Equipped Visual задаёт необязательную сцену. Display Slot выбирает визуальную руку независимо от слота инвентаря. Колчан виден при экипированных стрелах/болтах. Анимация не определяет урон, расход предметов или длительность действий.
 - **Файлы:** [Код](../game/player/darklight/DarklightVisualComponent.gd) · [Сцена](../game/player/darklight/DarklightVisualComponent.tscn) · [Риг](../game/player/darklight/DarklightRig.tscn) · [Работа с ригом и ограничения](../game/player/darklight/README.md).
 
-<a id="temporaryplayervisualcomponent"></a>
-
-### TemporaryPlayerVisualComponent — Архивная тестовая внешность
-
-- **Делает:** Расширяет AnimationComponent: выбирает warrior/archer/lancer по оружию, проигрывает эффекты предметов и баффов.
-- **Когда применять:** Только как справочный пример старого визуала. Основной Player использует DarklightVisualComponent.
-- **Что требуется:** Требования AnimationComponent, плюс EquipmentComponent, ItemUseComponent, StatusEffectComponent и спрайты эффектов готовой сцены.
-- **Настройки и ограничения:** Character Art / Item Effects доступны в старой сцене компонента. SpriteFrames заданы ресурсами; лечение, расход и время статуса остаются в игровых компонентах. Не использовать как основу новых анимаций героя.
-- **Файлы:** [Код](../game/player/TemporaryPlayerVisualComponent.gd) · [Сцена](../game/player/TemporaryPlayerVisualComponent.tscn).
-
 <a id="enemyvisualcomponent"></a>
 
 ### EnemyVisualComponent — Анимация врага

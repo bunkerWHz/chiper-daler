@@ -57,8 +57,8 @@ sprite. See [item authoring](../game/items/README.md) for resource setup.
 
 See [Darklight authoring notes](../game/player/darklight/README.md) for size,
 facing, attachment setup, source provenance and missing-animation fallbacks.
-The old `TemporaryPlayerVisualComponent` and Warrior/Archer/Lancer resources
-remain available as legacy assets, but are no longer used by the player scene.
+The old `TemporaryPlayerVisualComponent` and Warrior/Archer/Lancer character
+resources have been removed; their history remains in Git.
 
 ## Stone Golem asset setup
 
