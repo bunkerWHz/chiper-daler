@@ -406,7 +406,7 @@ tracks/31/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [-0.610865]
+"values": [0.7690259]
 }
 tracks/32/type = "value"
 tracks/32/imported = false
@@ -3641,7 +3641,7 @@ offset = Vector2(-90, -93)
 visible = false
 z_index = -4
 position = Vector2(212, 132)
-rotation = 0.74673915
+rotation = 0.7690259
 texture = ExtResource("18_3q2d0")
 offset = Vector2(-17, -31)
 
@@ -3779,7 +3779,7 @@ remote_path = NodePath("../../../../../../VisualDetails/BackArmBot")
 
 [node name="OffHand" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot" unique_id=1362563054]
 position = Vector2(28, 36)
-rotation = -0.610865
+rotation = 0.7690259
 remote_path = NodePath("../../../../../../VisualDetails/OffHand")
 
 [node name="Torso" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip" unique_id=1989318441]
