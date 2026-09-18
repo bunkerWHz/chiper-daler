@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" uid="uid://cdymef71nkw4f" path="res://features/inventory/ItemStats.gd" id="2_stats"]
 [ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
+[ext_resource type="Script" uid="uid://dkiud5txfrcpw" path="res://features/inventory/profiles/ItemRangedProfile.gd" id="4_idn2e"]
 [ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 
 [sub_resource type="Resource" id="ItemStats_crossbow"]
@@ -15,9 +16,16 @@ allowed_slots = Array[int]([1])
 display_slot = 2
 stats = SubResource("ItemStats_crossbow")
 
+[sub_resource type="Resource" id="Resource_y56ms"]
+script = ExtResource("4_idn2e")
+projectile_speed = 820.0
+projectile_gravity = 50.0
+projectile_damage = 24.0
+
 [sub_resource type="Resource" id="ItemWeaponProfile_crossbow"]
 script = ExtResource("4_weapon")
 combat_mode = 4
+ranged = SubResource("Resource_y56ms")
 visual_archetype = 2
 family = 15
 handedness = 1

@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqc4jsjq3gpaf"]
 
-[ext_resource type="Script" path="res://features/inventory/ItemData.gd" id="item"]
-[ext_resource type="Script" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
+[ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="item"]
+[ext_resource type="Script" uid="uid://d1oecoy1ibkrt" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
 
 [sub_resource type="Resource" id="Projectile"]
 script = ExtResource("projectile")
