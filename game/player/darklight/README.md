@@ -1,11 +1,17 @@
 # Darklight
 
-`game/player/Player.tscn` uses Darklight as its playable visual. The existing
+Darklight is the project's main playable hero, not an alternate or temporary skin.
+`game/player/Player.tscn` is its gameplay scene. The existing
 Actor components still own movement, FSM, inventory, equipment, damage, stamina,
 item use, saving and respawning. No gameplay scripts or UI from dark-sanctum are
 loaded.
 
 ## Editing animations
+
+Author all future player rig and animation changes in this repository's
+`game/player/darklight/DarklightRig.tscn`, not the external source project.
+The legacy Warrior/Archer/Lancer art and `TemporaryPlayerVisualComponent` are
+reference assets only and are not the basis for new player work.
 
 Open `DarklightRig.tscn` directly. Select `AnimationPlayer` and edit the clips by
 moving `CharacterContainer/Anim Targets`. The original Skeleton2D, Bone2D rest

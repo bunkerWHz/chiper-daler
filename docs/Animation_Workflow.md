@@ -4,7 +4,8 @@ Actor animation uses Godot's standard scene resources:
 
 ```text
 gameplay component -> ActorStateComponent -> visual component -> AnimationPlayer
-                                                          -> AnimatedSprite2D
+                                                          -> Skeleton2D / SoupIK (player)
+                                                          -> AnimatedSprite2D (frame art)
 ```
 
 The gameplay layer decides what the Actor is doing and when an action succeeds.
@@ -36,15 +37,23 @@ instead of the animation timeline.
 
 ## Editing the player
 
-`game/player/Player.tscn` now renders the Skeleton2D-based Darklight character.
+Darklight is the main hero; `game/player/Player.tscn` is its gameplay scene.
+All new player animations belong to this Skeleton2D-based rig.
 Open `game/player/darklight/DarklightRig.tscn`, select `AnimationPlayer`, and
 animate `CharacterContainer/Anim Targets`. The original rig includes skinned
 polygons, bone attachments and SoupIK controls.
 
 `DarklightVisualComponent` maps the existing `ActorStateComponent` behavior to
 clips. Gameplay components remain the authority for action durations and damage.
-Equipment visuals are scene instances attached to the hand bones, assigned with
-`ItemData.equipped_visual`; changes to the active inventory loadout update them.
+The rig's `MainHand` and `OffHand` Sprite2D nodes follow the hand bones. Assign
+`ItemData.equipped_texture` to swap artwork without changing animation tracks or
+authored hand transforms. Optional `equipped_visual` scenes support multipart
+artwork; the texture takes precedence. Inventory icons are separate.
+
+`ItemEquipmentProfile.display_slot` defaults to the equipment slot. Bow and
+crossbow equip in MAIN_HAND but display in OffHand. Only the active weapon set
+updates visible equipment; its equipped arrows or bolts show the `Arrows` quiver
+sprite. See [item authoring](../game/items/README.md) for resource setup.
 
 See [Darklight authoring notes](../game/player/darklight/README.md) for size,
 facing, attachment setup, source provenance and missing-animation fallbacks.

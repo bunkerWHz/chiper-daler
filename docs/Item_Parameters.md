@@ -13,6 +13,24 @@
 Правило и план миграции описаны в [Характеристиках Actor](Actor_Stats.md#пассивные-навыки-и-требования-предметов).
 Проверки навыков ещё не реализованы; требования STR/DEX/INT/END/WIS удалены. Будущие формулы итогового урона описаны в новом решении.
 
+## Отображение экипировки основного героя
+
+Основной герой — Darklight. Его риг сохраняет анимации и крепления при смене предмета.
+
+| Поле | Текущее поведение |
+| --- | --- |
+| ItemData.icon | Только изображение в интерфейсе |
+| ItemData.equipped_texture | Картинка Sprite2D в руке, имеет приоритет над equipped_visual |
+| ItemData.equipped_visual | Необязательная сцена предмета; начало координат — место хвата |
+| ItemEquipmentProfile.allowed_slots | Допустимые слоты экипировки в инвентаре |
+| ItemEquipmentProfile.display_slot | Рука отображения: Same As Equipment по умолчанию, Main Hand или Off Hand |
+
+Лук и арбалет занимают MAIN_HAND, а отображаются в OffHand. Колчан виден при
+экипированных стрелах или болтах активного набора; при снятии или расходе последнего
+боеприпаса скрывается. Без equipped_texture и equipped_visual предмет в руке не виден.
+Подробности: [создание ресурсов предметов](../game/items/README.md) и
+[работа с ригом](../game/player/darklight/README.md).
+
 ## Текущие параметры
 
 Метательные предметы используют `ItemData.projectile_profile` (ItemProjectileProfile):
@@ -23,7 +41,7 @@ texture, speed, gravity, lifetime, damage и knockback работают при �
 | Поле ItemWeaponProfile | Статус | Где используется |
 | --- | --- | --- |
 | combat_mode | Работает | EquipmentComponent выбирает доступный режим действий |
-| visual_archetype | Работает | TemporaryPlayerVisualComponent выбирает рисунок |
+| visual_archetype | Только старый визуал | Используется TemporaryPlayerVisualComponent; на основного героя Darklight не влияет |
 | family | Описание | Название семейства в карточке, отдельных правил семейства нет |
 | handedness | Работает | Занятость рук и совместимость экипировки |
 | available_actions | Частично работает | Attack, Guard, RangedWeapon и Magic проверяют доступные действия; RELOAD пока не используется |

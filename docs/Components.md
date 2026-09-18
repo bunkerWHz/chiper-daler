@@ -621,19 +621,32 @@ Shape2D. После изменения масштаба проверяйте т�
 ### AnimationComponent — Общая анимация персонажа
 
 - **Делает:** Переводит поведение и направление взгляда в клипы AnimationPlayer и flip_h.
-- **Когда применять:** Для персонажа с ActorState; служит базой временного визуала игрока.
+- **Когда применять:** Для персонажа с ActorState; служит базой DarklightVisualComponent основного героя.
 - **Что требуется:** ActorStateComponent, FacingComponent; `_Visual/AnimatedSprite2D` со SpriteFrames и `_Visual/AnimationPlayer` с нужными клипами.
 - **Настройки и ограничения:** Кадры/библиотеки назначаются в сцене. Обязательные клипы описаны в коде и Animation_Workflow.md. Не добавляйте параллельно другой компонент, управляющий тем же рисунком.
 - **Файлы:** [Код](../framework/components/AnimationComponent.gd) · [Сцена](../framework/components/AnimationComponent.tscn).
 
+Для покадровых сцен используются указанные выше SpriteFrames. Основной герой
+переопределяет отображение через Skeleton2D в следующем компоненте.
+
+<a id="darklightvisualcomponent"></a>
+
+### DarklightVisualComponent — Риг основного героя
+
+- **Делает:** Отображает состояние ActorStateComponent клипами Darklight, отражает визуальный риг по направлению взгляда и обновляет экипировку активного набора.
+- **Когда применять:** Для основного героя в game/player/Player.tscn; новые анимации создаются в DarklightRig.tscn.
+- **Что требуется:** Skeleton2D/SoupIK, AnimationPlayer, крепления MainHand / OffHand и спрайт Arrows; игровые компоненты готовой сцены Player.
+- **Настройки и ограничения:** Equipped Texture подменяет картинку руки; Equipped Visual задаёт необязательную сцену. Display Slot выбирает визуальную руку независимо от слота инвентаря. Колчан виден при экипированных стрелах/болтах. Анимация не определяет урон, расход предметов или длительность действий.
+- **Файлы:** [Код](../game/player/darklight/DarklightVisualComponent.gd) · [Сцена](../game/player/darklight/DarklightVisualComponent.tscn) · [Риг](../game/player/darklight/DarklightRig.tscn) · [Работа с ригом и ограничения](../game/player/darklight/README.md).
+
 <a id="temporaryplayervisualcomponent"></a>
 
-### TemporaryPlayerVisualComponent — Тестовая внешность игрока
+### TemporaryPlayerVisualComponent — Архивная тестовая внешность
 
 - **Делает:** Расширяет AnimationComponent: выбирает warrior/archer/lancer по оружию, проигрывает эффекты предметов и баффов.
-- **Когда применять:** В нынешнем Player до замены тестовой графики.
+- **Когда применять:** Только как справочный пример старого визуала. Основной Player использует DarklightVisualComponent.
 - **Что требуется:** Требования AnimationComponent, плюс EquipmentComponent, ItemUseComponent, StatusEffectComponent и спрайты эффектов готовой сцены.
-- **Настройки и ограничения:** Character Art / Item Effects на узле AnimationComponent в Player. SpriteFrames заданы ресурсами; лечение, расход и время статуса остаются в игровых компонентах.
+- **Настройки и ограничения:** Character Art / Item Effects доступны в старой сцене компонента. SpriteFrames заданы ресурсами; лечение, расход и время статуса остаются в игровых компонентах. Не использовать как основу новых анимаций героя.
 - **Файлы:** [Код](../game/player/TemporaryPlayerVisualComponent.gd) · [Сцена](../game/player/TemporaryPlayerVisualComponent.tscn).
 
 <a id="enemyvisualcomponent"></a>
@@ -828,7 +841,7 @@ Shape2D. После изменения масштаба проверяйте т�
 | [ActorAudioProfile](../features/audio/ActorAudioProfile.gd) | Звуки по типу события, громкость и параметры воспроизведения |
 | [ItemData](../features/inventory/ItemData.gd) | ID, название, описание, иконка, категория, цена, вес, стопка и ссылки на профили |
 | [ItemStats](../features/inventory/ItemStats.gd) | Урон, защита и поля баффов; наличие дополнительных полей не означает готовую механику |
-| [ItemEquipmentProfile](../features/inventory/profiles/ItemEquipmentProfile.gd) | Допустимые слоты и характеристики экипируемого предмета |
+| [ItemEquipmentProfile](../features/inventory/profiles/ItemEquipmentProfile.gd) | Допустимые слоты, отдельный слот отображения и характеристики экипируемого предмета |
 | [ItemWeaponProfile](../features/inventory/profiles/ItemWeaponProfile.gd) | Тип оружия, действия, руки, визуальный профиль, критический урон и дальность; неактивные поля помечены Planned |
 | [ItemOffhandProfile](../features/inventory/profiles/ItemOffhandProfile.gd) | Семейство вспомогательного предмета, действия, блок и парирование |
 | [ItemArmorProfile](../features/inventory/profiles/ItemArmorProfile.gd) | Класс/набор брони и заготовка устойчивости Poise |
@@ -929,7 +942,8 @@ HitStop замедляет игровое время, CameraShake смещает
 Подготовленные поля оружия не делают готовыми скорость атаки, moveset,
 типовой урон, scaling, stagger и poise. Stamina пока не связана с затратами
 действий. Статусы требуют отдельного потребителя эффекта, а уровни — отдельного
-решения о росте характеристик. Текущий визуал игрока и шкалы ресурсов временные.
+решения о росте характеристик. Основной герой — Darklight; недостающие клипы
+перечислены в [документации рига](../game/player/darklight/README.md). Шкалы ресурсов временные.
 Общее прицеливание подключено к дальним атакам; дисковое сохранение описано в Save_System.md.
 
 ## Общее прицеливание

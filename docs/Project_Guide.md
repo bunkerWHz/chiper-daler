@@ -37,7 +37,11 @@ godot --headless --path . --script tests/run_tests.gd
 [Прицеливание и выпуск снарядов](Aiming.md): быстрый бросок, удержание,
 мышь/W/S/стик, общий прицел для метательного оружия, лука и заклинаний.
 
-Откройте `game/player/Player.tscn`. Настройки находятся под `_Components`.
+Основной герой проекта — **Darklight**. Игровая сцена — `game/player/Player.tscn`,
+настройки поведения находятся под `_Components`. Риг и все новые анимации меняйте
+в `game/player/darklight/DarklightRig.tscn`: `AnimationPlayer` управляет целями
+`CharacterContainer/Anim Targets`. [Работа с ригом](../game/player/darklight/README.md)
+описывает крепления, масштаб и пока отсутствующие клипы.
 
 | Что изменить | Где в Inspector |
 | --- | --- |
@@ -52,10 +56,18 @@ godot --headless --path . --script tests/run_tests.gd
 | Начальные предметы | InventoryComponent → Config |
 | Начальные наборы оружия | EquipmentComponent → Starting Main Hand Ids / Starting Off Hand Ids |
 | Время смены наборов оружия | EquipmentSwapComponent → Base Duration; CharacterAttributesComponent → Action Speed → Attack Speed Multiplier |
-| Полоска переодевания над головой | EquipmentSwapView в сцене игрока; Position задаёт положение |
-| Заготовка анимации переодевания | `_Visual/AnimationPlayer` → equipment_swap |
-| Рисунок персонажа и эффекты предметов | AnimationComponent → Character art / Item effects |
-| Клипы анимации | `_Visual/AnimationPlayer` |
+| Общий размер героя | Корень Player → Scale, одинаковый по обеим осям; сейчас 0.1 |
+| Коллизии | Размеры ресурсов Shape2D и Position; локальный Scale узлов коллизий — 1 |
+| Полоска переодевания над головой | EquipmentSwapView → Position / Native Width; ширина следует размеру героя, высота и отступ сохраняются |
+| Клипы и заготовка equipment_swap | DarklightRig.tscn → AnimationPlayer (в Player: `_Visual/DarklightRig/AnimationPlayer`) |
+| Предмет в руке | ItemData → Equipped Texture или Equipped Visual; крепления MainHand / OffHand в риге |
+| Рука для отображения | Equipment Profile → Display Slot; по умолчанию совпадает со слотом экипировки |
+| Колчан | Спрайт Arrows в риге; виден при экипированных стрелах или болтах активного набора |
+| Эффекты предметов | AnimationComponent → Item Effects |
+
+Лук и арбалет экипируются в Main Hand, но отображаются в OffHand. Смена картинки
+предмета сохраняет анимации и положение крепления. Старый TemporaryPlayerVisualComponent
+и наборы Warrior/Archer/Lancer больше не используются основным героем.
 
 Встроенные конфигурации общей сцены компонента могут использоваться несколькими
 персонажами. Для изменения только текущего персонажа сначала выберите

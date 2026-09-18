@@ -87,8 +87,7 @@ reference value of 5 Wisdom, base mana is unchanged; each Wisdom point changes
 maximum mana by 10. Mana restoration and the HUD use the derived maximum.
 
 The first one-handed content batch adds training rapier, katana, and dagger
-resources without adding them to the starting inventory. They share the
-temporary warrior visual but have distinct thrust/slash profiles, moveset IDs,
+resources with distinct thrust/slash profiles, moveset IDs,
 actions, speed, reach, stagger, weight, and legacy scaling. Critical
 damage is weapon data and is applied to the active melee hitbox; the dagger has
 the strongest critical multiplier in this batch.
@@ -198,9 +197,10 @@ their configured maximum. Non-stackable items always occupy separate cells.
 rules. Optional focused resources contain behavior for a particular item
 family:
 
-- `ItemEquipmentProfile` declares every compatible equipment slot and item
-  stats;
-- `ItemWeaponProfile` declares combat mode and the temporary visual archetype;
+- `ItemEquipmentProfile` declares compatible equipment slots, item stats and
+  the independent visual `display_slot` (defaults to the equipment slot);
+- `ItemWeaponProfile` declares combat mode; its legacy `visual_archetype` does
+  not change Darklight's appearance;
 - `ItemConsumableProfile` declares the current use effect, value, status, and
   presentation effect.
 
@@ -269,19 +269,34 @@ ordering and selling remain later interaction work.
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
 
-## Temporary player visuals
+## Main hero equipment visuals
 
-`TemporaryPlayerVisualComponent` isolates the current test art from the generic
-animation architecture. A main-hand item's `visual_archetype` selects warrior,
-archer, or lancer sprite sheets; the bow and crossbow also fall back to archer.
-Switching the active weapon set refreshes the profile immediately.
+Darklight is the main hero. `DarklightVisualComponent` connects the existing
+inventory and FSM to its Skeleton2D rig. `ItemData.equipped_texture` replaces
+the native-size image of the rig's MainHand or OffHand Sprite2D without changing
+authored attachment transforms or animations. For multipart art, use an optional
+`equipped_visual` Node2D scene with its origin at the grip. The texture takes
+precedence; `icon` is UI-only and is never a fallback for missing weapon art.
 
-Item effects use an `AnimatedSprite2D` overlay above the character. Health,
-mana, and rage play their own animation for exactly the configured item-use
-duration. Successful rage use applies the provisional `rage` buff status. A
-second overlay plays the shared buff animation whenever any buff is applied,
-allowing both layers to coexist. These profiles and assets are deliberately
-temporary and can be replaced without changing equipment or item-use rules.
+`ItemEquipmentProfile.allowed_slots` controls where the item can be equipped.
+`display_slot` independently selects Same As Equipment (default), Main Hand or
+Off Hand. Bow/crossbow resources and templates equip in MAIN_HAND but display in
+OffHand. If both equipped items target one visual hand, MAIN_HAND equipment wins.
+Only the active set is displayed. Items without assigned world artwork are hidden;
+the training crossbow still needs artwork.
+
+The rig's Arrows quiver sprite is visible while arrows or bolts are equipped in
+the active set. Both use the same quiver image. Unequipping, consuming the last
+round or switching sets refreshes it. Ammunition does not occupy a visual hand.
+Armor and accessories affect stats; replacing body artwork is not implemented.
+
+Item-use and buff effects retain separate AnimatedSprite2D overlays driven by
+gameplay signals. Damage, consumption and status duration remain in gameplay
+components. The old TemporaryPlayerVisualComponent and Warrior/Archer/Lancer
+assets are legacy references only.
+
+See [item authoring](../game/items/README.md) and
+[Darklight rig authoring](../game/player/darklight/README.md).
 
 ### Browsing weapon sets while paused
 

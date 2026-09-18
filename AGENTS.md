@@ -30,6 +30,23 @@ in game/enemy/monsters/<name>/ with owned animation resources. The copy tool
 resets the new root scale to (1, 1); levels reference completed monsters.
 Name enemy asset folders after the monster: assets/Enemies/<MonsterName>/PNG Sequences.
 
+# Main playable hero
+
+- Darklight is the canonical main hero. Use `game/player/Player.tscn` for gameplay
+  and `game/player/darklight/DarklightRig.tscn` for rig and animation authoring.
+  Work on this repository's rig, not the external dark-sanctum source project.
+- Preserve Skeleton2D, SoupIK targets and bone attachments. Add future player
+  animations to this rig; do not build on TemporaryPlayerVisualComponent or the
+  legacy Warrior/Archer/Lancer art. Follow `game/player/darklight/README.md`.
+- DarklightVisualComponent presents ActorStateComponent behavior. Gameplay
+  components retain ownership of action timing, damage and item consumption.
+- Equipment slots and visual hands are independent: ItemEquipmentProfile's
+  display_slot defaults to the equipment slot. Bow/crossbow equip in MAIN_HAND
+  and display in OffHand. Use equipped_texture or optional equipped_visual;
+  preserve authored hand transforms. Equipped arrows/bolts control the quiver.
+- Skeleton2D/Polygon2D are an exception to the sprite flip_h rule: reflect only
+  the visual rig with its IK targets and attachments, never the physics root.
+
 # Commit workflow
 
 - After completing and verifying a fix, always create a Git commit before

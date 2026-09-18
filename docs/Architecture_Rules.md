@@ -191,8 +191,8 @@ State Machine
 -   `AnimationComponent`, debug UI, and other presentation consumers read the
     coordinated Actor behavior instead of reconstructing parallel state from
     several components.
--   Actor-specific or temporary art belongs in a presentation subclass such as
-    `TemporaryPlayerVisualComponent`. It may react to equipment and gameplay
+-   Actor-specific art belongs in a presentation subclass such as
+    `DarklightVisualComponent`, the main hero's adapter. It may react to equipment and gameplay
     fact signals, but it never owns damage, healing, inventory consumption, or
     status-effect timing.
 
@@ -206,7 +206,11 @@ Animation and presentation
     an `AnimationPlayer`; they do not implement a second gameplay state machine.
 -   `AnimationPlayer` is the standard orchestration point for Actor animation.
     Its tracks may coordinate the sprite, sound, visual effects, and future
-    presentation events. `AnimatedSprite2D` remains the frame-by-frame renderer.
+    presentation events. The main hero uses Darklight's Skeleton2D/SoupIK rig;
+    `AnimatedSprite2D` remains the renderer for frame-based Actors and overlays.
+-   Player rig and animation authoring belongs in `game/player/darklight/DarklightRig.tscn`.
+    Equipment's inventory slot and visual destination are separate; display-slot
+    overrides must not change equipment compatibility or combat behavior.
 -   Frame-authored events pass through `AnimationEventComponent`. Animation
     tracks may request a sound, visual effect, or a validated combat window,
     but they do not apply damage directly. Gameplay components validate each
