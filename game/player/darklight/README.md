@@ -31,26 +31,43 @@ follows the swap duration. Add new authored clips and map them in
 
 ## Equipment
 
-Assign an optional `ItemData.equipped_visual` PackedScene. Its root must be
-Node2D; put the grip at `(0, 0)` and keep sprites at native scale. The adapter
-instances it under the front/back hand attachment and updates both hands when
-the active loadout changes, including unequip and weapon-set changes.
+The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing
+bone RemoteTransform2D attachments and animation targets. Their transforms,
+`centered` and `offset` are authored in the rig and are never changed by equipment.
+Assign `ItemData.equipped_texture` to replace only the native-size image.
+Inventory `icon` is separate and is not automatically used as weapon artwork.
 
-The starting katana and bow have scenes using the imported source weapon art.
-The starting buckler has a simple scene-authored polygon placeholder. For other
-items, an explicitly assigned inventory icon is an aspect-preserving fallback;
-items without either scene or icon have no hand visual. Armor/accessory stats
-continue to work, but replacing body-part artwork is not implemented here.
+For a multipart visual, use the optional `ItemData.equipped_visual` Node2D scene
+instead. Its grip is at the scene origin; use its own Sprite2D offset/rotation for
+item-specific alignment. `equipped_texture` takes precedence when both are set.
+The adapter replaces only its own instance, preserving any authored children.
+
+`Equipment Profile → Display Slot` offers `Same As Equipment` (default),
+`Main Hand`, and `Off Hand`. This changes only the visual destination. The katana
+uses its main-hand slot; bow and crossbow resources/templates explicitly select
+Off Hand while still equipping to MAIN_HAND in inventory. If both equipped items
+claim the same visual destination, MAIN_HAND equipment wins. The inactive weapon
+set never changes visible equipment. Items without texture or visual scene are
+hidden; the training crossbow still needs its own artwork assigned.
+
+The `Arrows` sprite contains the quiver artwork. It is visible only while arrows
+or bolts are equipped in the active set. Ammunition is not displayed in the hand
+sprites. Unequipping ammunition, exhausting its stack, and switching sets update
+visibility through the existing equipment signals. Both ammunition types currently
+use the same quiver image. Armor/accessory stats work without replacing body art.
 
 Consumable and buff overlays remain connected to the current item/status signals.
 
 ## Size and facing
 
-Player root scale is `(0.1, 0.1)`. Body, hurtbox and hitbox shapes are authored
-as 500×500 native units, giving 50×50 world dimensions at this scale.
-The hitbox's 500-unit offset gives 50-world-unit reach before weapon modifiers. `_Visual.position.y = -250` aligns the feet with the existing
-floor contact. Movement, gravity, jump velocities and world-space interaction
-distances are unchanged. HUD/effect scaling is a visual-only exception.
+Player root scale is `(0.1, 0.1)`. Body collision and hurtbox are 412×970
+native units, offset by `(0, -250)` to match the rig's body from head to feet
+without including cloak, quiver or weapons (41.2×97 world units at this scale).
+The melee hitbox remains 500×500 native units with offset `(500, -250)`:
+its reach is unchanged, but its center is now at hand/torso height.
+Collision nodes retain unit local scale. `_Visual.position.y = -250` matches
+the body/hurtbox offset. Movement, gravity, jump velocities and world-space
+interaction distances are unchanged. HUD/effect scaling is a visual-only exception.
 
 The equipment-swap view anchors at native Y = -750, just above the head.
 Its 600-native-unit width follows the player size (60 world pixels at 0.1),

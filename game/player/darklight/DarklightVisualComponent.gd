@@ -14,8 +14,10 @@ var _item_effect_sprite: AnimatedSprite2D
 var _buff_effect_sprite: AnimatedSprite2D
 var _effect_frames: Dictionary = {}
 var _rig: Node2D
-var _main_hand: Polygon2D
-var _off_hand: Polygon2D
+var _main_hand: Sprite2D
+var _off_hand: Sprite2D
+var _quiver: Sprite2D
+var _hand_visuals: Dictionary = {}
 
 
 func on_initialize() -> void:
@@ -54,8 +56,9 @@ func _ready() -> void:
 		return
 	_rig = actor.get_node("_Visual/DarklightRig") as Node2D
 	_animation_player = _rig.get_node("AnimationPlayer") as AnimationPlayer
-	_main_hand = _rig.get_node("CharacterContainer/VisualDetails/MainHand") as Polygon2D
-	_off_hand = _rig.get_node("CharacterContainer/VisualDetails/OffHand") as Polygon2D
+	_main_hand = _rig.get_node("CharacterContainer/VisualDetails/MainHand") as Sprite2D
+	_off_hand = _rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	_quiver = _rig.get_node("CharacterContainer/VisualDetails/Arrows") as Sprite2D
 	_item_effect_sprite = actor.get_node("_Visual/ItemEffectSprite") as AnimatedSprite2D
 	_buff_effect_sprite = actor.get_node("_Visual/BuffEffectSprite") as AnimatedSprite2D
 	_build_effect_frames()
@@ -142,40 +145,47 @@ func _build_effect_frames() -> void:
 func _refresh_equipment_visuals() -> void:
 	if _main_hand == null:
 		return
-	_update_hand(_main_hand, ItemData.EquipSlot.MAIN_HAND)
-	_update_hand(_off_hand, ItemData.EquipSlot.OFF_HAND)
+	var displayed: Dictionary = {}
+	var show_quiver := false
+	# Main-hand equipment wins if both items target the same visual attachment.
+	for slot: ItemData.EquipSlot in [ItemData.EquipSlot.OFF_HAND, ItemData.EquipSlot.MAIN_HAND]:
+		var item := _equipment.get_equipped_item(slot)
+		if item == null:
+			continue
+		if item.category == ItemData.Category.AMMUNITION:
+			show_quiver = show_quiver or item.get_ammunition_type() in [&"arrow", &"bolt"]
+			continue
+		displayed[item.get_display_slot(slot)] = item
+	_update_hand(_main_hand, displayed.get(ItemData.EquipSlot.MAIN_HAND) as ItemData)
+	_update_hand(_off_hand, displayed.get(ItemData.EquipSlot.OFF_HAND) as ItemData)
+	_quiver.visible = show_quiver
 
 
-func _update_hand(hand: Polygon2D, slot: ItemData.EquipSlot) -> void:
-	var item := _equipment.get_equipped_item(slot)
-	# Rebuild only on an actual equipment change; pose resets must keep attachments.
+func _update_hand(hand: Sprite2D, item: ItemData) -> void:
+	# Pose resets preserve the authored grip offsets and existing attachments.
 	if hand.has_meta(&"equipped_item") and hand.get_meta(&"equipped_item") == item:
 		return
 	hand.set_meta(&"equipped_item", item)
-	for child in hand.get_children():
-		hand.remove_child(child)
-		child.queue_free()
+	var previous := _hand_visuals.get(hand) as Node
+	if is_instance_valid(previous):
+		hand.remove_child(previous)
+		previous.queue_free()
+	_hand_visuals.erase(hand)
 	hand.texture = null
-	hand.color = Color.TRANSPARENT
 	hand.visible = item != null
 	if item == null:
+		return
+	if item.equipped_texture != null:
+		hand.texture = item.equipped_texture
 		return
 	if item.equipped_visual != null:
 		var visual := item.equipped_visual.instantiate()
 		if visual is Node2D:
 			hand.add_child(visual)
+			_hand_visuals[hand] = visual
 			return
 		visual.free()
-	# Items without authored world art retain the inventory icon as a placeholder.
-	hand.color = Color.WHITE
-	hand.texture = item.icon
-	if hand.texture == null:
-		hand.visible = false
-		return
-	var size := hand.texture.get_size()
-	hand.uv = PackedVector2Array([Vector2.ZERO, Vector2(size.x, 0), size, Vector2(0, size.y)])
-	var fitted := size * (450.0 / maxf(size.x, size.y))
-	hand.polygon = PackedVector2Array([Vector2(0, -fitted.y / 2), Vector2(fitted.x, -fitted.y / 2), Vector2(fitted.x, fitted.y / 2), Vector2(0, fitted.y / 2)])
+	hand.visible = false
 
 
 func _on_loadout_item_changed(

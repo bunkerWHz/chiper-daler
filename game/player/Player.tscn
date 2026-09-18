@@ -66,11 +66,11 @@ remove_actor_on_finish = false
 
 [sub_resource type="RectangleShape2D" id="NativePlayerBodyShape"]
 resource_local_to_scene = true
-size = Vector2(500, 500)
+size = Vector2(412, 970)
 
 [sub_resource type="RectangleShape2D" id="NativePlayerHurtShape"]
 resource_local_to_scene = true
-size = Vector2(500, 500)
+size = Vector2(412, 970)
 
 [sub_resource type="RectangleShape2D" id="NativePlayerHitShape"]
 resource_local_to_scene = true
@@ -118,7 +118,7 @@ config = SubResource("DeathConfig_player")
 [node name="HurtboxComponent" parent="_Components" unique_id=390170658 instance=ExtResource("12_hurtbox")]
 
 [node name="HitboxComponent" parent="_Components" unique_id=2003695411 instance=ExtResource("13_hitbox")]
-position = Vector2(500, 0)
+position = Vector2(500, -250)
 
 [node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
 script = ExtResource("10_facing")
@@ -220,9 +220,11 @@ scale = Vector2(25, 25)
 z_index = 2
 
 [node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" index="0"]
+position = Vector2(0, -250)
 shape = SubResource("NativePlayerBodyShape")
 
 [node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D" index="0"]
+position = Vector2(0, -250)
 shape = SubResource("NativePlayerHurtShape")
 
 [node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D" index="0"]

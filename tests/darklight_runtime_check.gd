@@ -4,6 +4,7 @@ var _failed := false
 
 
 func _initialize() -> void:
+	debug_collisions_hint = "--collision-preview" in OS.get_cmdline_user_args()
 	call_deferred("_run")
 
 
@@ -43,10 +44,21 @@ func _run() -> void:
 	for frame in 65:
 		await physics_frame
 	_check(body.is_on_floor(), "Darklight must land on the existing player collision")
-	_check(absf(player.position.y - 55.0) < 0.2, "The larger character must land with its feet at floor contact")
+	_check(absf(player.position.y - 56.5) < 0.2, "The larger character must land with its feet at floor contact")
 	_check(visual.get_animation_player().current_animation == &"idle", "FSM must drive idle")
 	for sprite: Node in rig.find_children("*", "Sprite2D", true, false):
 		_check((sprite as Sprite2D).scale.is_equal_approx(Vector2.ONE), "Native sprites must remain at unit scale")
+	var head_query := PhysicsPointQueryParameters2D.new()
+	head_query.position = player.global_position + Vector2(0, -60)
+	head_query.collision_mask = 4
+	head_query.collide_with_areas = true
+	head_query.collide_with_bodies = false
+	var head_hits := world.get_world_2d().direct_space_state.intersect_point(head_query)
+	var upper_body_hittable := false
+	for hit: Dictionary in head_hits:
+		if hit.collider == player.get_node("_Components/HurtboxComponent/Area2D"):
+			upper_body_hittable = true
+	_check(upper_body_hittable, "Hurtbox must cover the upper body, not only the legs")
 	await _capture("darklight_right")
 	var start_x := player.position.x
 	Input.action_press(&"move_left")
@@ -64,14 +76,15 @@ func _run() -> void:
 		await physics_frame
 	Input.action_release(&"jump")
 	await process_frame
+	await process_frame
 	_check(not body.is_on_floor(), "Existing jump must work with the native rig scale")
-	_check(state.get_state() in [ActorState.Behavior.JUMP, ActorState.Behavior.DOUBLE_JUMP], "Jump must be resolved by the current FSM")
+	_check(state.get_state() in [ActorState.Behavior.JUMP, ActorState.Behavior.DOUBLE_JUMP], "Jump must be resolved by the current FSM: " + ActorState.get_behavior_name(state.get_state()))
 	for frame in 100:
 		await physics_frame
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	_check(equipment.switch_weapon_set(1), "Existing inventory must switch to the bow")
-	var hand := rig.get_node("CharacterContainer/VisualDetails/MainHand")
-	_check(hand.get_child_count() == 1 and hand.get_child(0).name == &"Bow", "Equipped bow must follow the hand bone")
+	var hand := rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	_check(hand.texture == equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture, "Equipped bow must follow the opposite hand bone")
 	for frame in 4:
 		await physics_frame
 	await _capture("darklight_bow")

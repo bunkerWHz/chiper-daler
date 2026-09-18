@@ -82,6 +82,8 @@ enum UseVisualEffect {
 @export var display_name: String = "New Item"
 @export_multiline var description: String
 @export var icon: Texture2D
+## Native-size texture for the rig's hand Sprite2D. Takes precedence over equipped_visual.
+@export var equipped_texture: Texture2D
 ## Optional native-size hand visual. Author the grip at the scene origin.
 @export var equipped_visual: PackedScene
 @export_group("Category and rarity")
@@ -133,6 +135,10 @@ func get_primary_equip_slot() -> EquipSlot:
 	if equipment_profile != null:
 		return equipment_profile.get_primary_slot()
 	return EquipSlot.NONE
+
+
+func get_display_slot(equipment_slot: EquipSlot) -> EquipSlot:
+	return equipment_profile.get_display_slot(equipment_slot) if equipment_profile != null else equipment_slot
 
 
 func get_equipment_stats() -> ItemStats:

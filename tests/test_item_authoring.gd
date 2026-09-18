@@ -80,3 +80,27 @@ func test_catalog_items_remain_valid_with_unique_ids() -> void:
 			assert_false(ids.has(item.id), "Duplicate item ID: %s" % item.id)
 			ids[item.id] = true
 	assert_false(ids.is_empty())
+
+
+func test_display_slot_defaults_to_inventory_slot_and_serializes_independently() -> void:
+	var item := ItemData.new()
+	item.id = &"saved_visual_slot"
+	item.equipment_profile = ItemEquipmentProfile.new()
+	item.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
+	assert_eq(item.get_display_slot(ItemData.EquipSlot.MAIN_HAND), ItemData.EquipSlot.MAIN_HAND)
+	assert_eq(item.get_display_slot(ItemData.EquipSlot.OFF_HAND), ItemData.EquipSlot.OFF_HAND)
+	item.equipment_profile.display_slot = ItemEquipmentProfile.DisplaySlot.OFF_HAND
+	item.equipped_texture = load("res://assets/Characters/Darklight/equipment/Bow.png") as Texture2D
+	var path := "res://.godot/test_display_slot.tres"
+	assert_eq(ResourceSaver.save(item, path), OK)
+	var restored := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE) as ItemData
+	assert_true(restored.can_equip_in(ItemData.EquipSlot.MAIN_HAND))
+	assert_false(restored.can_equip_in(ItemData.EquipSlot.OFF_HAND))
+	assert_eq(restored.get_display_slot(ItemData.EquipSlot.MAIN_HAND), ItemData.EquipSlot.OFF_HAND)
+	assert_eq(restored.equipped_texture, item.equipped_texture)
+	DirAccess.remove_absolute(path)
+	for weapon: String in ["Bow", "Crossbow"]:
+		for folder: String in ["weapons/Training", "templates/"]:
+			var configured := load("res://game/items/" + folder + weapon + ".tres") as ItemData
+			assert_eq(configured.get_primary_equip_slot(), ItemData.EquipSlot.MAIN_HAND)
+			assert_eq(configured.get_display_slot(ItemData.EquipSlot.MAIN_HAND), ItemData.EquipSlot.OFF_HAND)

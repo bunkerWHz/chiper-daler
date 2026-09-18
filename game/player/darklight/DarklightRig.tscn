@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Texture2D" uid="uid://ct24k2woh3m06" path="res://assets/Characters/Darklight/equipment/Bow.png" id="18_3q2d0"]
+[ext_resource type="Texture2D" uid="uid://blecoiaifln7s" path="res://assets/Characters/Darklight/equipment/Sword.png" id="17_e03j0"]
 [ext_resource type="Texture2D" path="res://assets/Characters/Darklight/back_arm_top.png" id="29_sitjj"]
 [ext_resource type="Texture2D" path="res://assets/Characters/Darklight/front_arm_top.png" id="30_7635k"]
 [ext_resource type="Texture2D" path="res://assets/Characters/Darklight/front_leg_top.png" id="31_xl4ms"]
@@ -3617,19 +3619,22 @@ rotation = -0.0438324
 texture = ExtResource("57_ut2b3")
 offset = Vector2(0, -121)
 
-[node name="MainHand" type="Polygon2D" parent="CharacterContainer/VisualDetails" unique_id=1186801292]
+[node name="MainHand" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1831474147]
+visible = false
 z_index = 2
-position = Vector2(151.504, -238.704)
-rotation = -1.12926
-visible = false
-polygon = PackedVector2Array(0, -225, 450, -225, 450, 225, 0, 225)
+position = Vector2(-166.4791, 198.5834)
+rotation = -0.13599746
+texture = ExtResource("17_e03j0")
+centered = false
+offset = Vector2(-90, -93)
 
-[node name="OffHand" type="Polygon2D" parent="CharacterContainer/VisualDetails" unique_id=1265054370]
-z_index = -1
-position = Vector2(211.99992, 131.99994)
-rotation = -0.61086464
+[node name="OffHand" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1309016613]
 visible = false
-polygon = PackedVector2Array(0, -225, 450, -225, 450, 225, 0, 225)
+z_index = -4
+position = Vector2(212, 132)
+rotation = 0.74673915
+texture = ExtResource("18_3q2d0")
+offset = Vector2(-17, -31)
 
 [node name="Skeleton2D" type="Skeleton2D" parent="CharacterContainer" unique_id=1431504021]
 

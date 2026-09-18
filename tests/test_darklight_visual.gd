@@ -9,19 +9,27 @@ func suite_name() -> String:
 func test_active_equipment_updates_both_skeletal_hand_attachments() -> void:
 	var setup := _create_player_visual()
 	var equipment := setup.equipment as EquipmentComponent
-	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/MainHand") as Polygon2D
-	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/OffHand") as Polygon2D
-	assert_eq(main.get_child(0).scene_file_path, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_visual.resource_path)
+	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/MainHand") as Sprite2D
+	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	assert_eq(main.texture, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture)
 	assert_true(main.visible)
 	assert_true(off.visible)
 	assert_eq(off.get_child(0).name, &"Buckler")
 	assert_true(equipment.switch_weapon_set(1))
-	assert_eq(main.get_child(0).scene_file_path, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_visual.resource_path)
-	var off_item := equipment.get_equipped_item(ItemData.EquipSlot.OFF_HAND)
-	assert_eq(off.visible, off_item != null and (off_item.equipped_visual != null or off_item.icon != null))
+	assert_false(main.visible)
+	assert_eq(main.get_child_count(), 0)
+	assert_eq(off.texture, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture)
+	assert_true(off.visible)
+	assert_true(equipment.switch_weapon_set(0))
+	assert_true(main.visible)
+	assert_eq(main.texture, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture)
+	assert_eq(off.get_child(0).name, &"Buckler")
+	assert_true(equipment.switch_weapon_set(1))
 	assert_true(equipment.unequip_item(ItemData.EquipSlot.MAIN_HAND))
 	assert_false(main.visible)
-	assert_eq(main.texture, null)
+	assert_false(off.visible)
+	assert_eq(off.get_child_count(), 0)
+
 
 
 func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
@@ -60,12 +68,18 @@ func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
 func test_native_collision_shapes_follow_requested_player_size() -> void:
 	var setup := _create_player_visual()
 	var player := setup.player as Actor
-	for path: String in ["CharacterBodyComponent/CharacterBody2D", "HurtboxComponent/Area2D", "HitboxComponent/Area2D"]:
+	for path: String in ["CharacterBodyComponent/CharacterBody2D", "HurtboxComponent/Area2D"]:
 		var collision := player.get_node("_Components/" + path + "/CollisionShape2D") as CollisionShape2D
 		assert_eq(collision.scale, Vector2.ONE)
-		assert_eq((collision.shape as RectangleShape2D).size * player.scale, Vector2(50, 50))
+		assert_eq((collision.shape as RectangleShape2D).size, Vector2(412, 970))
+		assert_eq(collision.position, Vector2(0, -250))
+		assert_true(((collision.shape as RectangleShape2D).size * player.scale).is_equal_approx(Vector2(41.2, 97)))
 	var hitbox := player.get_node("_Components/HitboxComponent") as Node2D
-	assert_eq(hitbox.position * player.scale, Vector2(50, 0))
+	assert_eq(hitbox.position * player.scale, Vector2(50, -25))
+	var hit_shape := hitbox.get_node("Area2D/CollisionShape2D") as CollisionShape2D
+	assert_eq(hit_shape.scale, Vector2.ONE)
+	assert_eq((hit_shape.shape as RectangleShape2D).size, Vector2(500, 500))
+
 
 
 func test_item_and_buff_effects_render_on_separate_overlays() -> void:
@@ -118,3 +132,58 @@ func _effect_atlas_path(visual: DarklightVisualComponent) -> String:
 		&"effect", 0
 	) as AtlasTexture
 	return texture.atlas.resource_path
+
+
+func test_quiver_follows_equipped_ammunition_and_empty_stacks() -> void:
+	var setup := _create_player_visual()
+	var equipment := setup.equipment as EquipmentComponent
+	var inventory := setup.inventory as InventoryComponent
+	var quiver := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/Arrows") as Sprite2D
+	assert_false(quiver.visible)
+	assert_true(equipment.switch_weapon_set(1))
+	assert_true(quiver.visible)
+	assert_true(equipment.unequip_item(ItemData.EquipSlot.OFF_HAND))
+	assert_false(quiver.visible)
+	assert_true(equipment.equip_inventory_item(&"training_arrows", ItemData.EquipSlot.OFF_HAND))
+	assert_true(quiver.visible)
+	var count := inventory.get_quantity(&"training_arrows")
+	assert_eq(inventory.remove_item(&"training_arrows", count), count)
+	assert_false(quiver.visible)
+	assert_true(equipment.equip_inventory_item(&"training_crossbow", ItemData.EquipSlot.MAIN_HAND))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.OFF_HAND), &"training_bolts")
+	assert_true(quiver.visible)
+	assert_true(equipment.switch_weapon_set(0))
+	assert_false(quiver.visible)
+	assert_true(equipment.switch_weapon_set(1))
+	assert_true(quiver.visible)
+	count = inventory.get_quantity(&"training_bolts")
+	assert_eq(inventory.remove_item(&"training_bolts", count), count)
+	assert_false(quiver.visible)
+
+
+func test_display_override_changes_texture_without_moving_inventory_slot_or_grip() -> void:
+	var setup := _create_player_visual()
+	var inventory := setup.inventory as InventoryComponent
+	var equipment := setup.equipment as EquipmentComponent
+	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/MainHand") as Sprite2D
+	var marker := Marker2D.new()
+	off.add_child(marker)
+	var grip_offset := off.offset
+	var grip_centered := off.centered
+	var item := ItemData.new()
+	item.id = &"display_override_probe"
+	item.category = ItemData.Category.WEAPON
+	item.equipment_profile = ItemEquipmentProfile.new()
+	item.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
+	item.equipment_profile.display_slot = ItemEquipmentProfile.DisplaySlot.OFF_HAND
+	item.equipped_texture = load("res://assets/Characters/Darklight/equipment/Sword.png") as Texture2D
+	inventory.add_item(item)
+	assert_true(equipment.equip_inventory_item(item.id, ItemData.EquipSlot.MAIN_HAND))
+	assert_eq(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND), item.id)
+	assert_eq(off.texture, item.equipped_texture)
+	assert_false(main.visible)
+	assert_eq(marker.get_parent(), off)
+	assert_eq(off.offset, grip_offset)
+	assert_eq(off.centered, grip_centered)
+	assert_eq(off.scale, Vector2.ONE)
