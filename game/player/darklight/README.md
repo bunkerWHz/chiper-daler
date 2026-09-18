@@ -133,6 +133,14 @@ The visual rig is reflected as a whole, including its IK targets and attachments
 the actor and physics are never reflected. RemoteTransform2D must transfer the
 complete bone transform to preserve correct reflection. Source art faces right.
 
+Skinned Polygon2D attachments are the exception: their RemoteTransform2D nodes
+must not copy rotation or scale, which are already supplied by skeletal skinning
+and the shared rig parent. Copying global scale without rotation can retain a
+negative local Y scale after repeated facing changes and make the thighs vanish.
+Keep the authored polygon basis unchanged; ordinary sprite attachments still
+copy the complete transform. `tests/darklight_facing_check.gd` exercises 48 turns
+across idle/run and checks every skinned polygon's basis each frame.
+
 ## Provenance and checks
 
 Imported from the user's `dark-sanctum/Scenes/Characters/dark_light.tscn`, its

@@ -3740,6 +3740,7 @@ rest = Transform2D(1, 0, 0, 1, 56, 0)
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackLegTop" unique_id=1500801952]
 remote_path = NodePath("../../../../Polygons/BackLegTop_1")
 update_rotation = false
+update_scale = false
 
 [node name="BackLegMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/BackLegTop" unique_id=244374166]
 position = Vector2(24, 144)
@@ -3770,6 +3771,7 @@ rest = Transform2D(1, 0, 0, 1, -96, 0)
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontLegTop" unique_id=700593671]
 remote_path = NodePath("../../../../Polygons/FrontLegTop_1")
 update_rotation = false
+update_scale = false
 
 [node name="FrontLegMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/FrontLegTop" unique_id=1044183745]
 position = Vector2(-5.08614, 135.905)
@@ -3802,6 +3804,7 @@ rest = Transform2D(1, 0, 0, 1, -120, -245)
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop" unique_id=1504834162]
 remote_path = NodePath("../../../../Polygons/FrontArmTop_1")
 update_rotation = false
+update_scale = false
 
 [node name="FrontArmMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop" unique_id=53136572]
 position = Vector2(-64, 176)
@@ -3834,6 +3837,7 @@ rest = Transform2D(1, 0, 0, 1, 96, -240)
 remote_path = NodePath("../../../../Polygons/BackArmTop_1")
 update_position = false
 update_rotation = false
+update_scale = false
 
 [node name="BackArmMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop" unique_id=651175087]
 position = Vector2(8, 128)
