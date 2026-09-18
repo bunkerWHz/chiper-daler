@@ -38,10 +38,11 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 				radius = reach.length()
 			assert_true(is_equal_approx(reach.length(), radius), "Reach radius changed")
 			assert_true(reach.normalized().dot(aim.get_direction()) > 0.999, "Arm misses aim: %s vs %s" % [reach.normalized(), aim.get_direction()])
-			var wrist_axis: Vector2 = arm.wrist_bone.global_transform.x.normalized()
+			var grip := arm.wrist_bone.get_node("OffHand") as Node2D
+			var wrist_axis: Vector2 = (grip.global_position - arm.wrist_bone.global_position).normalized()
 			assert_true(wrist_axis.dot(aim.get_direction()) > 0.999, "Wrist misses aim: %s vs %s" % [wrist_axis, aim.get_direction()])
 			var look_axis: Vector2 = arm.wrist_ik.target_node.global_position - arm.wrist_bone.global_position
-			assert_true(look_axis.normalized().dot(aim.get_direction()) > 0.999, "Look target misses aim")
+			assert_true(look_axis.normalized().dot(arm.wrist_bone.global_transform.x.normalized()) > 0.999, "Look target misses wrist axis")
 			visual._process(0.0)
 			assert_true(is_equal_approx(head.rotation, original_head - deg_to_rad(angle) * 0.25))
 	aim._owner = null

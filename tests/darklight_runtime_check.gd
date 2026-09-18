@@ -102,7 +102,9 @@ func _run() -> void:
 		var arm = visual._bow_arm
 		var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
 		_check(reach.normalized().dot(aiming.get_direction()) > 0.999, "Bow arm must follow the live aim")
-		_check(arm.wrist_bone.global_transform.x.normalized().dot(aiming.get_direction()) > 0.999, "Wrist must follow aim without a downward kink")
+		var grip := arm.wrist_bone.get_node("OffHand") as Node2D
+		var grip_axis: Vector2 = (grip.global_position - arm.wrist_bone.global_position).normalized()
+		_check(grip_axis.dot(aiming.get_direction()) > 0.999, "Wrist-to-grip direction must follow aim")
 		await _capture("darklight_bow_aim_" + str(int(angle)))
 	# Submit release at the start of a frame, not after frame_post_draw.
 	await process_frame

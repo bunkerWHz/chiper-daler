@@ -160,11 +160,16 @@ func _process(_delta: float) -> void:
 	var arm_angle := aim_angle + deg_to_rad(bow_shoulder_offset_degrees)
 	shoulder.rotation = -upper_angle + arm_angle - hip.rotation
 	elbow.rotation = upper_angle - forearm_angle
-	wrist.rotation = forearm_angle
+	# The drawn hand reaches toward the authored grip, not the bone's +X axis.
+	var grip := _bow_arm.wrist_bone.get_node("OffHand") as Node2D
+	var grip_angle := grip.position.angle()
+	wrist.rotation = forearm_angle - grip_angle
 	_bow_arm._process(0.0)
 	# Move the wrist look-at around the shoulder together with the bow hand.
 	# Its original stationary target would bend the wrist away from the shot.
-	var aim_axis := Vector2.from_angle(arm_angle)
+	var aim_axis := Vector2.from_angle(
+		arm_angle - grip_angle + _bow_arm.wrist_bone.get_bone_angle()
+	)
 	var world_axis := _rig.global_transform.basis_xform(aim_axis)
 	_bow_arm.wrist_ik.target_node.global_position = (
 		_bow_arm.wrist_bone.global_position + world_axis * 100.0

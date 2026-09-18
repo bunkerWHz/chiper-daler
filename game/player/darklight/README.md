@@ -42,8 +42,10 @@ follows the swap duration. Add new authored clips and map them in
 
 While the ranged component is in BOW_AIM, DarklightVisualComponent rotates the
 bow arm with the shared aim direction. The extended arm pivots at the shoulder,
-so its wrist follows a circle. The wrist look-at target moves ahead of the hand
-in the same direction, preserving wrist alignment and the authored weapon grip.
+so its wrist follows a circle. Wrist rotation accounts for the local direction
+from the wrist pivot to its authored OffHand grip. That wrist-to-grip line follows
+the aim, rather than the bone's +X axis. The look-at target follows the corrected
+bone direction; the weapon attachment and idle grip remain unchanged.
 The arm uses FK while its wrist look-at remains active; head look-at is temporarily
 disabled so the head can follow at one quarter of the aim angle.
 
