@@ -44,7 +44,7 @@ func test_mouse_keys_limits_and_turn_share_one_angle() -> void:
 	assert_true(s.aim.get_direction().is_equal_approx(Vector2.UP))
 	s.input._vertical_axis = 1.0
 	s.aim._process(10.0)
-	assert_true(s.aim.get_direction().is_equal_approx(Vector2.LEFT))
+	assert_true(s.aim.get_direction().is_equal_approx(Vector2.DOWN))
 
 
 func test_small_stick_deflection_changes_angle_more_slowly() -> void:
@@ -54,6 +54,30 @@ func test_small_stick_deflection_changes_angle_more_slowly() -> void:
 	s.input._vertical_axis = -0.5
 	s.aim._process(0.5)
 	assert_true(is_equal_approx(s.aim._angle, 37.5))
+
+
+func test_downward_aim_fires_below_platform_for_every_weapon_and_facing() -> void:
+	for slot: int in [EquipmentComponent.Slot.THROWABLE, EquipmentComponent.Slot.BOW,
+		EquipmentComponent.Slot.CROSSBOW, EquipmentComponent.Slot.MAGIC]:
+		for facing in [-1.0, 1.0]:
+			var s := _create_actor()
+			preload("res://tests/AimingTestFactory.gd").select_weapon(s, slot)
+			var ability: Component = _ability(s, slot)
+			_press(s, slot)
+			ability._process(0.0)
+			s.aim._process(s.aim.config.hold_delay)
+			# Lower from +15 to -45 using the same mouse input as gameplay.
+			s.input._aim_mouse_motion = 240.0
+			s.aim._process(0.0)
+			s.input._move_axis = facing
+			s.facing._physics_process(0.0)
+			var direction := Vector2(facing, 1.0).normalized()
+			assert_true(s.aim.get_direction().is_equal_approx(direction))
+			_release(s, slot)
+			ability._process(0.0)
+			var projectile := s.root.get_child(1) as ThrownProjectile
+			assert_true(projectile._velocity.normalized().is_equal_approx(direction))
+			assert_true(projectile._velocity.y > 0.0)
 
 
 func test_hold_indicator_delay_and_new_session_reset() -> void:

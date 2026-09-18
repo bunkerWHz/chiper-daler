@@ -24,7 +24,7 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 	for direction in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
 		facing._set_direction(direction)
 		visual._apply_facing(direction)
-		for angle in [0.0, 45.0, 90.0, 15.0]:
+		for angle in [0.0, 45.0, 90.0, 15.0, -45.0, -90.0]:
 			aim._angle = angle
 			visual._process(0.0)
 			var expected_shoulder: float = -arm.elbow_bone.position.angle() - deg_to_rad(angle)

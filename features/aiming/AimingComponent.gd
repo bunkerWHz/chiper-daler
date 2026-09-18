@@ -21,7 +21,7 @@ func on_initialize() -> void:
 		push_error("AimingComponent requires config, enabled input and facing")
 		disable()
 		return
-	if (config.default_angle_degrees < 0.0 or config.default_angle_degrees > 90.0
+	if (config.default_angle_degrees < -90.0 or config.default_angle_degrees > 90.0
 		or config.angular_speed_degrees <= 0.0 or config.mouse_degrees_per_pixel <= 0.0
 		or config.hold_delay < 0.0):
 		push_error("AimingComponent has invalid config")
@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 		return
 	var active_delta := _elapsed - maxf(previous_elapsed, config.hold_delay)
 	_angle = clampf(_angle - _input.get_vertical_axis() * config.angular_speed_degrees
-		* active_delta - mouse_motion * config.mouse_degrees_per_pixel, 0.0, 90.0)
+		* active_delta - mouse_motion * config.mouse_degrees_per_pixel, -90.0, 90.0)
 
 
 func _notification(what: int) -> void:

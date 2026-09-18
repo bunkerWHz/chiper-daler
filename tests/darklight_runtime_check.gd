@@ -95,7 +95,7 @@ func _run() -> void:
 		await process_frame
 	var aiming := player.get_component(AimingComponent) as AimingComponent
 	_check(visual._bow_pose_active, "Holding attack with a bow must activate the aiming pose")
-	for angle in [0.0, 45.0, 85.0]:
+	for angle in [0.0, 45.0, 85.0, -45.0, -90.0]:
 		aiming._angle = angle
 		for frame in 3:
 			await process_frame
