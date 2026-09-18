@@ -37,6 +37,12 @@ follows the swap duration. Add new authored clips and map them in
 
 ## Shoulder, elbow and wrist controls
 
+`CharacterContainer/Anim Targets/Hip` controls the pelvis: animate its Rotation
+or Position directly, without switching modes. Keep its Scale at (1, 1).
+Its BoneTransform child transfers the full transform for correct mirrored facing. Existing Hip tracks,
+including RESET, target this control. FK arms follow the pelvis; IK limbs still
+reach their separate targets. Do not animate the Hip bone or BoneTransform directly.
+
 Under `CharacterContainer/Anim Targets`, both `BackArmFK` (bow arm) and
 `FrontArmFK` contain `Shoulder → Elbow → Wrist` Marker2D controls.
 Select the arm's FK node and set **Mode = FK** in the Inspector, then animate

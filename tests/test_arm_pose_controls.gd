@@ -6,6 +6,39 @@ func suite_name() -> String:
 	return "arm_pose_controls"
 
 
+func test_hip_control_moves_bone_and_fk_arms_in_both_facings() -> void:
+	var rig := track(load("res://game/player/darklight/DarklightRig.tscn").instantiate()) as Node2D
+	(Engine.get_main_loop() as SceneTree).root.add_child(rig)
+	var hip := rig.get_node("CharacterContainer/Skeleton2D/Hip") as Bone2D
+	var control := rig.get_node("CharacterContainer/Anim Targets/Hip") as Marker2D
+	var arm = rig.get_node("CharacterContainer/Anim Targets/BackArmFK")
+	arm.mode = 1
+	for facing in [1.0, -1.0]:
+		rig.scale.x = facing
+		control.rotation = 0.0
+		(control.get_node("BoneTransform") as RemoteTransform2D).force_update_transform()
+		arm._process(0.0)
+		var before: Vector2 = arm.wrist_bone.global_position
+		control.rotation = 0.4
+		control.position = Vector2(12, 140)
+		(control.get_node("BoneTransform") as RemoteTransform2D).force_update_cache()
+		(control.get_node("BoneTransform") as RemoteTransform2D).force_update_transform()
+		arm._process(0.0)
+		assert_true(is_equal_approx(hip.rotation, control.rotation))
+		assert_true(hip.position.distance_to(control.position) < 0.01)
+		assert_true(before.distance_to(arm.wrist_bone.global_position) > 10.0)
+		assert_true(hip.scale.is_equal_approx(Vector2.ONE))
+	var animation := rig.get_node("AnimationPlayer") as AnimationPlayer
+	animation.play("RESET")
+	animation.advance(0.0)
+	assert_true(is_zero_approx(control.rotation))
+	assert_true(control.position.is_equal_approx(Vector2(0, 136)))
+	for clip_name in animation.get_animation_list():
+		var clip := animation.get_animation(clip_name)
+		for index in clip.get_track_count():
+			assert_false(str(clip.track_get_path(index)).begins_with("CharacterContainer/Skeleton2D/Hip:"))
+
+
 func test_fk_chain_and_ik_ownership_on_both_sides_and_facings() -> void:
 	var rig := track(load("res://game/player/darklight/DarklightRig.tscn").instantiate()) as Node2D
 	(Engine.get_main_loop() as SceneTree).root.add_child(rig)
