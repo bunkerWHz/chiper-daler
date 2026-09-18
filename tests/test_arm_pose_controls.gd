@@ -1,0 +1,61 @@
+@tool
+extends McpTestSuite
+
+
+func suite_name() -> String:
+	return "arm_pose_controls"
+
+
+func test_fk_chain_and_ik_ownership_on_both_sides_and_facings() -> void:
+	var rig := track(load("res://game/player/darklight/DarklightRig.tscn").instantiate()) as Node2D
+	(Engine.get_main_loop() as SceneTree).root.add_child(rig)
+	for side in ["Back", "Front"]:
+		var controls = rig.get_node("CharacterContainer/Anim Targets/" + side + "ArmFK")
+		assert_true(controls.arm_ik.enabled)
+		assert_true(controls.wrist_ik.enabled)
+		controls.mode = 1
+		assert_false(controls.arm_ik.enabled)
+		assert_false(controls.wrist_ik.enabled)
+		var shoulder := controls.get_node("Shoulder") as Marker2D
+		var elbow := controls.get_node("Shoulder/Elbow") as Marker2D
+		var wrist := controls.get_node("Shoulder/Elbow/Wrist") as Marker2D
+		for facing in [1.0, -1.0]:
+			rig.scale.x = facing
+			shoulder.rotation = 0.3
+			elbow.rotation = -0.5
+			wrist.rotation = 0.2
+			controls._process(0.0)
+			var before: Vector2 = controls.wrist_bone.global_position
+			elbow.rotation += 0.4
+			controls._process(0.0)
+			assert_true(before.distance_to(controls.wrist_bone.global_position) > 10.0)
+			assert_true(wrist.global_position.distance_to(controls.wrist_bone.global_position) < 0.01)
+			controls.arm_ik._process_loop(0.0)
+			controls.wrist_ik._process_loop(0.0)
+			assert_true(is_equal_approx(controls.elbow_bone.rotation, elbow.rotation))
+			assert_true(is_equal_approx(controls.wrist_bone.rotation, wrist.rotation))
+			before = controls.wrist_bone.global_position
+			shoulder.rotation += 0.4
+			controls._process(0.0)
+			assert_true(before.distance_to(controls.wrist_bone.global_position) > 10.0)
+		controls.mode = 0
+		assert_true(controls.arm_ik.enabled)
+		assert_true(controls.wrist_ik.enabled)
+
+
+func test_reset_returns_both_arms_to_ik() -> void:
+	var rig := track(load("res://game/player/darklight/DarklightRig.tscn").instantiate()) as Node2D
+	(Engine.get_main_loop() as SceneTree).root.add_child(rig)
+	var animation := rig.get_node("AnimationPlayer") as AnimationPlayer
+	for side in ["Back", "Front"]:
+		var controls = rig.get_node("CharacterContainer/Anim Targets/" + side + "ArmFK")
+		controls.mode = 1
+		controls.get_node("Shoulder/Elbow").rotation = 0.8
+	animation.play("RESET")
+	animation.advance(0.0)
+	for side in ["Back", "Front"]:
+		var controls = rig.get_node("CharacterContainer/Anim Targets/" + side + "ArmFK")
+		assert_eq(controls.mode, 0)
+		assert_true(controls.arm_ik.enabled)
+		assert_true(controls.wrist_ik.enabled)
+		assert_eq(controls.get_node("Shoulder/Elbow").rotation, 0.0)

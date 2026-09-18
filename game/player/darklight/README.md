@@ -35,6 +35,23 @@ respawn freeze it while the existing fade/respawn components handle the result.
 follows the swap duration. Add new authored clips and map them in
 `_get_animation_name()` to replace these fallbacks.
 
+## Shoulder, elbow and wrist controls
+
+Under `CharacterContainer/Anim Targets`, both `BackArmFK` (bow arm) and
+`FrontArmFK` contain `Shoulder → Elbow → Wrist` Marker2D controls.
+Select the arm's FK node and set **Mode = FK** in the Inspector, then animate
+the markers' **Rotation**. Shoulder rotation moves the whole chain; elbow
+rotation moves the forearm, wrist and equipped item; wrist rotation adjusts
+the hand. Marker positions follow the bone pivots and are not animation inputs.
+
+For an FK animation, key `BackArmFK:mode` (or `FrontArmFK:mode`) to FK at time
+zero using a discrete track, then key the three marker rotations as needed.
+Each arm switches independently. IK mode keeps the original wrist targets and
+SoupIK solvers; FK disables both that arm's two-bone solver and wrist look-at.
+The controls follow the hip and the rig's facing. RESET returns both arms to IK
+and clears the FK angles, so existing clips retain their original behavior.
+Switching modes is immediate; it does not automatically match or blend poses.
+
 ## Equipment
 
 The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing

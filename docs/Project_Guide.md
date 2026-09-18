@@ -60,6 +60,7 @@ godot --headless --path . --script tests/run_tests.gd
 | Коллизии | Размеры ресурсов Shape2D и Position; локальный Scale узлов коллизий — 1 |
 | Полоска переодевания над головой | EquipmentSwapView → Position / Native Width; ширина следует размеру героя, высота и отступ сохраняются |
 | Клипы и заготовка equipment_swap | DarklightRig.tscn → AnimationPlayer (в Player: `_Visual/DarklightRig/AnimationPlayer`) |
+| Ручная поза руки | В риге: Anim Targets → BackArmFK (рука с луком) или FrontArmFK → Mode = FK; вращайте Shoulder → Elbow → Wrist |
 | Предмет в руке | ItemData → Equipped Texture или Equipped Visual; крепления MainHand / OffHand в риге |
 | Рука для отображения | Equipment Profile → Display Slot; по умолчанию совпадает со слотом экипировки |
 | Колчан | Спрайт Arrows в риге; виден при экипированных стрелах или болтах активного набора |

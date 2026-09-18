@@ -22,6 +22,8 @@
 [ext_resource type="Texture2D" uid="uid://rlv366rvoef5" path="res://assets/Characters/Darklight/back_leg_bot.png" id="60_xopmn"]
 [ext_resource type="Texture2D" uid="uid://c4wdumg1d7nof" path="res://assets/Characters/Darklight/front_leg_bot.png" id="61_xopmn"]
 
+[ext_resource type="Script" path="res://game/player/darklight/ArmPoseControls.gd" id="arm_pose_controls"]
+
 [sub_resource type="Animation" id="Animation_s2enn"]
 resource_name = "RESET"
 tracks/0/type = "value"
@@ -1511,6 +1513,79 @@ tracks/123/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [0.0]
+}
+
+tracks/124/type = "value"
+tracks/124/path = NodePath("CharacterContainer/Anim Targets/BackArmFK:mode")
+tracks/124/interp = 1
+tracks/124/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/125/type = "value"
+tracks/125/path = NodePath("CharacterContainer/Anim Targets/BackArmFK/Shoulder:rotation")
+tracks/125/interp = 1
+tracks/125/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+tracks/126/type = "value"
+tracks/126/path = NodePath("CharacterContainer/Anim Targets/BackArmFK/Shoulder/Elbow:rotation")
+tracks/126/interp = 1
+tracks/126/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+tracks/127/type = "value"
+tracks/127/path = NodePath("CharacterContainer/Anim Targets/BackArmFK/Shoulder/Elbow/Wrist:rotation")
+tracks/127/interp = 1
+tracks/127/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+tracks/128/type = "value"
+tracks/128/path = NodePath("CharacterContainer/Anim Targets/FrontArmFK:mode")
+tracks/128/interp = 1
+tracks/128/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/129/type = "value"
+tracks/129/path = NodePath("CharacterContainer/Anim Targets/FrontArmFK/Shoulder:rotation")
+tracks/129/interp = 1
+tracks/129/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+tracks/130/type = "value"
+tracks/130/path = NodePath("CharacterContainer/Anim Targets/FrontArmFK/Shoulder/Elbow:rotation")
+tracks/130/interp = 1
+tracks/130/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+tracks/131/type = "value"
+tracks/131/path = NodePath("CharacterContainer/Anim Targets/FrontArmFK/Shoulder/Elbow/Wrist:rotation")
+tracks/131/interp = 1
+tracks/131/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
 }
 
 [sub_resource type="Animation" id="Animation_reuo5"]
@@ -3901,3 +3976,45 @@ position = Vector2(90, 441)
 
 [node name="BackLeg_AT" type="Node2D" parent="CharacterContainer/Anim Targets/BackLegIK" unique_id=1681992658]
 position = Vector2(111, 3)
+
+[node name="BackArmFK" type="Node2D" parent="CharacterContainer/Anim Targets" node_paths=PackedStringArray("shoulder_bone", "elbow_bone", "wrist_bone", "arm_ik", "wrist_ik")]
+process_priority = 1
+script = ExtResource("arm_pose_controls")
+shoulder_bone = NodePath("../../Skeleton2D/Hip/BackArmTop")
+elbow_bone = NodePath("../../Skeleton2D/Hip/BackArmTop/BackArmMid")
+wrist_bone = NodePath("../../Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot")
+arm_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/BackArmIK")
+wrist_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/BackArmAt")
+
+[node name="Shoulder" type="Marker2D" parent="CharacterContainer/Anim Targets/BackArmFK"]
+position = Vector2(96, -240)
+gizmo_extents = 36.0
+
+[node name="Elbow" type="Marker2D" parent="CharacterContainer/Anim Targets/BackArmFK/Shoulder"]
+position = Vector2(8, 128)
+gizmo_extents = 28.0
+
+[node name="Wrist" type="Marker2D" parent="CharacterContainer/Anim Targets/BackArmFK/Shoulder/Elbow"]
+position = Vector2(80, 72)
+gizmo_extents = 20.0
+
+[node name="FrontArmFK" type="Node2D" parent="CharacterContainer/Anim Targets" node_paths=PackedStringArray("shoulder_bone", "elbow_bone", "wrist_bone", "arm_ik", "wrist_ik")]
+process_priority = 1
+script = ExtResource("arm_pose_controls")
+shoulder_bone = NodePath("../../Skeleton2D/Hip/FrontArmTop")
+elbow_bone = NodePath("../../Skeleton2D/Hip/FrontArmTop/FrontArmMid")
+wrist_bone = NodePath("../../Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot")
+arm_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/FrontArmIK")
+wrist_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/FrontArmAT")
+
+[node name="Shoulder" type="Marker2D" parent="CharacterContainer/Anim Targets/FrontArmFK"]
+position = Vector2(-120, -245)
+gizmo_extents = 36.0
+
+[node name="Elbow" type="Marker2D" parent="CharacterContainer/Anim Targets/FrontArmFK/Shoulder"]
+position = Vector2(-64, 176)
+gizmo_extents = 28.0
+
+[node name="Wrist" type="Marker2D" parent="CharacterContainer/Anim Targets/FrontArmFK/Shoulder/Elbow"]
+position = Vector2(-8, 88)
+gizmo_extents = 20.0
