@@ -206,7 +206,7 @@ func test_world_bar_updates_and_disappears_on_cancel() -> void:
 	f.swap._process(1.0)
 	view.refresh()
 	assert_eq((view.get_node("ProgressBar") as ProgressBar).value, 0.5)
-	assert_eq((view.get_node("Label") as Label).text, "Смена: 1.0 с")
+	assert_eq((view.get_node("Label") as Label).text, "1.0 с")
 	f.swap.cancel_swap()
 	assert_false(view.visible)
 
@@ -218,3 +218,22 @@ func test_player_contains_swap_component_world_bar_and_placeholder_clip() -> voi
 	var animation := player.get_node("_Visual/DarklightRig/AnimationPlayer") as AnimationPlayer
 	assert_true(animation.has_animation(&"equipment_swap"))
 	assert_eq(animation.get_animation(&"equipment_swap").get_track_count(), 0)
+
+
+func test_world_bar_tracks_character_width_without_scaling_height_or_gap() -> void:
+	var parent := track(Node2D.new()) as Node2D
+	var view := (load("res://features/equipment/ui/EquipmentSwapView.tscn") as PackedScene).instantiate() as EquipmentSwapView
+	view.actor_path = NodePath()
+	view.position = Vector2(0, -750)
+	view.native_width = 600.0
+	parent.add_child(view)
+	(Engine.get_main_loop() as SceneTree).root.add_child(parent)
+	var bar := view.get_node("ProgressBar") as ProgressBar
+	for root_scale: float in [0.04, 0.1, 0.2]:
+		parent.scale = Vector2.ONE * root_scale
+		view._update_layout()
+		assert_true(view.global_scale.is_equal_approx(Vector2.ONE))
+		assert_true(is_equal_approx(bar.size.x, 600.0 * root_scale))
+		assert_true(is_equal_approx(bar.size.y, 4.0))
+		var head_y := -750.0 * root_scale
+		assert_true(is_equal_approx(head_y - (bar.global_position.y + bar.size.y), 4.0))

@@ -37,7 +37,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 10
-text = "Смена: 2.0 с"
+text = "2.0 с"
 horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="."]

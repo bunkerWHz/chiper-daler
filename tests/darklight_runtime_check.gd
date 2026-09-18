@@ -32,8 +32,8 @@ func _run() -> void:
 	world.add_child(player)
 	(player.get_component(CameraComponent) as CameraComponent).get_camera().enabled = false
 	var camera := Camera2D.new()
-	camera.zoom = Vector2(10, 10)
-	camera.position = Vector2(0, 48)
+	camera.zoom = Vector2(4, 4)
+	camera.position = Vector2(0, 20)
 	world.add_child(camera)
 	camera.make_current()
 	var body := player.get_component(CharacterBodyComponent) as CharacterBodyComponent
@@ -43,7 +43,7 @@ func _run() -> void:
 	for frame in 65:
 		await physics_frame
 	_check(body.is_on_floor(), "Darklight must land on the existing player collision")
-	_check(absf(player.position.y - 70.0) < 0.2, "Root scale must preserve the old floor contact")
+	_check(absf(player.position.y - 55.0) < 0.2, "The larger character must land with its feet at floor contact")
 	_check(visual.get_animation_player().current_animation == &"idle", "FSM must drive idle")
 	for sprite: Node in rig.find_children("*", "Sprite2D", true, false):
 		_check((sprite as Sprite2D).scale.is_equal_approx(Vector2.ONE), "Native sprites must remain at unit scale")

@@ -46,12 +46,16 @@ Consumable and buff overlays remain connected to the current item/status signals
 
 ## Size and facing
 
-Player root scale is `(0.04, 0.04)`. Body, hurtbox and hitbox shapes are authored
-as 500×500 native units, preserving their previous 20×20 world dimensions.
-The hitbox's 500-unit offset preserves its original 20-world-unit reach before
-weapon modifiers. `_Visual.position.y = -250` aligns the feet with the existing
+Player root scale is `(0.1, 0.1)`. Body, hurtbox and hitbox shapes are authored
+as 500×500 native units, giving 50×50 world dimensions at this scale.
+The hitbox's 500-unit offset gives 50-world-unit reach before weapon modifiers. `_Visual.position.y = -250` aligns the feet with the existing
 floor contact. Movement, gravity, jump velocities and world-space interaction
 distances are unchanged. HUD/effect scaling is a visual-only exception.
+
+The equipment-swap view anchors at native Y = -750, just above the head.
+Its 600-native-unit width follows the player size (60 world pixels at 0.1),
+while its height, text size and 4-world-pixel head gap stay constant.
+The view cancels inherited scale for its controls in both editor and gameplay.
 
 Unlike Sprite2D, Skeleton2D and skinned Polygon2D do not expose `flip_h`.
 The visual rig is reflected as a whole, including its IK targets and attachments;

@@ -52,20 +52,20 @@ func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
 	var rig := player.get_node("_Visual/DarklightRig") as Node2D
 	assert_true(rig.transform.determinant() < 0.0)
 	assert_eq(body.transform, before)
-	assert_eq(player.scale, Vector2(0.04, 0.04))
+	assert_eq(player.scale, Vector2(0.1, 0.1))
 	facing._set_direction(FacingComponent.Direction.RIGHT)
 	assert_true(rig.transform.determinant() > 0.0)
 
 
-func test_native_collision_shapes_preserve_previous_world_geometry() -> void:
+func test_native_collision_shapes_follow_requested_player_size() -> void:
 	var setup := _create_player_visual()
 	var player := setup.player as Actor
 	for path: String in ["CharacterBodyComponent/CharacterBody2D", "HurtboxComponent/Area2D", "HitboxComponent/Area2D"]:
 		var collision := player.get_node("_Components/" + path + "/CollisionShape2D") as CollisionShape2D
 		assert_eq(collision.scale, Vector2.ONE)
-		assert_eq((collision.shape as RectangleShape2D).size * player.scale, Vector2(20, 20))
+		assert_eq((collision.shape as RectangleShape2D).size * player.scale, Vector2(50, 50))
 	var hitbox := player.get_node("_Components/HitboxComponent") as Node2D
-	assert_eq(hitbox.position * player.scale, Vector2(20, 0))
+	assert_eq(hitbox.position * player.scale, Vector2(50, 0))
 
 
 func test_item_and_buff_effects_render_on_separate_overlays() -> void:

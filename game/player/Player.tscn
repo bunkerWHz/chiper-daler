@@ -77,7 +77,7 @@ resource_local_to_scene = true
 size = Vector2(500, 500)
 
 [node name="Player" type="Node2D" unique_id=2130954343]
-scale = Vector2(0.04, 0.04)
+scale = Vector2(0.1, 0.1)
 script = ExtResource("1_wv0h6")
 
 [node name="_Components" type="Node2D" parent="." unique_id=939943652]
@@ -158,8 +158,9 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="EquipmentSwapComponent" parent="_Components" instance=ExtResource("equipment_swap")]
 
 [node name="EquipmentSwapView" parent="." instance=ExtResource("equipment_swap_view")]
-position = Vector2(0, -1700)
-scale = Vector2(25, 25)
+position = Vector2(0, -750)
+scale = Vector2(10, 10)
+native_width = 600.0
 
 [node name="EquipmentDefenseComponent" parent="_Components" instance=ExtResource("45_equipment_defense")]
 
