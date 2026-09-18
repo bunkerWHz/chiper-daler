@@ -6,6 +6,65 @@ func suite_name() -> String:
 	return "darklight_visual"
 
 
+func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
+	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
+	(Engine.get_main_loop() as SceneTree).root.add_child(player)
+	var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
+	var aim := player.get_component(AimingComponent) as AimingComponent
+	var ranged := player.get_component(RangedWeaponComponent) as RangedWeaponComponent
+	var facing := player.get_component(FacingComponent) as FacingComponent
+	var arm = visual._bow_arm
+	var head := visual._head_ik.bone_node
+	var original_head := head.rotation
+	var original_physics := player.transform
+	var original_wrist_target: Transform2D = arm.wrist_ik.target_node.transform
+	var radius := -1.0
+	aim._owner = ranged
+	ranged._phase = RangedWeaponComponent.Phase.BOW_AIM
+	for direction in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
+		facing._set_direction(direction)
+		visual._apply_facing(direction)
+		for angle in [0.0, 45.0, 90.0, 15.0]:
+			aim._angle = angle
+			visual._process(0.0)
+			var expected_shoulder: float = -arm.elbow_bone.position.angle() - deg_to_rad(angle)
+			assert_true(is_equal_approx(arm.shoulder_bone.rotation, expected_shoulder))
+			assert_true(is_equal_approx(head.rotation, original_head - deg_to_rad(angle) * 0.25))
+			assert_false(arm.arm_ik.enabled)
+			assert_false(visual._head_ik.enabled)
+			assert_true(arm.wrist_ik.enabled)
+			var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
+			if radius < 0.0:
+				radius = reach.length()
+			assert_true(is_equal_approx(reach.length(), radius), "Reach radius changed")
+			assert_true(reach.normalized().dot(aim.get_direction()) > 0.999, "Arm misses aim: %s vs %s" % [reach.normalized(), aim.get_direction()])
+			var wrist_axis: Vector2 = arm.wrist_bone.global_transform.x.normalized()
+			assert_true(wrist_axis.dot(aim.get_direction()) > 0.999, "Wrist misses aim: %s vs %s" % [wrist_axis, aim.get_direction()])
+			var look_axis: Vector2 = arm.wrist_ik.target_node.global_position - arm.wrist_bone.global_position
+			assert_true(look_axis.normalized().dot(aim.get_direction()) > 0.999, "Look target misses aim")
+			visual._process(0.0)
+			assert_true(is_equal_approx(head.rotation, original_head - deg_to_rad(angle) * 0.25))
+	aim._owner = null
+	ranged._phase = RangedWeaponComponent.Phase.NONE
+	visual._process(0.0)
+	assert_false(visual._bow_pose_active)
+	assert_true(arm.arm_ik.enabled)
+	assert_true(visual._head_ik.enabled)
+	assert_true(is_equal_approx(head.rotation, original_head))
+	assert_eq(player.transform, original_physics)
+	assert_true(arm.wrist_ik.target_node.transform.is_equal_approx(original_wrist_target))
+	# Crossbows and magic do not acquire the bow's FK pose.
+	aim._owner = ranged
+	ranged._phase = RangedWeaponComponent.Phase.CROSSBOW_AIM
+	visual._process(0.0)
+	assert_false(visual._bow_pose_active)
+	ranged._phase = RangedWeaponComponent.Phase.BOW_AIM
+	visual._process(0.0)
+	visual.disable()
+	assert_false(visual._bow_pose_active)
+	assert_true(arm.arm_ik.enabled)
+
+
 func test_active_equipment_updates_both_skeletal_hand_attachments() -> void:
 	var setup := _create_player_visual()
 	var equipment := setup.equipment as EquipmentComponent

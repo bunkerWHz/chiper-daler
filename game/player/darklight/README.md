@@ -28,7 +28,8 @@ Before switching clips the adapter applies RESET, because the source's attack
 clips key only the arms. RESET no longer targets the old character controller,
 camera, gameplay components, root transform or equipment visibility.
 
-The source has no dedicated ranged, magic, climbing, item-use, hit, death or
+Bow aiming adds a procedural arm/head pose over idle (see below). The source
+has no dedicated release, crossbow, magic, climbing, item-use, hit, death or
 equipment-swap animation. Those states currently use the idle pose; death and
 respawn freeze it while the existing fade/respawn components handle the result.
 `equipment_swap` retains a two-second empty placeholder clip whose playback rate
@@ -36,6 +37,23 @@ follows the swap duration. Add new authored clips and map them in
 `_get_animation_name()` to replace these fallbacks.
 
 ## Shoulder, elbow and wrist controls
+
+### Bow aiming in gameplay
+
+While the ranged component is in BOW_AIM, DarklightVisualComponent rotates the
+bow arm with the shared aim direction. The extended arm pivots at the shoulder,
+so its wrist follows a circle. The wrist look-at target moves ahead of the hand
+in the same direction, preserving wrist alignment and the authored weapon grip.
+The arm uses FK while its wrist look-at remains active; head look-at is temporarily
+disabled so the head can follow at one quarter of the aim angle.
+
+On AnimationComponent, **Bow Aiming Pose → Bow Head Follow** controls this ratio
+(default 0.25); **Bow Shoulder Offset Degrees** adjusts the arm's angle relative
+to the aim. Both facings are supported. Releasing/cancelling aim, switching clips
+or disabling the visual restores the saved controls and look-at target. Crossbow
+and magic poses are unchanged. Gameplay still owns aiming limits, firing and ammo.
+
+### Manual controls
 
 `CharacterContainer/Anim Targets/Hip` controls the pelvis: animate its Rotation
 or Position directly, without switching modes. Keep its Scale at (1, 1).

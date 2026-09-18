@@ -88,6 +88,28 @@ func _run() -> void:
 	for frame in 4:
 		await physics_frame
 	await _capture("darklight_bow")
+	for frame in 65:
+		await physics_frame
+	Input.action_press(&"attack")
+	for frame in 5:
+		await process_frame
+	var aiming := player.get_component(AimingComponent) as AimingComponent
+	_check(visual._bow_pose_active, "Holding attack with a bow must activate the aiming pose")
+	for angle in [0.0, 45.0, 85.0]:
+		aiming._angle = angle
+		for frame in 3:
+			await process_frame
+		var arm = visual._bow_arm
+		var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
+		_check(reach.normalized().dot(aiming.get_direction()) > 0.999, "Bow arm must follow the live aim")
+		_check(arm.wrist_bone.global_transform.x.normalized().dot(aiming.get_direction()) > 0.999, "Wrist must follow aim without a downward kink")
+		await _capture("darklight_bow_aim_" + str(int(angle)))
+	# Submit release at the start of a frame, not after frame_post_draw.
+	await process_frame
+	Input.action_release(&"attack")
+	for frame in 5:
+		await process_frame
+	_check(not visual._bow_pose_active, "Releasing the bow must restore normal rig control")
 	var menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
 	menu.open_inventory()
 	_check(paused and menu.is_open(), "Existing inventory menu must open and pause gameplay")

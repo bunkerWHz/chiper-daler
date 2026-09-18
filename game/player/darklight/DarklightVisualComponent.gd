@@ -1,6 +1,10 @@
 extends AnimationComponent
 class_name DarklightVisualComponent
 
+@export_group("Bow aiming pose")
+@export_range(0.0, 1.0, 0.01) var bow_head_follow: float = 0.25
+@export_range(-90.0, 90.0, 0.1) var bow_shoulder_offset_degrees: float = 0.0
+
 @export_group("Item effects")
 @export var heal_effect_frames: SpriteFrames
 @export var mana_effect_frames: SpriteFrames
@@ -18,6 +22,16 @@ var _main_hand: Sprite2D
 var _off_hand: Sprite2D
 var _quiver: Sprite2D
 var _hand_visuals: Dictionary = {}
+var _aim: AimingComponent
+var _ranged: RangedWeaponComponent
+var _bow_pose_active: bool = false
+var _bow_arm: Node2D
+var _head_ik: SoupLookAt
+var _saved_fk_angles := Vector3.ZERO
+var _saved_head_rotation: float = 0.0
+var _saved_head_enabled: bool = true
+var _saved_arm_mode: int = 0
+var _saved_wrist_target: Transform2D
 
 
 func on_initialize() -> void:
@@ -55,6 +69,12 @@ func _ready() -> void:
 	if not is_enabled:
 		return
 	_rig = actor.get_node("_Visual/DarklightRig") as Node2D
+	_aim = actor.get_component(AimingComponent) as AimingComponent
+	_ranged = actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
+	_bow_arm = _rig.get_node("CharacterContainer/Anim Targets/BackArmFK") as Node2D
+	_head_ik = _rig.get_node("CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT") as SoupLookAt
+	# Apply the dynamic pose after animation and SoupIK/FK evaluation.
+	process_priority = 2
 	_animation_player = _rig.get_node("AnimationPlayer") as AnimationPlayer
 	_main_hand = _rig.get_node("CharacterContainer/VisualDetails/MainHand") as Sprite2D
 	_off_hand = _rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
@@ -86,6 +106,7 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 
 
 func _play_animation(animation_name: StringName) -> void:
+	_end_bow_pose()
 	# Source attack clips animate only the arms. Restore the base pose first so a
 	# previous dodge/jump cannot leave stale leg/hip targets in a later animation.
 	_animation_player.play(&"RESET")
@@ -109,6 +130,72 @@ func _play_animation(animation_name: StringName) -> void:
 		_animation_player.pause()
 
 
+func _process(_delta: float) -> void:
+	if _bow_arm == null:
+		return
+	var aiming_bow := (is_enabled and _ranged != null and _aim != null
+		and _ranged.get_phase() == RangedWeaponComponent.Phase.BOW_AIM
+		and _aim.is_aiming())
+	if not aiming_bow:
+		_end_bow_pose()
+		return
+	var shoulder := _bow_arm.get_node("Shoulder") as Marker2D
+	var elbow := _bow_arm.get_node("Shoulder/Elbow") as Marker2D
+	var wrist := _bow_arm.get_node("Shoulder/Elbow/Wrist") as Marker2D
+	if not _bow_pose_active:
+		_saved_fk_angles = Vector3(shoulder.rotation, elbow.rotation, wrist.rotation)
+		_saved_arm_mode = _bow_arm.mode
+		_saved_head_rotation = _head_ik.bone_node.rotation
+		_saved_head_enabled = _head_ik.enabled
+		_saved_wrist_target = _bow_arm.wrist_ik.target_node.transform
+		_bow_pose_active = true
+	_bow_arm.mode = 1
+	_head_ik.enabled = false
+	# Convert world aim to the right-facing rig's local angle; reflection handles left.
+	var direction := _aim.get_direction()
+	var aim_angle := atan2(direction.y, absf(direction.x))
+	var upper_angle: float = _bow_arm.elbow_bone.position.angle()
+	var forearm_angle: float = _bow_arm.wrist_bone.position.angle()
+	var hip := _bow_arm.shoulder_bone.get_parent() as Node2D
+	var arm_angle := aim_angle + deg_to_rad(bow_shoulder_offset_degrees)
+	shoulder.rotation = -upper_angle + arm_angle - hip.rotation
+	elbow.rotation = upper_angle - forearm_angle
+	wrist.rotation = forearm_angle
+	_bow_arm._process(0.0)
+	# Move the wrist look-at around the shoulder together with the bow hand.
+	# Its original stationary target would bend the wrist away from the shot.
+	var aim_axis := Vector2.from_angle(arm_angle)
+	var world_axis := _rig.global_transform.basis_xform(aim_axis)
+	_bow_arm.wrist_ik.target_node.global_position = (
+		_bow_arm.wrist_bone.global_position + world_axis * 100.0
+	)
+	_bow_arm.wrist_ik.enabled = true
+	_bow_arm.wrist_ik._process_loop(0.0)
+	_head_ik.bone_node.rotation = _saved_head_rotation + aim_angle * bow_head_follow
+
+
+func _end_bow_pose() -> void:
+	if not _bow_pose_active:
+		return
+	_bow_pose_active = false
+	_bow_arm.get_node("Shoulder").rotation = _saved_fk_angles.x
+	_bow_arm.get_node("Shoulder/Elbow").rotation = _saved_fk_angles.y
+	_bow_arm.get_node("Shoulder/Elbow/Wrist").rotation = _saved_fk_angles.z
+	_bow_arm.mode = _saved_arm_mode
+	_bow_arm.wrist_ik.target_node.transform = _saved_wrist_target
+	_head_ik.enabled = _saved_head_enabled
+	_head_ik.bone_node.rotation = _saved_head_rotation
+	_bow_arm.arm_ik._process_loop(0.0)
+	_bow_arm.wrist_ik._process_loop(0.0)
+	if _saved_arm_mode == 1:
+		_bow_arm._process(0.0)
+
+
+func disable() -> void:
+	_end_bow_pose()
+	super.disable()
+
+
 func get_item_effect_sprite() -> AnimatedSprite2D:
 	return _item_effect_sprite
 
@@ -130,7 +217,8 @@ func _get_animation_name(state: ActorState.Behavior) -> StringName:
 		ActorState.Behavior.AIR_HEAVY_ATTACK: return &"air_heavy_attack"
 		ActorState.Behavior.BLOCKING, ActorState.Behavior.PARRYING: return &"block"
 		ActorState.Behavior.EQUIPMENT_SWAP: return &"equipment_swap"
-	# The source has no bow, magic, item-use, climbing, hit or death clips yet.
+	# Bow aim uses a procedural upper-body pose over the idle clip.
+	# The source has no magic, item-use, climbing, hit or death clips yet.
 	# Keep those states controlled by gameplay, with an explicit idle-pose fallback.
 	return &"idle"
 
