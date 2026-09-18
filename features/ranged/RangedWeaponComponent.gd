@@ -196,9 +196,11 @@ func _fire(bow: bool) -> void:
 	if settings == null or not settings.is_valid():
 		cancel_aim()
 		return
+	# Capture before ending aim/resetting the pose, including the last arrow.
+	var launch_position := _aim.get_launch_position()
 	_set_phase(release_phase, settings.release_duration)
 	_spawn_projectile(settings.projectile_speed, settings.projectile_damage,
-		ARROW_TEXTURE if bow else null, settings.projectile_gravity, settings)
+		ARROW_TEXTURE if bow else null, settings.projectile_gravity, settings, launch_position)
 	_inventory.remove_item(ammo.id, 1)
 	projectile_fired.emit(release_phase, _inventory.get_quantity(ammo.id))
 	_cooldown_timer = settings.shot_cooldown
@@ -218,7 +220,8 @@ func _spawn_projectile(
 	damage: float,
 	visual_texture: Texture2D = null,
 	gravity: float = 0.0,
-	settings: ItemRangedProfile = null
+	settings: ItemRangedProfile = null,
+	launch_position: Vector2 = Vector2.INF
 ) -> void:
 	var parent := actor.get_parent()
 
@@ -227,7 +230,7 @@ func _spawn_projectile(
 
 	var projectile := PROJECTILE_SCENE.instantiate() as ThrownProjectile
 	parent.add_child(projectile)
-	projectile.global_position = _aim.get_launch_position()
+	projectile.global_position = _aim.get_launch_position() if launch_position == Vector2.INF else launch_position
 	projectile.setup_direction(
 		actor,
 		_aim.get_direction(),

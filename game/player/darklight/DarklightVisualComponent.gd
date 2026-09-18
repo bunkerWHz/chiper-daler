@@ -70,6 +70,8 @@ func _ready() -> void:
 		return
 	_rig = actor.get_node("_Visual/DarklightRig") as Node2D
 	_aim = actor.get_component(AimingComponent) as AimingComponent
+	if _aim != null and not _aim.launch_position_requested.is_connected(_sync_bow_launch_origin):
+		_aim.launch_position_requested.connect(_sync_bow_launch_origin)
 	_ranged = actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	_bow_arm = _rig.get_node("CharacterContainer/Anim Targets/BackArmFK") as Node2D
 	_head_ik = _rig.get_node("CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT") as SoupLookAt
@@ -177,12 +179,21 @@ func _process(_delta: float) -> void:
 	_bow_arm.wrist_ik.enabled = true
 	_bow_arm.wrist_ik._process_loop(0.0)
 	_head_ik.bone_node.rotation = _saved_head_rotation + aim_angle * bow_head_follow
+	_aim.set_launch_origin(_ranged, grip)
+
+
+func _sync_bow_launch_origin() -> void:
+	# A tap can fire before the visual's first process tick. Pose it before reading
+	# the origin; use the bone attachment, not the deferred RemoteTransform sprite.
+	if is_enabled and _ranged != null and _ranged.get_phase() == RangedWeaponComponent.Phase.BOW_AIM:
+		_process(0.0)
 
 
 func _end_bow_pose() -> void:
 	if not _bow_pose_active:
 		return
 	_bow_pose_active = false
+	_aim.set_launch_origin(_ranged, null)
 	_bow_arm.get_node("Shoulder").rotation = _saved_fk_angles.x
 	_bow_arm.get_node("Shoulder/Elbow").rotation = _saved_fk_angles.y
 	_bow_arm.get_node("Shoulder/Elbow/Wrist").rotation = _saved_fk_angles.z

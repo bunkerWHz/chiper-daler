@@ -55,6 +55,11 @@ to the aim. Both facings are supported. Releasing/cancelling aim, switching clip
 or disabling the visual restores the saved controls and look-at target. Crossbow
 and magic poses are unchanged. Gameplay still owns aiming limits, firing and ammo.
 
+Bow arrows and the aiming indicator share the world position of the wrist's
+OffHand attachment (the authored grip). Querying it synchronizes the bow pose,
+including quick taps. Firing captures this point before ending aim or consuming
+the last arrow. Other weapons keep the configured launch offset.
+
 ### Manual controls
 
 `CharacterContainer/Anim Targets/Hip` controls the pelvis: animate its Rotation

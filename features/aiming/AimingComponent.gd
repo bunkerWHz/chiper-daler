@@ -3,6 +3,8 @@ class_name AimingComponent
 
 signal aim_ended
 signal aim_cancelled(aim_owner: Component)
+## Presentation may synchronize a moving grip before its world position is read.
+signal launch_position_requested
 
 @export var config: AimingConfig
 
@@ -11,6 +13,7 @@ var _facing: FacingComponent
 var _owner: Component
 var _angle: float = 15.0
 var _elapsed: float = 0.0
+var _launch_origin: Node2D
 
 
 func on_initialize() -> void:
@@ -36,6 +39,7 @@ func begin_aim(aim_owner: Component) -> bool:
 	if not is_enabled or aim_owner == null or not aim_owner.is_enabled or aim_owner.actor != actor or is_aiming():
 		return false
 	_owner = aim_owner
+	_launch_origin = null
 	_angle = config.default_angle_degrees
 	_elapsed = 0.0
 	_input.consume_aim_mouse_motion()
@@ -46,6 +50,7 @@ func end_aim(aim_owner: Component) -> void:
 	if _owner != aim_owner:
 		return
 	_owner = null
+	_launch_origin = null
 	aim_ended.emit()
 
 
@@ -71,7 +76,15 @@ func get_direction() -> Vector2:
 
 
 func get_launch_position() -> Vector2:
+	launch_position_requested.emit()
+	if is_aiming() and is_instance_valid(_launch_origin):
+		return _launch_origin.global_position
 	return actor.global_position + config.launch_offset
+
+
+func set_launch_origin(aim_owner: Component, origin: Node2D) -> void:
+	if aim_owner == _owner and is_aiming():
+		_launch_origin = origin
 
 
 func get_locomotion_blocks() -> int:

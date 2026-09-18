@@ -6,6 +6,42 @@ func suite_name() -> String:
 	return "darklight_visual"
 
 
+func test_bow_shots_and_indicator_use_grip_before_pose_reset() -> void:
+	for facing in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
+		for angle in [-90.0, -45.0, 0.0, 45.0, 90.0]:
+			var world := track(Node2D.new()) as Node2D
+			(Engine.get_main_loop() as SceneTree).root.add_child(world)
+			var player := load("res://game/player/Player.tscn").instantiate() as Actor
+			world.add_child(player)
+			player.position = Vector2(120, -250)
+			var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
+			var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
+			equipment.switch_weapon_set(1)
+			var ranged := player.get_component(RangedWeaponComponent) as RangedWeaponComponent
+			var aim := player.get_component(AimingComponent) as AimingComponent
+			(player.get_component(FacingComponent) as FacingComponent)._set_direction(facing)
+			ranged._set_phase(RangedWeaponComponent.Phase.BOW_AIM, 0.0)
+			ranged._ammo_id = &"training_arrows"
+			aim._angle = angle
+			# No visual process tick: querying the origin must already pose a tap shot.
+			var origin := aim.get_launch_position()
+			var grip := visual._bow_arm.wrist_bone.get_node("OffHand") as Node2D
+			assert_true(origin.is_equal_approx(grip.global_position))
+			aim._elapsed = aim.config.hold_delay
+			var indicator = aim.get_child(0)
+			indicator._process(0.0)
+			assert_true(indicator.global_position.is_equal_approx(origin))
+			var inventory := player.get_component(InventoryComponent) as InventoryComponent
+			inventory.remove_item(&"training_arrows", inventory.get_quantity(&"training_arrows") - 1)
+			ranged._fire(true)
+			var projectile := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+			assert_true(projectile != null)
+			assert_true(projectile.global_position.is_equal_approx(origin))
+			assert_false(aim.is_aiming())
+			assert_eq(inventory.get_quantity(&"training_arrows"), 0)
+			assert_true(aim.get_launch_position().is_equal_approx(player.global_position + aim.config.launch_offset))
+
+
 func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
 	(Engine.get_main_loop() as SceneTree).root.add_child(player)

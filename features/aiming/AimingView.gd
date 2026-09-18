@@ -7,6 +7,8 @@ var _aim: AimingComponent
 
 
 func _ready() -> void:
+	# Follow the final animated grip after the player's pose update.
+	process_priority = 3
 	_aim = get_parent() as AimingComponent
 	_aim.aim_ended.connect(_hide_indicator)
 	visible = false
