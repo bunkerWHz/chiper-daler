@@ -2,7 +2,7 @@ extends Component
 class_name AimingComponent
 
 signal aim_ended
-signal aim_cancelled(owner: Component)
+signal aim_cancelled(aim_owner: Component)
 
 @export var config: AimingConfig
 
@@ -32,18 +32,18 @@ func _ready() -> void:
 	process_priority = -80
 
 
-func begin_aim(owner: Component) -> bool:
-	if not is_enabled or owner == null or not owner.is_enabled or owner.actor != actor or is_aiming():
+func begin_aim(aim_owner: Component) -> bool:
+	if not is_enabled or aim_owner == null or not aim_owner.is_enabled or aim_owner.actor != actor or is_aiming():
 		return false
-	_owner = owner
+	_owner = aim_owner
 	_angle = config.default_angle_degrees
 	_elapsed = 0.0
 	_input.consume_aim_mouse_motion()
 	return true
 
 
-func end_aim(owner: Component) -> void:
-	if _owner != owner:
+func end_aim(aim_owner: Component) -> void:
+	if _owner != aim_owner:
 		return
 	_owner = null
 	aim_ended.emit()

@@ -66,11 +66,11 @@ func _physics_process(delta: float) -> void:
 func setup_direction(
 	source_actor: Actor, direction: Vector2, speed: float, damage: float,
 	knockback: float, lifetime: float, visual_texture: Texture2D = null,
-	gravity: float = 0.0
+	projectile_gravity: float = 0.0
 ) -> void:
 	setup(source_actor, 1.0, speed, damage, knockback, lifetime, visual_texture)
 	_velocity = direction.normalized() * speed
-	_gravity = gravity
+	_gravity = projectile_gravity
 	_orient_to_velocity = true
 	rotation = direction.angle()
 

@@ -205,8 +205,8 @@ func _set_phase(value: Phase, duration: float) -> void:
 	phase_changed.emit(previous_phase, _phase)
 
 
-func _on_aim_cancelled(owner: Component) -> void:
-	if owner == self and _phase == Phase.CHARGE:
+func _on_aim_cancelled(aim_owner: Component) -> void:
+	if aim_owner == self and _phase == Phase.CHARGE:
 		_set_phase(Phase.NONE, 0.0)
 
 
