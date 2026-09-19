@@ -20,8 +20,7 @@ var _status_effects: Array[StatusEffect] = []
 
 ## Called before entering the tree. Keep the existing world-space hit radius.
 func fit_throwable(source_actor: Actor, texture: Texture2D) -> void:
-	var maximum := VISUAL_SIZING.body_height(source_actor) * absf(source_actor.global_scale.y) * 0.3
-	var factor := VISUAL_SIZING.fit_scale(texture, maximum)
+	var factor := VISUAL_SIZING.throwable_scale(texture, VISUAL_SIZING.body_height(source_actor), source_actor.global_scale.y)
 	scale = Vector2.ONE * factor
 	var collision := get_node("CollisionShape2D") as CollisionShape2D
 	var circle := collision.shape.duplicate() as CircleShape2D

@@ -42,3 +42,7 @@ static func fit_scale(texture: Texture2D, maximum: float, height_only: bool = fa
 	if extent <= 0.0 or maximum <= 0.0:
 		return 1.0
 	return minf(1.0, maximum / extent)
+
+
+static func throwable_scale(texture: Texture2D, native_body_height: float, actor_scale: float) -> float:
+	return fit_scale(texture, native_body_height * absf(actor_scale) * 0.3)

@@ -8,6 +8,9 @@ func _initialize() -> void:
 
 func _check() -> void:
 	var preview := load("res://tests/EquipmentFittingPreview.tscn").instantiate() as Node2D
+	# The user can save any fitting setup; tests supply their own items.
+	preview.main_hand_item = load("res://game/items/weapons/TrainingKatana.tres")
+	preview.off_hand_item = load("res://game/items/offhand/TrainingBuckler.tres")
 	root.add_child(preview)
 	await process_frame
 	await process_frame
@@ -84,6 +87,33 @@ func _check() -> void:
 	rig = preview.get_node("FittingRig")
 	off = rig.get_node(preview.OFF_HAND_PATH) as Sprite2D
 	if not _require(off.get_child_count() == 1 and preview._holders.size() == 1, "Script reload rebuilds without duplicate items"):
+		return
+	var thrown := (load("res://game/items/throwables/TrainingStone.tres") as ItemData).duplicate(true) as ItemData
+	var image := Image.create(1000, 200, false, Image.FORMAT_RGBA8)
+	image.fill(Color.WHITE)
+	thrown.projectile_profile.texture = ImageTexture.create_from_image(image)
+	thrown.equipped_scale = 4.0
+	preview.projectile_item = thrown
+	preview.projectile_angle_degrees = 30.0
+	for player_scale in [0.1, 0.2]:
+		preview.projectile_player_scale = player_scale
+		await process_frame
+		await process_frame
+		var flight := preview.get_node("ProjectilePreview/FlightVisual") as Node2D
+		if not _require(is_equal_approx(flight.scale.x * 1000.0, 970.0 * 0.3), "Projectile matches gameplay body ratio, independent of equipped scale"):
+			return
+		if not _require(flight.get_child(0).scale == Vector2.ONE and is_equal_approx(flight.rotation_degrees, 150.0), "Native projectile sprite and left-facing angle"):
+			return
+	preview._toggle_projectile()
+	await process_frame
+	if not _require(not preview.has_node("ProjectilePreview"), "Projectile button hides the sample"):
+		return
+	preview.projectile_item = null
+	preview.main_hand_item = load("res://game/items/throwables/TrainingStone.tres")
+	preview._toggle_projectile()
+	await process_frame
+	await process_frame
+	if not _require(preview.get_node("ProjectilePreview/FlightVisual").get_child(0) is Polygon2D, "Untextured hand item uses the gameplay projectile fallback"):
 		return
 	preview.free()
 	DirAccess.remove_absolute(fixture_path)

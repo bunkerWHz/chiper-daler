@@ -67,6 +67,34 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 @export_tool_button("Save OffHand to item") var save_off_hand = _save_off_hand
 @export_tool_button("Reload OffHand from item") var reload_off_hand = _load_item_fit.bind(false)
 
+@export_group("Projectile in flight")
+## Uses Projectile Profile.texture, not the equipped hand texture.
+## If empty, the first hand item with a projectile profile is used.
+@export var projectile_item: ItemData:
+	set(value):
+		projectile_item = value
+		show_projectile = value != null
+		_schedule_refresh()
+@export var show_projectile: bool = false:
+	set(value):
+		show_projectile = value
+		_schedule_refresh()
+@export_tool_button("Show / hide projectile") var toggle_projectile = _toggle_projectile
+## Move the frozen sample beside the hero for comparison, in native rig units.
+@export var projectile_preview_position := Vector2(650, 0):
+	set(value):
+		projectile_preview_position = value
+		_schedule_refresh()
+@export_range(-180.0, 180.0, 1.0) var projectile_angle_degrees: float = 0.0:
+	set(value):
+		projectile_angle_degrees = value
+		_schedule_refresh()
+## Match the gameplay Player root scale; the preview hero itself is native-size.
+@export_range(0.01, 1.0, 0.01) var projectile_player_scale: float = 0.1:
+	set(value):
+		projectile_player_scale = value
+		_schedule_refresh()
+
 @export_group("Save result")
 @export_multiline var save_status: String = "Choose an item .tres, fit it, then press Save for that hand."
 
@@ -88,6 +116,61 @@ func _load_item_fit(main: bool) -> void:
 		off_hand_scale = size
 		off_hand_offset = offset
 		off_hand_rotation_degrees = angle
+
+
+func _toggle_projectile() -> void:
+	show_projectile = not show_projectile
+
+
+func _update_projectile_preview() -> void:
+	var previous := get_node_or_null("ProjectilePreview")
+	if previous != null:
+		remove_child(previous)
+		previous.queue_free()
+	if not show_projectile:
+		return
+	var item := projectile_item
+	if item == null:
+		for candidate: ItemData in [main_hand_item, off_hand_item]:
+			if candidate != null and candidate.projectile_profile != null:
+				item = candidate
+				break
+	var sample := Node2D.new()
+	sample.name = "ProjectilePreview"
+	sample.position = projectile_preview_position * Vector2(-1.0 if face_left else 1.0, 1.0)
+	add_child(sample)
+	var label := Label.new()
+	label.position = Vector2(-220, -240)
+	label.add_theme_font_size_override("font_size", 24)
+	sample.add_child(label)
+	if item == null or item.projectile_profile == null:
+		label.text = "Выберите Projectile Item\nс Projectile Profile."
+		return
+	var texture := item.projectile_profile.texture
+	var factor := SIZING.throwable_scale(texture, 970.0, projectile_player_scale)
+	var visual := Node2D.new()
+	visual.name = "FlightVisual"
+	# Convert the world-sized projectile to the native-sized comparison hero.
+	visual.scale = Vector2.ONE * factor / projectile_player_scale
+	visual.rotation_degrees = (180.0 - projectile_angle_degrees) if face_left else projectile_angle_degrees
+	sample.add_child(visual)
+	var extent := Vector2(12, 6)
+	if texture != null:
+		var sprite := Sprite2D.new()
+		sprite.texture = texture
+		sprite.centered = false
+		var bounds := SIZING.visible_rect(texture)
+		sprite.offset = -bounds.get_center()
+		extent = bounds.size
+		visual.add_child(sprite)
+	else:
+		# Match ThrownProjectile's default artwork when no texture is assigned.
+		var fallback := Polygon2D.new()
+		fallback.polygon = PackedVector2Array([Vector2(-6, -3), Vector2(6, -3), Vector2(6, 3), Vector2(-6, 3)])
+		fallback.color = Color(0.85, 0.75, 0.35)
+		visual.add_child(fallback)
+	var world_size := extent * factor
+	label.text = "%s — в полёте\n%.1f × %.1f игровых px\nУгол меняет только ракурс примерки" % [item.display_name, world_size.x, world_size.y]
 
 
 func _save_main_hand() -> void:
@@ -188,6 +271,7 @@ func _refresh() -> void:
 	_rig.get_node("CharacterContainer/VisualDetails/Arrows").visible = show_quiver
 	_fit_hand("MainHand", main_hand_item, main_hand_scale, main_hand_offset, main_hand_rotation_degrees)
 	_fit_hand("OffHand", off_hand_item, off_hand_scale, off_hand_offset, off_hand_rotation_degrees)
+	_update_projectile_preview()
 	notify_property_list_changed()
 	queue_redraw()
 

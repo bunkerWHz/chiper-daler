@@ -155,6 +155,18 @@ preview scene alone retains the fitting setup but does not update the item.
 Both slots edit the same placement fields when assigned the same resource.
 An already-open preview automatically rebuilds an obsolete generated rig after
 hand hierarchy changes or tool-script reloads, preserving fitting values.
+
+**Projectile in flight → Projectile Item** shows a frozen thrown projectile next
+to the hero without running the game. **Show / hide projectile** toggles it; when
+Projectile Item is empty, the first hand item with a projectile profile is used.
+The sample uses `Projectile Profile.texture` and the same size calculation as
+ThrownProjectile, including its untextured fallback. Its label reports visible
+width/height in world pixels. **Projectile Angle Degrees** rotates the sample
+for inspection; **Projectile Preview Position** moves it beside the hero.
+**Projectile Player Scale** defaults to the gameplay hero's 0.1: projectile size
+is converted to the native-size preview hero for an accurate comparison. Hand
+fitting scale/offset do not affect flight size. This is a static size comparison,
+not a trajectory or collision simulation; no item is consumed or changed.
 Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
 to verify editor-mode fitting, saving/reloading a disposable item, and clearing slots.
 
