@@ -91,6 +91,8 @@ enum UseVisualEffect {
 @export_range(-180.0, 180.0, 0.1) var equipped_rotation_degrees: float = 0.0
 ## Uniform multiplier applied after the automatic equipment size limit.
 @export_range(0.01, 5.0, 0.01, "or_greater") var equipped_scale: float = 1.0
+## Draw order relative to the hand, without changing the rig attachment.
+@export_range(-100, 100, 1) var equipped_z_index: int = 0
 @export_group("Category and rarity")
 @export var category: Category = Category.MATERIAL
 @export var rarity: Rarity = Rarity.COMMON

@@ -174,6 +174,7 @@ func _fit_hand(hand_name: String, item: ItemData, size: float, offset: Vector2, 
 	holder.position = offset
 	holder.rotation_degrees = angle
 	holder.scale = Vector2.ONE * size
+	holder.z_index = item.equipped_z_index
 	_holders.append(holder)
 	if item.equipped_texture != null:
 		var ratio := SIZING.shield_ratio(item)
@@ -184,8 +185,7 @@ func _fit_hand(hand_name: String, item: ItemData, size: float, offset: Vector2, 
 		sprite.centered = false if ratio > 0.0 else hand.centered
 		sprite.offset = -SIZING.visible_rect(item.equipped_texture).get_center() if ratio > 0.0 else hand.offset
 		holder.add_child(sprite)
-		var grip := hand.get_node("ShieldGrip") if ratio > 0.0 else hand
-		grip.add_child(holder)
+		hand.add_child(holder)
 	else:
 		hand.add_child(holder)
 		if item.equipped_visual != null:

@@ -390,16 +390,17 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 		var shield_ratio := VISUAL_SIZING.shield_ratio(item)
 		var maximum := VISUAL_SIZING.body_height(actor) * (shield_ratio if shield_ratio > 0.0 else 1.0)
 		var visual_scale := VISUAL_SIZING.fit_scale(item.equipped_texture, maximum, shield_ratio > 0.0)
-		if shield_ratio > 0.0 or visual_scale < 1.0 or item.equipped_offset != Vector2.ZERO or item.equipped_rotation_degrees != 0.0 or item.equipped_scale != 1.0:
+		if shield_ratio > 0.0 or visual_scale < 1.0 or item.equipped_offset != Vector2.ZERO or item.equipped_rotation_degrees != 0.0 or item.equipped_scale != 1.0 or item.equipped_z_index != 0:
 			var holder := Node2D.new()
 			holder.name = "ItemVisual"
 			holder.scale = Vector2.ONE * visual_scale * item.equipped_scale
 			holder.position = item.equipped_offset
 			holder.rotation_degrees = item.equipped_rotation_degrees
+			holder.z_index = item.equipped_z_index
 			var sprite := Sprite2D.new()
 			sprite.texture = item.equipped_texture
 			if shield_ratio > 0.0:
-				# Center visible artwork on the dedicated, animated shield grip.
+				# Center visible shield artwork at the item's authored placement.
 				sprite.centered = false
 				var bounds := VISUAL_SIZING.visible_rect(item.equipped_texture)
 				sprite.offset = -bounds.get_center()
@@ -407,11 +408,7 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 				sprite.centered = hand.centered
 				sprite.offset = hand.offset
 			holder.add_child(sprite)
-			var grip := hand.get_node_or_null("ShieldGrip") as Node2D
-			if shield_ratio > 0.0 and grip != null:
-				grip.add_child(holder)
-			else:
-				hand.add_child(holder)
+			hand.add_child(holder)
 			_hand_visuals[hand] = holder
 			return
 		hand.texture = item.equipped_texture
@@ -424,6 +421,7 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 			holder.position = item.equipped_offset
 			holder.rotation_degrees = item.equipped_rotation_degrees
 			holder.scale = Vector2.ONE * item.equipped_scale
+			holder.z_index = item.equipped_z_index
 			holder.add_child(visual)
 			hand.add_child(holder)
 			_hand_visuals[hand] = holder

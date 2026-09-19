@@ -171,15 +171,17 @@ offhand family values 1/2/3 are preserved; Medium Shield/Greatshield are now nam
 Heater/Tower. Smaller artwork is never enlarged. Authored equipped_visual scenes
 retain their own scene sizing. `equipped_scale` multiplies this baseline;
 `equipped_offset` and `equipped_rotation_degrees` place the item's wrapper
-relative to its hand (or ShieldGrip for shield textures). Defaults preserve
+relative directly to its hand. Defaults preserve
 existing placement. These visual adjustments do not change damage hitboxes,
 weapon reach or projectile launch origins.
 
-Each hand has a ShieldGrip Marker2D. Shield textures are centered there, ignoring
-the old bow/sword sprite offsets. OffHand's marker cancels the fixed 44-degree
-bow attachment offset while retaining animated wrist rotation and facing.
-Edit/key this marker for shield placement; keep the original hand attachment
-unchanged so bows and their aim continue to work.
+Shield textures are centered by visible artwork bounds directly under the hand,
+ignoring the old bow/sword sprite offsets. Their placement comes entirely from
+the item's saved fitting fields. The buckler stores its existing -44.06193841°
+rotation and relative draw order 5 in ItemData, preserving its original OffHand
+appearance. `equipped_z_index` controls draw order relative to the hand for any
+item. Use the fitting scene for placement; keep the rig attachments unchanged
+so bows and their aim continue to work.
 
 Thrown item textures use the same bounds calculation, capped at 30% of the
 thrower's world body height on the longest side at spawn. The projectile root

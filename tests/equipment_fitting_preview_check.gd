@@ -23,7 +23,9 @@ func _check() -> void:
 	var base_scale := holder.scale.x
 	if not _require(main.visible and off.visible and holder.get_child(0).scale == Vector2.ONE, "Default items and native sprite scale"):
 		return
-	var shield := off.get_node("ShieldGrip/FittingItem") as Node2D
+	var shield := off.get_node("FittingItem") as Node2D
+	if not _require(is_equal_approx(shield.rotation, -0.7690259) and shield.z_index == 5, "Saved shield placement replaces the removed marker"):
+		return
 	var bounds: Rect2 = preload("res://features/inventory/ItemVisualSizing.gd").visible_rect(shield.get_child(0).texture)
 	if not _require(is_equal_approx(bounds.size.y * shield.scale.y, minf(bounds.size.y, 970.0 * 0.3)), "Shield matches gameplay height"):
 		return

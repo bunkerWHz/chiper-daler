@@ -24,13 +24,16 @@ func test_padding_and_uniform_limits() -> void:
 		assert_true(is_equal_approx(SIZING.shield_ratio(item), family * 0.3))
 
 
-func test_shield_grip_and_all_three_sizes() -> void:
+func test_shields_attach_directly_to_hand_with_saved_placement() -> void:
 	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
 	(Engine.get_main_loop() as SceneTree).root.add_child(player)
 	var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
 	var hand := visual._off_hand
-	var grip := hand.get_node("ShieldGrip") as Marker2D
-	assert_true(is_equal_approx(grip.rotation, -0.7690259))
+	assert_false(hand.has_node("ShieldGrip"))
+	assert_false(visual._main_hand.has_node("ShieldGrip"))
+	var buckler := hand.get_node("ItemVisual") as Node2D
+	assert_true(is_equal_approx(buckler.rotation, -0.7690259))
+	assert_eq(buckler.z_index, 5)
 	var image := Image.create(500, 1200, false, Image.FORMAT_RGBA8)
 	image.fill(Color.WHITE)
 	for family in [1, 2, 3]:
@@ -38,14 +41,20 @@ func test_shield_grip_and_all_three_sizes() -> void:
 		item.offhand_profile = ItemOffhandProfile.new()
 		item.offhand_profile.family = family
 		item.equipped_texture = ImageTexture.create_from_image(image)
+		item.equipped_offset = Vector2(12, -8)
+		item.equipped_rotation_degrees = -20.0
+		item.equipped_z_index = 3
 		visual._update_hand(hand, item)
-		assert_eq(grip.get_child_count(), 1)
-		var holder := grip.get_child(0) as Node2D
+		assert_eq(hand.get_child_count(), 1)
+		var holder := hand.get_node("ItemVisual") as Node2D
+		assert_eq(holder.position, item.equipped_offset)
+		assert_true(is_equal_approx(holder.rotation_degrees, -20.0))
+		assert_eq(holder.z_index, 3)
 		assert_true(is_equal_approx(holder.scale.y * 1200.0, 970.0 * family * 0.3))
 		assert_eq(holder.scale.x, holder.scale.y)
 		assert_eq((holder.get_child(0) as Sprite2D).scale, Vector2.ONE)
 	visual._update_hand(hand, null)
-	assert_eq(grip.get_child_count(), 0)
+	assert_eq(hand.get_child_count(), 0)
 
 
 func test_throwable_scales_with_actor_and_preserves_hit_radius() -> void:
