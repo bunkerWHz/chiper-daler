@@ -33,7 +33,7 @@ independent Animation resources in `animations/` and exposed in the rig's
 AnimationPlayer. They play during the corresponding aim/charge states. Throw
 starts from a separate copy of the bow pose with MainHand and OffHand hidden; crossbow and
 magic start from copies of idle, ready for authoring without changing
-idle itself. The source has no dedicated release, climbing, item-use, hit, death or
+idle itself. The source has no dedicated release, climbing, hit, death or
 equipment-swap animation. Those states currently use the idle pose; death and
 respawn freeze it while the existing fade/respawn components handle the result.
 `equipment_swap` retains a two-second empty placeholder clip whose playback rate
@@ -148,7 +148,12 @@ sprites. Unequipping ammunition, exhausting its stack, and switching sets update
 visibility through the existing equipment signals. Both ammunition types currently
 use the same quiver image. Armor/accessory stats work without replacing body art.
 
-Consumable and buff overlays remain connected to the current item/status signals.
+Flasks play the authored `drink` clip in `animations/drink.tres` during USING_ITEM.
+Playback speed fits ItemUseConfig.use_duration; gameplay alone applies the effect
+and spends a charge, and cancellation returns through the normal actor state.
+Flasks do not show the legacy item-effect overlays, and the old heal overlay is
+disconnected. Non-flask mana/rage effects and the applied-buff overlay remain.
+Health, Mana and Rage flask inventory icons use assets/items/Flasks artwork.
 
 ## Size and facing
 

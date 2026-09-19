@@ -281,29 +281,29 @@ func test_native_collision_shapes_follow_requested_player_size() -> void:
 
 
 
-func test_item_and_buff_effects_render_on_separate_overlays() -> void:
+func test_flasks_play_drink_without_legacy_overlays() -> void:
 	var setup := _create_player_visual()
 	var visual := setup.visual as DarklightVisualComponent
 	var item_use := setup.item_use as ItemUseComponent
-	var status_effects := setup.status_effects as StatusEffectComponent
 	var inventory := setup.inventory as InventoryComponent
-	var heal := inventory.get_item_data(&"health_potion")
-	var mana := inventory.get_item_data(&"mana_potion")
+	for item_id in [&"health_potion", &"mana_potion", &"rage_potion"]:
+		var item := inventory.get_item_data(item_id)
+		assert_true(item.icon != null)
+		assert_true(item.icon.resource_path.begins_with("res://assets/items/Flasks/"))
+		item_use.item_use_started.emit(item)
+		visual._apply_state(ActorState.Behavior.USING_ITEM, true)
+		assert_eq(visual.get_animation_player().current_animation, &"drink")
+		assert_false(visual.get_item_effect_sprite().visible)
+		var animation := visual.get_animation_player()
+		assert_eq(animation.speed_scale, 1.0)
+		assert_true(is_equal_approx(animation.get_playing_speed(), animation.get_animation(&"drink").length / item_use.config.use_duration))
+		item_use.item_use_cancelled.emit()
+		visual._apply_state(ActorState.Behavior.IDLE)
+		assert_eq(animation.current_animation, &"idle")
+		assert_false(visual.get_item_effect_sprite().visible)
 	var rage := inventory.get_item_data(&"rage_potion")
-
-	item_use.item_use_started.emit(heal)
-	assert_true(visual.get_item_effect_sprite().visible)
-	assert_true(_effect_atlas_path(visual).ends_with("Heal_Effect.png"))
-	item_use.item_use_cancelled.emit()
-	assert_false(visual.get_item_effect_sprite().visible)
-
-	item_use.item_use_started.emit(mana)
-	assert_true(_effect_atlas_path(visual).ends_with("Mana_Effect.png"))
-	item_use.item_use_started.emit(rage)
-	assert_true(_effect_atlas_path(visual).ends_with("Rage_effect.png"))
-	assert_true(status_effects.apply_effect(rage.get_status_effect()))
+	assert_true((setup.status_effects as StatusEffectComponent).apply_effect(rage.get_status_effect()))
 	assert_true(visual.get_buff_effect_sprite().visible)
-
 
 func _create_player_visual() -> Dictionary:
 	var packed := load("res://game/player/Player.tscn") as PackedScene
@@ -324,13 +324,6 @@ func _create_player_visual() -> Dictionary:
 		"item_use": player.get_component(ItemUseComponent),
 		"status_effects": player.get_component(StatusEffectComponent),
 	}
-
-
-func _effect_atlas_path(visual: DarklightVisualComponent) -> String:
-	var texture := visual.get_item_effect_sprite().sprite_frames.get_frame_texture(
-		&"effect", 0
-	) as AtlasTexture
-	return texture.atlas.resource_path
 
 
 func test_quiver_follows_equipped_ammunition_and_empty_stacks() -> void:

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmo5aehu3ho6r"]
 
+[ext_resource type="Texture2D" path="res://assets/items/Flasks/Health.png" id="flask_icon"]
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" uid="uid://c5ghdauittu1y" path="res://features/inventory/profiles/ItemFlaskProfile.gd" id="2_consumable"]
 
@@ -11,6 +12,7 @@ use_visual_effect = 1
 
 [resource]
 script = ExtResource("1_item")
+icon = ExtResource("flask_icon")
 id = &"health_potion"
 display_name = "Health Potion"
 description = "A refillable flask that restores 35 health. Sanctuary rest restores its charges."

@@ -6,13 +6,13 @@ class_name DarklightVisualComponent
 @export_range(-90.0, 90.0, 0.1) var bow_shoulder_offset_degrees: float = 0.0
 
 @export_group("Item effects")
-@export var heal_effect_frames: SpriteFrames
 @export var mana_effect_frames: SpriteFrames
 @export var rage_effect_frames: SpriteFrames
 @export var buff_effect_frames: SpriteFrames
 
 var _equipment: EquipmentComponent
 var _item_use: ItemUseComponent
+var _using_flask: bool = false
 var _status_effects: StatusEffectComponent
 var _item_effect_sprite: AnimatedSprite2D
 var _buff_effect_sprite: AnimatedSprite2D
@@ -126,6 +126,8 @@ func _play_animation(animation_name: StringName) -> void:
 		var attack := actor.get_component(AttackComponent) as AttackComponent
 		var heavy := animation_name in [&"heavy_attack", &"air_heavy_attack"]
 		speed = _animation_player.get_animation(animation_name).length / attack.get_attack_duration(heavy)
+	elif animation_name == &"drink":
+		speed = _animation_player.get_animation(animation_name).length / _item_use.config.use_duration
 	elif animation_name == &"dodge":
 		var dodge := actor.get_component(DodgeComponent) as DodgeComponent
 		speed = _animation_player.get_animation(animation_name).length / dodge.config.duration
@@ -302,13 +304,13 @@ func _get_animation_name(state: ActorState.Behavior) -> StringName:
 		ActorState.Behavior.AIM_BOW: return &"bow_aim"
 		ActorState.Behavior.AIM_CROSSBOW: return &"crossbow_aim"
 		ActorState.Behavior.MAGIC_CHARGE: return &"magic_aim"
-	# The source has no release, item-use, climbing, hit or death clips yet.
+		ActorState.Behavior.USING_ITEM: return &"drink" if _using_flask else &"idle"
+	# The source has no release, climbing, hit or death clips yet.
 	# Keep those states controlled by gameplay, with an explicit idle-pose fallback.
 	return &"idle"
 
 
 func _build_effect_frames() -> void:
-	_effect_frames[ItemData.UseVisualEffect.HEAL] = heal_effect_frames
 	_effect_frames[ItemData.UseVisualEffect.MANA] = mana_effect_frames
 	_effect_frames[ItemData.UseVisualEffect.RAGE] = rage_effect_frames
 	_buff_effect_sprite.sprite_frames = buff_effect_frames
@@ -383,6 +385,10 @@ func _on_weapon_set_changed(_previous: int, _current: int) -> void:
 
 
 func _on_item_use_started(item: ItemData) -> void:
+	_using_flask = item != null and item.is_flask()
+	if _using_flask:
+		_hide_item_effect()
+		return
 	var visual_effect := (
 		item.get_use_visual_effect()
 		if item != null

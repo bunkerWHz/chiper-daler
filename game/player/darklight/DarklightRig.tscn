@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://biwv0rejp7nuf"]
 
+[ext_resource type="Animation" path="res://game/player/darklight/animations/drink.tres" id="drink"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/throw_aim.tres" id="throw_aim"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/bow_aim.tres" id="bow_aim"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/crossbow_aim.tres" id="crossbow_aim"]
@@ -3559,6 +3560,7 @@ _data = {
 &"bow_aim": ExtResource("bow_aim"),
 &"crossbow_aim": ExtResource("crossbow_aim"),
 &"magic_aim": ExtResource("magic_aim"),
+&"drink": ExtResource("drink"),
 &"RESET": SubResource("Animation_s2enn"),
 &"air_attack": SubResource("Animation_reuo5"),
 &"air_heavy_attack": SubResource("Animation_hvbhi"),
