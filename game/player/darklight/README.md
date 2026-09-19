@@ -170,6 +170,9 @@ visibility through the existing equipment signals. Both ammunition types current
 use the same quiver image. Armor/accessory stats work without replacing body art.
 
 Flasks play the authored `drink` clip in `animations/drink.tres` during USING_ITEM.
+MainHand and OffHand equipment visuals (including child shield visuals) are hidden
+throughout drink. Leaving the pose restores the current loadout after completion
+or cancellation. No bottle visual is attached yet; the character's hands remain.
 Playback speed fits ItemUseConfig.use_duration; gameplay alone applies the effect
 and spends a charge, and cancellation returns through the normal actor state.
 Flasks do not show the legacy item-effect overlays, and the old heal overlay is

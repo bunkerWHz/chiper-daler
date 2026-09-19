@@ -15,6 +15,7 @@ const VISUAL_SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 var _equipment: EquipmentComponent
 var _item_use: ItemUseComponent
 var _using_flask: bool = false
+var _drink_pose_active: bool = false
 var _status_effects: StatusEffectComponent
 var _item_effect_sprite: AnimatedSprite2D
 var _buff_effect_sprite: AnimatedSprite2D
@@ -117,6 +118,7 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 
 
 func _play_animation(animation_name: StringName) -> void:
+	_drink_pose_active = animation_name == &"drink"
 	_end_bow_pose()
 	# Source attack clips animate only the arms. Restore the base pose first so a
 	# previous dodge/jump cannot leave stale leg/hip targets in a later animation.
@@ -139,12 +141,14 @@ func _play_animation(animation_name: StringName) -> void:
 			speed = _animation_player.get_animation(animation_name).length / swap.get_duration()
 	_animation_player.play(animation_name, 0.0, speed)
 	_animation_player.advance(0.0)
+	_apply_hand_visibility_override()
 	if _current_state in [ActorState.Behavior.DEAD, ActorState.Behavior.RESPAWNING]:
 		_animation_player.pause()
 
 
 func _process(_delta: float) -> void:
 	_update_cloak_animation()
+	_apply_hand_visibility_override()
 	if _bow_arm == null:
 		return
 	var aiming_bow := (is_enabled and _ranged != null and _aim != null
@@ -335,7 +339,13 @@ func _refresh_equipment_visuals() -> void:
 	_update_hand(_main_hand, displayed.get(ItemData.EquipSlot.MAIN_HAND) as ItemData)
 	_update_hand(_off_hand, displayed.get(ItemData.EquipSlot.OFF_HAND) as ItemData)
 	_quiver.visible = show_quiver
-	if is_enabled and _throwing != null and _throwing.get_phase() == ThrowingComponent.Phase.AIM:
+	_apply_hand_visibility_override()
+
+
+func _apply_hand_visibility_override() -> void:
+	if _main_hand == null or _off_hand == null:
+		return
+	if _drink_pose_active or (is_enabled and _throwing != null and _throwing.get_phase() == ThrowingComponent.Phase.AIM):
 		_main_hand.visible = false
 		_off_hand.visible = false
 
