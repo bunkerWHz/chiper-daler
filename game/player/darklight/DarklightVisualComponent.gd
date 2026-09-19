@@ -151,7 +151,10 @@ func _process(_delta: float) -> void:
 	if not aiming_bow and not aiming_throw:
 		_end_bow_pose()
 		return
-	_pose_owner = _throwing if aiming_throw else _ranged
+	if aiming_throw:
+		_pose_owner = _throwing
+	else:
+		_pose_owner = _ranged
 	if aiming_throw:
 		_main_hand.visible = false
 		_off_hand.visible = false
