@@ -7,9 +7,10 @@
 [ext_resource type="Script" uid="uid://d1oecoy1ibkrt" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
 [ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="weapon"]
 
-[sub_resource type="Resource" id="projectile"]
+[sub_resource type="Resource" id="Resource_kd1er"]
 script = ExtResource("projectile")
 texture = ExtResource("1_kd1er")
+visual_scale = 1.4000000000000001
 rotation_speed = 720.0
 speed = 500.0
 
@@ -24,9 +25,11 @@ display_name = "Gothic Swords"
 description = "Kills your enemies with style"
 icon = ExtResource("2_yhxa8")
 equipped_texture = ExtResource("1_kd1er")
+equipped_offset = Vector2(-90, -40)
+equipped_scale = 0.6
 category = 6
 stackable = true
 max_stack_size = 20
 usable_in_combat = true
 weapon_profile = SubResource("weapon")
-projectile_profile = SubResource("projectile")
+projectile_profile = SubResource("Resource_kd1er")

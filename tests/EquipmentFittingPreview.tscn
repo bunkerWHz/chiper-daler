@@ -1,15 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bif3xxgltj56f"]
 
-[ext_resource type="Script" path="res://tests/EquipmentFittingPreview.gd" id="1"]
-[ext_resource type="Resource" path="res://game/items/weapons/TrainingKatana.tres" id="2"]
-[ext_resource type="Resource" path="res://game/items/offhand/TrainingBuckler.tres" id="3"]
+[ext_resource type="Script" uid="uid://c4okunlv6o48d" path="res://tests/EquipmentFittingPreview.gd" id="1"]
+[ext_resource type="Resource" uid="uid://cu51hcmvka1mc" path="res://game/items/weapons/TrainingBow.tres" id="2_a66sl"]
 
-[node name="EquipmentFittingPreview" type="Node2D"]
+[node name="EquipmentFittingPreview" type="Node2D" unique_id=641704457]
 script = ExtResource("1")
-main_hand_item = ExtResource("2")
-off_hand_item = ExtResource("3")
+off_hand_item = ExtResource("2_a66sl")
 
-[node name="Instructions" type="Label" parent="."]
+[node name="Instructions" type="Label" parent="." unique_id=133406800]
 offset_left = -650.0
 offset_top = -850.0
 offset_right = 650.0
@@ -20,4 +18,3 @@ text = "ПРИМЕРКА ЭКИПИРОВКИ — В РЕДАКТОРЕ 2D
 MainHand / OffHand: перетащите .tres предмета, настройте Scale.
 Pose: выберите Animation, Pose Time и Face Left.
 Save MainHand / OffHand to item — сохранить посадку в предмет для игры."
-mouse_filter = 2
