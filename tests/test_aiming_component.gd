@@ -175,6 +175,37 @@ func test_ballistic_and_straight_projectiles_use_same_launch_vector() -> void:
 	assert_true(is_equal_approx(ballistic._velocity.y - straight._velocity.y, 50.0))
 
 
+func test_projectile_spin_preserves_trajectory_and_zero_tracks_velocity() -> void:
+	var profile := ItemProjectileProfile.new()
+	assert_eq(profile.rotation_speed, 0.0)
+	var direction := Vector2.RIGHT.rotated(-0.3)
+	for spin: float in [0.0, 360.0, -360.0]:
+		var projectile := track(ThrownProjectile.new()) as ThrownProjectile
+		projectile.setup_direction(null, direction, 100.0, 1.0, 0.0, 10.0, null, 100.0, spin)
+		projectile._physics_process(0.25)
+		projectile._physics_process(0.25)
+		assert_true(projectile.position.is_equal_approx(direction * 50.0 + Vector2(0.0, 12.5)))
+		var expected := projectile._velocity.angle() if spin == 0.0 else direction.angle() + deg_to_rad(spin) * 0.5
+		assert_true(is_equal_approx(angle_difference(projectile.rotation, expected), 0.0))
+
+
+func test_throw_passes_item_rotation_speed_to_projectile() -> void:
+	var s := _create_actor()
+	var item := s.inventory.get_item_data(&"training_stone") as ItemData
+	var original := item.projectile_profile
+	item.projectile_profile = original.duplicate() as ItemProjectileProfile
+	item.projectile_profile.rotation_speed = -720.0
+	_press(s, EquipmentComponent.Slot.THROWABLE)
+	_release(s, EquipmentComponent.Slot.THROWABLE)
+	s.throwing._process(0.0)
+	item.projectile_profile = original
+	assert_eq(s.root.get_child_count(), 2)
+	var projectile := s.root.get_child(1) as ThrownProjectile
+	var initial := projectile.rotation
+	projectile._physics_process(0.125)
+	assert_true(is_equal_approx(angle_difference(projectile.rotation, initial - PI / 2.0), 0.0))
+
+
 func _press(s: Dictionary, slot: int) -> void:
 	if slot == EquipmentComponent.Slot.THROWABLE:
 		s.input._interact_pressed = true

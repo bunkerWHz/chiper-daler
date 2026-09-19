@@ -116,7 +116,7 @@ func _release_throwable() -> void:
 	actor.get_parent().add_child(projectile)
 	projectile.global_position = origin
 	projectile.setup_direction(actor, direction, profile.speed, profile.damage,
-		profile.knockback, profile.lifetime, profile.texture, profile.gravity)
+		profile.knockback, profile.lifetime, profile.texture, profile.gravity, profile.rotation_speed)
 	throwable_released.emit(direction, _inventory.get_quantity(item.id))
 
 

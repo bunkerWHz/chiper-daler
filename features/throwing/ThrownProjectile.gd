@@ -13,6 +13,7 @@ var _default_visual: CanvasItem
 var _projectile_sprite: Sprite2D
 var _gravity: float = 0.0
 var _orient_to_velocity: bool = false
+var _rotation_speed: float = 0.0
 
 
 func _ready() -> void:
@@ -55,7 +56,9 @@ func _apply_visual(texture: Texture2D, direction: float) -> void:
 func _physics_process(delta: float) -> void:
 	position += _velocity * delta + Vector2.DOWN * _gravity * delta * delta * 0.5
 	_velocity.y += _gravity * delta
-	if _orient_to_velocity and not _velocity.is_zero_approx():
+	if _rotation_speed != 0.0:
+		rotation += _rotation_speed * delta
+	elif _orient_to_velocity and not _velocity.is_zero_approx():
 		rotation = _velocity.angle()
 	_lifetime = maxf(_lifetime - delta, 0.0)
 
@@ -66,11 +69,12 @@ func _physics_process(delta: float) -> void:
 func setup_direction(
 	source_actor: Actor, direction: Vector2, speed: float, damage: float,
 	knockback: float, lifetime: float, visual_texture: Texture2D = null,
-	projectile_gravity: float = 0.0
+	projectile_gravity: float = 0.0, projectile_rotation_speed: float = 0.0
 ) -> void:
 	setup(source_actor, 1.0, speed, damage, knockback, lifetime, visual_texture)
 	_velocity = direction.normalized() * speed
 	_gravity = projectile_gravity
+	_rotation_speed = deg_to_rad(projectile_rotation_speed)
 	_orient_to_velocity = true
 	rotation = direction.angle()
 
