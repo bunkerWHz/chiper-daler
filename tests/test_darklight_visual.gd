@@ -102,15 +102,18 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 	assert_true(arm.arm_ik.enabled)
 
 
-func test_throw_aim_follows_angles_hides_bow_and_restores_equipment() -> void:
-	for release: bool in [false, true]:
+func test_throw_aim_follows_angles_hides_both_hands_and_restores_equipment() -> void:
+	for scenario: Vector2i in [Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 0), Vector2i(1, 1)]:
+		var release := scenario.y == 1
 		var world := track(Node2D.new()) as Node2D
 		(Engine.get_main_loop() as SceneTree).root.add_child(world)
 		var player := load("res://game/player/Player.tscn").instantiate() as Actor
 		world.add_child(player)
 		var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
 		var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
-		equipment.switch_weapon_set(1)
+		equipment.switch_weapon_set(scenario.x)
+		var main_was_visible := visual._main_hand.visible
+		var off_was_visible := visual._off_hand.visible
 		var held := equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND)
 		var throwing := player.get_component(ThrowingComponent) as ThrowingComponent
 		var aim := player.get_component(AimingComponent) as AimingComponent
@@ -122,12 +125,14 @@ func test_throw_aim_follows_angles_hides_bow_and_restores_equipment() -> void:
 		throwing._process(0.0)
 		(player.get_component(ActorStateComponent) as ActorStateComponent).refresh_state()
 		assert_eq(visual.get_animation_player().current_animation, &"throw_aim")
+		assert_false(visual._main_hand.visible)
 		var arm = visual._bow_arm
 		for facing in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
 			(player.get_component(FacingComponent) as FacingComponent)._set_direction(facing)
 			for angle: float in [-90.0, -45.0, 0.0, 45.0, 90.0]:
 				aim._angle = angle
 				visual._process(0.0)
+				assert_false(visual._main_hand.visible)
 				assert_false(visual._off_hand.visible)
 				var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
 				assert_true(reach.normalized().dot(aim.get_direction()) > 0.999)
@@ -137,6 +142,7 @@ func test_throw_aim_follows_angles_hides_bow_and_restores_equipment() -> void:
 				assert_true(is_equal_approx(head_angle, visual._head_ik.bone_node.rotation - deg_to_rad(angle) * visual.bow_head_follow))
 				visual._head_ik.enabled = false
 				visual._refresh_equipment_visuals()
+				assert_false(visual._main_hand.visible)
 				assert_false(visual._off_hand.visible)
 		var origin := aim.get_launch_position()
 		assert_true(origin.is_equal_approx((arm.wrist_bone.get_node("OffHand") as Node2D).global_position))
@@ -149,7 +155,8 @@ func test_throw_aim_follows_angles_hides_bow_and_restores_equipment() -> void:
 			throwing.cancel_throw()
 		(player.get_component(ActorStateComponent) as ActorStateComponent).refresh_state()
 		visual._process(0.0)
-		assert_true(visual._off_hand.visible)
+		assert_eq(visual._main_hand.visible, main_was_visible)
+		assert_eq(visual._off_hand.visible, off_was_visible)
 		assert_false(visual._bow_pose_active)
 		assert_eq(equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND), held)
 

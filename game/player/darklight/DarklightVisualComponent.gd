@@ -148,6 +148,7 @@ func _process(_delta: float) -> void:
 		return
 	_pose_owner = _throwing if aiming_throw else _ranged
 	if aiming_throw:
+		_main_hand.visible = false
 		_off_hand.visible = false
 	var shoulder := _bow_arm.get_node("Shoulder") as Marker2D
 	var elbow := _bow_arm.get_node("Shoulder/Elbow") as Marker2D
@@ -224,7 +225,9 @@ func _end_bow_pose() -> void:
 	_bow_pose_active = false
 	_aim.set_launch_origin(_pose_owner, null)
 	_pose_owner = null
-	_update_hand(_off_hand, _off_hand.get_meta(&"equipped_item", null) as ItemData)
+	for hand: Sprite2D in [_main_hand, _off_hand]:
+		var item := hand.get_meta(&"equipped_item") as ItemData if hand.has_meta(&"equipped_item") else null
+		_update_hand(hand, item)
 	_bow_arm.get_node("Shoulder").rotation = _saved_fk_angles.x
 	_bow_arm.get_node("Shoulder/Elbow").rotation = _saved_fk_angles.y
 	_bow_arm.get_node("Shoulder/Elbow/Wrist").rotation = _saved_fk_angles.z
@@ -298,6 +301,7 @@ func _refresh_equipment_visuals() -> void:
 	_update_hand(_off_hand, displayed.get(ItemData.EquipSlot.OFF_HAND) as ItemData)
 	_quiver.visible = show_quiver
 	if is_enabled and _throwing != null and _throwing.get_phase() == ThrowingComponent.Phase.AIM:
+		_main_hand.visible = false
 		_off_hand.visible = false
 
 

@@ -31,7 +31,7 @@ camera, gameplay components, root transform or equipment visibility.
 Aim clips are `throw_aim`, `bow_aim`, `crossbow_aim` and `magic_aim`, stored as
 independent Animation resources in `animations/` and exposed in the rig's
 AnimationPlayer. They play during the corresponding aim/charge states. Throw
-starts from a separate copy of the bow pose with OffHand hidden; crossbow and
+starts from a separate copy of the bow pose with MainHand and OffHand hidden; crossbow and
 magic start from copies of idle, ready for authoring without changing
 idle itself. The source has no dedicated release, climbing, item-use, hit, death or
 equipment-swap animation. Those states currently use the idle pose; death and
@@ -61,8 +61,9 @@ On AnimationComponent, **Bow Aiming Pose → Bow Head Follow** controls this rat
 to the aim. Both facings are supported. Releasing/cancelling aim, switching clips
 or disabling the visual restores the saved controls and look-at target. Throwing
 uses the same arm/head follow and grip launch point, including quick taps. Its
-OffHand equipment visual (including a bow) is hidden while aiming and restored
-on release/cancel; equipment itself is unchanged. Crossbow and magic use their
+MainHand and OffHand equipment visuals are hidden while aiming and restored
+on release/cancel; equipment itself is unchanged. Both hands are currently empty;
+displaying the thrown item's texture in MainHand is not implemented yet. Crossbow and magic use their
 authored clips without this angle overlay.
 Gameplay still owns aiming limits, firing and ammo.
 
