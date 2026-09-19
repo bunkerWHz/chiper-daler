@@ -28,8 +28,11 @@ Before switching clips the adapter applies RESET, because the source's attack
 clips key only the arms. RESET no longer targets the old character controller,
 camera, gameplay components, root transform or equipment visibility.
 
-Bow aiming adds a procedural arm/head pose over idle (see below). The source
-has no dedicated release, crossbow, magic, climbing, item-use, hit, death or
+Aim clips are `throw_aim`, `bow_aim`, `crossbow_aim` and `magic_aim`, stored as
+independent Animation resources in `animations/` and exposed in the rig's
+AnimationPlayer. They play during the corresponding aim/charge states. Throw,
+crossbow and magic start from copies of idle, ready for authoring without changing
+idle itself. The source has no dedicated release, climbing, item-use, hit, death or
 equipment-swap animation. Those states currently use the idle pose; death and
 respawn freeze it while the existing fade/respawn components handle the result.
 `equipment_swap` retains a two-second empty placeholder clip whose playback rate
@@ -40,20 +43,33 @@ follows the swap duration. Add new authored clips and map them in
 
 ### Bow aiming in gameplay
 
-While the ranged component is in BOW_AIM, DarklightVisualComponent rotates the
-bow arm with the shared aim direction. The extended arm pivots at the shoulder,
+Edit `bow_aim` in AnimationPlayer with the neutral aim pointing right. Its
+BackArmFK mode is FK; key Shoulder, Elbow and Wrist rotations to change the pose.
+The authored values are sampled throughout playback, including animated keys.
+DarklightVisualComponent adds the shared aim angle to the authored shoulder
+pose, preserving elbow and wrist edits. The default extended arm pivots at the shoulder,
 so its wrist follows a circle. Wrist rotation accounts for the local direction
 from the wrist pivot to its authored OffHand grip. That wrist-to-grip line follows
 the aim, rather than the bone's +X axis. The look-at target follows the corrected
 bone direction; the weapon attachment and idle grip remain unchanged.
 The arm uses FK while its wrist look-at remains active; head look-at is temporarily
-disabled so the head can follow at one quarter of the aim angle.
+evaluated from the authored Head_AT target before adding one quarter of the aim angle.
 
 On AnimationComponent, **Bow Aiming Pose → Bow Head Follow** controls this ratio
 (default 0.25); **Bow Shoulder Offset Degrees** adjusts the arm's angle relative
 to the aim. Both facings are supported. Releasing/cancelling aim, switching clips
-or disabling the visual restores the saved controls and look-at target. Crossbow
-and magic poses are unchanged. Gameplay still owns aiming limits, firing and ammo.
+or disabling the visual restores the saved controls and look-at target. Crossbow,
+throwing and magic use their authored clips without the bow-specific angle overlay.
+Gameplay still owns aiming limits, firing and ammo.
+
+To edit: open `DarklightRig.tscn`, select AnimationPlayer, choose the desired
+`*_aim` clip and enable animation preview. Move/key controls under
+`CharacterContainer/Anim Targets`. For throw/crossbow/magic the arms start in IK:
+edit FrontArmIK/BackArmIK and their look targets, or key the desired arm's mode
+to FK before animating its Shoulder/Elbow/Wrist. Keep a key at time zero for
+each edited property. The clips loop while aiming; release/cancel leaves the
+clip through the existing gameplay state machine. Bow's angle overlay only runs
+in gameplay, so the editor shows its neutral authored pose.
 
 Bow arrows and the aiming indicator share the world position of the wrist's
 OffHand attachment (the authored grip). Querying it synchronizes the bow pose,

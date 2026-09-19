@@ -144,6 +144,10 @@ func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
 		ActorState.Behavior.AIR_LIGHT_ATTACK: &"air_attack",
 		ActorState.Behavior.AIR_HEAVY_ATTACK: &"air_heavy_attack",
 		ActorState.Behavior.BLOCKING: &"block",
+		ActorState.Behavior.THROWING_AIM: &"throw_aim",
+		ActorState.Behavior.AIM_BOW: &"bow_aim",
+		ActorState.Behavior.AIM_CROSSBOW: &"crossbow_aim",
+		ActorState.Behavior.MAGIC_CHARGE: &"magic_aim",
 	}
 	for behavior: int in expected:
 		state.state_changed.emit(ActorState.Behavior.IDLE, behavior)
@@ -159,6 +163,46 @@ func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
 	assert_eq(player.scale, Vector2(0.1, 0.1))
 	facing._set_direction(FacingComponent.Direction.RIGHT)
 	assert_true(rig.transform.determinant() > 0.0)
+
+
+func test_authored_bow_pose_survives_aim_updates_and_cancel() -> void:
+	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
+	(Engine.get_main_loop() as SceneTree).root.add_child(player)
+	var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
+	var animation := visual.get_animation_player()
+	# Work on a private library so editing this test's pose cannot affect other players.
+	var library := animation.get_animation_library(&"").duplicate(true) as AnimationLibrary
+	animation.remove_animation_library(&"")
+	animation.add_animation_library(&"", library)
+	var clip := animation.get_animation(&"bow_aim")
+	var path := NodePath("CharacterContainer/Anim Targets/BackArmFK/Shoulder/Elbow:rotation")
+	var track_index := clip.find_track(path, Animation.TYPE_VALUE)
+	clip.track_set_key_value(track_index, 0, 0.4)
+	clip.track_insert_key(track_index, 1.0, 0.8)
+	var aim := player.get_component(AimingComponent) as AimingComponent
+	var ranged := player.get_component(RangedWeaponComponent) as RangedWeaponComponent
+	var state := player.get_component(ActorStateComponent) as ActorStateComponent
+	aim._owner = ranged
+	ranged._phase = RangedWeaponComponent.Phase.BOW_AIM
+	state.state_changed.emit(ActorState.Behavior.IDLE, ActorState.Behavior.AIM_BOW)
+	animation.seek(0.5, true)
+	for facing in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
+		visual._apply_facing(facing)
+		for angle: float in [-45.0, 0.0, 45.0]:
+			aim._angle = angle
+			visual._process(0.0)
+			assert_true(is_equal_approx(visual._bow_arm.elbow_bone.rotation, 0.6))
+			var shoulder: float = visual._bow_arm.shoulder_bone.rotation
+			var head: float = visual._head_ik.bone_node.rotation
+			visual._process(0.0)
+			assert_true(is_equal_approx(visual._bow_arm.shoulder_bone.rotation, shoulder))
+			assert_true(is_equal_approx(visual._head_ik.bone_node.rotation, head))
+	aim._owner = null
+	ranged._phase = RangedWeaponComponent.Phase.NONE
+	state.state_changed.emit(ActorState.Behavior.AIM_BOW, ActorState.Behavior.IDLE)
+	assert_eq(animation.current_animation, &"idle")
+	assert_false(visual._bow_pose_active)
+	assert_true(visual._bow_arm.arm_ik.enabled)
 
 
 func test_native_collision_shapes_follow_requested_player_size() -> void:

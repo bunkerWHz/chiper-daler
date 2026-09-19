@@ -166,11 +166,16 @@ func _process(_delta: float) -> void:
 	var grip := _bow_arm.wrist_bone.get_node("OffHand") as Node2D
 	var grip_angle := grip.position.angle()
 	wrist.rotation = forearm_angle - grip_angle
+	if _animation_player.current_animation == &"bow_aim":
+		# Sample the authored FK tracks so the aim offset never accumulates between frames.
+		shoulder.rotation = _bow_clip_angle("Shoulder", -upper_angle) + arm_angle - hip.rotation
+		elbow.rotation = _bow_clip_angle("Shoulder/Elbow", upper_angle - forearm_angle)
+		wrist.rotation = _bow_clip_angle("Shoulder/Elbow/Wrist", forearm_angle - grip_angle)
 	_bow_arm._process(0.0)
 	# Move the wrist look-at around the shoulder together with the bow hand.
 	# Its original stationary target would bend the wrist away from the shot.
 	var aim_axis := Vector2.from_angle(
-		arm_angle - grip_angle + _bow_arm.wrist_bone.get_bone_angle()
+		hip.rotation + shoulder.rotation + elbow.rotation + wrist.rotation + _bow_arm.wrist_bone.get_bone_angle()
 	)
 	var world_axis := _rig.global_transform.basis_xform(aim_axis)
 	_bow_arm.wrist_ik.target_node.global_position = (
@@ -178,8 +183,24 @@ func _process(_delta: float) -> void:
 	)
 	_bow_arm.wrist_ik.enabled = true
 	_bow_arm.wrist_ik._process_loop(0.0)
-	_head_ik.bone_node.rotation = _saved_head_rotation + aim_angle * bow_head_follow
+	var base_head_rotation := _saved_head_rotation
+	if _animation_player.current_animation == &"bow_aim":
+		# Re-evaluate the authored head target before adding the directional look offset.
+		_head_ik.enabled = true
+		_head_ik._process_loop(0.0)
+		base_head_rotation = _head_ik.bone_node.rotation
+		_head_ik.enabled = false
+	_head_ik.bone_node.rotation = base_head_rotation + aim_angle * bow_head_follow
 	_aim.set_launch_origin(_ranged, grip)
+
+
+func _bow_clip_angle(control: String, fallback: float) -> float:
+	var clip := _animation_player.get_animation(&"bow_aim")
+	var path := NodePath("CharacterContainer/Anim Targets/BackArmFK/" + control + ":rotation")
+	var track_index := clip.find_track(path, Animation.TYPE_VALUE)
+	if track_index < 0 or not clip.track_is_enabled(track_index) or clip.track_get_key_count(track_index) == 0:
+		return fallback
+	return float(clip.value_track_interpolate(track_index, _animation_player.current_animation_position))
 
 
 func _sync_bow_launch_origin() -> void:
@@ -233,8 +254,11 @@ func _get_animation_name(state: ActorState.Behavior) -> StringName:
 		ActorState.Behavior.AIR_HEAVY_ATTACK: return &"air_heavy_attack"
 		ActorState.Behavior.BLOCKING, ActorState.Behavior.PARRYING: return &"block"
 		ActorState.Behavior.EQUIPMENT_SWAP: return &"equipment_swap"
-	# Bow aim uses a procedural upper-body pose over the idle clip.
-	# The source has no magic, item-use, climbing, hit or death clips yet.
+		ActorState.Behavior.THROWING_AIM: return &"throw_aim"
+		ActorState.Behavior.AIM_BOW: return &"bow_aim"
+		ActorState.Behavior.AIM_CROSSBOW: return &"crossbow_aim"
+		ActorState.Behavior.MAGIC_CHARGE: return &"magic_aim"
+	# The source has no release, item-use, climbing, hit or death clips yet.
 	# Keep those states controlled by gameplay, with an explicit idle-pose fallback.
 	return &"idle"
 
