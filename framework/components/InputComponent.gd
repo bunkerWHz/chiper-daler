@@ -9,6 +9,7 @@ const MOVE_DOWN_ACTION: StringName = &"move_down"
 const JUMP_ACTION: StringName = &"jump"
 const INTERACT_ACTION: StringName = &"interact"
 const ATTACK_ACTION: StringName = &"attack"
+const HEAVY_ATTACK_ACTION: StringName = &"heavy_attack"
 const GUARD_ACTION: StringName = &"guard"
 const DODGE_ACTION: StringName = &"dodge"
 const INVENTORY_ACTION: StringName = &"inventory"
@@ -33,6 +34,7 @@ var _jump_released: bool = false
 var _interact_pressed: bool = false
 var _interact_released: bool = false
 var _attack_just_pressed: bool = false
+var _heavy_attack_just_pressed: bool = false
 var _attack_pressed: bool = false
 var _attack_released: bool = false
 var _guard_pressed: bool = false
@@ -106,6 +108,12 @@ func consume_attack_pressed() -> bool:
 	return true
 
 
+func consume_heavy_attack_pressed() -> bool:
+	var pressed := _heavy_attack_just_pressed
+	_heavy_attack_just_pressed = false
+	return pressed
+
+
 func is_attack_pressed() -> bool:
 	return _attack_pressed
 
@@ -169,6 +177,7 @@ func _process(_delta: float) -> void:
 	_interact_pressed = Input.is_action_just_pressed(INTERACT_ACTION)
 	_interact_released = Input.is_action_just_released(INTERACT_ACTION)
 	_attack_just_pressed = Input.is_action_just_pressed(ATTACK_ACTION)
+	_heavy_attack_just_pressed = Input.is_action_just_pressed(HEAVY_ATTACK_ACTION)
 	_attack_pressed = Input.is_action_pressed(ATTACK_ACTION)
 	_attack_released = Input.is_action_just_released(ATTACK_ACTION)
 	_guard_pressed = Input.is_action_pressed(GUARD_ACTION)

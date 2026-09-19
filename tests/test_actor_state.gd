@@ -163,16 +163,8 @@ func test_actor_state_maps_heavy_attack_and_parry() -> void:
 	hitbox._ready()
 	attack._ready()
 
-	input._attack_just_pressed = true
-	input._attack_pressed = true
+	input._heavy_attack_just_pressed = true
 	attack._process(0.0)
-	actor_state.refresh_state()
-	assert_eq(
-		actor_state.get_state(),
-		ActorState.Behavior.GROUND_ATTACK_WINDUP
-	)
-
-	assert_true(attack.heavy_attack())
 	actor_state.refresh_state()
 	assert_eq(
 		actor_state.get_state(),
@@ -220,7 +212,7 @@ func test_air_attacks_return_to_air_motion_or_landing_recovery() -> void:
 	input._attack_pressed = true
 	attack._process(0.0)
 	state.refresh_state()
-	assert_eq(state.get_state(), ActorState.Behavior.AIR_ATTACK_WINDUP)
+	assert_eq(state.get_state(), ActorState.Behavior.AIR_LIGHT_ATTACK)
 	input._attack_pressed = false
 	input._attack_released = true
 	attack._process(0.0)

@@ -78,9 +78,10 @@ normal horizontal air control and gravity, but blocks another jump and dodge.
 Landing recovery blocks horizontal movement, jump, and dodge for the configured
 recovery duration.
 
-The input press starts a windup. Releasing it before the heavy threshold starts
-a light attack; holding it through the threshold starts a heavy attack. This
-keeps the state accurate even while the final attack type is not known yet.
+J or left mouse starts a light melee attack immediately; L or right mouse
+starts a heavy melee attack immediately. Holding or releasing light attack
+does not make it heavy or repeat it. Simultaneous presses prioritize heavy.
+Ranged aiming still uses holding and releasing attack.
 
 ## Exclusive behavior gate
 

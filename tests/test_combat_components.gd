@@ -317,7 +317,7 @@ func test_guard_is_grounded_and_locks_locomotion() -> void:
 	assert_false(guard.start_parry())
 
 
-func test_held_attack_becomes_heavy_and_restores_hitbox_damage() -> void:
+func test_heavy_button_attacks_immediately_and_restores_hitbox_damage() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
 	container.name = "_Components"
@@ -339,12 +339,9 @@ func test_held_attack_becomes_heavy_and_restores_hitbox_damage() -> void:
 	hitbox._ready()
 	attack._ready()
 
-	input._attack_just_pressed = true
-	input._attack_pressed = true
+	input._heavy_attack_just_pressed = true
 	attack._process(0.0)
-	assert_true(attack.is_charging_heavy_attack())
-
-	attack._process(attack.config.heavy_charge_time)
+	assert_false(attack.is_charging_heavy_attack())
 	assert_true(attack.is_heavy_attacking())
 	assert_eq(hitbox.damage, 20.0)
 	assert_true(area.monitoring)
@@ -355,7 +352,7 @@ func test_held_attack_becomes_heavy_and_restores_hitbox_damage() -> void:
 	assert_false(area.monitoring)
 
 
-func test_released_attack_remains_light_attack() -> void:
+func test_light_button_attacks_immediately_without_hold_repeat() -> void:
 	var actor := track(Actor.new()) as Actor
 	var container := Node2D.new()
 	container.name = "_Components"
@@ -379,13 +376,16 @@ func test_released_attack_remains_light_attack() -> void:
 	input._attack_just_pressed = true
 	input._attack_pressed = true
 	attack._process(0.0)
-	input._attack_pressed = false
-	input._attack_released = true
-	attack._process(0.1)
-
 	assert_true(attack.is_attacking())
 	assert_false(attack.is_heavy_attacking())
 	assert_eq(hitbox.damage, 10.0)
+	attack._process(attack.config.active_duration + attack.config.cooldown)
+	assert_false(attack.is_attacking())
+	assert_false(attack.is_charging_heavy_attack())
+	input._attack_pressed = false
+	input._attack_released = true
+	attack._process(0.0)
+	assert_false(attack.is_attacking())
 
 
 func test_damage_number_view_rises_and_fades() -> void:
@@ -1461,3 +1461,18 @@ func _on_hit_received(hit: HitData, applied_damage: float) -> void:
 	_received_count += 1
 	_last_hit = hit
 	_last_applied_damage = applied_damage
+
+
+func test_attack_keyboard_and_mouse_bindings_are_separate() -> void:
+	for binding: Array in [[KEY_J, &"attack"], [KEY_L, &"heavy_attack"]]:
+		var event := InputEventKey.new()
+		event.physical_keycode = binding[0]
+		assert_true(InputMap.event_is_action(event, binding[1]))
+		var other: StringName = &"heavy_attack" if binding[1] == &"attack" else &"attack"
+		assert_false(InputMap.event_is_action(event, other))
+	for binding: Array in [[MOUSE_BUTTON_LEFT, &"attack"], [MOUSE_BUTTON_RIGHT, &"heavy_attack"]]:
+		var event := InputEventMouseButton.new()
+		event.button_index = binding[0]
+		assert_true(InputMap.event_is_action(event, binding[1]))
+		var other: StringName = &"heavy_attack" if binding[1] == &"attack" else &"attack"
+		assert_false(InputMap.event_is_action(event, other))

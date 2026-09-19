@@ -319,31 +319,16 @@ func _finish_attack() -> void:
 	attack_finished.emit()
 
 
-func _update_attack_input(delta: float) -> void:
-	if _input_component == null:
+func _update_attack_input(_delta: float) -> void:
+	if _input_component == null or not _allows_melee_actions():
 		return
 
-	if not _allows_melee_actions():
-		_is_charging = false
-		_charge_timer = 0.0
-		return
-
-	if _input_component.consume_attack_pressed():
-		if can_attack():
-			_is_charging = true
-			_charge_timer = 0.0
-			_attack_started_airborne = _is_airborne()
-
-	if not _is_charging:
-		return
-
-	if _input_component.is_attack_pressed():
-		_charge_timer += delta
-
-		if _charge_timer >= config.heavy_charge_time:
-			_start_attack(true, _attack_started_airborne)
-	elif _input_component.consume_attack_released():
-		_start_attack(false, _attack_started_airborne)
+	var light_pressed := _input_component.consume_attack_pressed()
+	var heavy_pressed := _input_component.consume_heavy_attack_pressed()
+	if heavy_pressed:
+		heavy_attack()
+	elif light_pressed:
+		attack()
 
 
 func _start_attack(heavy: bool, started_airborne: bool) -> bool:
