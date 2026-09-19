@@ -104,6 +104,18 @@ The controls follow the hip and the rig's facing. RESET returns both arms to IK
 and clears the FK angles, so existing clips retain their original behavior.
 Switching modes is immediate; it does not automatically match or blend poses.
 
+## Cloak wind
+
+`Cloak.tscn` contains a native-size skinned cloth mesh and four Bone2D nodes.
+The existing hip attachment still positions the cloak. Anchor holds the neckline;
+Upper, Middle and Hem bend the lower fabric with a delayed, subtle four-second
+wind loop. Its independent WindAnimation player keeps running across body clips
+and inherits gameplay pause and visual facing. Physics and IK are unchanged.
+Open Cloak.tscn and preview/edit the `wind` clip on WindAnimation to adjust
+the three bone rotation tracks (or playback Speed Scale to change wind speed).
+The texture placement matches the original centered sprite and (-264, 0) offset.
+Run `tests/darklight_cloak_check.gd` for weights, loop, anchoring and facing checks.
+
 ## Equipment
 
 The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing

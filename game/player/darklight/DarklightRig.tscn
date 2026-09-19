@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://3677cp1n6ky" path="res://addons/soupik/modifications/soup_two_bone_ik.gd" id="36_x2t84"]
 [ext_resource type="Script" uid="uid://dwfox8iknj704" path="res://addons/soupik/modifications/soup_look_at.gd" id="37_y72ng"]
 [ext_resource type="Texture2D" uid="uid://xqgb2vfdwi6p" path="res://assets/Characters/Darklight/arrows.png" id="50_gv142"]
-[ext_resource type="Texture2D" uid="uid://cltrndu36giuk" path="res://assets/Characters/Darklight/cloak.png" id="51_owtu8"]
+[ext_resource type="PackedScene" path="res://game/player/darklight/Cloak.tscn" id="51_owtu8"]
 [ext_resource type="Texture2D" uid="uid://bsu4kbxpoqudd" path="res://assets/Characters/Darklight/back_arm_mid.png" id="53_xopmn"]
 [ext_resource type="Texture2D" uid="uid://bjrpegi0imx65" path="res://assets/Characters/Darklight/body.png" id="55_xopmn"]
 [ext_resource type="Texture2D" uid="uid://deg8tx0uncucg" path="res://assets/Characters/Darklight/back_leg_mid.png" id="56_vmfjp"]
@@ -3636,10 +3636,8 @@ position = Vector2(0, 136)
 texture = ExtResource("50_gv142")
 offset = Vector2(-192, -269)
 
-[node name="Cloak" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1360235648]
+[node name="Cloak" parent="CharacterContainer/VisualDetails" unique_id=1360235648 instance=ExtResource("51_owtu8")]
 position = Vector2(0, 136)
-texture = ExtResource("51_owtu8")
-offset = Vector2(-264, 0)
 
 [node name="BackArmMid" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1099915142]
 position = Vector2(104, 24)
