@@ -153,6 +153,8 @@ from item** discards unsaved fitting changes. For a new item, first duplicate
 a weapon template and save its own `.tres`, then assign it here. Saving the
 preview scene alone retains the fitting setup but does not update the item.
 Both slots edit the same placement fields when assigned the same resource.
+An already-open preview automatically rebuilds an obsolete generated rig after
+hand hierarchy changes or tool-script reloads, preserving fitting values.
 Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
 to verify editor-mode fitting, saving/reloading a disposable item, and clearing slots.
 

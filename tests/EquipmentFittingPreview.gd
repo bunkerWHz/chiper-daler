@@ -2,7 +2,9 @@
 extends Node2D
 ## Fit equipment in the editor, then explicitly save its placement into ItemData.
 
-const RIG := preload("res://game/player/darklight/DarklightRig.tscn")
+const RIG_PATH := "res://game/player/darklight/DarklightRig.tscn"
+const MAIN_HAND_PATH := "CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand"
+const OFF_HAND_PATH := "CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand"
 const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 
 @export_group("Pose")
@@ -120,11 +122,36 @@ func _save_item_fit(main: bool) -> Error:
 
 
 func _ready() -> void:
-	# Generated children have no owner: saving the preview never bakes rig edits.
-	_rig = RIG.instantiate() as Node2D
-	_rig.name = "FittingRig"
-	add_child(_rig)
 	_refresh()
+
+
+func _ensure_rig() -> bool:
+	# Tool scripts reload without rerunning _ready; their generated scene may
+	# still contain the old RemoteTransform2D hands after the rig was reparented.
+	if is_instance_valid(_rig) and _rig.get_node_or_null(MAIN_HAND_PATH) is Sprite2D and _rig.get_node_or_null(OFF_HAND_PATH) is Sprite2D:
+		return true
+	if not is_instance_valid(_rig):
+		_rig = get_node_or_null("FittingRig") as Node2D
+	# Bypass the editor's cached PackedScene when recovering an obsolete rig.
+	var packed := ResourceLoader.load(RIG_PATH, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	if packed == null:
+		save_status = "Cannot load the Darklight rig."
+		return false
+	var replacement := packed.instantiate() as Node2D
+	if replacement == null or not replacement.get_node_or_null(MAIN_HAND_PATH) is Sprite2D or not replacement.get_node_or_null(OFF_HAND_PATH) is Sprite2D:
+		if replacement != null:
+			replacement.free()
+		save_status = "Darklight rig must have MainHand / OffHand sprites under the wrist bones."
+		return false
+	_holders.clear()
+	if is_instance_valid(_rig):
+		remove_child(_rig)
+		_rig.queue_free()
+	_rig = replacement
+	_rig.name = "FittingRig"
+	# No owner: the generated rig is never baked into the fitting scene.
+	add_child(_rig)
+	return true
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -142,11 +169,13 @@ func _schedule_refresh() -> void:
 
 func _refresh() -> void:
 	_pending = false
-	if not is_instance_valid(_rig):
+	if not is_inside_tree() or not _ensure_rig():
 		return
 	for holder: Node2D in _holders:
-		holder.get_parent().remove_child(holder)
-		holder.queue_free()
+		if is_instance_valid(holder):
+			if holder.get_parent() != null:
+				holder.get_parent().remove_child(holder)
+			holder.queue_free()
 	_holders.clear()
 	var player := _rig.get_node("AnimationPlayer") as AnimationPlayer
 	player.play(&"RESET")
@@ -164,8 +193,9 @@ func _refresh() -> void:
 
 
 func _fit_hand(hand_name: String, item: ItemData, size: float, offset: Vector2, angle: float) -> void:
-	var arm_path := "FrontArmTop/FrontArmMid/FrontArmBot/" if hand_name == "MainHand" else "BackArmTop/BackArmMid/BackArmBot/"
-	var hand := _rig.get_node("CharacterContainer/Skeleton2D/Hip/" + arm_path + hand_name) as Sprite2D
+	var hand := _rig.get_node_or_null(MAIN_HAND_PATH if hand_name == "MainHand" else OFF_HAND_PATH) as Sprite2D
+	if hand == null:
+		return
 	hand.texture = null
 	hand.visible = item != null
 	if item == null:

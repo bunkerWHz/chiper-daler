@@ -60,6 +60,31 @@ func _check() -> void:
 	await process_frame
 	if not _require(not main.visible and not off.visible and preview._holders.is_empty(), "Clearing slots removes preview items"):
 		return
+	# Reproduce an already-open editor preview retaining the pre-migration rig:
+	# the old wrist child was a RemoteTransform2D, not a Sprite2D.
+	var wrist := off.get_parent()
+	off.reparent(rig.get_node("CharacterContainer/VisualDetails"))
+	var old_proxy := RemoteTransform2D.new()
+	old_proxy.name = "OffHand"
+	wrist.add_child(old_proxy)
+	var bow := load("res://game/items/weapons/TrainingBow.tres") as ItemData
+	preview.off_hand_item = bow
+	await process_frame
+	await process_frame
+	rig = preview.get_node("FittingRig")
+	off = rig.get_node(preview.OFF_HAND_PATH) as Sprite2D
+	if not _require(off != null and off.visible and off.get_node("FittingItem").get_child(0).texture == bow.equipped_texture, "TrainingBow recovers an obsolete editor rig"):
+		return
+	# A tool-script reload can also discard script fields while children survive.
+	preview._rig = null
+	preview._holders.clear()
+	preview.off_hand_scale = 1.25
+	await process_frame
+	await process_frame
+	rig = preview.get_node("FittingRig")
+	off = rig.get_node(preview.OFF_HAND_PATH) as Sprite2D
+	if not _require(off.get_child_count() == 1 and preview._holders.size() == 1, "Script reload rebuilds without duplicate items"):
+		return
 	preview.free()
 	DirAccess.remove_absolute(fixture_path)
 	print("Equipment fitting preview checks passed; editor_hint=", Engine.is_editor_hint())
