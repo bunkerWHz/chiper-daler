@@ -111,7 +111,12 @@ The existing hip attachment still positions the cloak. Anchor holds the neckline
 Upper, Middle and Hem bend the lower fabric with a delayed, subtle four-second
 wind loop. Its independent WindAnimation player keeps running across body clips
 and inherits gameplay pause and visual facing. Physics and IK are unchanged.
-Open Cloak.tscn and preview/edit the `wind` clip on WindAnimation to adjust
+The `jump` clip tucks the fabric toward the back during ascent; `fall` curves it
+outward into an inflated canopy during descent. DarklightVisualComponent selects
+these from airborne vertical velocity, including during attacks and aiming, with
+a 0.22-second blend. The apex retains the previous air pose; landing restores wind.
+Death/respawning freeze cloth playback. These are visual poses only.
+Open Cloak.tscn and preview/edit `wind`, `jump`, or `fall` on WindAnimation to adjust
 the three bone rotation tracks (or playback Speed Scale to change wind speed).
 The texture placement matches the original centered sprite and (-264, 0) offset.
 Run `tests/darklight_cloak_check.gd` for weights, loop, anchoring and facing checks.

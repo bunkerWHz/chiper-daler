@@ -78,9 +78,16 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(not body.is_on_floor(), "Existing jump must work with the native rig scale")
+	var cloth := rig.get_node("CharacterContainer/VisualDetails/Cloak/WindAnimation") as AnimationPlayer
+	_check(cloth.current_animation == &"jump", "Ascending must tuck the cloak")
 	_check(state.get_state() in [ActorState.Behavior.JUMP, ActorState.Behavior.DOUBLE_JUMP], "Jump must be resolved by the current FSM: " + ActorState.get_behavior_name(state.get_state()))
+	var saw_falling_cloak := false
 	for frame in 100:
 		await physics_frame
+		if cloth.current_animation == &"fall":
+			saw_falling_cloak = true
+	_check(saw_falling_cloak, "Descending must inflate the cloak")
+	_check(cloth.current_animation == &"wind", "Landing must restore wind")
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	_check(equipment.switch_weapon_set(1), "Existing inventory must switch to the bow")
 	var hand := rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D

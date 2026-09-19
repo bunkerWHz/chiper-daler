@@ -37,8 +37,78 @@ tracks/2/keys = {
 "values": [-0.0541997, -0.0317148, 0.0093482, 0.0449352, 0.0541997, 0.0317148, -0.0093482, -0.0449352, -0.0541997]
 }
 
+[sub_resource type="Animation" id="jump"]
+resource_name = "jump"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Anchor/Upper:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [-0.4800000, -0.4715147, -0.4680000, -0.4715147, -0.4800000, -0.4884853, -0.4920000, -0.4884853, -0.4800000]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Anchor/Upper/Middle:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0866859, 0.1029697, 0.1175138, 0.1217986, 0.1133141, 0.0970303, 0.0824862, 0.0782014, 0.0866859]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Anchor/Upper/Middle/Hem:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0910933, 0.1052344, 0.1280250, 0.1461147, 0.1489067, 0.1347656, 0.1119750, 0.0938853, 0.0910933]
+}
+
+[sub_resource type="Animation" id="fall"]
+resource_name = "fall"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Anchor/Upper:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.6500000, 0.6782843, 0.6900000, 0.6782843, 0.6500000, 0.6217157, 0.6100000, 0.6217157, 0.6500000]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Anchor/Upper/Middle:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.5576370, 0.6094489, 0.6557259, 0.6693593, 0.6423630, 0.5905511, 0.5442741, 0.5306407, 0.5576370]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Anchor/Upper/Middle/Hem:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [-0.3867202, -0.3442969, -0.2759251, -0.2216560, -0.2132798, -0.2557031, -0.3240749, -0.3783440, -0.3867202]
+}
+
 [sub_resource type="AnimationLibrary" id="library"]
-_data = { &"wind": SubResource("wind") }
+_data = { &"wind": SubResource("wind"), &"jump": SubResource("jump"), &"fall": SubResource("fall") }
 
 [node name="Cloak" type="Node2D"]
 

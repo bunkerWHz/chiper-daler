@@ -18,6 +18,8 @@ var _item_effect_sprite: AnimatedSprite2D
 var _buff_effect_sprite: AnimatedSprite2D
 var _effect_frames: Dictionary = {}
 var _rig: Node2D
+var _cloak_animation: AnimationPlayer
+var _cloak_body: CharacterBodyComponent
 var _main_hand: Sprite2D
 var _off_hand: Sprite2D
 var _quiver: Sprite2D
@@ -71,6 +73,8 @@ func _ready() -> void:
 	if not is_enabled:
 		return
 	_rig = actor.get_node("_Visual/DarklightRig") as Node2D
+	_cloak_animation = _rig.get_node("CharacterContainer/VisualDetails/Cloak/WindAnimation") as AnimationPlayer
+	_cloak_body = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	_aim = actor.get_component(AimingComponent) as AimingComponent
 	if _aim != null and not _aim.launch_position_requested.is_connected(_sync_bow_launch_origin):
 		_aim.launch_position_requested.connect(_sync_bow_launch_origin)
@@ -136,6 +140,7 @@ func _play_animation(animation_name: StringName) -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_cloak_animation()
 	if _bow_arm == null:
 		return
 	var aiming_bow := (is_enabled and _ranged != null and _aim != null
@@ -201,6 +206,29 @@ func _process(_delta: float) -> void:
 		_head_ik.enabled = false
 	_head_ik.bone_node.rotation = base_head_rotation + aim_angle * bow_head_follow
 	_aim.set_launch_origin(_pose_owner, grip)
+
+
+func _update_cloak_animation() -> void:
+	if _cloak_animation == null or _cloak_body == null:
+		return
+	if not is_enabled or _current_state in [ActorState.Behavior.DEAD, ActorState.Behavior.RESPAWNING]:
+		_cloak_animation.pause()
+		return
+	# Vertical motion keeps cloth responsive even during airborne attacks/aiming.
+	var clip: StringName = &"wind"
+	if not _cloak_body.is_on_floor():
+		var vertical_speed := _cloak_body.get_velocity().y
+		if vertical_speed < -1.0:
+			clip = &"jump"
+		elif vertical_speed > 1.0:
+			clip = &"fall"
+		elif _cloak_animation.current_animation in [&"jump", &"fall"]:
+			# Retain the pose at the apex instead of briefly switching to wind.
+			clip = _cloak_animation.current_animation
+	if _cloak_animation.current_animation != clip:
+		_cloak_animation.play(clip, 0.22)
+	elif not _cloak_animation.is_playing():
+		_cloak_animation.play()
 
 
 func _bow_clip_angle(control: String, fallback: float) -> float:

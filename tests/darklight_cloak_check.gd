@@ -44,7 +44,39 @@ func _run() -> void:
 			if clip == "idle" and DisplayServer.get_name() != "headless":
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png("res://.godot/cloak_%s.png" % ("right" if facing > 0 else "left"))
+	for facing in [1.0, -1.0]:
+		rig.scale.x = 0.65 * facing
+		for clip in ["jump", "fall"]:
+			body.play("RESET")
+			body.advance(0.0)
+			body.play(clip)
+			body.advance(0.2)
+			wind.play(clip)
+			wind.advance(0.0)
+			wind.pause()
+			wind.seek(0.0, true)
+			var start_rotation := hem.rotation
+			wind.seek(2.0, true)
+			assert(is_equal_approx(hem.rotation, start_rotation), "Air cloth loops must join")
+			wind.seek(0.5, true)
+			var upper := anchor.get_node("Upper") as Bone2D
+			assert(upper.rotation < -0.4 if clip == "jump" else upper.rotation > 0.6)
+			assert(anchor.rotation == 0.0)
+			if DisplayServer.get_name() != "headless":
+				await process_frame
+				await RenderingServer.frame_post_draw
+				root.get_texture().get_image().save_png("res://.godot/cloak_%s_%s.png" % [clip, "right" if facing > 0 else "left"])
+	var upper := anchor.get_node("Upper") as Bone2D
+	wind.play("wind")
+	wind.advance(0.1)
+	for clip in ["jump", "fall", "wind"]:
+		var previous_rotation := upper.rotation
+		wind.play(clip, 0.22)
+		wind.advance(0.01)
+		assert(absf(upper.rotation - previous_rotation) < 0.1, "Cloth transitions must not snap")
+		wind.advance(0.3)
+		assert(wind.current_animation == clip)
 	rig.queue_free()
 	await process_frame
-	print("Darklight cloak: PASS (weights, wind, loop, anchor, clips, both facings)")
+	print("Darklight cloak: PASS (weights, wind/jump/fall, loops, blends, anchor, both facings)")
 	quit()
