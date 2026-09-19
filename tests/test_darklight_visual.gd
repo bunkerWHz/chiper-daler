@@ -6,6 +6,28 @@ func suite_name() -> String:
 	return "darklight_visual"
 
 
+func test_saved_item_fitting_is_applied_to_both_gameplay_hands() -> void:
+	var setup := _create_player_visual()
+	var visual := setup.visual as DarklightVisualComponent
+	var item := (load("res://game/items/weapons/TrainingKatana.tres") as ItemData).duplicate() as ItemData
+	item.equipped_offset = Vector2(35, -22)
+	item.equipped_rotation_degrees = 17.0
+	item.equipped_scale = 1.5
+	for hand: Sprite2D in [visual._main_hand, visual._off_hand]:
+		visual._update_hand(hand, item)
+		var holder := hand.get_node("ItemVisual") as Node2D
+		assert_eq(holder.position, item.equipped_offset)
+		assert_true(is_equal_approx(holder.rotation_degrees, item.equipped_rotation_degrees))
+		var fit := preload("res://features/inventory/ItemVisualSizing.gd").fit_scale(item.equipped_texture, 970.0)
+		assert_eq(holder.scale, Vector2.ONE * fit * item.equipped_scale)
+		assert_eq((holder.get_child(0) as Sprite2D).scale, Vector2.ONE)
+		visual._apply_facing(FacingComponent.Direction.LEFT)
+		assert_eq(holder.position, item.equipped_offset)
+		visual._update_hand(hand, null)
+		assert_false(hand.visible)
+		assert_false(hand.has_node("ItemVisual"))
+
+
 func test_started_attacks_advance_but_rejected_attacks_do_not() -> void:
 	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
 	(Engine.get_main_loop() as SceneTree).root.add_child(player)

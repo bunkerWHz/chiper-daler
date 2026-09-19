@@ -1,6 +1,6 @@
 @tool
 extends Node2D
-## Editor-only fitting adjustments are saved in this scene, not in item resources.
+## Fit equipment in the editor, then explicitly save its placement into ItemData.
 
 const RIG := preload("res://game/player/darklight/DarklightRig.tscn")
 const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
@@ -27,6 +27,7 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 @export var main_hand_item: ItemData:
 	set(value):
 		main_hand_item = value
+		_load_item_fit(true)
 		_schedule_refresh()
 @export_range(0.01, 5.0, 0.01, "or_greater") var main_hand_scale: float = 1.0:
 	set(value):
@@ -40,11 +41,14 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		main_hand_rotation_degrees = value
 		_schedule_refresh()
+@export_tool_button("Save MainHand to item") var save_main_hand = _save_main_hand
+@export_tool_button("Reload MainHand from item") var reload_main_hand = _load_item_fit.bind(true)
 
 @export_group("OffHand")
 @export var off_hand_item: ItemData:
 	set(value):
 		off_hand_item = value
+		_load_item_fit(false)
 		_schedule_refresh()
 @export_range(0.01, 5.0, 0.01, "or_greater") var off_hand_scale: float = 1.0:
 	set(value):
@@ -58,10 +62,61 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		off_hand_rotation_degrees = value
 		_schedule_refresh()
+@export_tool_button("Save OffHand to item") var save_off_hand = _save_off_hand
+@export_tool_button("Reload OffHand from item") var reload_off_hand = _load_item_fit.bind(false)
+
+@export_group("Save result")
+@export_multiline var save_status: String = "Choose an item .tres, fit it, then press Save for that hand."
 
 var _rig: Node2D
 var _pending: bool = false
 var _holders: Array[Node2D] = []
+
+
+func _load_item_fit(main: bool) -> void:
+	var item := main_hand_item if main else off_hand_item
+	var size := item.equipped_scale if item != null else 1.0
+	var offset := item.equipped_offset if item != null else Vector2.ZERO
+	var angle := item.equipped_rotation_degrees if item != null else 0.0
+	if main:
+		main_hand_scale = size
+		main_hand_offset = offset
+		main_hand_rotation_degrees = angle
+	else:
+		off_hand_scale = size
+		off_hand_offset = offset
+		off_hand_rotation_degrees = angle
+
+
+func _save_main_hand() -> void:
+	_save_item_fit(true)
+
+
+func _save_off_hand() -> void:
+	_save_item_fit(false)
+
+
+func _save_item_fit(main: bool) -> Error:
+	var item := main_hand_item if main else off_hand_item
+	if item == null or not item.resource_path.begins_with("res://") or not item.resource_path.ends_with(".tres") or item.is_built_in():
+		save_status = "Assign an external item .tres first. For a new item, use Save As in its Inspector."
+		return ERR_INVALID_PARAMETER
+	# Save a copy first so failure cannot change the loaded gameplay resource.
+	var saved := item.duplicate() as ItemData
+	saved.equipped_scale = main_hand_scale if main else off_hand_scale
+	saved.equipped_offset = main_hand_offset if main else off_hand_offset
+	saved.equipped_rotation_degrees = main_hand_rotation_degrees if main else off_hand_rotation_degrees
+	var error := ResourceSaver.save(saved, item.resource_path)
+	if error != OK:
+		save_status = "Save failed: " + error_string(error)
+		return error
+	item.equipped_scale = saved.equipped_scale
+	item.equipped_offset = saved.equipped_offset
+	item.equipped_rotation_degrees = saved.equipped_rotation_degrees
+	item.emit_changed()
+	save_status = "Saved: " + item.resource_path
+	notify_property_list_changed()
+	return OK
 
 
 func _ready() -> void:

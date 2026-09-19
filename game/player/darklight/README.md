@@ -146,10 +146,15 @@ Offsets use native rig units. The rig is shown at native size for authoring.
 **Animation** selects an authored pose, **Pose Time** scrubs it in seconds,
 and **Face Left** mirrors the complete visual rig. Empty item slots hide that
 hand's equipment. Texture and `equipped_visual` scene items are both supported.
-Save the preview scene to retain a fitting setup. These adjustments are only a
-preview: they do not write item resources or alter gameplay equipment sizing.
+Selecting an item loads its saved placement. **Save MainHand to item** or
+**Save OffHand to item** writes the current scale, offset and rotation to that
+item's external `.tres`; gameplay applies exactly these values. **Reload ...
+from item** discards unsaved fitting changes. For a new item, first duplicate
+a weapon template and save its own `.tres`, then assign it here. Saving the
+preview scene alone retains the fitting setup but does not update the item.
+Both slots edit the same placement fields when assigned the same resource.
 Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
-to verify editor-mode item placement, sizing, pose selection, and clearing slots.
+to verify editor-mode fitting, saving/reloading a disposable item, and clearing slots.
 
 The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing
 bone RemoteTransform2D attachments and animation targets. Their transforms,
@@ -164,7 +169,11 @@ Weapons/other equipped textures are capped at one body height on their longest
 side. Shields use height: Buckler 30%, Heater 60%, Tower 90%. The existing
 offhand family values 1/2/3 are preserved; Medium Shield/Greatshield are now named
 Heater/Tower. Smaller artwork is never enlarged. Authored equipped_visual scenes
-retain their own scene sizing.
+retain their own scene sizing. `equipped_scale` multiplies this baseline;
+`equipped_offset` and `equipped_rotation_degrees` place the item's wrapper
+relative to its hand (or ShieldGrip for shield textures). Defaults preserve
+existing placement. These visual adjustments do not change damage hitboxes,
+weapon reach or projectile launch origins.
 
 Each hand has a ShieldGrip Marker2D. Shield textures are centered there, ignoring
 the old bow/sword sprite offsets. OffHand's marker cancels the fixed 44-degree

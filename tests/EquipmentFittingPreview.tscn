@@ -19,5 +19,5 @@ text = "ПРИМЕРКА ЭКИПИРОВКИ — В РЕДАКТОРЕ 2D
 Выберите EquipmentFittingPreview → Inspector.
 MainHand / OffHand: перетащите .tres предмета, настройте Scale.
 Pose: выберите Animation, Pose Time и Face Left.
-Scale = 1 — игровой размер. Настройки примерки хранятся только здесь."
+Save MainHand / OffHand to item — сохранить посадку в предмет для игры."
 mouse_filter = 2

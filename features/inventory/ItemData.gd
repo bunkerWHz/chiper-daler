@@ -86,6 +86,11 @@ enum UseVisualEffect {
 @export var equipped_texture: Texture2D
 ## Optional native-size hand visual. Author the grip at the scene origin.
 @export var equipped_visual: PackedScene
+## Local placement relative to the authored hand grip, in native rig units.
+@export var equipped_offset: Vector2 = Vector2.ZERO
+@export_range(-180.0, 180.0, 0.1) var equipped_rotation_degrees: float = 0.0
+## Uniform multiplier applied after the automatic equipment size limit.
+@export_range(0.01, 5.0, 0.01, "or_greater") var equipped_scale: float = 1.0
 @export_group("Category and rarity")
 @export var category: Category = Category.MATERIAL
 @export var rarity: Rarity = Rarity.COMMON

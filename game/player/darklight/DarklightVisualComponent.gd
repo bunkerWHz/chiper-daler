@@ -390,10 +390,12 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 		var shield_ratio := VISUAL_SIZING.shield_ratio(item)
 		var maximum := VISUAL_SIZING.body_height(actor) * (shield_ratio if shield_ratio > 0.0 else 1.0)
 		var visual_scale := VISUAL_SIZING.fit_scale(item.equipped_texture, maximum, shield_ratio > 0.0)
-		if shield_ratio > 0.0 or visual_scale < 1.0:
+		if shield_ratio > 0.0 or visual_scale < 1.0 or item.equipped_offset != Vector2.ZERO or item.equipped_rotation_degrees != 0.0 or item.equipped_scale != 1.0:
 			var holder := Node2D.new()
 			holder.name = "ItemVisual"
-			holder.scale = Vector2.ONE * visual_scale
+			holder.scale = Vector2.ONE * visual_scale * item.equipped_scale
+			holder.position = item.equipped_offset
+			holder.rotation_degrees = item.equipped_rotation_degrees
 			var sprite := Sprite2D.new()
 			sprite.texture = item.equipped_texture
 			if shield_ratio > 0.0:
@@ -417,8 +419,14 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 	if item.equipped_visual != null:
 		var visual := item.equipped_visual.instantiate()
 		if visual is Node2D:
-			hand.add_child(visual)
-			_hand_visuals[hand] = visual
+			var holder := Node2D.new()
+			holder.name = "ItemVisual"
+			holder.position = item.equipped_offset
+			holder.rotation_degrees = item.equipped_rotation_degrees
+			holder.scale = Vector2.ONE * item.equipped_scale
+			holder.add_child(visual)
+			hand.add_child(holder)
+			_hand_visuals[hand] = holder
 			return
 		visual.free()
 	hand.visible = false
