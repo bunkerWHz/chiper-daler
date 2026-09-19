@@ -163,10 +163,18 @@ The sample uses `Projectile Profile.texture` and the same size calculation as
 ThrownProjectile, including its untextured fallback. Its label reports visible
 width/height in world pixels. **Projectile Angle Degrees** rotates the sample
 for inspection; **Projectile Preview Position** moves it beside the hero.
-**Projectile Player Scale** defaults to the gameplay hero's 0.1: projectile size
-is converted to the native-size preview hero for an accurate comparison. Hand
-fitting scale/offset do not affect flight size. This is a static size comparison,
-not a trajectory or collision simulation; no item is consumed or changed.
+**Projectile Scale** changes flight size immediately; **Save projectile size to
+item** saves it to `Projectile Profile.visual_scale` for gameplay. Selecting an
+item or **Reload projectile size from item** loads its saved value. Saving makes
+the projectile profile local to that item, so shared profiles remain unchanged.
+**Refresh preview** rebuilds the sample after editing nested profile properties.
+**Projectile Player Scale** is only the reference gameplay hero scale (default
+0.1). For body-relative fitted textures, its effect cancels when converting to
+the native-size hero; the sample stays the same size while its world-pixel label
+changes. Use Projectile Scale to resize the projectile. Hand fitting scale/offset
+do not affect flight size. This is a static comparison, not a trajectory or
+collision simulation; no item is consumed. Flight sizing preserves the existing
+world-space hit radius and is applied before spawning.
 Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
 to verify editor-mode fitting, saving/reloading a disposable item, and clearing slots.
 

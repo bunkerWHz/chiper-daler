@@ -2,6 +2,8 @@ extends Resource
 class_name ItemProjectileProfile
 
 @export var texture: Texture2D
+## Uniform flight size multiplier after the automatic body-relative fit.
+@export_range(0.01, 5.0, 0.01, "or_greater") var visual_scale: float = 1.0
 ## Applied through the target's hurtbox after a damaging hit. Empty means no effects.
 @export var status_effects: Array[StatusEffect] = []
 ## Spin in degrees per second. Zero follows the flight direction without spinning.

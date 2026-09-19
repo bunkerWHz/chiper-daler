@@ -104,6 +104,17 @@ func _check() -> void:
 			return
 		if not _require(flight.get_child(0).scale == Vector2.ONE and is_equal_approx(flight.rotation_degrees, 150.0), "Native projectile sprite and left-facing angle"):
 			return
+	preview.projectile_scale = 2.0
+	await process_frame
+	await process_frame
+	var resized := preview.get_node("ProjectilePreview/FlightVisual") as Node2D
+	if not _require(is_equal_approx(resized.scale.x * 1000.0, 970.0 * 0.3 * 2.0), "Projectile Scale immediately changes the visible flight size"):
+		return
+	var resized_scale := resized.scale.x
+	preview.refresh_preview.call()
+	await process_frame
+	if not _require(is_equal_approx(preview.get_node("ProjectilePreview/FlightVisual").scale.x, resized_scale), "Explicit refresh preserves fitted size"):
+		return
 	preview._toggle_projectile()
 	await process_frame
 	if not _require(not preview.has_node("ProjectilePreview"), "Projectile button hides the sample"):
@@ -115,6 +126,20 @@ func _check() -> void:
 	await process_frame
 	if not _require(preview.get_node("ProjectilePreview/FlightVisual").get_child(0) is Polygon2D, "Untextured hand item uses the gameplay projectile fallback"):
 		return
+	var projectile_path := "res://.godot/fitting_projectile_test.tres"
+	var projectile_fixture := (load("res://game/items/throwables/TrainingStone.tres") as ItemData).duplicate(true) as ItemData
+	ResourceSaver.save(projectile_fixture, projectile_path)
+	preview.projectile_item = ResourceLoader.load(projectile_path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	preview.projectile_scale = 1.75
+	if not _require(preview._save_projectile_fit() == OK, "Save projectile size"):
+		return
+	var reloaded_projectile := ResourceLoader.load(projectile_path, "", ResourceLoader.CACHE_MODE_IGNORE) as ItemData
+	if not _require(reloaded_projectile.projectile_profile.visual_scale == 1.75, "Flight size persists in item profile"):
+		return
+	preview.projectile_item = reloaded_projectile
+	if not _require(preview.projectile_scale == 1.75, "Selecting the item loads its saved flight size"):
+		return
+	DirAccess.remove_absolute(projectile_path)
 	preview.free()
 	DirAccess.remove_absolute(fixture_path)
 	print("Equipment fitting preview checks passed; editor_hint=", Engine.is_editor_hint())

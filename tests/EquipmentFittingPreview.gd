@@ -30,6 +30,7 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		main_hand_item = value
 		_load_item_fit(true)
+		_load_projectile_fit()
 		_schedule_refresh()
 @export_range(0.01, 5.0, 0.01, "or_greater") var main_hand_scale: float = 1.0:
 	set(value):
@@ -51,6 +52,7 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		off_hand_item = value
 		_load_item_fit(false)
+		_load_projectile_fit()
 		_schedule_refresh()
 @export_range(0.01, 5.0, 0.01, "or_greater") var off_hand_scale: float = 1.0:
 	set(value):
@@ -73,6 +75,7 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 @export var projectile_item: ItemData:
 	set(value):
 		projectile_item = value
+		_load_projectile_fit()
 		show_projectile = value != null
 		_schedule_refresh()
 @export var show_projectile: bool = false:
@@ -80,6 +83,14 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 		show_projectile = value
 		_schedule_refresh()
 @export_tool_button("Show / hide projectile") var toggle_projectile = _toggle_projectile
+## Actual projectile size, saved to Projectile Profile.visual_scale for gameplay.
+@export_range(0.01, 5.0, 0.01, "or_greater") var projectile_scale: float = 1.0:
+	set(value):
+		projectile_scale = maxf(value, 0.01)
+		_schedule_refresh()
+@export_tool_button("Save projectile size to item") var save_projectile_size = _save_projectile_fit
+@export_tool_button("Reload projectile size from item") var reload_projectile_size = _load_projectile_fit
+@export_tool_button("Refresh preview") var refresh_preview = _schedule_refresh
 ## Move the frozen sample beside the hero for comparison, in native rig units.
 @export var projectile_preview_position := Vector2(650, 0):
 	set(value):
@@ -89,7 +100,8 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		projectile_angle_degrees = value
 		_schedule_refresh()
-## Match the gameplay Player root scale; the preview hero itself is native-size.
+## Reference hero scale, not a projectile size control. Body-relative sizes
+## remain visually constant beside the native-size hero. Use Projectile Scale.
 @export_range(0.01, 1.0, 0.01) var projectile_player_scale: float = 0.1:
 	set(value):
 		projectile_player_scale = value
@@ -122,6 +134,40 @@ func _toggle_projectile() -> void:
 	show_projectile = not show_projectile
 
 
+func _get_projectile_item() -> ItemData:
+	if projectile_item != null:
+		return projectile_item
+	for candidate: ItemData in [main_hand_item, off_hand_item]:
+		if candidate != null and candidate.projectile_profile != null:
+			return candidate
+	return null
+
+
+func _load_projectile_fit() -> void:
+	var item := _get_projectile_item()
+	projectile_scale = item.projectile_profile.visual_scale if item != null and item.projectile_profile != null else 1.0
+
+
+func _save_projectile_fit() -> Error:
+	var item := _get_projectile_item()
+	if item == null or item.projectile_profile == null or not item.resource_path.begins_with("res://") or not item.resource_path.ends_with(".tres") or item.is_built_in():
+		save_status = "Choose a saved item .tres with a Projectile Profile."
+		return ERR_INVALID_PARAMETER
+	# Localize the profile so saving one weapon cannot change a shared profile.
+	var saved := item.duplicate() as ItemData
+	saved.projectile_profile = item.projectile_profile.duplicate() as ItemProjectileProfile
+	saved.projectile_profile.visual_scale = projectile_scale
+	var error := ResourceSaver.save(saved, item.resource_path)
+	if error != OK:
+		save_status = "Save failed: " + error_string(error)
+		return error
+	item.projectile_profile = saved.projectile_profile
+	item.emit_changed()
+	save_status = "Projectile size saved: " + item.resource_path
+	notify_property_list_changed()
+	return OK
+
+
 func _update_projectile_preview() -> void:
 	var previous := get_node_or_null("ProjectilePreview")
 	if previous != null:
@@ -129,12 +175,7 @@ func _update_projectile_preview() -> void:
 		previous.queue_free()
 	if not show_projectile:
 		return
-	var item := projectile_item
-	if item == null:
-		for candidate: ItemData in [main_hand_item, off_hand_item]:
-			if candidate != null and candidate.projectile_profile != null:
-				item = candidate
-				break
+	var item := _get_projectile_item()
 	var sample := Node2D.new()
 	sample.name = "ProjectilePreview"
 	sample.position = projectile_preview_position * Vector2(-1.0 if face_left else 1.0, 1.0)
@@ -147,7 +188,7 @@ func _update_projectile_preview() -> void:
 		label.text = "Выберите Projectile Item\nс Projectile Profile."
 		return
 	var texture := item.projectile_profile.texture
-	var factor := SIZING.throwable_scale(texture, 970.0, projectile_player_scale)
+	var factor := SIZING.throwable_scale(texture, 970.0, projectile_player_scale, projectile_scale)
 	var visual := Node2D.new()
 	visual.name = "FlightVisual"
 	# Convert the world-sized projectile to the native-sized comparison hero.
@@ -170,7 +211,7 @@ func _update_projectile_preview() -> void:
 		fallback.color = Color(0.85, 0.75, 0.35)
 		visual.add_child(fallback)
 	var world_size := extent * factor
-	label.text = "%s — в полёте\n%.1f × %.1f игровых px\nУгол меняет только ракурс примерки" % [item.display_name, world_size.x, world_size.y]
+	label.text = "%s — в полёте\n%.1f × %.1f игровых px • размер ×%.2f\nРазмер: Projectile Scale → Save projectile size" % [item.display_name, world_size.x, world_size.y, projectile_scale]
 
 
 func _save_main_hand() -> void:
