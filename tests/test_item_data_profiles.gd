@@ -219,7 +219,7 @@ func test_offhand_batch_has_distinct_defensive_roles() -> void:
 	assert_eq(buckler.offhand_profile.family, ItemOffhandProfile.Family.BUCKLER)
 	assert_true(buckler.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(buckler.offhand_profile.parry_window_multiplier, 1.35)
-	assert_eq(greatshield.offhand_profile.family, ItemOffhandProfile.Family.GREATSHIELD)
+	assert_eq(greatshield.offhand_profile.family, ItemOffhandProfile.Family.TOWER)
 	assert_true(greatshield.has_offhand_action(ItemOffhandProfile.Action.GUARD))
 	assert_false(greatshield.has_offhand_action(ItemOffhandProfile.Action.PARRY))
 	assert_eq(greatshield.offhand_profile.block_damage_reduction, 0.75)

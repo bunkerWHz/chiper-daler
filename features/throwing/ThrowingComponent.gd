@@ -113,6 +113,7 @@ func _release_throwable() -> void:
 		cancel_throw()
 		return
 	var projectile := PROJECTILE_SCENE.instantiate() as ThrownProjectile
+	projectile.fit_throwable(actor, profile.texture)
 	actor.get_parent().add_child(projectile)
 	projectile.global_position = origin
 	projectile.setup_direction(actor, direction, profile.speed, profile.damage,

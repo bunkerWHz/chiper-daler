@@ -129,6 +129,27 @@ bone RemoteTransform2D attachments and animation targets. Their transforms,
 Assign `ItemData.equipped_texture` to replace only the native-size image.
 Inventory `icon` is separate and is not automatically used as weapon artwork.
 
+Oversized equipped textures are uniformly reduced on an ItemVisual child root;
+the Sprite2D stays at unit scale. Limits use visible alpha bounds and native body
+collision height (970), so actor root scaling also scales the equipment.
+Weapons/other equipped textures are capped at one body height on their longest
+side. Shields use height: Buckler 30%, Heater 60%, Tower 90%. The existing
+offhand family values 1/2/3 are preserved; Medium Shield/Greatshield are now named
+Heater/Tower. Smaller artwork is never enlarged. Authored equipped_visual scenes
+retain their own scene sizing.
+
+Each hand has a ShieldGrip Marker2D. Shield textures are centered there, ignoring
+the old bow/sword sprite offsets. OffHand's marker cancels the fixed 44-degree
+bow attachment offset while retaining animated wrist rotation and facing.
+Edit/key this marker for shield placement; keep the original hand attachment
+unchanged so bows and their aim continue to work.
+
+Thrown item textures use the same bounds calculation, capped at 30% of the
+thrower's world body height on the longest side at spawn. The projectile root
+is uniformly scaled before entering the scene tree; its native collision radius
+is adjusted to preserve the existing world hit radius. Speed/gravity remain in
+world units. Existing arrows and magic projectiles are unaffected.
+
 For a multipart visual, use the optional `ItemData.equipped_visual` Node2D scene
 instead. Its grip is at the scene origin; use its own Sprite2D offset/rotation for
 item-specific alignment. `equipped_texture` takes precedence when both are set.

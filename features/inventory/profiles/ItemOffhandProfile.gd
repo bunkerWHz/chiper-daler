@@ -4,8 +4,8 @@ class_name ItemOffhandProfile
 enum Family {
 	NONE,
 	BUCKLER,
-	MEDIUM_SHIELD,
-	GREATSHIELD,
+	HEATER,
+	TOWER,
 	CATALYST,
 	PARRYING_DAGGER,
 	TORCH,

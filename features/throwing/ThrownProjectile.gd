@@ -2,6 +2,7 @@ extends Area2D
 class_name ThrownProjectile
 
 const COMBAT_TARGETING := preload("res://features/combat/CombatTargeting.gd")
+const VISUAL_SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 
 var _source_actor: Actor
 var _velocity: Vector2
@@ -15,6 +16,21 @@ var _gravity: float = 0.0
 var _orient_to_velocity: bool = false
 var _rotation_speed: float = 0.0
 var _status_effects: Array[StatusEffect] = []
+
+
+## Called before entering the tree. Keep the existing world-space hit radius.
+func fit_throwable(source_actor: Actor, texture: Texture2D) -> void:
+	var maximum := VISUAL_SIZING.body_height(source_actor) * absf(source_actor.global_scale.y) * 0.3
+	var factor := VISUAL_SIZING.fit_scale(texture, maximum)
+	scale = Vector2.ONE * factor
+	var collision := get_node("CollisionShape2D") as CollisionShape2D
+	var circle := collision.shape.duplicate() as CircleShape2D
+	circle.radius /= factor
+	collision.shape = circle
+	if texture != null:
+		var sprite := get_node("ProjectileSprite") as Sprite2D
+		sprite.centered = false
+		sprite.offset = -VISUAL_SIZING.visible_rect(texture).get_center()
 
 
 func _ready() -> void:

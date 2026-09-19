@@ -1,6 +1,8 @@
 extends AnimationComponent
 class_name DarklightVisualComponent
 
+const VISUAL_SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
+
 @export_group("Bow aiming pose")
 @export_range(0.0, 1.0, 0.01) var bow_head_follow: float = 0.25
 @export_range(-90.0, 90.0, 0.1) var bow_shoulder_offset_degrees: float = 0.0
@@ -346,7 +348,7 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 	hand.set_meta(&"equipped_item", item)
 	var previous := _hand_visuals.get(hand) as Node
 	if is_instance_valid(previous):
-		hand.remove_child(previous)
+		previous.get_parent().remove_child(previous)
 		previous.queue_free()
 	_hand_visuals.erase(hand)
 	hand.texture = null
@@ -354,6 +356,31 @@ func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 	if item == null:
 		return
 	if item.equipped_texture != null:
+		var shield_ratio := VISUAL_SIZING.shield_ratio(item)
+		var maximum := VISUAL_SIZING.body_height(actor) * (shield_ratio if shield_ratio > 0.0 else 1.0)
+		var visual_scale := VISUAL_SIZING.fit_scale(item.equipped_texture, maximum, shield_ratio > 0.0)
+		if shield_ratio > 0.0 or visual_scale < 1.0:
+			var holder := Node2D.new()
+			holder.name = "ItemVisual"
+			holder.scale = Vector2.ONE * visual_scale
+			var sprite := Sprite2D.new()
+			sprite.texture = item.equipped_texture
+			if shield_ratio > 0.0:
+				# Center visible artwork on the dedicated, animated shield grip.
+				sprite.centered = false
+				var bounds := VISUAL_SIZING.visible_rect(item.equipped_texture)
+				sprite.offset = -bounds.get_center()
+			else:
+				sprite.centered = hand.centered
+				sprite.offset = hand.offset
+			holder.add_child(sprite)
+			var grip := hand.get_node_or_null("ShieldGrip") as Node2D
+			if shield_ratio > 0.0 and grip != null:
+				grip.add_child(holder)
+			else:
+				hand.add_child(holder)
+			_hand_visuals[hand] = holder
+			return
 		hand.texture = item.equipped_texture
 		return
 	if item.equipped_visual != null:
