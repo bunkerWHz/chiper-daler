@@ -133,6 +133,24 @@ Run `tests/darklight_cloak_check.gd` for weights, loop, anchoring and facing che
 
 ## Equipment
 
+### Editor fitting scene
+
+Open `tests/EquipmentFittingPreview.tscn` in the 2D editor; no game launch is
+needed. Select the root `EquipmentFittingPreview`. Drag item `.tres` resources
+into **MainHand Item** / **OffHand Item** (these select visual hands directly;
+put bows in OffHand). Adjust each hand's **Scale**, **Offset**, and **Rotation
+Degrees**. Scale 1 uses gameplay texture sizing, including shield height limits.
+Sprites retain unit scale; the temporary item's root carries uniform sizing.
+Offsets use native rig units. The rig is shown at native size for authoring.
+
+**Animation** selects an authored pose, **Pose Time** scrubs it in seconds,
+and **Face Left** mirrors the complete visual rig. Empty item slots hide that
+hand's equipment. Texture and `equipped_visual` scene items are both supported.
+Save the preview scene to retain a fitting setup. These adjustments are only a
+preview: they do not write item resources or alter gameplay equipment sizing.
+Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
+to verify editor-mode item placement, sizing, pose selection, and clearing slots.
+
 The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing
 bone RemoteTransform2D attachments and animation targets. Their transforms,
 `centered` and `offset` are authored in the rig and are never changed by equipment.

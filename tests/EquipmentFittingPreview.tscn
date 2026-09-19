@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://tests/EquipmentFittingPreview.gd" id="1"]
+[ext_resource type="Resource" path="res://game/items/weapons/TrainingKatana.tres" id="2"]
+[ext_resource type="Resource" path="res://game/items/offhand/TrainingBuckler.tres" id="3"]
+
+[node name="EquipmentFittingPreview" type="Node2D"]
+script = ExtResource("1")
+main_hand_item = ExtResource("2")
+off_hand_item = ExtResource("3")
+
+[node name="Instructions" type="Label" parent="."]
+offset_left = -650.0
+offset_top = -850.0
+offset_right = 650.0
+offset_bottom = -640.0
+theme_override_font_sizes/font_size = 30
+text = "ПРИМЕРКА ЭКИПИРОВКИ — В РЕДАКТОРЕ 2D
+Выберите EquipmentFittingPreview → Inspector.
+MainHand / OffHand: перетащите .tres предмета, настройте Scale.
+Pose: выберите Animation, Pose Time и Face Left.
+Scale = 1 — игровой размер. Настройки примерки хранятся только здесь."
+mouse_filter = 2
