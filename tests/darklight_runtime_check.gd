@@ -78,7 +78,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(not body.is_on_floor(), "Existing jump must work with the native rig scale")
-	var cloth := rig.get_node("CharacterContainer/VisualDetails/Cloak/WindAnimation") as AnimationPlayer
+	var cloth := rig.get_node("CharacterContainer/VisualDetails/Cloak/CloakAnimation") as AnimationPlayer
 	_check(cloth.current_animation == &"jump", "Ascending must tuck the cloak")
 	_check(state.get_state() in [ActorState.Behavior.JUMP, ActorState.Behavior.DOUBLE_JUMP], "Jump must be resolved by the current FSM: " + ActorState.get_behavior_name(state.get_state()))
 	var saw_falling_cloak := false

@@ -73,7 +73,7 @@ func _ready() -> void:
 	if not is_enabled:
 		return
 	_rig = actor.get_node("_Visual/DarklightRig") as Node2D
-	_cloak_animation = _rig.get_node("CharacterContainer/VisualDetails/Cloak/WindAnimation") as AnimationPlayer
+	_cloak_animation = _rig.get_node("CharacterContainer/VisualDetails/Cloak/CloakAnimation") as AnimationPlayer
 	_cloak_body = actor.get_component(CharacterBodyComponent) as CharacterBodyComponent
 	_aim = actor.get_component(AimingComponent) as AimingComponent
 	if _aim != null and not _aim.launch_position_requested.is_connected(_sync_bow_launch_origin):

@@ -11,7 +11,7 @@ func _run() -> void:
 	rig.position = Vector2(600, 400)
 	rig.scale = Vector2(0.65, 0.65)
 	var cloak := rig.get_node("CharacterContainer/VisualDetails/Cloak")
-	var wind := cloak.get_node("WindAnimation") as AnimationPlayer
+	var wind := cloak.get_node("CloakAnimation") as AnimationPlayer
 	var fabric := cloak.get_node("Fabric") as Polygon2D
 	var anchor := cloak.get_node("Skeleton2D/Anchor") as Bone2D
 	var hem := anchor.get_node("Upper/Middle/Hem") as Bone2D
