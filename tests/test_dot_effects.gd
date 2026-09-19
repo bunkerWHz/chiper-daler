@@ -126,6 +126,43 @@ func test_invalid_parameters_and_missing_health_are_rejected() -> void:
 	assert_false(dot.is_valid())
 
 
+func test_throwable_profile_effects_reach_target_and_respect_damage_gate() -> void:
+	assert_true(ItemProjectileProfile.new().status_effects.is_empty())
+	for mode: String in ["poison", "empty", "zero_damage", "lethal"]:
+		var s := preload("res://tests/AimingTestFactory.gd").create()
+		track(s.root)
+		var item := s.inventory.get_item_data(&"training_stone") as ItemData
+		var original := item.projectile_profile
+		var profile := original.duplicate() as ItemProjectileProfile
+		profile.damage = 0.0 if mode == "zero_damage" else 10.0
+		profile.status_effects.clear()
+		if mode != "empty":
+			profile.status_effects.assign([_dot(&"poison"), _dot(&"burning")])
+		item.projectile_profile = profile
+		s.input._interact_pressed = true
+		s.input._interact_released = true
+		s.throwing._process(0.0)
+		item.projectile_profile = original
+		var projectile := s.root.get_child(1) as ThrownProjectile
+		# Editing the source list after launch must not change this projectile's effects.
+		profile.status_effects.clear()
+		var target := _target(5.0 if mode == "lethal" else 100.0)
+		var hurtbox := target.get_component(HurtboxComponent) as HurtboxComponent
+		var area := Area2D.new()
+		hurtbox.add_child(area)
+		var effects := target.get_component(StatusEffectComponent) as StatusEffectComponent
+		var health := target.get_component(HealthComponent) as HealthComponent
+		effects.dot_resistances.set_percent(&"poison", 40.0)
+		projectile._on_area_entered(area)
+		projectile._on_area_entered(area)
+		assert_eq(effects.has_effect(&"poison"), mode == "poison")
+		assert_eq(effects.has_effect(&"burning"), mode == "poison")
+		var immediate := 0.0 if mode == "lethal" else (100.0 if mode == "zero_damage" else 90.0)
+		assert_eq(health.get_current_health(), immediate)
+		effects._process(1.0)
+		assert_eq(health.get_current_health(), immediate - 8.0 if mode == "poison" else immediate)
+
+
 func test_tick_handler_can_clear_effects() -> void:
 	var target := _target()
 	var effects := target.get_component(StatusEffectComponent) as StatusEffectComponent

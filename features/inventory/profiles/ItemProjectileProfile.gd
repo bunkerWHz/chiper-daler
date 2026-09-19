@@ -2,6 +2,8 @@ extends Resource
 class_name ItemProjectileProfile
 
 @export var texture: Texture2D
+## Applied through the target's hurtbox after a damaging hit. Empty means no effects.
+@export var status_effects: Array[StatusEffect] = []
 ## Spin in degrees per second. Zero follows the flight direction without spinning.
 @export_range(-3600.0, 3600.0, 1.0, "or_less", "or_greater", "suffix:°/s") var rotation_speed: float = 0.0
 @export_range(1.0, 3000.0) var speed: float = 520.0

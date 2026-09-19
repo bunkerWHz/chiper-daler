@@ -14,6 +14,7 @@ var _projectile_sprite: Sprite2D
 var _gravity: float = 0.0
 var _orient_to_velocity: bool = false
 var _rotation_speed: float = 0.0
+var _status_effects: Array[StatusEffect] = []
 
 
 func _ready() -> void:
@@ -69,12 +70,14 @@ func _physics_process(delta: float) -> void:
 func setup_direction(
 	source_actor: Actor, direction: Vector2, speed: float, damage: float,
 	knockback: float, lifetime: float, visual_texture: Texture2D = null,
-	projectile_gravity: float = 0.0, projectile_rotation_speed: float = 0.0
+	projectile_gravity: float = 0.0, projectile_rotation_speed: float = 0.0,
+	projectile_status_effects: Array[StatusEffect] = []
 ) -> void:
 	setup(source_actor, 1.0, speed, damage, knockback, lifetime, visual_texture)
 	_velocity = direction.normalized() * speed
 	_gravity = projectile_gravity
 	_rotation_speed = deg_to_rad(projectile_rotation_speed)
+	_status_effects = projectile_status_effects.duplicate()
 	_orient_to_velocity = true
 	rotation = direction.angle()
 
@@ -96,11 +99,13 @@ func _on_area_entered(area: Area2D) -> void:
 	# hostile target is allowed to receive this projectile.
 	_has_hit = true
 	var direction := signf(_velocity.x)
-	hurtbox.receive_hit(HitData.new(
+	var hit := HitData.new(
 		_damage,
 		_source_actor,
 		Vector2(direction * _knockback, -_knockback * 0.35)
-	))
+	)
+	hit.status_effects = _status_effects
+	hurtbox.receive_hit(hit)
 	queue_free()
 
 
