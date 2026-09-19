@@ -3730,11 +3730,10 @@ texture = ExtResource("18_3q2d0")
 offset = Vector2(-17, -31)
 
 [node name="ShieldGrip" type="Marker2D" parent="CharacterContainer/VisualDetails/OffHand"]
-z_index = 10
+z_index = 5
 rotation = -0.7690259
 
 [node name="ShieldGrip" type="Marker2D" parent="CharacterContainer/VisualDetails/MainHand"]
-z_index = 10
 
 [node name="Skeleton2D" type="Skeleton2D" parent="CharacterContainer" unique_id=1431504021]
 
