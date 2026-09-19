@@ -14,6 +14,14 @@ func _check() -> void:
 	root.add_child(preview)
 	await process_frame
 	await process_frame
+	# Inspector buttons must remain callable after an actual tool-script reload.
+	var script := preview.get_script() as Script
+	if not _require(script.reload(true) == OK, "Reload fitting tool script"):
+		return
+	for button: StringName in [&"save_main_hand", &"reload_main_hand", &"save_off_hand", &"reload_off_hand", &"toggle_projectile", &"save_projectile_size", &"reload_projectile_size", &"refresh_preview"]:
+		var callback: Variant = preview.get(button)
+		if not _require(callback is Callable and callback.is_valid(), "Inspector callback after reload: " + str(button)):
+			return
 	var rig := preview.get_node("FittingRig")
 	# Save only a disposable fixture; never overwrite the player's real items.
 	var fixture_path := "res://.godot/fitting_item_test.tres"
@@ -131,7 +139,7 @@ func _check() -> void:
 	ResourceSaver.save(projectile_fixture, projectile_path)
 	preview.projectile_item = ResourceLoader.load(projectile_path, "", ResourceLoader.CACHE_MODE_IGNORE)
 	preview.projectile_scale = 1.75
-	if not _require(preview._save_projectile_fit() == OK, "Save projectile size"):
+	if not _require(preview.save_projectile_size.call() == OK, "Save projectile size through Inspector callback"):
 		return
 	var reloaded_projectile := ResourceLoader.load(projectile_path, "", ResourceLoader.CACHE_MODE_IGNORE) as ItemData
 	if not _require(reloaded_projectile.projectile_profile.visual_scale == 1.75, "Flight size persists in item profile"):

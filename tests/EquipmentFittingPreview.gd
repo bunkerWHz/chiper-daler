@@ -44,8 +44,12 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		main_hand_rotation_degrees = value
 		_schedule_refresh()
-@export_tool_button("Save MainHand to item") var save_main_hand = _save_main_hand
-@export_tool_button("Reload MainHand from item") var reload_main_hand = _load_item_fit.bind(true)
+# Compute button callbacks on access: editor hot reload can restore Nil into
+# ordinary initialized fields when new buttons are added to an open scene.
+@export_tool_button("Save MainHand to item") var save_main_hand: Callable:
+	get: return _save_main_hand
+@export_tool_button("Reload MainHand from item") var reload_main_hand: Callable:
+	get: return _load_item_fit.bind(true)
 
 @export_group("OffHand")
 @export var off_hand_item: ItemData:
@@ -66,8 +70,10 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		off_hand_rotation_degrees = value
 		_schedule_refresh()
-@export_tool_button("Save OffHand to item") var save_off_hand = _save_off_hand
-@export_tool_button("Reload OffHand from item") var reload_off_hand = _load_item_fit.bind(false)
+@export_tool_button("Save OffHand to item") var save_off_hand: Callable:
+	get: return _save_off_hand
+@export_tool_button("Reload OffHand from item") var reload_off_hand: Callable:
+	get: return _load_item_fit.bind(false)
 
 @export_group("Projectile in flight")
 ## Uses Projectile Profile.texture, not the equipped hand texture.
@@ -82,15 +88,19 @@ const SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 	set(value):
 		show_projectile = value
 		_schedule_refresh()
-@export_tool_button("Show / hide projectile") var toggle_projectile = _toggle_projectile
+@export_tool_button("Show / hide projectile") var toggle_projectile: Callable:
+	get: return _toggle_projectile
 ## Actual projectile size, saved to Projectile Profile.visual_scale for gameplay.
 @export_range(0.01, 5.0, 0.01, "or_greater") var projectile_scale: float = 1.0:
 	set(value):
 		projectile_scale = maxf(value, 0.01)
 		_schedule_refresh()
-@export_tool_button("Save projectile size to item") var save_projectile_size = _save_projectile_fit
-@export_tool_button("Reload projectile size from item") var reload_projectile_size = _load_projectile_fit
-@export_tool_button("Refresh preview") var refresh_preview = _schedule_refresh
+@export_tool_button("Save projectile size to item") var save_projectile_size: Callable:
+	get: return _save_projectile_fit
+@export_tool_button("Reload projectile size from item") var reload_projectile_size: Callable:
+	get: return _load_projectile_fit
+@export_tool_button("Refresh preview") var refresh_preview: Callable:
+	get: return _schedule_refresh
 ## Move the frozen sample beside the hero for comparison, in native rig units.
 @export var projectile_preview_position := Vector2(650, 0):
 	set(value):
