@@ -20,8 +20,9 @@ preserved. The rig is authored at native size; its standalone root is unit scale
 
 `DarklightVisualComponent` listens to `ActorStateComponent.state_changed` and
 `FacingComponent.facing_changed`. Run, jump, fall, wall jump, dodge, block, light
-and heavy ground/air attacks use the corresponding source clips. Attack and
-dodge playback speeds follow the existing gameplay action durations. Animation
+and heavy ground/air attacks use the corresponding source clips. Melee attacks
+play at authored speed; AttackComponent samples the next variant's duration before
+starting the swing and owns its timer. Dodge follows the gameplay duration. Animation
 does not activate hitboxes, spend stamina or change FSM state.
 
 Melee clips cycle independently per family: `attack`, `heavy_attack`,
@@ -31,8 +32,9 @@ automatically in numeric order (gaps are allowed), then wrap to the base clip.
 Idle, movement and other attack families do not reset the sequence. Each player
 starts with the base clips. A started, interrupted swing still consumes its variant;
 windup and rejected inputs do not. Critical attacks keep the base `attack` pose
-without advancing the light sequence. Every variant fits the gameplay attack
-duration, regardless of its authored clip length.
+without advancing the light sequence. Each regular swing lasts for its selected
+clip's authored duration, including airborne variants. Duration queries do not
+advance the sequence; interrupted swings still consume their selected variant.
 
 Before switching clips the adapter applies RESET, because the source's attack
 clips key only the arms. RESET no longer targets the old character controller,

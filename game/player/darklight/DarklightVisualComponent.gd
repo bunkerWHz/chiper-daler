@@ -89,6 +89,8 @@ func _ready() -> void:
 	# Apply the dynamic pose after animation and SoupIK/FK evaluation.
 	process_priority = 2
 	_animation_player = _rig.get_node("AnimationPlayer") as AnimationPlayer
+	var attack := actor.get_component(AttackComponent) as AttackComponent
+	attack.attack_duration_provider = _get_authored_attack_duration
 	_main_hand = _rig.get_node("CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
 	_off_hand = _rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	_quiver = _rig.get_node("CharacterContainer/VisualDetails/Arrows") as Sprite2D
@@ -132,11 +134,7 @@ func _play_animation(animation_name: StringName) -> void:
 	_animation_player.advance(0.0)
 	_refresh_equipment_visuals()
 	var speed := 1.0
-	if attack_family in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
-		var attack := actor.get_component(AttackComponent) as AttackComponent
-		var heavy := attack_family in [&"heavy_attack", &"air_heavy_attack"]
-		speed = _animation_player.get_animation(animation_name).length / attack.get_attack_duration(heavy)
-	elif animation_name == &"drink":
+	if animation_name == &"drink":
 		speed = _animation_player.get_animation(animation_name).length / _item_use.config.use_duration
 	elif animation_name == &"dodge":
 		var dodge := actor.get_component(DodgeComponent) as DodgeComponent
@@ -152,7 +150,14 @@ func _play_animation(animation_name: StringName) -> void:
 		_animation_player.pause()
 
 
-func _next_attack_animation(family: StringName) -> StringName:
+func _get_authored_attack_duration(heavy: bool, airborne: bool) -> float:
+	var family: StringName = &"heavy_attack" if heavy else &"attack"
+	if airborne:
+		family = &"air_heavy_attack" if heavy else &"air_attack"
+	return _animation_player.get_animation(_next_attack_animation(family, false)).length
+
+
+func _next_attack_animation(family: StringName, consume: bool = true) -> StringName:
 	var variants: Array[String] = [String(family)]
 	var prefix := String(family) + "_"
 	for clip: String in _animation_player.get_animation_list():
@@ -163,7 +168,8 @@ func _next_attack_animation(family: StringName) -> StringName:
 			variants.append(clip)
 	variants.sort_custom(func(a: String, b: String) -> bool: return a.naturalnocasecmp_to(b) < 0)
 	var index := int(_attack_variant_indices.get(family, 0)) % variants.size()
-	_attack_variant_indices[family] = (index + 1) % variants.size()
+	if consume:
+		_attack_variant_indices[family] = (index + 1) % variants.size()
 	return StringName(variants[index])
 
 

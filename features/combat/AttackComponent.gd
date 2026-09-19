@@ -44,6 +44,9 @@ var _attack_started_airborne: bool = false
 var _landing_recovery_timer: float = 0.0
 var _damage_window_open: bool = false
 var _timing_player: AnimationPlayer
+## Optional presentation clip duration, queried once before a swing starts.
+var attack_duration_provider: Callable
+var _started_attack_duration: float = 0.0
 
 
 func on_initialize() -> void:
@@ -208,8 +211,14 @@ func is_attacking() -> bool:
 
 
 func get_attack_duration(heavy: bool = false) -> float:
+	if is_attacking() and heavy == _is_heavy_attack:
+		return _started_attack_duration
 	if _timing_player != null:
 		return _timing_player.get_animation(timing_clip).length
+	if attack_duration_provider.is_valid():
+		var duration: float = attack_duration_provider.call(heavy, _attack_started_airborne)
+		if is_finite(duration) and duration > 0.0:
+			return duration
 	return config.heavy_active_duration if heavy else config.active_duration
 
 
@@ -339,7 +348,8 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 	_charge_timer = 0.0
 	_is_heavy_attack = heavy
 	_attack_started_airborne = started_airborne
-	_active_timer = get_attack_duration(heavy)
+	_started_attack_duration = get_attack_duration(heavy)
+	_active_timer = _started_attack_duration
 	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
 	var equipped_damage := _get_equipped_melee_damage()
 	_hitbox_component.set_reach_multiplier(

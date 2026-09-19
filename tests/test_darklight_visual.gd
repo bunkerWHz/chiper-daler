@@ -42,12 +42,23 @@ func test_started_attacks_advance_but_rejected_attacks_do_not() -> void:
 	if not library.has_animation(&"heavy_attack_2"):
 		library.add_animation(&"heavy_attack_2", library.get_animation(&"heavy_attack").duplicate())
 	for expected: StringName in [&"heavy_attack", &"heavy_attack_2", &"heavy_attack"]:
+		var duration := library.get_animation(expected).length
+		assert_true(is_equal_approx(attack.get_attack_duration(true), duration))
+		assert_true(is_equal_approx(attack.get_attack_duration(true), duration))
 		assert_true(attack._start_attack(true, false))
 		state.refresh_state()
 		assert_eq(visual.get_animation_player().current_animation, expected)
+		assert_true(is_equal_approx(animation.get_playing_speed(), 1.0))
+		assert_true(is_equal_approx(attack.get_attack_duration(true), duration))
 		assert_false(attack._start_attack(true, false))
 		state.refresh_state()
 		assert_eq(visual.get_animation_player().current_animation, expected)
+		attack._process(duration - 0.01)
+		state.refresh_state()
+		assert_true(attack.is_attacking())
+		assert_eq(animation.current_animation, expected)
+		attack._process(0.02)
+		assert_false(attack.is_attacking())
 		attack._process(10.0)
 		state.refresh_state()
 
@@ -76,17 +87,32 @@ func test_melee_variants_cycle_independently_in_numeric_order() -> void:
 		[ActorState.Behavior.GROUND_LIGHT_ATTACK, &"attack"],
 		[ActorState.Behavior.GROUND_HEAVY_ATTACK, &"heavy_attack"],
 	]
-	var attack := (setup.player as Actor).get_component(AttackComponent) as AttackComponent
 	for entry: Array in attacks:
 		visual._apply_state(ActorState.Behavior.IDLE)
 		visual._apply_state(entry[0])
 		assert_eq(animation.current_animation, entry[1])
-		var heavy: bool = entry[0] == ActorState.Behavior.GROUND_HEAVY_ATTACK
-		assert_true(is_equal_approx(animation.get_animation(entry[1]).length / animation.get_playing_speed(), attack.get_attack_duration(heavy)))
+		assert_true(is_equal_approx(animation.get_playing_speed(), 1.0))
 		# Repeated state updates and facing changes must not consume another variant.
 		visual._apply_state(entry[0])
 		visual._apply_facing(FacingComponent.Direction.LEFT)
 		assert_eq(animation.current_animation, entry[1])
+
+
+func test_authored_melee_clips_include_all_keys_and_drive_airborne_duration() -> void:
+	var setup := _create_player_visual()
+	var visual := setup.visual as DarklightVisualComponent
+	var animation := visual.get_animation_player()
+	for family: StringName in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
+		var clip := animation.get_animation(family)
+		for track_index in clip.get_track_count():
+			for key_index in clip.track_get_key_count(track_index):
+				assert_true(clip.track_get_key_time(track_index, key_index) <= clip.length + 0.00001)
+	var attack := (setup.player as Actor).get_component(AttackComponent) as AttackComponent
+	for heavy: bool in [false, true]:
+		var family: StringName = &"air_heavy_attack" if heavy else &"air_attack"
+		assert_true(attack._start_attack(heavy, true))
+		assert_true(is_equal_approx(attack.get_attack_duration(heavy), animation.get_animation(family).length))
+		attack._process(10.0)
 
 
 func test_bow_shots_and_indicator_use_grip_before_pose_reset() -> void:
