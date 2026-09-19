@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="3_equipment"]
 [ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="4_weapon"]
 [ext_resource type="Texture2D" uid="uid://c6dsefk14mp1b" path="res://assets/Characters/Darklight/equipment/SwordIcon.png" id="darklight_icon"]
-[ext_resource type="Texture2D" path="res://assets/Characters/Darklight/equipment/Sword.png" id="darklight_texture"]
+[ext_resource type="Texture2D" uid="uid://blecoiaifln7s" path="res://assets/Characters/Darklight/equipment/Sword.png" id="darklight_texture"]
 
 [sub_resource type="Resource" id="ItemStats_katana"]
 script = ExtResource("2_stats")

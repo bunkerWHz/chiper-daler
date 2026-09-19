@@ -13,8 +13,8 @@ damage = 13.0
 [sub_resource type="Resource" id="ItemEquipmentProfile_crossbow"]
 script = ExtResource("3_equipment")
 allowed_slots = Array[int]([1])
-display_slot = 2
 stats = SubResource("ItemStats_crossbow")
+display_slot = 2
 
 [sub_resource type="Resource" id="Resource_y56ms"]
 script = ExtResource("4_idn2e")

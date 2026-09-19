@@ -1,23 +1,22 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bfrxrvcf4iicf"]
 
-[ext_resource type="Script" path="res://game/player/player.gd" id="1_wv0h6"]
-[ext_resource type="PackedScene" path="res://features/aiming/AimingComponent.tscn" id="aiming"]
-[ext_resource type="PackedScene" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
-[ext_resource type="Script" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
-[ext_resource type="PackedScene" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
+[ext_resource type="Script" uid="uid://oxt258x2k4xp" path="res://game/player/player.gd" id="1_wv0h6"]
+[ext_resource type="PackedScene" uid="uid://b7twfe0a5fcbt" path="res://features/movement/MovementComponent.tscn" id="2_r5dqo"]
+[ext_resource type="Script" uid="uid://b8d0ic1ruenbv" path="res://features/movement/MovementConfig.gd" id="3_38lxl"]
+[ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 [ext_resource type="PackedScene" path="res://game/player/darklight/DarklightVisualComponent.tscn" id="6_lg056"]
-[ext_resource type="PackedScene" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
-[ext_resource type="Script" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
-[ext_resource type="Script" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
-[ext_resource type="Script" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
-[ext_resource type="Script" path="res://framework/components/FacingComponent.gd" id="10_facing"]
+[ext_resource type="PackedScene" uid="uid://bw1a5wx3lqx60" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
+[ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
+[ext_resource type="Script" uid="uid://bcwnhbaqj47sg" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
+[ext_resource type="Script" uid="uid://cuofhl2p3ogcx" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
+[ext_resource type="Script" uid="uid://df5k1rqt7k0ak" path="res://framework/components/FacingComponent.gd" id="10_facing"]
 [ext_resource type="PackedScene" path="res://features/health/HealthComponent.tscn" id="11_health"]
 [ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="12_hurtbox"]
 [ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="13_hitbox"]
 [ext_resource type="PackedScene" path="res://framework/debug/DebugOverlayComponent.tscn" id="14_debug"]
 [ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="15_attack"]
 [ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="16_death"]
-[ext_resource type="Script" path="res://features/health/DeathConfig.gd" id="17_death_config"]
+[ext_resource type="Script" uid="uid://dnnbfjy6bbcdk" path="res://features/health/DeathConfig.gd" id="17_death_config"]
 [ext_resource type="PackedScene" path="res://features/player/PlayerRespawnComponent.tscn" id="18_respawn"]
 [ext_resource type="PackedScene" path="res://features/combat/DamageNumberComponent.tscn" id="19_damage_number"]
 [ext_resource type="PackedScene" path="res://features/combat/InvulnerabilityComponent.tscn" id="20_invulnerability"]
@@ -28,14 +27,12 @@
 [ext_resource type="PackedScene" path="res://features/combat/CombatFactionComponent.tscn" id="25_faction"]
 [ext_resource type="PackedScene" path="res://features/combat/GuardComponent.tscn" id="26_guard"]
 [ext_resource type="PackedScene" path="res://features/combat/BlockReactionComponent.tscn" id="27_block_reaction"]
-[ext_resource type="Script" path="res://features/movement/JumpReachPreview.gd" id="28_jump_preview"]
+[ext_resource type="Script" uid="uid://k8gi8p2l8mqi" path="res://framework/camera/CameraConfig.gd" id="27_y3r3g"]
+[ext_resource type="Script" uid="uid://bn150anedbus8" path="res://features/movement/JumpReachPreview.gd" id="28_jump_preview"]
 [ext_resource type="PackedScene" path="res://features/state/ActorStateComponent.tscn" id="29_actor_state"]
 [ext_resource type="PackedScene" path="res://features/movement/DodgeComponent.tscn" id="30_dodge"]
 [ext_resource type="PackedScene" path="res://features/movement/ClimbingComponent.tscn" id="31_climbing"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentComponent.tscn" id="32_equipment"]
-[ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
-[ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]
-[ext_resource type="PackedScene" path="res://features/equipment/ui/EquipmentSwapView.tscn" id="equipment_swap_view"]
 [ext_resource type="PackedScene" path="res://features/items/ItemUseComponent.tscn" id="33_item_use"]
 [ext_resource type="PackedScene" path="res://features/throwing/ThrowingComponent.tscn" id="34_throwing"]
 [ext_resource type="PackedScene" path="res://features/ranged/RangedWeaponComponent.tscn" id="35_ranged"]
@@ -45,15 +42,25 @@
 [ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="39_status"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryComponent.tscn" id="40_inventory"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessComponent.tscn" id="41_quick_access"]
-[ext_resource type="PackedScene" path="res://features/inventory/InventoryMenuComponent.tscn" id="42_inventory_menu"]
+[ext_resource type="PackedScene" uid="uid://c5e1m0b5hndrn" path="res://features/inventory/InventoryMenuComponent.tscn" id="42_inventory_menu"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryDropComponent.tscn" id="43_inventory_drop"]
 [ext_resource type="PackedScene" path="res://features/stats/CharacterAttributesComponent.tscn" id="44_attributes"]
+[ext_resource type="Resource" path="res://game/status/DotCatalog.tres" id="44_f76ou"]
+[ext_resource type="Script" uid="uid://tl6w7avwaijp" path="res://features/status/DotResistances.gd" id="45_4dtle"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentDefenseComponent.tscn" id="45_equipment_defense"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessHUDComponent.tscn" id="46_quick_hud"]
 [ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
 [ext_resource type="PackedScene" path="res://features/stamina/StaminaComponent.tscn" id="48_stamina"]
 [ext_resource type="PackedScene" path="res://features/player/ViewportFallDeathComponent.tscn" id="49_fall_death"]
-[ext_resource type="PackedScene" path="res://game/player/darklight/DarklightRig.tscn" id="51_animation_player"]
+[ext_resource type="PackedScene" uid="uid://biwv0rejp7nuf" path="res://game/player/darklight/DarklightRig.tscn" id="51_animation_player"]
+[ext_resource type="PackedScene" path="res://features/aiming/AimingComponent.tscn" id="aiming"]
+[ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
+[ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]
+[ext_resource type="PackedScene" path="res://features/equipment/ui/EquipmentSwapView.tscn" id="equipment_swap_view"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y3r3g"]
+resource_local_to_scene = true
+size = Vector2(412, 970)
 
 [sub_resource type="Resource" id="Resource_lg056"]
 script = ExtResource("3_38lxl")
@@ -64,17 +71,23 @@ script = ExtResource("17_death_config")
 duration = 0.4
 remove_actor_on_finish = false
 
-[sub_resource type="RectangleShape2D" id="NativePlayerBodyShape"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f76ou"]
 resource_local_to_scene = true
 size = Vector2(412, 970)
 
-[sub_resource type="RectangleShape2D" id="NativePlayerHurtShape"]
-resource_local_to_scene = true
-size = Vector2(412, 970)
-
-[sub_resource type="RectangleShape2D" id="NativePlayerHitShape"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4dtle"]
 resource_local_to_scene = true
 size = Vector2(500, 500)
+
+[sub_resource type="Resource" id="Resource_wwqa4"]
+script = ExtResource("27_y3r3g")
+position_smoothing_speed = 3.0
+zoom = Vector2(2, 2)
+metadata/_custom_type_script = "uid://k8gi8p2l8mqi"
+
+[sub_resource type="Resource" id="Resource_k60nk"]
+resource_local_to_scene = true
+script = ExtResource("45_4dtle")
 
 [node name="Player" type="Node2D" unique_id=2130954343]
 scale = Vector2(0.1, 0.1)
@@ -82,60 +95,71 @@ script = ExtResource("1_wv0h6")
 
 [node name="_Components" type="Node2D" parent="." unique_id=939943652]
 
-[node name="AimingComponent" parent="_Components" instance=ExtResource("aiming")]
+[node name="AimingComponent" parent="_Components" unique_id=1432770723 instance=ExtResource("aiming")]
 
-[node name="CombatFactionComponent" parent="_Components" instance=ExtResource("25_faction")]
+[node name="CombatFactionComponent" parent="_Components" unique_id=1818155991 instance=ExtResource("25_faction")]
 faction = 1
 
 [node name="CharacterBodyComponent" parent="_Components" unique_id=945165399 instance=ExtResource("3_e8u23")]
 collision_layer = 8
-collision_mask = 1
+
+[node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" parent_id_path=PackedInt32Array(945165399, 902119216) index="0" unique_id=850418791]
+position = Vector2(0, -250)
+shape = SubResource("RectangleShape2D_y3r3g")
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")
 
-[node name="DodgeComponent" parent="_Components" instance=ExtResource("30_dodge")]
+[node name="DodgeComponent" parent="_Components" unique_id=1527168314 instance=ExtResource("30_dodge")]
 
-[node name="ClimbingComponent" parent="_Components" instance=ExtResource("31_climbing")]
+[node name="ClimbingComponent" parent="_Components" unique_id=2126546747 instance=ExtResource("31_climbing")]
 
-[node name="KnockbackComponent" parent="_Components" instance=ExtResource("21_knockback")]
+[node name="KnockbackComponent" parent="_Components" unique_id=349156904 instance=ExtResource("21_knockback")]
 
-[node name="HitStunComponent" parent="_Components" instance=ExtResource("24_hit_stun")]
+[node name="HitStunComponent" parent="_Components" unique_id=481814248 instance=ExtResource("24_hit_stun")]
 
 [node name="HealthComponent" parent="_Components" unique_id=1127726964 instance=ExtResource("11_health")]
 
-[node name="DamageNumberComponent" parent="_Components" instance=ExtResource("19_damage_number")]
+[node name="DamageNumberComponent" parent="_Components" unique_id=1278656075 instance=ExtResource("19_damage_number")]
 
-[node name="InvulnerabilityComponent" parent="_Components" instance=ExtResource("20_invulnerability")]
+[node name="InvulnerabilityComponent" parent="_Components" unique_id=301986171 instance=ExtResource("20_invulnerability")]
 
-[node name="PlayerRespawnComponent" parent="_Components" instance=ExtResource("18_respawn")]
+[node name="PlayerRespawnComponent" parent="_Components" unique_id=853184010 instance=ExtResource("18_respawn")]
 
-[node name="ViewportFallDeathComponent" parent="_Components" instance=ExtResource("49_fall_death")]
+[node name="ViewportFallDeathComponent" parent="_Components" unique_id=644570334 instance=ExtResource("49_fall_death")]
 
-[node name="DeathComponent" parent="_Components" instance=ExtResource("16_death")]
+[node name="DeathComponent" parent="_Components" unique_id=983322727 instance=ExtResource("16_death")]
 config = SubResource("DeathConfig_player")
 
 [node name="HurtboxComponent" parent="_Components" unique_id=390170658 instance=ExtResource("12_hurtbox")]
 
+[node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D" index="0"]
+position = Vector2(0, -250)
+shape = SubResource("RectangleShape2D_f76ou")
+
 [node name="HitboxComponent" parent="_Components" unique_id=2003695411 instance=ExtResource("13_hitbox")]
 position = Vector2(500, -250)
+
+[node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D" index="0"]
+shape = SubResource("RectangleShape2D_4dtle")
 
 [node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
 script = ExtResource("10_facing")
 
-[node name="AttackComponent" parent="_Components" instance=ExtResource("15_attack")]
+[node name="AttackComponent" parent="_Components" unique_id=1048698319 instance=ExtResource("15_attack")]
 
-[node name="GuardComponent" parent="_Components" instance=ExtResource("26_guard")]
+[node name="GuardComponent" parent="_Components" unique_id=1528954580 instance=ExtResource("26_guard")]
 
-[node name="BlockReactionComponent" parent="_Components" instance=ExtResource("27_block_reaction")]
+[node name="BlockReactionComponent" parent="_Components" unique_id=2142822909 instance=ExtResource("27_block_reaction")]
 
-[node name="HitStopComponent" parent="_Components" instance=ExtResource("22_hit_stop")]
+[node name="HitStopComponent" parent="_Components" unique_id=682256968 instance=ExtResource("22_hit_stop")]
 
 [node name="AnimationComponent" parent="_Components" unique_id=876596304 instance=ExtResource("6_lg056")]
 
 [node name="CameraComponent" parent="_Components" unique_id=1289643820 instance=ExtResource("7_b72hb")]
+config = SubResource("Resource_wwqa4")
 
-[node name="CameraShakeComponent" parent="_Components" instance=ExtResource("23_camera_shake")]
+[node name="CameraShakeComponent" parent="_Components" unique_id=1867977163 instance=ExtResource("23_camera_shake")]
 
 [node name="InteractionComponent" type="Node" parent="_Components" unique_id=723174944]
 script = ExtResource("8_wcm5h")
@@ -149,89 +173,77 @@ metadata/_custom_type_script = "uid://bcwnhbaqj47sg"
 script = ExtResource("9_ohvm5")
 metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
-[node name="CharacterAttributesComponent" parent="_Components" instance=ExtResource("44_attributes")]
+[node name="CharacterAttributesComponent" parent="_Components" unique_id=1691102044 instance=ExtResource("44_attributes")]
 
-[node name="EquipmentComponent" parent="_Components" instance=ExtResource("32_equipment")]
+[node name="EquipmentComponent" parent="_Components" unique_id=1535872912 instance=ExtResource("32_equipment")]
 
-[node name="EquipmentInputComponent" parent="_Components" instance=ExtResource("equipment_input")]
+[node name="EquipmentInputComponent" parent="_Components" unique_id=1515040633 instance=ExtResource("equipment_input")]
 
-[node name="EquipmentSwapComponent" parent="_Components" instance=ExtResource("equipment_swap")]
+[node name="EquipmentSwapComponent" parent="_Components" unique_id=667467064 instance=ExtResource("equipment_swap")]
 
-[node name="EquipmentSwapView" parent="." instance=ExtResource("equipment_swap_view")]
+[node name="EquipmentDefenseComponent" parent="_Components" unique_id=1547470452 instance=ExtResource("45_equipment_defense")]
+
+[node name="ThrowingComponent" parent="_Components" unique_id=1632743987 instance=ExtResource("34_throwing")]
+
+[node name="RangedWeaponComponent" parent="_Components" unique_id=753000308 instance=ExtResource("35_ranged")]
+
+[node name="MagicComponent" parent="_Components" unique_id=273067881 instance=ExtResource("36_magic")]
+
+[node name="StaminaComponent" parent="_Components" unique_id=972858078 instance=ExtResource("48_stamina")]
+
+[node name="RestComponent" parent="_Components" unique_id=1183638924 instance=ExtResource("37_rest")]
+
+[node name="ProgressionComponent" parent="_Components" unique_id=1962424301 instance=ExtResource("38_progression")]
+
+[node name="StatusEffectComponent" parent="_Components" unique_id=571521567 instance=ExtResource("39_status")]
+dot_resistances = SubResource("Resource_k60nk")
+
+[node name="InventoryComponent" parent="_Components" unique_id=1806457266 instance=ExtResource("40_inventory")]
+
+[node name="FlaskChargesComponent" parent="_Components" unique_id=1620570312 instance=ExtResource("47_flasks")]
+
+[node name="InventoryDropComponent" parent="_Components" unique_id=1110312109 instance=ExtResource("43_inventory_drop")]
+
+[node name="QuickAccessComponent" parent="_Components" unique_id=414794584 instance=ExtResource("41_quick_access")]
+
+[node name="ItemUseComponent" parent="_Components" unique_id=1504343935 instance=ExtResource("33_item_use")]
+
+[node name="InventoryMenuComponent" parent="_Components" unique_id=215811667 instance=ExtResource("42_inventory_menu")]
+
+[node name="QuickAccessHUDComponent" parent="_Components" unique_id=367928820 instance=ExtResource("46_quick_hud")]
+
+[node name="ActorStateComponent" parent="_Components" unique_id=928634338 instance=ExtResource("29_actor_state")]
+
+[node name="DebugOverlayComponent" parent="_Components" unique_id=13741111 instance=ExtResource("14_debug")]
+
+[node name="EquipmentSwapView" parent="." unique_id=819791121 instance=ExtResource("equipment_swap_view")]
 position = Vector2(0, -750)
 scale = Vector2(10, 10)
 native_width = 600.0
 
-[node name="EquipmentDefenseComponent" parent="_Components" instance=ExtResource("45_equipment_defense")]
-
-[node name="ThrowingComponent" parent="_Components" instance=ExtResource("34_throwing")]
-
-[node name="RangedWeaponComponent" parent="_Components" instance=ExtResource("35_ranged")]
-
-[node name="MagicComponent" parent="_Components" instance=ExtResource("36_magic")]
-
-[node name="StaminaComponent" parent="_Components" instance=ExtResource("48_stamina")]
-
-[node name="RestComponent" parent="_Components" instance=ExtResource("37_rest")]
-
-[node name="ProgressionComponent" parent="_Components" instance=ExtResource("38_progression")]
-
-[node name="StatusEffectComponent" parent="_Components" instance=ExtResource("39_status")]
-
-[node name="InventoryComponent" parent="_Components" instance=ExtResource("40_inventory")]
-
-[node name="FlaskChargesComponent" parent="_Components" instance=ExtResource("47_flasks")]
-
-[node name="InventoryDropComponent" parent="_Components" instance=ExtResource("43_inventory_drop")]
-
-[node name="QuickAccessComponent" parent="_Components" instance=ExtResource("41_quick_access")]
-
-[node name="ItemUseComponent" parent="_Components" instance=ExtResource("33_item_use")]
-
-[node name="InventoryMenuComponent" parent="_Components" instance=ExtResource("42_inventory_menu")]
-
-[node name="QuickAccessHUDComponent" parent="_Components" instance=ExtResource("46_quick_hud")]
-
-[node name="ActorStateComponent" parent="_Components" instance=ExtResource("29_actor_state")]
-
-[node name="DebugOverlayComponent" parent="_Components" unique_id=13741111 instance=ExtResource("14_debug")]
-
 [node name="_Sockets" type="Node2D" parent="." unique_id=2023322398]
 
-[node name="JumpReachPreview" type="Node2D" parent="."]
-position = Vector2(0, 250)
+[node name="JumpReachPreview" type="Node2D" parent="." unique_id=749549619]
 show_behind_parent = true
 z_index = -10
+position = Vector2(0, 250)
 script = ExtResource("28_jump_preview")
 
-[node name="_Visual" type="Node2D" parent="."]
+[node name="_Visual" type="Node2D" parent="." unique_id=2072221291]
 position = Vector2(0, -250)
 
-[node name="DarklightRig" parent="_Visual" instance=ExtResource("51_animation_player")]
+[node name="DarklightRig" parent="_Visual" unique_id=1659143186 instance=ExtResource("51_animation_player")]
 
-[node name="ItemEffectSprite" type="AnimatedSprite2D" parent="_Visual"]
+[node name="ItemEffectSprite" type="AnimatedSprite2D" parent="_Visual" unique_id=767928326]
 visible = false
-scale = Vector2(25, 25)
 z_index = 1
-
-[node name="BuffEffectSprite" type="AnimatedSprite2D" parent="_Visual"]
-visible = false
 scale = Vector2(25, 25)
+
+[node name="BuffEffectSprite" type="AnimatedSprite2D" parent="_Visual" unique_id=1583398920]
+visible = false
 z_index = 2
-
-[node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" index="0"]
-position = Vector2(0, -250)
-shape = SubResource("NativePlayerBodyShape")
-
-[node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D" index="0"]
-position = Vector2(0, -250)
-shape = SubResource("NativePlayerHurtShape")
-
-[node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D" index="0"]
-shape = SubResource("NativePlayerHitShape")
+scale = Vector2(25, 25)
 
 [editable path="_Components/CharacterBodyComponent"]
-
 [editable path="_Components/HurtboxComponent"]
-
 [editable path="_Components/HitboxComponent"]

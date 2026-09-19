@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqc4jsjq3gpaf"]
 
+[ext_resource type="Script" uid="uid://bfo5buj1r2nmt" path="res://features/status/StatusEffect.gd" id="2_6ps3g"]
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="item"]
 [ext_resource type="Script" uid="uid://d1oecoy1ibkrt" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
 
