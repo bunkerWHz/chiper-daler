@@ -6,6 +6,67 @@ func suite_name() -> String:
 	return "darklight_visual"
 
 
+func test_started_attacks_advance_but_rejected_attacks_do_not() -> void:
+	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
+	(Engine.get_main_loop() as SceneTree).root.add_child(player)
+	var visual := player.get_component(DarklightVisualComponent) as DarklightVisualComponent
+	var attack := player.get_component(AttackComponent) as AttackComponent
+	var state := player.get_component(ActorStateComponent) as ActorStateComponent
+	# Keep the regression portable when authored rig edits are not committed yet.
+	var animation := visual.get_animation_player()
+	var library := animation.get_animation_library(&"").duplicate(true) as AnimationLibrary
+	animation.remove_animation_library(&"")
+	animation.add_animation_library(&"", library)
+	if not library.has_animation(&"heavy_attack_2"):
+		library.add_animation(&"heavy_attack_2", library.get_animation(&"heavy_attack").duplicate())
+	for expected: StringName in [&"heavy_attack", &"heavy_attack_2", &"heavy_attack"]:
+		assert_true(attack._start_attack(true, false))
+		state.refresh_state()
+		assert_eq(visual.get_animation_player().current_animation, expected)
+		assert_false(attack._start_attack(true, false))
+		state.refresh_state()
+		assert_eq(visual.get_animation_player().current_animation, expected)
+		attack._process(10.0)
+		state.refresh_state()
+
+
+func test_melee_variants_cycle_independently_in_numeric_order() -> void:
+	var setup := _create_player_visual()
+	var visual := setup.visual as DarklightVisualComponent
+	var animation := visual.get_animation_player()
+	var library := animation.get_animation_library(&"").duplicate(true) as AnimationLibrary
+	animation.remove_animation_library(&"")
+	animation.add_animation_library(&"", library)
+	for name: StringName in [&"attack_2", &"attack_10", &"heavy_attack_2"]:
+		if library.has_animation(name):
+			library.remove_animation(name)
+		var clip := Animation.new()
+		clip.length = 1.7
+		library.add_animation(name, clip)
+	var attacks := [
+		[ActorState.Behavior.GROUND_HEAVY_ATTACK, &"heavy_attack"],
+		[ActorState.Behavior.GROUND_LIGHT_ATTACK, &"attack"],
+		[ActorState.Behavior.GROUND_HEAVY_ATTACK, &"heavy_attack_2"],
+		[ActorState.Behavior.CRITICAL_ATTACK, &"attack"],
+		[ActorState.Behavior.GROUND_LIGHT_ATTACK, &"attack_2"],
+		[ActorState.Behavior.AIR_LIGHT_ATTACK, &"air_attack"],
+		[ActorState.Behavior.GROUND_LIGHT_ATTACK, &"attack_10"],
+		[ActorState.Behavior.GROUND_LIGHT_ATTACK, &"attack"],
+		[ActorState.Behavior.GROUND_HEAVY_ATTACK, &"heavy_attack"],
+	]
+	var attack := (setup.player as Actor).get_component(AttackComponent) as AttackComponent
+	for entry: Array in attacks:
+		visual._apply_state(ActorState.Behavior.IDLE)
+		visual._apply_state(entry[0])
+		assert_eq(animation.current_animation, entry[1])
+		var heavy: bool = entry[0] == ActorState.Behavior.GROUND_HEAVY_ATTACK
+		assert_true(is_equal_approx(animation.get_animation(entry[1]).length / animation.get_playing_speed(), attack.get_attack_duration(heavy)))
+		# Repeated state updates and facing changes must not consume another variant.
+		visual._apply_state(entry[0])
+		visual._apply_facing(FacingComponent.Direction.LEFT)
+		assert_eq(animation.current_animation, entry[1])
+
+
 func test_bow_shots_and_indicator_use_grip_before_pose_reset() -> void:
 	for facing in [FacingComponent.Direction.RIGHT, FacingComponent.Direction.LEFT]:
 		for angle in [-90.0, -45.0, 0.0, 45.0, 90.0]:

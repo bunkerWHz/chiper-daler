@@ -39,6 +39,7 @@ var _saved_head_rotation: float = 0.0
 var _saved_head_enabled: bool = true
 var _saved_arm_mode: int = 0
 var _saved_wrist_target: Transform2D
+var _attack_variant_indices: Dictionary = {}
 
 
 func on_initialize() -> void:
@@ -118,6 +119,11 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 
 
 func _play_animation(animation_name: StringName) -> void:
+	var attack_family := animation_name
+	if attack_family in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
+		# Critical attacks retain their dedicated gameplay behavior and base pose.
+		if _current_state != ActorState.Behavior.CRITICAL_ATTACK:
+			animation_name = _next_attack_animation(attack_family)
 	_drink_pose_active = animation_name == &"drink"
 	_end_bow_pose()
 	# Source attack clips animate only the arms. Restore the base pose first so a
@@ -126,9 +132,9 @@ func _play_animation(animation_name: StringName) -> void:
 	_animation_player.advance(0.0)
 	_refresh_equipment_visuals()
 	var speed := 1.0
-	if animation_name in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
+	if attack_family in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
 		var attack := actor.get_component(AttackComponent) as AttackComponent
-		var heavy := animation_name in [&"heavy_attack", &"air_heavy_attack"]
+		var heavy := attack_family in [&"heavy_attack", &"air_heavy_attack"]
 		speed = _animation_player.get_animation(animation_name).length / attack.get_attack_duration(heavy)
 	elif animation_name == &"drink":
 		speed = _animation_player.get_animation(animation_name).length / _item_use.config.use_duration
@@ -144,6 +150,21 @@ func _play_animation(animation_name: StringName) -> void:
 	_apply_hand_visibility_override()
 	if _current_state in [ActorState.Behavior.DEAD, ActorState.Behavior.RESPAWNING]:
 		_animation_player.pause()
+
+
+func _next_attack_animation(family: StringName) -> StringName:
+	var variants: Array[String] = [String(family)]
+	var prefix := String(family) + "_"
+	for clip: String in _animation_player.get_animation_list():
+		if not clip.begins_with(prefix):
+			continue
+		var suffix := clip.trim_prefix(prefix)
+		if suffix.is_valid_int() and suffix.to_int() >= 2 and suffix == str(suffix.to_int()):
+			variants.append(clip)
+	variants.sort_custom(func(a: String, b: String) -> bool: return a.naturalnocasecmp_to(b) < 0)
+	var index := int(_attack_variant_indices.get(family, 0)) % variants.size()
+	_attack_variant_indices[family] = (index + 1) % variants.size()
+	return StringName(variants[index])
 
 
 func _process(_delta: float) -> void:

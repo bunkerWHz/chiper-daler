@@ -24,6 +24,16 @@ and heavy ground/air attacks use the corresponding source clips. Attack and
 dodge playback speeds follow the existing gameplay action durations. Animation
 does not activate hitboxes, spend stamina or change FSM state.
 
+Melee clips cycle independently per family: `attack`, `heavy_attack`,
+`air_attack`, and `air_heavy_attack`. Add numbered clips to AnimationPlayer,
+for example `heavy_attack_2`, `heavy_attack_3`, or `attack_2`; they are picked up
+automatically in numeric order (gaps are allowed), then wrap to the base clip.
+Idle, movement and other attack families do not reset the sequence. Each player
+starts with the base clips. A started, interrupted swing still consumes its variant;
+windup and rejected inputs do not. Critical attacks keep the base `attack` pose
+without advancing the light sequence. Every variant fits the gameplay attack
+duration, regardless of its authored clip length.
+
 Before switching clips the adapter applies RESET, because the source's attack
 clips key only the arms. RESET no longer targets the old character controller,
 camera, gameplay components, root transform or equipment visibility.
