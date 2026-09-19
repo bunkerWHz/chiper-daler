@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://deuf6vsncpwxx"]
 
-[ext_resource type="Texture2D" path="res://assets/items/Flasks/Mana.png" id="flask_icon"]
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" uid="uid://c5ghdauittu1y" path="res://features/inventory/profiles/ItemFlaskProfile.gd" id="2_consumable"]
+[ext_resource type="Texture2D" uid="uid://di63fmtwmynty" path="res://assets/items/Flasks/Mana.png" id="flask_icon"]
 
 [sub_resource type="Resource" id="ItemFlaskProfile_mana"]
 script = ExtResource("2_consumable")
@@ -12,10 +12,10 @@ use_visual_effect = 2
 
 [resource]
 script = ExtResource("1_item")
-icon = ExtResource("flask_icon")
 id = &"mana_potion"
 display_name = "Mana Potion"
 description = "A refillable flask that restores 30 mana. Sanctuary rest restores its charges."
+icon = ExtResource("flask_icon")
 category = 4
 weight = 0.25
 sell_price = 8

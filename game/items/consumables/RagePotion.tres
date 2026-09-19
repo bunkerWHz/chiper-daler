@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djokku0h4gt5e"]
 
-[ext_resource type="Texture2D" path="res://assets/items/Flasks/Rage.png" id="flask_icon"]
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" uid="uid://bfo5buj1r2nmt" path="res://features/status/StatusEffect.gd" id="2_status"]
 [ext_resource type="Script" uid="uid://c5ghdauittu1y" path="res://features/inventory/profiles/ItemFlaskProfile.gd" id="3_consumable"]
+[ext_resource type="Texture2D" uid="uid://cux1cjketi2l0" path="res://assets/items/Flasks/Rage.png" id="flask_icon"]
 
 [sub_resource type="Resource" id="StatusEffect_rage"]
 script = ExtResource("2_status")
@@ -19,10 +19,10 @@ status_effect = SubResource("StatusEffect_rage")
 
 [resource]
 script = ExtResource("1_item")
-icon = ExtResource("flask_icon")
 id = &"rage_potion"
 display_name = "Rage Potion"
 description = "A refillable flask that applies a temporary rage buff. Sanctuary rest restores its charges."
+icon = ExtResource("flask_icon")
 category = 4
 weight = 0.25
 sell_price = 12

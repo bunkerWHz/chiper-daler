@@ -1,13 +1,17 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bpak6qyt6abt3"]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxrsomi2ablp0"]
 
-[ext_resource type="Script" uid="uid://bfo5buj1r2nmt" path="res://features/status/StatusEffect.gd" id="3_nsaog"]
-[ext_resource type="Texture2D" uid="uid://cl5fn0qfm6e6u" path="res://assets/icon_placeholder.png" id="icon"]
+[ext_resource type="Texture2D" uid="uid://cshryik6vb5ea" path="res://assets/items/Weapons/Throwables/Gothic Swords/throwdagger.png" id="1_kd1er"]
+[ext_resource type="Texture2D" uid="uid://cmotl16reqpg8" path="res://assets/items/Weapons/Throwables/Gothic Swords/throwdagger_icon.png" id="2_yhxa8"]
+[ext_resource type="Script" uid="uid://bfo5buj1r2nmt" path="res://features/status/StatusEffect.gd" id="4_x18ot"]
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="item"]
 [ext_resource type="Script" uid="uid://d1oecoy1ibkrt" path="res://features/inventory/profiles/ItemProjectileProfile.gd" id="projectile"]
 [ext_resource type="Script" uid="uid://b7ui45j61uanb" path="res://features/inventory/profiles/ItemWeaponProfile.gd" id="weapon"]
 
 [sub_resource type="Resource" id="projectile"]
 script = ExtResource("projectile")
+texture = ExtResource("1_kd1er")
+rotation_speed = 720.0
+speed = 500.0
 
 [sub_resource type="Resource" id="weapon"]
 script = ExtResource("weapon")
@@ -15,8 +19,11 @@ combat_mode = 2
 
 [resource]
 script = ExtResource("item")
-display_name = "New Throwable"
-icon = ExtResource("icon")
+id = &"1000"
+display_name = "Gothic Swords"
+description = "Kills your enemies with style"
+icon = ExtResource("2_yhxa8")
+equipped_texture = ExtResource("1_kd1er")
 category = 6
 stackable = true
 max_stack_size = 20
