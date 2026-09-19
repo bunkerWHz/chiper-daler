@@ -10,6 +10,8 @@ func _run() -> void:
 	rig.position = Vector2(400, 300)
 	var animation := rig.get_node("AnimationPlayer") as AnimationPlayer
 	var polygons := rig.get_node("CharacterContainer/Polygons").get_children()
+	var main := rig.get_node("CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
+	var off := rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	var bases: Array[Transform2D] = []
 	for polygon: Node2D in polygons:
 		bases.append(polygon.transform)
@@ -22,6 +24,11 @@ func _run() -> void:
 			animation.play(&"idle" if turn % 16 == 0 else &"run")
 		for frame in 8:
 			await process_frame
+			for hand: Sprite2D in [main, off]:
+				if not hand.scale.is_equal_approx(Vector2.ONE) or hand.global_transform.determinant() * rig.global_transform.determinant() <= 0.0:
+					push_error("Hand attachment lost native scale or facing: " + str(hand.name))
+					quit(1)
+					return
 			for index in polygons.size():
 				var polygon := polygons[index] as Node2D
 				if not polygon.transform.x.is_equal_approx(bases[index].x) or not polygon.transform.y.is_equal_approx(bases[index].y):

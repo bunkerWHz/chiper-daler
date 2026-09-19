@@ -89,8 +89,8 @@ func _ready() -> void:
 	# Apply the dynamic pose after animation and SoupIK/FK evaluation.
 	process_priority = 2
 	_animation_player = _rig.get_node("AnimationPlayer") as AnimationPlayer
-	_main_hand = _rig.get_node("CharacterContainer/VisualDetails/MainHand") as Sprite2D
-	_off_hand = _rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	_main_hand = _rig.get_node("CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
+	_off_hand = _rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	_quiver = _rig.get_node("CharacterContainer/VisualDetails/Arrows") as Sprite2D
 	_item_effect_sprite = actor.get_node("_Visual/ItemEffectSprite") as AnimatedSprite2D
 	_buff_effect_sprite = actor.get_node("_Visual/BuffEffectSprite") as AnimatedSprite2D
@@ -274,7 +274,7 @@ func _bow_clip_angle(control: String, fallback: float) -> float:
 
 func _sync_bow_launch_origin() -> void:
 	# A tap can fire before the visual's first process tick. Pose it before reading
-	# the origin; use the bone attachment, not the deferred RemoteTransform sprite.
+	# the origin; the equipped hand sprite is attached directly to the wrist bone.
 	if is_enabled:
 		_process(0.0)
 

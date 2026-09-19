@@ -164,7 +164,8 @@ func _refresh() -> void:
 
 
 func _fit_hand(hand_name: String, item: ItemData, size: float, offset: Vector2, angle: float) -> void:
-	var hand := _rig.get_node("CharacterContainer/VisualDetails/" + hand_name) as Sprite2D
+	var arm_path := "FrontArmTop/FrontArmMid/FrontArmBot/" if hand_name == "MainHand" else "BackArmTop/BackArmMid/BackArmBot/"
+	var hand := _rig.get_node("CharacterContainer/Skeleton2D/Hip/" + arm_path + hand_name) as Sprite2D
 	hand.texture = null
 	hand.visible = item != null
 	if item == null:

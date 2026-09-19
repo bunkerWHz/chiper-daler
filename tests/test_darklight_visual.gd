@@ -247,8 +247,8 @@ func test_throw_aim_follows_angles_hides_both_hands_and_restores_equipment() -> 
 func test_active_equipment_updates_both_skeletal_hand_attachments() -> void:
 	var setup := _create_player_visual()
 	var equipment := setup.equipment as EquipmentComponent
-	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/MainHand") as Sprite2D
-	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
+	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	assert_eq(main.texture, equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture)
 	assert_true(main.visible)
 	assert_true(off.visible)
@@ -454,8 +454,8 @@ func test_display_override_changes_texture_without_moving_inventory_slot_or_grip
 	var setup := _create_player_visual()
 	var inventory := setup.inventory as InventoryComponent
 	var equipment := setup.equipment as EquipmentComponent
-	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/OffHand") as Sprite2D
-	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/VisualDetails/MainHand") as Sprite2D
+	var off := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
+	var main := setup.player.get_node("_Visual/DarklightRig/CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
 	var marker := Marker2D.new()
 	off.add_child(marker)
 	var grip_offset := off.offset

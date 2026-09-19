@@ -90,7 +90,7 @@ func _run() -> void:
 	_check(cloth.current_animation == &"wind", "Landing must restore wind")
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	_check(equipment.switch_weapon_set(1), "Existing inventory must switch to the bow")
-	var hand := rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	var hand := rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	_check(hand.texture == equipment.get_equipped_item(ItemData.EquipSlot.MAIN_HAND).equipped_texture, "Equipped bow must follow the opposite hand bone")
 	for frame in 4:
 		await physics_frame

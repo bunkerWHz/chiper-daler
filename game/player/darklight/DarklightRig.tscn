@@ -4658,25 +4658,6 @@ scale = Vector2(0.99999917, 0.99999917)
 texture = ExtResource("57_ut2b3")
 offset = Vector2(0, -121)
 
-[node name="MainHand" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1831474147]
-visible = false
-z_index = 2
-position = Vector2(-166.47913, 198.58331)
-rotation = -0.13599743
-scale = Vector2(0.9999976, 0.9999976)
-texture = ExtResource("17_e03j0")
-centered = false
-offset = Vector2(-90, -93)
-
-[node name="OffHand" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1309016613]
-visible = false
-z_index = -4
-position = Vector2(211.99995, 132)
-rotation = 0.76902676
-scale = Vector2(0.99999946, 0.99999946)
-texture = ExtResource("18_3q2d0")
-offset = Vector2(-17, -31)
-
 [node name="Skeleton2D" type="Skeleton2D" parent="CharacterContainer" unique_id=1431504021]
 
 [node name="Hip" type="Bone2D" parent="CharacterContainer/Skeleton2D" unique_id=2124082830]
@@ -4785,9 +4766,13 @@ bone_angle = 0.0
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot" unique_id=1288065090]
 remote_path = NodePath("../../../../../../VisualDetails/FrontArmBot")
 
-[node name="MainHand" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot" unique_id=960102703]
+[node name="MainHand" type="Sprite2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot" unique_id=1831474147]
+visible = false
+z_index = 2
 position = Vector2(-0.439061, 43.9295)
-remote_path = NodePath("../../../../../../VisualDetails/MainHand")
+texture = ExtResource("17_e03j0")
+centered = false
+offset = Vector2(-90, -93)
 
 [node name="BackArmTop" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip" unique_id=929842416]
 position = Vector2(96, -240)
@@ -4819,10 +4804,13 @@ bone_angle = 0.0
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot" unique_id=2047435902]
 remote_path = NodePath("../../../../../../VisualDetails/BackArmBot")
 
-[node name="OffHand" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot" unique_id=1362563054]
+[node name="OffHand" type="Sprite2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot" unique_id=1309016613]
+visible = false
+z_index = -4
 position = Vector2(28, 36)
 rotation = 0.7690259
-remote_path = NodePath("../../../../../../VisualDetails/OffHand")
+texture = ExtResource("18_3q2d0")
+offset = Vector2(-17, -31)
 
 [node name="Torso" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip" unique_id=1989318441]
 position = Vector2(0, -136)

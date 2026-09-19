@@ -28,6 +28,16 @@ func test_player_uses_serialized_skeleton_and_ik_animations() -> void:
 	var rig := player.get_node("_Visual/DarklightRig")
 	var animation_player := rig.get_node("AnimationPlayer") as AnimationPlayer
 	assert_true(rig.get_node("CharacterContainer/Skeleton2D") is Skeleton2D)
+	var main := rig.get_node("CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
+	var off := rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
+	assert_true(main.get_parent() is Bone2D and off.get_parent() is Bone2D)
+	assert_eq(main.scale, Vector2.ONE)
+	assert_eq(off.scale, Vector2.ONE)
+	assert_eq(main.position, Vector2(-0.439061, 43.9295))
+	assert_eq(off.position, Vector2(28, 36))
+	assert_true(is_equal_approx(off.rotation, 0.7690259))
+	assert_false(rig.has_node("CharacterContainer/VisualDetails/MainHand"))
+	assert_false(rig.has_node("CharacterContainer/VisualDetails/OffHand"))
 	for clip: StringName in [&"idle", &"run", &"jump", &"fall", &"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack", &"dodge", &"block"]:
 		assert_true(animation_player.has_animation(clip))
 	for clip: StringName in animation_player.get_animation_list():

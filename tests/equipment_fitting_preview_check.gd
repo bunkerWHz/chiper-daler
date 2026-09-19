@@ -17,8 +17,8 @@ func _check() -> void:
 	var fixture := preview.main_hand_item.duplicate() as ItemData
 	ResourceSaver.save(fixture, fixture_path)
 	preview.main_hand_item = load(fixture_path)
-	var main := rig.get_node("CharacterContainer/VisualDetails/MainHand") as Sprite2D
-	var off := rig.get_node("CharacterContainer/VisualDetails/OffHand") as Sprite2D
+	var main := rig.get_node("CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot/MainHand") as Sprite2D
+	var off := rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D
 	var holder := main.get_node("FittingItem") as Node2D
 	var base_scale := holder.scale.x
 	if not _require(main.visible and off.visible and holder.get_child(0).scale == Vector2.ONE, "Default items and native sprite scale"):

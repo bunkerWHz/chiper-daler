@@ -15,7 +15,7 @@ have been removed. Their history remains in Git; new player work uses this rig.
 
 Open `DarklightRig.tscn` directly. Select `AnimationPlayer` and edit the clips by
 moving `CharacterContainer/Anim Targets`. The original Skeleton2D, Bone2D rest
-poses, skinned polygons, RemoteTransform2D attachments and SoupIK solvers are
+poses, skinned polygons, body attachments and SoupIK solvers are
 preserved. The rig is authored at native size; its standalone root is unit scale.
 
 `DarklightVisualComponent` listens to `ActorStateComponent.state_changed` and
@@ -156,8 +156,12 @@ Both slots edit the same placement fields when assigned the same resource.
 Run `--headless --editor --script tests/equipment_fitting_preview_check.gd`
 to verify editor-mode fitting, saving/reloading a disposable item, and clearing slots.
 
-The rig's `MainHand` and `OffHand` are Sprite2D nodes driven by the existing
-bone RemoteTransform2D attachments and animation targets. Their transforms,
+The rig's `MainHand` and `OffHand` Sprite2D nodes are direct children of
+`Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot` and
+`Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot`, under `CharacterContainer`.
+They inherit the wrist bones directly, without RemoteTransform2D proxies.
+Their local grip transforms retain the former proxies' values; existing grip
+animation tracks now address the sprites themselves. Their transforms,
 `centered` and `offset` are authored in the rig and are never changed by equipment.
 Assign `ItemData.equipped_texture` to replace only the native-size image.
 Inventory `icon` is separate and is not automatically used as weapon artwork.
@@ -236,8 +240,9 @@ The view cancels inherited scale for its controls in both editor and gameplay.
 
 Unlike Sprite2D, Skeleton2D and skinned Polygon2D do not expose `flip_h`.
 The visual rig is reflected as a whole, including its IK targets and attachments;
-the actor and physics are never reflected. RemoteTransform2D must transfer the
-complete bone transform to preserve correct reflection. Source art faces right.
+the actor and physics are never reflected. Hand sprites inherit the bone's
+complete transform directly; remaining body RemoteTransform2D attachments must
+transfer the complete bone transform to preserve correct reflection. Source art faces right.
 
 Skinned Polygon2D attachments are the exception: their RemoteTransform2D nodes
 must not copy rotation or scale, which are already supplied by skeletal skinning
