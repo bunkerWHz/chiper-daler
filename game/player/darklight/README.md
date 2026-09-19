@@ -30,8 +30,9 @@ camera, gameplay components, root transform or equipment visibility.
 
 Aim clips are `throw_aim`, `bow_aim`, `crossbow_aim` and `magic_aim`, stored as
 independent Animation resources in `animations/` and exposed in the rig's
-AnimationPlayer. They play during the corresponding aim/charge states. Throw,
-crossbow and magic start from copies of idle, ready for authoring without changing
+AnimationPlayer. They play during the corresponding aim/charge states. Throw
+starts from a separate copy of the bow pose with OffHand hidden; crossbow and
+magic start from copies of idle, ready for authoring without changing
 idle itself. The source has no dedicated release, climbing, item-use, hit, death or
 equipment-swap animation. Those states currently use the idle pose; death and
 respawn freeze it while the existing fade/respawn components handle the result.
@@ -41,9 +42,9 @@ follows the swap duration. Add new authored clips and map them in
 
 ## Shoulder, elbow and wrist controls
 
-### Bow aiming in gameplay
+### Bow and throw aiming in gameplay
 
-Edit `bow_aim` in AnimationPlayer with the neutral aim pointing right. Its
+Edit `bow_aim` or `throw_aim` in AnimationPlayer with the neutral aim pointing right. Their
 BackArmFK mode is FK; key Shoulder, Elbow and Wrist rotations to change the pose.
 The authored values are sampled throughout playback, including animated keys.
 DarklightVisualComponent adds the shared aim angle to the authored shoulder
@@ -58,23 +59,26 @@ evaluated from the authored Head_AT target before adding one quarter of the aim 
 On AnimationComponent, **Bow Aiming Pose → Bow Head Follow** controls this ratio
 (default 0.25); **Bow Shoulder Offset Degrees** adjusts the arm's angle relative
 to the aim. Both facings are supported. Releasing/cancelling aim, switching clips
-or disabling the visual restores the saved controls and look-at target. Crossbow,
-throwing and magic use their authored clips without the bow-specific angle overlay.
+or disabling the visual restores the saved controls and look-at target. Throwing
+uses the same arm/head follow and grip launch point, including quick taps. Its
+OffHand equipment visual (including a bow) is hidden while aiming and restored
+on release/cancel; equipment itself is unchanged. Crossbow and magic use their
+authored clips without this angle overlay.
 Gameplay still owns aiming limits, firing and ammo.
 
 To edit: open `DarklightRig.tscn`, select AnimationPlayer, choose the desired
 `*_aim` clip and enable animation preview. Move/key controls under
-`CharacterContainer/Anim Targets`. For throw/crossbow/magic the arms start in IK:
+`CharacterContainer/Anim Targets`. For crossbow/magic the arms start in IK:
 edit FrontArmIK/BackArmIK and their look targets, or key the desired arm's mode
 to FK before animating its Shoulder/Elbow/Wrist. Keep a key at time zero for
 each edited property. The clips loop while aiming; release/cancel leaves the
-clip through the existing gameplay state machine. Bow's angle overlay only runs
+clip through the existing gameplay state machine. Bow/throw's angle overlay only runs
 in gameplay, so the editor shows its neutral authored pose.
 
-Bow arrows and the aiming indicator share the world position of the wrist's
+Bow arrows, thrown projectiles and the aiming indicator share the world position of the wrist's
 OffHand attachment (the authored grip). Querying it synchronizes the bow pose,
 including quick taps. Firing captures this point before ending aim or consuming
-the last arrow. Other weapons keep the configured launch offset.
+the last arrow or throwable. Other weapons keep the configured launch offset.
 
 ### Manual controls
 

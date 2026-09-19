@@ -24,6 +24,8 @@ var _quiver: Sprite2D
 var _hand_visuals: Dictionary = {}
 var _aim: AimingComponent
 var _ranged: RangedWeaponComponent
+var _throwing: ThrowingComponent
+var _pose_owner: Component
 var _bow_pose_active: bool = false
 var _bow_arm: Node2D
 var _head_ik: SoupLookAt
@@ -73,6 +75,7 @@ func _ready() -> void:
 	if _aim != null and not _aim.launch_position_requested.is_connected(_sync_bow_launch_origin):
 		_aim.launch_position_requested.connect(_sync_bow_launch_origin)
 	_ranged = actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
+	_throwing = actor.get_component(ThrowingComponent) as ThrowingComponent
 	_bow_arm = _rig.get_node("CharacterContainer/Anim Targets/BackArmFK") as Node2D
 	_head_ik = _rig.get_node("CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT") as SoupLookAt
 	# Apply the dynamic pose after animation and SoupIK/FK evaluation.
@@ -138,9 +141,14 @@ func _process(_delta: float) -> void:
 	var aiming_bow := (is_enabled and _ranged != null and _aim != null
 		and _ranged.get_phase() == RangedWeaponComponent.Phase.BOW_AIM
 		and _aim.is_aiming())
-	if not aiming_bow:
+	var aiming_throw := (is_enabled and _throwing != null and _aim != null
+		and _throwing.get_phase() == ThrowingComponent.Phase.AIM and _aim.is_aiming())
+	if not aiming_bow and not aiming_throw:
 		_end_bow_pose()
 		return
+	_pose_owner = _throwing if aiming_throw else _ranged
+	if aiming_throw:
+		_off_hand.visible = false
 	var shoulder := _bow_arm.get_node("Shoulder") as Marker2D
 	var elbow := _bow_arm.get_node("Shoulder/Elbow") as Marker2D
 	var wrist := _bow_arm.get_node("Shoulder/Elbow/Wrist") as Marker2D
@@ -166,7 +174,7 @@ func _process(_delta: float) -> void:
 	var grip := _bow_arm.wrist_bone.get_node("OffHand") as Node2D
 	var grip_angle := grip.position.angle()
 	wrist.rotation = forearm_angle - grip_angle
-	if _animation_player.current_animation == &"bow_aim":
+	if _animation_player.current_animation in [&"bow_aim", &"throw_aim"]:
 		# Sample the authored FK tracks so the aim offset never accumulates between frames.
 		shoulder.rotation = _bow_clip_angle("Shoulder", -upper_angle) + arm_angle - hip.rotation
 		elbow.rotation = _bow_clip_angle("Shoulder/Elbow", upper_angle - forearm_angle)
@@ -184,18 +192,18 @@ func _process(_delta: float) -> void:
 	_bow_arm.wrist_ik.enabled = true
 	_bow_arm.wrist_ik._process_loop(0.0)
 	var base_head_rotation := _saved_head_rotation
-	if _animation_player.current_animation == &"bow_aim":
+	if _animation_player.current_animation in [&"bow_aim", &"throw_aim"]:
 		# Re-evaluate the authored head target before adding the directional look offset.
 		_head_ik.enabled = true
 		_head_ik._process_loop(0.0)
 		base_head_rotation = _head_ik.bone_node.rotation
 		_head_ik.enabled = false
 	_head_ik.bone_node.rotation = base_head_rotation + aim_angle * bow_head_follow
-	_aim.set_launch_origin(_ranged, grip)
+	_aim.set_launch_origin(_pose_owner, grip)
 
 
 func _bow_clip_angle(control: String, fallback: float) -> float:
-	var clip := _animation_player.get_animation(&"bow_aim")
+	var clip := _animation_player.get_animation(_animation_player.current_animation)
 	var path := NodePath("CharacterContainer/Anim Targets/BackArmFK/" + control + ":rotation")
 	var track_index := clip.find_track(path, Animation.TYPE_VALUE)
 	if track_index < 0 or not clip.track_is_enabled(track_index) or clip.track_get_key_count(track_index) == 0:
@@ -206,7 +214,7 @@ func _bow_clip_angle(control: String, fallback: float) -> float:
 func _sync_bow_launch_origin() -> void:
 	# A tap can fire before the visual's first process tick. Pose it before reading
 	# the origin; use the bone attachment, not the deferred RemoteTransform sprite.
-	if is_enabled and _ranged != null and _ranged.get_phase() == RangedWeaponComponent.Phase.BOW_AIM:
+	if is_enabled:
 		_process(0.0)
 
 
@@ -214,7 +222,9 @@ func _end_bow_pose() -> void:
 	if not _bow_pose_active:
 		return
 	_bow_pose_active = false
-	_aim.set_launch_origin(_ranged, null)
+	_aim.set_launch_origin(_pose_owner, null)
+	_pose_owner = null
+	_update_hand(_off_hand, _off_hand.get_meta(&"equipped_item", null) as ItemData)
 	_bow_arm.get_node("Shoulder").rotation = _saved_fk_angles.x
 	_bow_arm.get_node("Shoulder/Elbow").rotation = _saved_fk_angles.y
 	_bow_arm.get_node("Shoulder/Elbow/Wrist").rotation = _saved_fk_angles.z
@@ -287,11 +297,14 @@ func _refresh_equipment_visuals() -> void:
 	_update_hand(_main_hand, displayed.get(ItemData.EquipSlot.MAIN_HAND) as ItemData)
 	_update_hand(_off_hand, displayed.get(ItemData.EquipSlot.OFF_HAND) as ItemData)
 	_quiver.visible = show_quiver
+	if is_enabled and _throwing != null and _throwing.get_phase() == ThrowingComponent.Phase.AIM:
+		_off_hand.visible = false
 
 
 func _update_hand(hand: Sprite2D, item: ItemData) -> void:
 	# Pose resets preserve the authored grip offsets and existing attachments.
 	if hand.has_meta(&"equipped_item") and hand.get_meta(&"equipped_item") == item:
+		hand.visible = item != null and (hand.texture != null or _hand_visuals.has(hand))
 		return
 	hand.set_meta(&"equipped_item", item)
 	var previous := _hand_visuals.get(hand) as Node
