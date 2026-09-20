@@ -387,6 +387,90 @@ func test_menu_lists_items_and_assigns_quick_slot() -> void:
 	assert_false(menu.is_open())
 
 
+func test_inventory_summary_weight_counts_equipped_items() -> void:
+	var world := track(Node2D.new()) as Node2D
+	var actor := Actor.new()
+	world.add_child(actor)
+	var components := Node2D.new()
+	components.name = "_Components"
+	actor.add_child(components)
+
+	var input := InputComponent.new()
+	var body := GroundedBodyComponent.new()
+	var attributes := CharacterAttributesComponent.new()
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var equipment := EquipmentComponent.new()
+	var quick_access := QuickAccessComponent.new()
+	quick_access.config = QuickAccessConfig.new()
+	var item_use := ItemUseComponent.new()
+	item_use.config = ItemUseConfig.new()
+	var inventory_drop := InventoryDropComponent.new()
+	inventory_drop.loot_bag_scene = load(
+		"res://features/loot/LootBag.tscn"
+	) as PackedScene
+	var menu_scene := load(
+		"res://features/inventory/InventoryMenuComponent.tscn"
+	) as PackedScene
+	var menu := menu_scene.instantiate() as InventoryMenuComponent
+	for component: Component in [
+		input,
+		body,
+		attributes,
+		health,
+		inventory,
+		equipment,
+		quick_access,
+		item_use,
+		inventory_drop,
+		menu,
+	]:
+		components.add_child(component)
+	actor._collect_components()
+	menu._ready()
+
+	var sword := ItemData.new()
+	sword.id = &"weighed_sword"
+	sword.display_name = "Weighed Sword"
+	sword.category = ItemData.Category.WEAPON
+	sword.weight = 4.0
+	sword.equipment_profile = ItemEquipmentProfile.new()
+	sword.equipment_profile.allowed_slots = [ItemData.EquipSlot.MAIN_HAND]
+	sword.weapon_profile = ItemWeaponProfile.new()
+	var stone := ItemData.new()
+	stone.id = &"weighed_stone"
+	stone.display_name = "Weighed Stone"
+	stone.category = ItemData.Category.MATERIAL
+	stone.weight = 2.5
+
+	assert_eq(inventory.add_item(sword, 1), 1)
+	assert_eq(inventory.add_item(stone, 2), 2)
+	assert_true(
+		equipment.equip_inventory_item(
+			&"weighed_sword",
+			ItemData.EquipSlot.MAIN_HAND
+		)
+	)
+
+	assert_eq(equipment.get_total_equipped_weight(), 4.0)
+	assert_eq(inventory.get_total_weight(), 9.0)
+	var bag_weight := 0.0
+	for stack: InventoryStack in menu._get_unequipped_stacks():
+		bag_weight += stack.item.weight * stack.quantity
+	assert_eq(bag_weight, 5.0, "Only the stone stays in the bag")
+
+	menu.open_inventory()
+	assert_true(
+		menu._inventory_summary.text.ends_with("Weight 9"),
+		"Summary must count the bag and the equipped sword: %s" % (
+			menu._inventory_summary.text
+		)
+	)
+	menu.close_inventory()
+
+
 func test_menu_pause_lifecycle_preserves_other_owners() -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	var was_paused := tree.paused

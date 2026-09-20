@@ -620,14 +620,14 @@ func _refresh_weapon_set_buttons() -> void:
 
 func _rebuild_inventory_summary() -> void:
 	var visible_stacks := _get_unequipped_stacks()
-	var visible_weight := 0.0
-	for stack: InventoryStack in visible_stacks:
-		visible_weight += stack.item.weight * stack.quantity
+	# The summary reports everything the character carries. Equipped items stay
+	# in the inventory stacks, so the inventory total already includes them; the
+	# equipment panel shows the equipped part separately as load.
 	_inventory_summary.text = "Amber Shards: %d    Bag slots %d / %d    Weight %d" % [
 		_inventory.get_amber(),
 		visible_stacks.size(),
 		_inventory.get_capacity(),
-		ceili(visible_weight),
+		ceili(_inventory.get_total_weight()),
 	]
 
 

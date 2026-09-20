@@ -277,6 +277,11 @@ ordering and selling remain later interaction work.
 
 Weight is recorded in `ItemData` and exposed by `InventoryComponent`, but no
 weight limit is enforced until the design decides how encumbrance should work.
+The inventory summary line reports the total weight of everything the character
+carries: equipped items stay in the inventory stacks, so the bag and the
+equipment are counted together. Equipment is validated against the inventory, so
+no equipped item can be missing from that total. The equipment panel shows the
+equipped part on its own as load against its capacity.
 
 ## Main hero equipment visuals
 
