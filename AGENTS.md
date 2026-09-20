@@ -49,16 +49,26 @@ Name enemy asset folders after the monster: assets/Enemies/<MonsterName>/PNG Seq
 
 # Documentation
 
-- `docs/` is the project's Obsidian vault and its compiled wiki layer. Start at
-  `docs/index.md`; how the vault is maintained — page types, frontmatter,
-  links and the ingest/query/lint operations — is defined in `docs/AGENTS.md`.
-- Raw sources are the project itself. Read the code, scenes and resources before
-  documenting a mechanic, and never rewrite them from the wiki.
-- After changing documentation, run `node docs/tools/wiki_lint.mjs`. It checks
+`docs/` is the project's Obsidian vault and its compiled wiki layer. It is the
+durable memory of this project: it outlives a session, so read it before you
+reason about gameplay.
+
+- Before changing or explaining a mechanic, read its owning page. Start at
+  `docs/index.md`; read `docs/concepts.md` for terminology. Follow the links on
+  those pages before concluding that the wiki lacks the answer.
+- Treat the wiki as a map, not as truth: verify concrete values, node paths and
+  field names against the code, scenes and resources.
+- When a change alters documented behaviour, update the owning page, its
+  `updated` date and `docs/index.md` in the same commit. Mark a superseded rule
+  next to the new one instead of deleting the history.
+- After documentation changes, run `node docs/tools/wiki_lint.mjs`. It checks
   frontmatter, link resolution inside and outside the vault, tag vocabulary and
   index coverage.
 - Leave the repository's own README files where they are; `docs/sources.md`
   points to them instead of copying their content.
+- The full protocol — page types, frontmatter, links, ingest/query/lint — is in
+  `docs/AGENTS.md`, which applies to work under `docs/`. Read it before
+  restructuring documentation.
 
 # Commit workflow
 
