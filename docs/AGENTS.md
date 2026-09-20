@@ -21,7 +21,7 @@ file here is a wiki page.
 
 | Layer | Location | Ownership |
 | --- | --- | --- |
-| Raw sources | The Godot project outside `docs/`: `game/`, `features/`, `framework/`, `levels/`, `tests/`, `art/`, `assets/`, `project.godot` | Immutable ground truth. Read, never rewrite, never duplicate. |
+| Raw sources | The Godot project outside `docs/`: `game/`, `features/`, `framework/`, `levels/`, `tests/`, `art/`, `assets/`, `project.godot` | Ground truth for the wiki. Read it; never rewrite it while compiling, never duplicate it. |
 | Wiki | `docs/*.md` | The agent owns this layer completely: pages, cross-references, index, log. |
 | Schema | This file | Co-evolve with the user as conventions change. |
 
@@ -30,6 +30,11 @@ They can never be linked with a vault link: Obsidian cannot resolve targets
 outside the vault root. `docs/sources.md` is the catalog of raw sources,
 including the project's own `README.md` files, which stay where they are and are
 never copied into the wiki.
+
+The project's own `README.md` files are authored documentation, not frozen
+history. When the user asks, correct them like any other file and record the
+change in the log. Read-only means the wiki must not rewrite ground truth on its
+own initiative while compiling.
 
 ## Language
 
