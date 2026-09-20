@@ -527,7 +527,7 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Делает:** Начинает отдых, сразу лечит, снимает дебаффы, восстанавливает ману и выносливость и пополняет фляги; на время отдыха занимает персонажа.
 - **Когда применять:** На персонаже, который восстанавливается у RestPoint.
 - **Что требуется:** HealthComponent и RestConfig. StatusEffectComponent, MagicComponent, StaminaComponent и FlaskChargesComponent используются при наличии.
-- **Настройки и ограничения:** Config → Duration. Сам не задаёт контрольную точку: её устанавливает RestPoint через PlayerRespawnComponent.
+- **Настройки и ограничения:** Config → Duration. Восстановление применяется мгновенно в момент старта; Duration только удерживает персонажа в состоянии отдыха и не растягивает восстановление. Сам не задаёт контрольную точку: её устанавливает RestPoint через PlayerRespawnComponent.
 - **Файлы:** [Код](../features/rest/RestComponent.gd) · [Сцена](../features/rest/RestComponent.tscn) · [RestConfig](../features/rest/RestConfig.gd).
 
 <a id="playerrespawncomponent"></a>

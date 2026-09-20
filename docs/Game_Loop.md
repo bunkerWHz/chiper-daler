@@ -12,7 +12,7 @@ tags: [progression, saves, levels]
 
 `RestPoint` combines recovery and checkpoint activation. Interacting with it:
 
-- restores the player's health, mana and stamina in full;
+- restores the player's health, mana and stamina in full, immediately on interaction;
 - clears active debuffs while preserving buffs;
 - refills every owned flask;
 - stores a respawn position above the marker.
