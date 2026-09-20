@@ -73,9 +73,14 @@ func _start(saved: bool) -> void:
 
 func _new_game() -> void:
 	if GameFlow.read_save().is_empty():
-		_start(false)
+		_create_character()
 	else:
-		_confirm("Начать заново?\nТекущее прохождение будет заменено.", _start.bind(false))
+		_confirm("Начать заново?\nТекущее прохождение будет заменено после создания героя.", _create_character)
+
+
+func _create_character() -> void:
+	if get_tree().change_scene_to_file(GameFlow.CHARACTER_CREATION) != OK:
+		_status.text = "Не удалось открыть создание персонажа."
 
 
 func _show_load() -> void:

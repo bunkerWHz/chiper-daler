@@ -1,7 +1,7 @@
 # Menus and playthrough saves
 
-The project starts at `MainMenu.tscn`. New Game opens the existing
-`MovementSandbox.tscn`; change `GameFlow.FIRST_LEVEL` when the first level is ready.
+The project starts at `MainMenu.tscn`. New Game opens `CharacterCreation.tscn`,
+then the existing `MovementSandbox.tscn`; change `GameFlow.FIRST_LEVEL` when the first level is ready.
 Escape opens the pause menu during gameplay. Progress saves automatically and
 before returning or quitting. The pause menu also offers an immediate manual save.
 
@@ -41,3 +41,24 @@ Validation: run `tests/menu_runtime_check.gd` with `--script` and an isolated
 APPDATA/LOCALAPPDATA directory, e.g. `.godot/test-user`. The test writes and removes
 saves/settings in that isolated profile. It checks disk persistence, malformed saves,
 scene transitions, pause release and resetting checkpoints for a new game.
+
+## Character creation
+
+Darklight remains the only playable rig. Creation sets a trimmed name (1–24
+characters), five attributes with a minimum of 1, and exactly 10 points total:
+5 are already assigned, 5 are freely distributed. Plus/minus buttons refund
+points before starting; reset returns every attribute to 1. All points must be spent.
+Weapon and seven-piece armor choices are independent of stats/classes.
+`CharacterCreationData.gd` owns the budget, validation and starter catalogs.
+Bow/crossbow include matching ammunition; every loadout includes health/mana flasks.
+The selected loadout replaces the sandbox inventory and is equipped immediately.
+The UI shows actual equipment weight against the existing END capacity formula.
+It does not introduce new stat scaling or change the established combat balance.
+
+The existing save codec restores starting data before the first autosave and
+stores an optional `identity.name`; older saves default to Darklight. Cancel/Escape
+returns to the menu without preparing a new session or replacing the existing save.
+Direct `GameFlow.start_game()` remains available to sandbox checks with authored defaults.
+Run `tests/character_creation_runtime_check.gd` with isolated APPDATA to check budget
+boundaries, all gear combinations, actual equipment, disk round trips and cancellation.
+Use a rendered run with `-- --capture` to save a UI screenshot in the temporary directory.

@@ -721,6 +721,9 @@ func _on_equipment_data_dropped(
 
 
 func _rebuild_equipment_text() -> void:
+	var title := get_node_or_null("CanvasLayer/Panel/Main/Header/Title") as Label
+	if title != null and "character_name" in actor:
+		title.text = "Инвентарь · " + String(actor.get("character_name"))
 	var attributes := (
 		actor.get_component(CharacterAttributesComponent)
 		as CharacterAttributesComponent

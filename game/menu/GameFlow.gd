@@ -1,6 +1,9 @@
 extends Node
 
+const CreationData := preload("res://game/menu/CharacterCreationData.gd")
+
 const MENU := "res://game/menu/MainMenu.tscn"
+const CHARACTER_CREATION := "res://game/menu/CharacterCreation.tscn"
 const FIRST_LEVEL := "res://tests/MovementSandbox.tscn"
 const SAVE_PATH := "user://checkpoint.cfg"
 const SETTINGS_PATH := "user://settings.cfg"
@@ -111,8 +114,20 @@ func save_checkpoint(path: String = SAVE_PATH) -> Error:
 	return saves.save_now(path)
 
 
-func start_game(from_save: bool = false) -> Error:
+func start_created_game(draft: RefCounted) -> Error:
+	if not draft is CreationData:
+		return ERR_INVALID_PARAMETER
+	if not draft.validation_error().is_empty():
+		return ERR_INVALID_PARAMETER
+	return start_game(false, draft.player_state())
+
+
+func start_game(from_save: bool = false, initial_player: Dictionary = {}) -> Error:
 	var saved := read_save() if from_save else {}
+	if not from_save and not initial_player.is_empty():
+		if not saves.store.codec.validate(initial_player):
+			return ERR_INVALID_DATA
+		saved = {"player": initial_player}
 	if from_save and saved.is_empty():
 		return ERR_FILE_CORRUPT
 	var scene_path: String = saved.get("scene", FIRST_LEVEL)
@@ -131,7 +146,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel") or event.is_echo():
 		return
 	var scene := get_tree().current_scene
-	if scene == null or scene.scene_file_path == MENU:
+	if scene == null or scene.scene_file_path in [MENU, CHARACTER_CREATION]:
 		return
 	get_viewport().set_input_as_handled()
 	if _pause_layer != null:

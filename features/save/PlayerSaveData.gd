@@ -37,6 +37,8 @@ func _scan_items(directory: String) -> void:
 
 func capture(actor: Actor) -> Dictionary:
 	var result := {}
+	if "character_name" in actor:
+		result["identity"] = {"name": actor.get("character_name")}
 	for key: String in component_types:
 		var component := actor.get_component(component_types[key])
 		if component == null:
@@ -51,6 +53,8 @@ func capture(actor: Actor) -> Dictionary:
 
 
 func restore(actor: Actor, data: Dictionary) -> void:
+	if "character_name" in actor:
+		actor.set("character_name", data.get("identity", {}).get("name", "Darklight"))
 	var components := actor.get_components()
 	components.sort_custom(func(a: Component, b: Component) -> bool:
 		return a.get_runtime_state_restore_priority() < b.get_runtime_state_restore_priority())
@@ -81,12 +85,16 @@ func validate(data: Variant) -> bool:
 		return false
 	for key: String in data:
 		# Legacy separate ammo counters are validated but no longer restored.
-		if not component_types.has(key) and key not in ["ranged", "throwing"]:
+		if not component_types.has(key) and key not in ["ranged", "throwing", "identity"]:
 			return false
 		if key == "throwing":
 			if not _count(data[key]):
 				return false
 		elif not data[key] is Dictionary:
+			return false
+	if data.has("identity"):
+		var character_name: Variant = data.identity.get("name")
+		if not character_name is String or character_name.strip_edges().is_empty() or character_name.length() > 24 or "\n" in character_name or "\r" in character_name:
 			return false
 	if data.has("inventory"):
 		var inv: Dictionary = data.inventory
