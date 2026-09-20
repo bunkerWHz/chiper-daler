@@ -214,12 +214,17 @@ func get_attack_duration(heavy: bool = false) -> float:
 	if is_attacking() and heavy == _is_heavy_attack:
 		return _started_attack_duration
 	if _timing_player != null:
-		return _timing_player.get_animation(timing_clip).length
+		return _timing_player.get_animation(timing_clip).length / get_attack_speed_multiplier()
 	if attack_duration_provider.is_valid():
 		var duration: float = attack_duration_provider.call(heavy, _attack_started_airborne)
 		if is_finite(duration) and duration > 0.0:
-			return duration
-	return config.heavy_active_duration if heavy else config.active_duration
+			return duration / get_attack_speed_multiplier()
+	return (config.heavy_active_duration if heavy else config.active_duration) / get_attack_speed_multiplier()
+
+
+func get_attack_speed_multiplier() -> float:
+	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
+	return attributes.get_attack_speed_multiplier() if attributes != null and attributes.is_enabled else 1.0
 
 
 func is_heavy_attacking() -> bool:
@@ -350,7 +355,7 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 	_attack_started_airborne = started_airborne
 	_started_attack_duration = get_attack_duration(heavy)
 	_active_timer = _started_attack_duration
-	_cooldown_timer = config.heavy_cooldown if heavy else config.cooldown
+	_cooldown_timer = (config.heavy_cooldown if heavy else config.cooldown) / get_attack_speed_multiplier()
 	var equipped_damage := _get_equipped_melee_damage()
 	_hitbox_component.set_reach_multiplier(
 		float(_equipment_component.call("get_active_weapon_reach_multiplier"))
@@ -383,7 +388,7 @@ func _start_attack(heavy: bool, started_airborne: bool) -> bool:
 
 func _begin_landing_recovery() -> void:
 	_finish_attack()
-	_landing_recovery_timer = config.landing_recovery_duration
+	_landing_recovery_timer = config.landing_recovery_duration / get_attack_speed_multiplier()
 	landing_recovery_started.emit()
 
 
@@ -414,6 +419,9 @@ func _restore_hitbox_damage() -> void:
 
 func _get_equipped_melee_damage() -> float:
 	var result := _base_damage
+	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
+	if attributes != null and attributes.is_enabled:
+		result = attributes.get_physical_attack()
 	if (
 		_equipment_component != null
 		and _equipment_component.has_method("get_active_weapon_damage")

@@ -13,10 +13,17 @@ func on_initialize() -> void:
 		disable()
 
 
-func modify_damage(_hit: HitData, damage: float) -> float:
+func modify_damage(hit: HitData, damage: float) -> float:
 	if not is_enabled or damage <= 0.0:
 		return damage
 	var defense := _equipment.get_total_defense()
+	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
+	if hit != null and hit.is_magic:
+		defense = _equipment.get_stat_bonus(&"magic_defense")
+		if attributes != null and attributes.is_enabled:
+			defense += attributes.get_magic_defense()
+	elif attributes != null and attributes.is_enabled:
+		defense += attributes.get_physical_defense()
 	if defense <= 0.0:
 		return damage
 	return damage * defense_scale / (defense_scale + defense)

@@ -10,27 +10,64 @@ signal attributes_changed(
 )
 
 @export_group("Base attributes")
-@export_range(0, 999, 1) var strength: int = 5
-@export_range(0, 999, 1) var dexterity: int = 5
-@export_range(0, 999, 1) var intelligence: int = 5
-@export_range(0, 999, 1) var endurance: int = 5
-@export_range(0, 999, 1) var wisdom: int = 5
+@export_range(0, 999, 1) var strength: int = 1
+@export_range(0, 999, 1) var dexterity: int = 1
+@export_range(0, 999, 1) var intelligence: int = 1
+@export_range(0, 999, 1) var endurance: int = 1
+@export_range(0, 999, 1) var wisdom: int = 1
 @export_group("Derived values")
 @export var derived_stats_config := CharacterDerivedStatsConfig.new()
-## Explicit speed until the DEX conversion formula is designed. Currently used by equipment swaps.
+## Additional multiplier retained for buffs and existing saves.
 @export_group("Action speed")
 @export_range(0.1, 10.0, 0.05) var attack_speed_multiplier: float = 1.0
 
 
 func get_attack_speed_multiplier() -> float:
-	return clampf(attack_speed_multiplier, 0.1, 10.0) if is_finite(attack_speed_multiplier) else 1.0
+	var extra := clampf(attack_speed_multiplier, 0.1, 10.0) if is_finite(attack_speed_multiplier) else 1.0
+	return (100.0 + maxi(dexterity - 1, 0)) / 100.0 * extra
+
+
+func get_run_speed_multiplier() -> float:
+	return (100.0 + maxi(dexterity - 1, 0)) / 100.0
+
+
+func get_cast_speed_multiplier() -> float:
+	return (100.0 + maxi(wisdom - 1, 0)) / 100.0
+
+
+func get_physical_attack() -> float:
+	return 1.0 + maxi(strength - 1, 0)
+
+
+func get_magic_attack() -> float:
+	return 1.0 + maxi(intelligence - 1, 0)
+
+
+func get_physical_defense() -> float:
+	return 1.0 + maxi(strength - 1, 0)
+
+
+func get_magic_defense() -> float:
+	return 1.0 + maxi(intelligence - 1, 0)
+
+
+func get_health_regeneration() -> float:
+	return 10.0 + maxi(endurance - 1, 0)
+
+
+func get_mana_regeneration() -> float:
+	return 10.0 + maxi(wisdom - 1, 0)
+
+
+func get_stamina_regeneration() -> float:
+	return 10.0 + maxi(dexterity - 1, 0)
 
 
 func get_endurance_health_bonus() -> float:
 	if derived_stats_config == null:
 		return 0.0
 	return (
-		float(endurance - derived_stats_config.reference_endurance)
+		float(maxi(endurance - derived_stats_config.reference_endurance, 0))
 		* derived_stats_config.health_per_endurance
 	)
 
@@ -40,7 +77,7 @@ func get_max_equip_load() -> float:
 		return 1.0
 	return maxf(
 		derived_stats_config.base_max_equip_load
-		+ float(endurance - derived_stats_config.reference_endurance)
+		+ float(maxi(endurance - derived_stats_config.reference_endurance, 0))
 		* derived_stats_config.equip_load_per_endurance,
 		1.0
 	)
@@ -50,7 +87,7 @@ func get_wisdom_mana_bonus() -> float:
 	if derived_stats_config == null:
 		return 0.0
 	return (
-		float(wisdom - derived_stats_config.reference_wisdom)
+		float(maxi(wisdom - derived_stats_config.reference_wisdom, 0))
 		* derived_stats_config.mana_per_wisdom
 	)
 

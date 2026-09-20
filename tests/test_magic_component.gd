@@ -178,12 +178,12 @@ func test_wisdom_changes_runtime_maximum_mana() -> void:
 	assert_eq(magic.get_mana(), 100.0)
 	magic._set_mana(70.0)
 	attributes.set_wisdom(7)
-	assert_eq(magic.get_max_mana(), 120.0)
-	assert_eq(magic.get_mana(), 90.0)
+	assert_eq(magic.get_max_mana(), 106.0)
+	assert_eq(magic.get_mana(), 76.0)
 	attributes.set_wisdom(0)
-	assert_eq(magic.get_max_mana(), 50.0)
-	assert_eq(magic.get_mana(), 50.0)
-	assert_eq(magic.restore_mana(100.0), 0.0)
+	assert_eq(magic.get_max_mana(), 100.0)
+	assert_eq(magic.get_mana(), 76.0)
+	assert_eq(magic.restore_mana(100.0), 24.0)
 
 
 func _on_magic_phase_changed(

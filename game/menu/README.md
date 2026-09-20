@@ -57,7 +57,7 @@ shoulder, hand, belt or foot items are granted.
 Bow/crossbow include matching ammunition; every loadout includes health/mana flasks.
 The selected loadout replaces the sandbox inventory and is equipped immediately.
 The UI shows actual equipment weight against the existing END capacity formula.
-It does not introduce new stat scaling or change the established combat balance.
+Creation previews HP, mana, speeds, regeneration and base attack/defense using the live attribute formulas. See docs/Actor_Stats.md for the balance rules.
 
 The existing save codec restores starting data before the first autosave and
 stores an optional `identity.name`; older saves default to Darklight. Cancel/Escape

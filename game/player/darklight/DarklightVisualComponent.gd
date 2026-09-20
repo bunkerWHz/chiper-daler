@@ -134,7 +134,11 @@ func _play_animation(animation_name: StringName) -> void:
 	_animation_player.advance(0.0)
 	_refresh_equipment_visuals()
 	var speed := 1.0
-	if animation_name == &"drink":
+	if attack_family in [&"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack"]:
+		var attack := actor.get_component(AttackComponent) as AttackComponent
+		if attack != null and attack.is_attacking():
+			speed = _animation_player.get_animation(animation_name).length / attack.get_attack_duration(attack.is_heavy_attacking())
+	elif animation_name == &"drink":
 		speed = _animation_player.get_animation(animation_name).length / _item_use.config.use_duration
 	elif animation_name == &"dodge":
 		var dodge := actor.get_component(DodgeComponent) as DodgeComponent

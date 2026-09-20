@@ -166,26 +166,31 @@ func _cast_spell() -> void:
 	var parent := actor.get_parent()
 	if parent != null:
 		var projectile := preload("res://features/throwing/ThrownProjectile.tscn").instantiate() as ThrownProjectile
+		projectile.is_magic = true
 		parent.add_child(projectile)
 		projectile.global_position = _aim.get_launch_position()
 		projectile.setup_direction(
 			actor,
 			_aim.get_direction(),
 			config.projectile_speed,
-			config.damage + _equipment.get_active_weapon_damage(),
+			(_attributes.get_magic_attack() if _attributes != null else config.damage) + _equipment.get_active_weapon_damage(),
 			config.knockback,
 			config.projectile_lifetime,
 			null,
 			config.projectile_gravity
 		)
-	_set_phase(Phase.CAST, config.cast_duration)
+	_set_phase(Phase.CAST, config.cast_duration / get_cast_speed_multiplier())
+
+
+func get_cast_speed_multiplier() -> float:
+	return _attributes.get_cast_speed_multiplier() if _attributes != null else 1.0
 
 
 func _update_phase(delta: float) -> void:
 	if _phase == Phase.CAST or _phase == Phase.RECOVERY:
 		_timer = maxf(_timer - delta, 0.0)
 		if _timer == 0.0:
-			_set_phase(Phase.RECOVERY if _phase == Phase.CAST else Phase.NONE, config.recovery_duration if _phase == Phase.CAST else 0.0)
+			_set_phase(Phase.RECOVERY if _phase == Phase.CAST else Phase.NONE, config.recovery_duration / get_cast_speed_multiplier() if _phase == Phase.CAST else 0.0)
 
 
 func _set_phase(value: Phase, duration: float) -> void:

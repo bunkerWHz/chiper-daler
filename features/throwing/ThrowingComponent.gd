@@ -116,7 +116,9 @@ func _release_throwable() -> void:
 	projectile.fit_throwable(actor, profile.texture, profile.visual_scale)
 	actor.get_parent().add_child(projectile)
 	projectile.global_position = origin
-	projectile.setup_direction(actor, direction, profile.speed, profile.damage,
+	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
+	var damage := profile.damage + (attributes.get_physical_attack() if attributes != null and attributes.is_enabled else 0.0)
+	projectile.setup_direction(actor, direction, profile.speed, damage,
 		profile.knockback, profile.lifetime, profile.texture, profile.gravity, profile.rotation_speed,
 		profile.status_effects)
 	throwable_released.emit(direction, _inventory.get_quantity(item.id))

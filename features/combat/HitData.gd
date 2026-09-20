@@ -2,6 +2,7 @@ extends RefCounted
 class_name HitData
 
 var damage: float
+var is_magic: bool = false
 var source_actor: Actor
 var knockback_velocity: Vector2
 var is_critical: bool

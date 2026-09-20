@@ -747,7 +747,7 @@ func _rebuild_equipment_text() -> void:
 		wisdom = attributes.wisdom
 	_equipment_text.text = (
 		"STR %d  DEX %d  INT %d\n"
-		+ "END %d  WIS %d  Defense %.1f\n"
+		+ "END %d  WIS %d  Броня %.1f\n"
 		+ "Load %d / %d (%.0f%%)"
 	) % [
 		strength,
@@ -755,11 +755,19 @@ func _rebuild_equipment_text() -> void:
 		intelligence,
 		endurance,
 		wisdom,
-		_equipment.get_total_defense(),
+		_equipment.get_total_defense() + (attributes.get_physical_defense() if attributes != null else 0.0),
 		ceili(_equipment.get_total_equipped_weight()),
 		ceili(_equipment.get_max_equip_load()),
 		_equipment.get_equip_load_ratio() * 100.0,
 	]
+	if attributes != null:
+		_equipment_text.text += "\nМаг. защита: %.1f\nСкорости А/Б/К: %.0f/%.0f/%.0f%%\nРеген: %.1f/%.1f/%.1f" % [
+			attributes.get_magic_defense() + _equipment.get_stat_bonus(&"magic_defense"),
+			attributes.get_attack_speed_multiplier() * 100, attributes.get_run_speed_multiplier() * 100, attributes.get_cast_speed_multiplier() * 100,
+			attributes.get_health_regeneration() + _equipment.get_stat_bonus(&"health_regeneration"),
+			attributes.get_mana_regeneration() + _equipment.get_stat_bonus(&"mana_regeneration"),
+			attributes.get_stamina_regeneration() + _equipment.get_stat_bonus(&"stamina_regeneration")]
+		_equipment_text.tooltip_text = "А/Б/К — атака, бег, магический каст.\nРеген: HP / мана / стамина за 1 секунду.\nЧерез 5 секунд без атак и урона реген ×2.\nБазовая физическая / магическая атака: %.1f / %.1f; урон оружия добавляется отдельно." % [attributes.get_physical_attack(), attributes.get_magic_attack()]
 
 
 func _on_inventory_changed() -> void:

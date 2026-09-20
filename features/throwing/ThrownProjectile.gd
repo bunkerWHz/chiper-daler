@@ -7,6 +7,7 @@ const VISUAL_SIZING := preload("res://features/inventory/ItemVisualSizing.gd")
 var _source_actor: Actor
 var _velocity: Vector2
 var _damage: float = 0.0
+var is_magic: bool = false
 var _knockback: float = 0.0
 var _lifetime: float = 0.0
 var _has_hit: bool = false
@@ -120,6 +121,7 @@ func _on_area_entered(area: Area2D) -> void:
 		Vector2(direction * _knockback, -_knockback * 0.35)
 	)
 	hit.status_effects = _status_effects
+	hit.is_magic = is_magic
 	hurtbox.receive_hit(hit)
 	queue_free()
 

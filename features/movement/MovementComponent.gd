@@ -160,6 +160,9 @@ func _update_horizontal_velocity(delta: float) -> void:
 
 	var direction := _input_component.get_move_axis()
 	var target_speed := direction * config.move_speed
+	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
+	if attributes != null and attributes.is_enabled:
+		target_speed *= attributes.get_run_speed_multiplier()
 	var velocity := _body_component.get_velocity()
 
 	match config.acceleration_mode:

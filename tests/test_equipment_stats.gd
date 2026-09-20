@@ -54,7 +54,7 @@ func test_all_five_attributes_persist() -> void:
 	assert_eq(attributes.intelligence, 6)
 	assert_eq(attributes.endurance, 6)
 	assert_eq(attributes.wisdom, 6)
-	assert_eq(attributes.get_attack_speed_multiplier(), 1.5)
+	assert_true(is_equal_approx(attributes.get_attack_speed_multiplier(), 1.575))
 
 
 func test_weapon_damage_applies_before_heavy_multiplier() -> void:
@@ -72,10 +72,10 @@ func test_weapon_damage_applies_before_heavy_multiplier() -> void:
 	attack._ready()
 
 	assert_true(attack.attack())
-	assert_eq(hitbox.damage, 20.0)
+	assert_eq(hitbox.damage, 11.0)
 	attack._process(attack.config.cooldown)
 	assert_true(attack.heavy_attack())
-	assert_eq(hitbox.damage, 40.0)
+	assert_eq(hitbox.damage, 22.0)
 
 
 func test_active_weapon_controls_critical_damage_multiplier() -> void:
@@ -130,8 +130,8 @@ func test_equipment_defense_reduces_incoming_damage() -> void:
 	equipment.equip_inventory_item(armor.id, ItemData.EquipSlot.CHEST)
 
 	assert_eq(equipment.get_total_defense(), 100.0)
-	assert_eq(hurtbox.receive_hit(HitData.new(100.0, null)), 50.0)
-	assert_eq(health.get_current_health(), 150.0)
+	assert_true(is_equal_approx(hurtbox.receive_hit(HitData.new(100.0, null)), 10000.0 / 201.0))
+	assert_true(is_equal_approx(health.get_current_health(), 200.0 - 10000.0 / 201.0))
 
 
 func test_endurance_controls_load_from_all_equipped_weapon_sets() -> void:
@@ -162,11 +162,11 @@ func test_endurance_controls_load_from_all_equipped_weapon_sets() -> void:
 	equipment.equip_inventory_item(armor.id, ItemData.EquipSlot.CHEST)
 
 	assert_eq(equipment.get_total_equipped_weight(), 9.0)
-	assert_eq(equipment.get_max_equip_load(), 25.0)
-	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 0.36))
+	assert_eq(equipment.get_max_equip_load(), 100.0)
+	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 0.09))
 	attributes.set_endurance(10)
-	assert_eq(equipment.get_max_equip_load(), 40.0)
-	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 0.225))
+	assert_eq(equipment.get_max_equip_load(), 109.0)
+	assert_true(is_equal_approx(equipment.get_equip_load_ratio(), 9.0 / 109.0))
 	assert_eq(inventory.get_total_weight(), 9.0)
 
 

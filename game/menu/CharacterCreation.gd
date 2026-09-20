@@ -8,6 +8,7 @@ var _plus: Dictionary = {}
 var _points: Label
 var _status: Label
 var _weight: Label
+var _derived: Label
 var _start_button: Button
 
 func _ready() -> void:
@@ -82,7 +83,9 @@ func _ready() -> void:
 		_refresh())
 	_weight = _label(right, "", 18)
 	_weight.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var note := _label(right, "Во всех наборах: фляги здоровья и маны.\nОружие и броню можно сочетать свободно.\n\nEND уже влияет на здоровье и нагрузку,\nWIS — на ману. Остальные связи статов\nс боем будут добавлены позднее.", 17)
+	_derived = _label(right, "", 17)
+	_derived.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var note := _label(right, "Во всех наборах: фляги здоровья и маны.\nОружие и броню можно сочетать свободно.\nРеген — раз в секунду; вне боя ×2 через 5 сек.", 17)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# Keep validation and actions outside scrolling content: longer messages and
 	# equipment warnings must never push the buttons below the viewport.
@@ -135,6 +138,14 @@ func _refresh() -> void:
 	var capacity := maxf(1.0, config.base_max_equip_load + (draft.attributes.endurance - config.reference_endurance) * config.equip_load_per_endurance)
 	var weight := draft.equipment_weight()
 	_weight.text = "Вес экипировки: %.1f / %.1f\n%s" % [weight, capacity, "Перегруз: увеличьте выносливость или выберите более лёгкую броню." if weight > capacity else "Нагрузка в пределах допустимой."]
+	var stats := CharacterAttributesComponent.new()
+	stats.restore_runtime_state(draft.attributes)
+	_derived.text = "HP %.0f · Мана %.0f · Стамина 100\nСкорости: атака %.0f%% · бег %.0f%% · каст %.0f%%\nРеген HP / маны / стамины: %.0f / %.0f / %.0f\nБазовая атака физ. / маг.: %.0f / %.0f\nБазовая защита физ. / маг.: %.0f / %.0f" % [
+		100.0 + stats.get_endurance_health_bonus(), 100.0 + stats.get_wisdom_mana_bonus(),
+		stats.get_attack_speed_multiplier() * 100, stats.get_run_speed_multiplier() * 100, stats.get_cast_speed_multiplier() * 100,
+		stats.get_health_regeneration(), stats.get_mana_regeneration(), stats.get_stamina_regeneration(),
+		stats.get_physical_attack(), stats.get_magic_attack(), stats.get_physical_defense(), stats.get_magic_defense()]
+	stats.free()
 	_status.text = draft.validation_error()
 	_start_button.disabled = not _status.text.is_empty()
 

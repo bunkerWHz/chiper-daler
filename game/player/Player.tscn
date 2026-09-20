@@ -57,6 +57,7 @@
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]
 [ext_resource type="PackedScene" path="res://features/equipment/ui/EquipmentSwapView.tscn" id="equipment_swap_view"]
+[ext_resource type="Script" path="res://features/stats/RegenerationComponent.gd" id="regeneration"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y3r3g"]
 resource_local_to_scene = true
@@ -190,6 +191,9 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 [node name="MagicComponent" parent="_Components" unique_id=273067881 instance=ExtResource("36_magic")]
 
 [node name="StaminaComponent" parent="_Components" unique_id=972858078 instance=ExtResource("48_stamina")]
+
+[node name="RegenerationComponent" type="Node" parent="_Components"]
+script = ExtResource("regeneration")
 
 [node name="RestComponent" parent="_Components" unique_id=1183638924 instance=ExtResource("37_rest")]
 

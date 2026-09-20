@@ -398,6 +398,15 @@ func get_total_defense() -> float:
 	return total
 
 
+func get_stat_bonus(property: StringName) -> float:
+	var total := 0.0
+	for item: ItemData in _get_effective_equipped_items():
+		var stats := item.get_equipment_stats()
+		if stats != null:
+			total += float(stats.get(property))
+	return total
+
+
 func get_total_poise() -> float:
 	var total := 0.0
 	for item: ItemData in _get_effective_equipped_items():

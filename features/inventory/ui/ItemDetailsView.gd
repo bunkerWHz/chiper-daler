@@ -73,6 +73,12 @@ func _append_item_stats(lines: PackedStringArray, item: ItemData) -> void:
 		item_stats.damage * (1.0 + 0.1 * _inventory.get_weapon_upgrade(item.id)),
 		item_stats.defense,
 	])
+	if item_stats.magic_defense > 0.0:
+		lines.append("Magic defense: %.1f" % item_stats.magic_defense)
+	for entry: Array in [["health_regeneration", "HP"], ["mana_regeneration", "Mana"], ["stamina_regeneration", "Stamina"]]:
+		var amount := float(item_stats.get(entry[0]))
+		if amount > 0.0:
+			lines.append("%s regeneration: +%.1f / tick (1 s)" % [entry[1], amount])
 	var equip_slot := item.get_primary_equip_slot()
 	if equip_slot == ItemData.EquipSlot.NONE:
 		return

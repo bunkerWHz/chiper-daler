@@ -19,6 +19,8 @@ func on_initialize() -> void:
 
 
 func _process(delta: float) -> void:
+	if actor != null and actor.has_component(RegenerationComponent):
+		return
 	if _regeneration_delay > 0.0:
 		var consumed_delay := minf(_regeneration_delay, delta)
 		_regeneration_delay -= consumed_delay
