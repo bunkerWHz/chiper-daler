@@ -17,6 +17,7 @@ var _displayed_stamina: float = 0.0
 var _displayed_max_stamina: float = 1.0
 var _displayed_experience: int = 0
 var _displayed_required_experience: int = 1
+var _displayed_max_level: bool = false
 var _displayed_rage: float = 0.0
 var _displayed_max_rage: float = 10.0
 
@@ -183,6 +184,11 @@ func _on_stamina_changed(current: float, maximum: float) -> void:
 
 
 func _on_experience_changed(current: int, required: int) -> void:
+	_displayed_max_level = (
+		_progression != null
+		and _progression.is_enabled
+		and _progression.is_max_level()
+	)
 	_displayed_required_experience = maxi(required, 1)
 	_displayed_experience = clampi(
 		current, 0, _displayed_required_experience
@@ -231,9 +237,13 @@ func _apply_display() -> void:
 	]
 	_experience_bar.max_value = _displayed_required_experience
 	_experience_bar.value = _displayed_experience
-	_experience_value.text = "%d / %d" % [
-		_displayed_experience, _displayed_required_experience
-	]
+	if _displayed_max_level:
+		_experience_bar.value = _displayed_required_experience
+		_experience_value.text = "МАКС"
+	else:
+		_experience_value.text = "%d / %d" % [
+			_displayed_experience, _displayed_required_experience
+		]
 	_rage_bar.max_value = _displayed_max_rage
 	_rage_bar.value = _displayed_rage
 	_rage_value.text = "%.1f / %.1f" % [

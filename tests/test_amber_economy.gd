@@ -89,3 +89,59 @@ func test_dead_player_cannot_collect_or_spend() -> void:
 	var shelter := track(RestPoint.new()) as RestPoint
 	assert_false(shelter.buy_level(player))
 	assert_eq(inventory.get_amber(), 100)
+
+
+func _flat_curve_player(max_level: int) -> Actor:
+	var player := _player()
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	progression.config.requirement_growth = 1.0
+	progression.config.max_level = max_level
+	return player
+
+
+## 20 опыта, 90 осколков, до уровня не хватает 80: обмен забирает ровно 80,
+## 10 осколков остаются в кошельке.
+func test_exchange_to_next_level_keeps_the_remainder() -> void:
+	var player := _flat_curve_player(100)
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	var shelter := track(RestPoint.new()) as RestPoint
+	progression.gain_experience(20)
+	inventory.add_amber(90)
+	assert_eq(shelter.get_level_cost(player), 80)
+	assert_true(shelter.buy_level(player))
+	assert_eq(inventory.get_amber(), 10)
+	assert_eq(progression.get_level(), 2)
+	assert_eq(progression.get_experience(), 0)
+
+
+func test_exchange_all_spends_the_whole_purse() -> void:
+	var player := _flat_curve_player(100)
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	var shelter := track(RestPoint.new()) as RestPoint
+	progression.gain_experience(20)
+	inventory.add_amber(90)
+	assert_eq(shelter.get_full_exchange_cost(player), 90)
+	assert_true(shelter.buy_all_levels(player))
+	assert_eq(inventory.get_amber(), 0)
+	assert_eq(progression.get_level(), 2)
+	assert_eq(progression.get_experience(), 10)
+
+
+func test_exchange_all_stops_paying_for_levels_past_the_cap() -> void:
+	var player := _flat_curve_player(2)
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	var shelter := track(RestPoint.new()) as RestPoint
+	inventory.add_amber(500)
+	assert_eq(shelter.get_full_exchange_cost(player), 100)
+	assert_true(shelter.buy_all_levels(player))
+	assert_eq(inventory.get_amber(), 400)
+	assert_eq(progression.get_level(), 2)
+	assert_true(progression.is_max_level())
+	assert_eq(shelter.get_level_cost(player), 0)
+	assert_eq(shelter.get_full_exchange_cost(player), 0)
+	assert_false(shelter.buy_level(player))
+	assert_false(shelter.buy_all_levels(player))
+	assert_eq(inventory.get_amber(), 400)

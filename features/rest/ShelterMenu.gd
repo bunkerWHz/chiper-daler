@@ -83,12 +83,13 @@ func _refresh() -> void:
 		queue_free()
 		return
 	var inventory := visitor.get_component(InventoryComponent) as InventoryComponent
+	var progression := visitor.get_component(ProgressionComponent) as ProgressionComponent
 	_balance.text = "Янтарные осколки: %d" % inventory.get_amber()
 	for child in _actions.get_children():
 		_actions.remove_child(child)
 		child.queue_free()
-	var cost := shelter.get_level_cost(visitor)
-	_button("Повысить уровень · %d осколков" % cost, shelter.buy_level.bind(visitor), cost <= 0 or inventory.get_amber() < cost)
+	_build_level_section(inventory, progression)
+	var cost := 0
 	for index in shelter.shop_weapons.size():
 		var item := shelter.shop_weapons[index]
 		if item == null:
@@ -106,13 +107,67 @@ func _refresh() -> void:
 		hint.add_theme_font_size_override("font_size", 12)
 		_actions.add_child(hint)
 
-func _button(text: String, action: Callable, unavailable: bool) -> void:
+func _build_level_section(inventory: InventoryComponent, progression: ProgressionComponent) -> void:
+	var max_level := progression.get_max_level()
+	_heading("ПОВЫШЕНИЕ УРОВНЯ · %d / %d" % [progression.get_level(), max_level])
+	if progression.is_max_level():
+		var maxed := Label.new()
+		maxed.text = "Достигнут максимальный уровень. Осколки остаются валютой убежища."
+		maxed.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_actions.add_child(maxed)
+		return
+	var amber := inventory.get_amber()
+	var to_next := shelter.get_level_cost(visitor)
+	var next_level := progression.get_level() + 1
+	var progress := Label.new()
+	progress.text = "Опыт: %d / %d. До уровня %d не хватает %d осколков." % [
+		progression.get_experience(),
+		progression.get_experience_required(),
+		next_level,
+		to_next,
+	]
+	progress.add_theme_font_size_override("font_size", 12)
+	_actions.add_child(progress)
+	_button(
+		"Обменять %d осколков · уровень %d" % [to_next, next_level],
+		shelter.buy_level.bind(visitor),
+		amber < to_next,
+		"Уровень %d." % next_level,
+		"Не хватает осколков до следующего уровня."
+	)
+	var all_cost := shelter.get_full_exchange_cost(visitor)
+	_button(
+		"Обменять все осколки · %d" % all_cost,
+		shelter.buy_all_levels.bind(visitor),
+		all_cost <= 0,
+		"Обменяно %d осколков." % all_cost,
+		"Обменивать нечего: осколков нет."
+	)
+	var hint := Label.new()
+	hint.text = "1 осколок = 1 опыт. Осколки также валюта убежища, поэтому часть запаса можно придержать."
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.add_theme_font_size_override("font_size", 12)
+	_actions.add_child(hint)
+
+func _heading(text: String) -> void:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 16)
+	_actions.add_child(label)
+
+func _button(
+	text: String,
+	action: Callable,
+	unavailable: bool,
+	success_text: String = "Готово.",
+	failure_text: String = "Не удалось: проверьте место в инвентаре и запас осколков."
+) -> void:
 	var button := Button.new()
 	button.text = text
 	button.disabled = unavailable
 	button.pressed.connect(func() -> void:
 		var success: bool = action.call()
-		_feedback.text = "Готово." if success else "Не удалось: проверьте место в инвентаре и запас осколков."
+		_feedback.text = success_text if success else failure_text
 		_refresh()
 	)
 	_actions.add_child(button)

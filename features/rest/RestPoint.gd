@@ -57,17 +57,48 @@ func _can_trade(visitor: Actor) -> bool:
 	return health != null and not health.is_dead() and inventory != null and inventory.is_enabled
 
 
+## Shards that buy exactly the next level, leaving the rest of the purse alone.
 func get_level_cost(visitor: Actor) -> int:
 	var progression := visitor.get_component(ProgressionComponent) as ProgressionComponent
-	if progression == null or not progression.is_enabled:
+	if progression == null or not progression.is_enabled or progression.is_max_level():
 		return 0
-	return progression.get_experience_required() - progression.get_experience()
+	return maxi(
+		progression.get_experience_required() - progression.get_experience(),
+		0
+	)
 
 
 func buy_level(visitor: Actor) -> bool:
 	if not _can_trade(visitor):
 		return false
 	var cost := get_level_cost(visitor)
+	var inventory := visitor.get_component(InventoryComponent) as InventoryComponent
+	if cost <= 0 or not inventory.spend_amber(cost):
+		return false
+	(visitor.get_component(ProgressionComponent) as ProgressionComponent).gain_experience(cost)
+	return true
+
+
+## Shards that the "exchange everything" offer would take: the whole purse,
+## capped by what the remaining levels up to the cap can still consume.
+func get_full_exchange_cost(visitor: Actor) -> int:
+	var progression := visitor.get_component(ProgressionComponent) as ProgressionComponent
+	var inventory := visitor.get_component(InventoryComponent) as InventoryComponent
+	if (
+		progression == null
+		or not progression.is_enabled
+		or progression.is_max_level()
+		or inventory == null
+		or not inventory.is_enabled
+	):
+		return 0
+	return mini(inventory.get_amber(), progression.get_experience_to_max_level())
+
+
+func buy_all_levels(visitor: Actor) -> bool:
+	if not _can_trade(visitor):
+		return false
+	var cost := get_full_exchange_cost(visitor)
 	var inventory := visitor.get_component(InventoryComponent) as InventoryComponent
 	if cost <= 0 or not inventory.spend_amber(cost):
 		return false

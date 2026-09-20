@@ -149,3 +149,114 @@ func test_rest_restores_stamina_completely() -> void:
 	assert_true(rest.start_rest())
 	assert_eq(stamina.get_stamina(), stamina.get_max_stamina())
 	tree.root.remove_child(player)
+
+
+func _descendants(node: Node) -> Array[Node]:
+	var result: Array[Node] = []
+	for child: Node in node.get_children():
+		result.append(child)
+		result.append_array(_descendants(child))
+	return result
+
+
+func _button_with_text(menu: Node, text: String) -> Button:
+	for node: Node in _descendants(menu):
+		var button := node as Button
+		if button != null and button.text == text:
+			return button
+	return null
+
+
+func _has_label(menu: Node, text: String) -> bool:
+	for node: Node in _descendants(menu):
+		var label := node as Label
+		if label != null and label.text == text:
+			return true
+	return false
+
+
+func _shelter_visitor() -> Actor:
+	var player := track(Actor.new()) as Actor
+	var components := Node2D.new()
+	components.name = "_Components"
+	player.add_child(components)
+	var inventory := InventoryComponent.new()
+	inventory.config = InventoryConfig.new()
+	var progression := ProgressionComponent.new()
+	progression.config = ProgressionConfig.new()
+	progression.config.requirement_growth = 1.0
+	var health := HealthComponent.new()
+	health.config = HealthConfig.new()
+	for component: Component in [inventory, progression, health]:
+		components.add_child(component)
+	player._collect_components()
+	return player
+
+
+func test_shelter_menu_shows_both_exchange_lines_and_spends_the_purse() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var player := _shelter_visitor()
+	tree.root.add_child(player)
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	var shelter := track(RestPoint.new()) as RestPoint
+	progression.gain_experience(20)
+	inventory.add_amber(90)
+
+	var menu := track(preload("res://features/rest/ShelterMenu.gd").new()) as CanvasLayer
+	menu.shelter = shelter
+	menu.visitor = player
+	tree.root.add_child(menu)
+
+	assert_true(_has_label(menu, "ПОВЫШЕНИЕ УРОВНЯ · 1 / 100"))
+	assert_true(_has_label(menu, "Опыт: 20 / 100. До уровня 2 не хватает 80 осколков."))
+	var to_next := _button_with_text(menu, "Обменять 80 осколков · уровень 2")
+	var exchange_all := _button_with_text(menu, "Обменять все осколки · 90")
+	assert_true(to_next != null, "Строка обмена до следующего уровня")
+	assert_true(exchange_all != null, "Строка обмена всего кошелька")
+	assert_false(to_next.disabled)
+	assert_false(exchange_all.disabled)
+
+	exchange_all.pressed.emit()
+	assert_eq(inventory.get_amber(), 0)
+	assert_eq(progression.get_level(), 2)
+	assert_eq(progression.get_experience(), 10)
+	assert_true(_has_label(menu, "Обменяно 90 осколков."))
+
+	tree.root.remove_child(menu)
+	menu.free()
+	tree.root.remove_child(player)
+
+
+func test_shelter_menu_locks_the_level_line_at_the_cap() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var player := _shelter_visitor()
+	tree.root.add_child(player)
+	var inventory := player.get_component(InventoryComponent) as InventoryComponent
+	var progression := player.get_component(ProgressionComponent) as ProgressionComponent
+	progression.config.max_level = 2
+	var shelter := track(RestPoint.new()) as RestPoint
+	inventory.add_amber(500)
+
+	var menu := track(preload("res://features/rest/ShelterMenu.gd").new()) as CanvasLayer
+	menu.shelter = shelter
+	menu.visitor = player
+	tree.root.add_child(menu)
+
+	var exchange_all := _button_with_text(menu, "Обменять все осколки · 100")
+	assert_true(exchange_all != null, "На потолке обмен берёт только остаток до него")
+	exchange_all.pressed.emit()
+	assert_eq(inventory.get_amber(), 400)
+	assert_eq(progression.get_level(), 2)
+	assert_true(_has_label(menu, "ПОВЫШЕНИЕ УРОВНЯ · 2 / 2"))
+	assert_true(
+		_has_label(
+			menu,
+			"Достигнут максимальный уровень. Осколки остаются валютой убежища."
+		)
+	)
+	assert_true(_button_with_text(menu, "Обменять все осколки · 0") == null)
+
+	tree.root.remove_child(menu)
+	menu.free()
+	tree.root.remove_child(player)

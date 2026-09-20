@@ -207,6 +207,10 @@ func _append_progression_info(lines: PackedStringArray) -> void:
 	if progression == null or not progression.is_enabled:
 		return
 
+	if progression.is_max_level():
+		lines.append("Level: %d  XP: MAX" % progression.get_level())
+		return
+
 	lines.append(
 		"Level: %d  XP: %d / %d" % [
 			progression.get_level(),
