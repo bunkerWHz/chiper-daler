@@ -2,7 +2,7 @@
 title: Запуск игровых тестов
 type: guide
 created: 2026-09-05
-updated: 2026-09-18
+updated: 2026-09-20
 tags: [testing, workflow]
 ---
 
@@ -48,9 +48,10 @@ godot --headless --path . --script tests/lost_amber_runtime_check.gd
 
 ## Все игровые тесты
 
-Запускайте команды из корня проекта. Нужны Godot 4.6.1 и установленный
+Запускайте команды из корня проекта. Нужны Godot 4.7 и установленный
 `addons/godot_ai`: существующие тесты используют его `McpTestSuite` и
-`McpTestRunner`. Каталог addons исключён из Git.
+`McpTestRunner`. Каталог addons исключён из Git. Проверено на Godot
+4.7.2-stable и плагине 4.1.0.
 
 Все игровые тесты:
 
@@ -66,7 +67,7 @@ godot --headless --path . --script tests/run_tests.gd -- equipment inventory_men
 
 После `--` перечисляются имена из `suite_name()`, а не имена файлов.
 Неизвестное имя считается ошибкой. В Windows используйте консольный файл
-Godot (`Godot_v4.6.1-stable_win64_console.exe`); если его нет в PATH,
+Godot (`Godot_v4.7.2-stable_win64_console.exe`); если его нет в PATH,
 укажите полный путь к нему.
 
 Последняя строка JSON содержит количество пройденных и проваленных тестов
