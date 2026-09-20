@@ -230,9 +230,10 @@ damage or destroy the item.
 Health, mana, and rage flasks use persistent charges instead of disappearing
 inventory stacks. `FlaskChargesComponent` owns current charges for each Actor.
 At zero charges the item and hotbar binding remain visible and selectable, but
-use is disabled. Flasks cannot be stacked, removed, dropped, or transferred;
-sanctuary rest refills every owned flask. Their runtime charge state is saved
-independently from inventory ownership.
+use is disabled. Flasks cannot be stacked, removed, dropped, or transferred,
+they weigh nothing, and they are never sold: their `weight` and `sell_price`
+stay at 0. Sanctuary rest refills every owned flask. Their runtime charge state
+is saved independently from inventory ownership.
 Persistent flasks are also rejected by enemy loot tables and loot bags. The
 default test enemy keeps an empty loot table — its only reward is amber shards —
 so any loot bag an authored enemy does drop stays fully collectable.

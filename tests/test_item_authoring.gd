@@ -82,6 +82,37 @@ func test_catalog_items_remain_valid_with_unique_ids() -> void:
 	assert_false(ids.is_empty())
 
 
+func test_new_items_start_with_weight_and_sell_price() -> void:
+	var item := ItemData.new()
+	assert_eq(item.weight, 1.0, "A new item must start with weight 1")
+	assert_eq(item.sell_price, 1, "A new item must start with sell price 1")
+	var template := load("res://game/items/templates/Weapon.tres") as ItemData
+	var copy := template.duplicate(true) as ItemData
+	assert_eq(copy.weight, 1.0, "A template copy must inherit the starting weight")
+	assert_eq(copy.sell_price, 1, "A template copy must inherit the starting sell price")
+
+
+func test_catalog_items_have_weight_and_price_except_flasks() -> void:
+	var flasks := 0
+	for folder: String in DirAccess.get_directories_at("res://game/items"):
+		if folder == "templates":
+			continue
+		for filename: String in DirAccess.get_files_at("res://game/items/" + folder):
+			if filename.get_extension() != "tres":
+				continue
+			var item := load("res://game/items/%s/%s" % [folder, filename]) as ItemData
+			if item == null:
+				continue
+			if item.is_flask():
+				flasks += 1
+				assert_true(is_zero_approx(item.weight), "Flask must weigh nothing: %s" % item.id)
+				assert_eq(item.sell_price, 0, "Flask must not be sold: %s" % item.id)
+				continue
+			assert_true(item.weight > 0.0, "Item without weight: %s" % item.id)
+			assert_true(item.sell_price > 0, "Item without sell price: %s" % item.id)
+	assert_true(flasks > 0, "Expected at least one flask in the catalog")
+
+
 func test_display_slot_defaults_to_inventory_slot_and_serializes_independently() -> void:
 	var item := ItemData.new()
 	item.id = &"saved_visual_slot"

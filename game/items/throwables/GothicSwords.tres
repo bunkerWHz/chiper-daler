@@ -20,7 +20,7 @@ combat_mode = 2
 
 [resource]
 script = ExtResource("item")
-id = &"1000"
+id = &"gothic_swords"
 display_name = "Gothic Swords"
 description = "Kills your enemies with style"
 icon = ExtResource("2_yhxa8")

@@ -99,8 +99,10 @@ enum UseVisualEffect {
 @export_group("Inventory and economy")
 @export var stackable: bool = false
 @export_range(1, 999, 1) var max_stack_size: int = 1
-@export_range(0.0, 1000.0, 0.01) var weight: float = 0.0
-@export_range(0, 1000000, 1) var sell_price: int = 0
+## Weight of one unit. New items start at 1; flasks weigh nothing and stay at 0.
+@export_range(0.0, 1000.0, 0.01) var weight: float = 1.0
+## Base sale value of one unit. New items start at 1; flasks are never sold and stay at 0.
+@export_range(0, 1000000, 1) var sell_price: int = 1
 @export_group("Usage")
 @export var is_key_item: bool = false
 @export var usable_in_combat: bool = false
