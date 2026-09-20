@@ -211,13 +211,18 @@ func test_world_bar_updates_and_disappears_on_cancel() -> void:
 	assert_false(view.visible)
 
 
-func test_player_contains_swap_component_world_bar_and_placeholder_clip() -> void:
+func test_player_contains_swap_component_world_bar_and_authored_clip() -> void:
 	var player := track((load("res://game/player/Player.tscn") as PackedScene).instantiate()) as Actor
 	assert_true(player.get_node("_Components/EquipmentSwapComponent") is EquipmentSwapComponent)
 	assert_true(player.get_node("EquipmentSwapView") is EquipmentSwapView)
 	var animation := player.get_node("_Visual/DarklightRig/AnimationPlayer") as AnimationPlayer
 	assert_true(animation.has_animation(&"equipment_swap"))
-	assert_eq(animation.get_animation(&"equipment_swap").get_track_count(), 0)
+	var clip := animation.get_animation(&"equipment_swap")
+	# The rig owns an authored swap clip; it is not an empty placeholder.
+	assert_true(clip.get_track_count() > 0)
+	assert_true(clip.length > 0.0)
+	var arm_path := NodePath("CharacterContainer/Anim Targets/FrontArmIK:position")
+	assert_true(clip.find_track(arm_path, Animation.TYPE_VALUE) >= 0)
 
 
 func test_world_bar_tracks_character_width_without_scaling_height_or_gap() -> void:

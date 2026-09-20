@@ -316,6 +316,7 @@ func test_fsm_selects_attack_variants_and_facing_preserves_physics() -> void:
 		ActorState.Behavior.AIM_BOW: &"bow_aim",
 		ActorState.Behavior.AIM_CROSSBOW: &"crossbow_aim",
 		ActorState.Behavior.MAGIC_CHARGE: &"magic_aim",
+		ActorState.Behavior.EQUIPMENT_SWAP: &"equipment_swap",
 	}
 	for behavior: int in expected:
 		state.state_changed.emit(ActorState.Behavior.IDLE, behavior)

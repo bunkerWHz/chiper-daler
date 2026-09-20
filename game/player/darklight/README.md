@@ -45,12 +45,14 @@ independent Animation resources in `animations/` and exposed in the rig's
 AnimationPlayer. They play during the corresponding aim/charge states. Throw
 starts from a separate copy of the bow pose with MainHand and OffHand hidden; crossbow and
 magic start from copies of idle, ready for authoring without changing
-idle itself. The source has no dedicated release, climbing, hit, death or
-equipment-swap animation. Those states currently use the idle pose; death and
-respawn freeze it while the existing fade/respawn components handle the result.
-`equipment_swap` retains a two-second empty placeholder clip whose playback rate
-follows the swap duration. Add new authored clips and map them in
-`_get_animation_name()` to replace these fallbacks.
+idle itself. The source has no dedicated release, climbing, hit or death animation. Those
+states currently use the idle pose; death and respawn freeze it while the
+existing fade/respawn components handle the result.
+`equipment_swap` is an authored clip in the rig's own AnimationPlayer: 20 tracks
+on the arm, leg and hip IK targets, 1 second long. Playback rate is
+`clip.length / swap duration`, so the 2-second base swap plays it at 0.5x.
+Add new authored clips and map them in `_get_animation_name()` to replace the
+remaining idle-pose fallbacks.
 
 ## Shoulder, elbow and wrist controls
 
