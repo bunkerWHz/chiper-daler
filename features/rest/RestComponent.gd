@@ -15,6 +15,7 @@ signal rest_finished
 
 var _health: HealthComponent
 var _magic: MagicComponent
+var _stamina: StaminaComponent
 var _status_effects: StatusEffectComponent
 var _flask_charges: FlaskChargesComponent
 var _timer: float = 0.0
@@ -36,6 +37,7 @@ func on_initialize() -> void:
 		actor.get_component(StatusEffectComponent) as StatusEffectComponent
 	)
 	_magic = actor.get_component(MagicComponent) as MagicComponent
+	_stamina = actor.get_component(StaminaComponent) as StaminaComponent
 	_flask_charges = (
 		actor.get_component(FlaskChargesComponent) as FlaskChargesComponent
 	)
@@ -66,6 +68,8 @@ func start_rest() -> bool:
 		_status_effects.clear_debuffs()
 	if _magic != null and _magic.is_enabled:
 		_magic.restore_mana(_magic.get_max_mana())
+	if _stamina != null and _stamina.is_enabled:
+		_stamina.restore(_stamina.get_max_stamina())
 	if _flask_charges != null and _flask_charges.is_enabled:
 		_flask_charges.refill_all()
 	rest_started.emit()

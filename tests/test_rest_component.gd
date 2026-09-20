@@ -136,3 +136,16 @@ func test_rest_refills_mana_and_rejected_rest_does_not() -> void:
 	assert_true(rest.start_rest())
 	assert_eq(magic.get_mana(), magic.get_max_mana())
 	tree.root.remove_child(player)
+
+
+func test_rest_restores_stamina_completely() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var player := track(preload("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var stamina := player.get_component(StaminaComponent) as StaminaComponent
+	var rest := player.get_component(RestComponent) as RestComponent
+	assert_true(stamina.spend(stamina.get_max_stamina() * 0.5))
+	assert_true(stamina.get_stamina() < stamina.get_max_stamina())
+	assert_true(rest.start_rest())
+	assert_eq(stamina.get_stamina(), stamina.get_max_stamina())
+	tree.root.remove_child(player)
