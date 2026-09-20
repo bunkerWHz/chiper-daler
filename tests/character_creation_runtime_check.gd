@@ -24,18 +24,20 @@ func _run() -> void:
 	check(draft.change_attribute("strength", -1), "Refund point")
 	check(draft.change_attribute("wisdom", 1), "Reallocate point")
 	for weapon in Data.WEAPONS.size():
-		for armor in Data.ARMOR.size():
+		for armor in range(Data.TOPS.size() * Data.BOTTOMS.size()):
 			draft.weapon_index = weapon
-			draft.armor_index = armor
+			draft.top_index = armor / Data.BOTTOMS.size()
+			draft.bottom_index = armor % Data.BOTTOMS.size()
 			check(flow.saves.store.codec.validate(draft.player_state()), "Every gear combination serializes")
 	draft.weapon_index = 4
-	draft.armor_index = 2
+	draft.top_index = 2
+	draft.bottom_index = 0
 	check(change_scene_to_file(flow.CHARACTER_CREATION) == OK, "Creation scene opens")
 	await process_frame
 	await process_frame
 	check(current_scene._start_button.disabled, "Incomplete form blocks start")
 	# Empty-name validation and the longest equipment warning used to clip the footer.
-	var armor_picker := current_scene.find_child("ArmorPicker", true, false) as OptionButton
+	var armor_picker := current_scene.find_child("TopPicker", true, false) as OptionButton
 	armor_picker.select(1)
 	armor_picker.item_selected.emit(1)
 	await process_frame
@@ -55,7 +57,7 @@ func _run() -> void:
 	for index in 4:
 		current_scene._plus["strength"].pressed.emit()
 	current_scene._plus["wisdom"].pressed.emit()
-	for entry: Array in [["WeaponPicker", 4], ["ArmorPicker", 2]]:
+	for entry: Array in [["WeaponPicker", 4], ["TopPicker", 2], ["BottomPicker", 0]]:
 		var picker := current_scene.find_child(entry[0], true, false) as OptionButton
 		picker.select(entry[1])
 		picker.item_selected.emit(entry[1])
@@ -85,17 +87,26 @@ func _run() -> void:
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	check(equipment.get_equipped_item_id(ItemData.EquipSlot.MAIN_HAND) == &"training_bow", "Selected weapon equipped")
 	check(equipment.get_equipped_item_id(ItemData.EquipSlot.CHEST) == &"scholar_robe", "Selected armor equipped")
+	check(equipment.get_equipped_item_id(ItemData.EquipSlot.LEGS) == &"scout_leather_pants", "Bottom selected independently of top")
 	var inventory_menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
 	inventory_menu.open_inventory()
 	check("Испытатель" in inventory_menu.get_node("CanvasLayer/Panel/Main/Header/Title").text, "Chosen name shown in inventory")
 	inventory_menu.close_inventory()
 	for weapon in Data.WEAPONS.size():
-		for armor in Data.ARMOR.size():
+		for armor in range(Data.TOPS.size() * Data.BOTTOMS.size()):
 			draft.weapon_index = weapon
-			draft.armor_index = armor
+			draft.top_index = armor / Data.BOTTOMS.size()
+			draft.bottom_index = armor % Data.BOTTOMS.size()
 			flow.saves.store.codec.restore(player, draft.player_state())
 			for item: ItemData in draft.selected_items():
 				check(equipment.is_item_equipped(item.id), "Every selected starting item equips")
+			var armor_count := 0
+			for stack: InventoryStack in inventory.get_stacks():
+				if stack.item.category == ItemData.Category.ARMOR:
+					armor_count += stack.quantity
+			check(armor_count == 2, "Starting armor contains exactly top and bottom")
+			for slot: ItemData.EquipSlot in [ItemData.EquipSlot.HEAD, ItemData.EquipSlot.SHOULDER, ItemData.EquipSlot.HANDS, ItemData.EquipSlot.BELT, ItemData.EquipSlot.FEET]:
+				check(equipment.get_equipped_item(slot) == null, "Other armor slots stay empty")
 	flow.saves.store.codec.restore(player, state)
 	check(flow.save_checkpoint() == OK, "Created hero saves")
 	check(flow.read_save().player.identity.name == "Испытатель", "Name survives disk round trip")

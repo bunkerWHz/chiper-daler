@@ -50,7 +50,9 @@ characters), five attributes with a minimum of 1, and exactly 10 points total:
 points before starting; reset returns every attribute to 1. All points must be spent.
 Validation and navigation buttons stay below the scrollable form so longer
 equipment warnings cannot clip the Back or Start Adventure buttons.
-Weapon and seven-piece armor choices are independent of stats/classes.
+Weapon, top (chest) and bottom (legs) choices are independent of stats/classes
+and of one another. Starting armor contains only these two pieces; no head,
+shoulder, hand, belt or foot items are granted.
 `CharacterCreationData.gd` owns the budget, validation and starter catalogs.
 Bow/crossbow include matching ammunition; every loadout includes health/mana flasks.
 The selected loadout replaces the sandbox inventory and is equipped immediately.

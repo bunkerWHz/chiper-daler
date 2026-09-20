@@ -74,8 +74,11 @@ func _ready() -> void:
 	_picker(right, "Оружие", CreationData.WEAPONS.keys(), func(index: int) -> void:
 		draft.weapon_index = index
 		_refresh())
-	_picker(right, "Комплект брони · 7 предметов", CreationData.ARMOR.keys(), func(index: int) -> void:
-		draft.armor_index = index
+	_picker(right, "Верх", CreationData.TOPS.keys(), func(index: int) -> void:
+		draft.top_index = index
+		_refresh())
+	_picker(right, "Низ", CreationData.BOTTOMS.keys(), func(index: int) -> void:
+		draft.bottom_index = index
 		_refresh())
 	_weight = _label(right, "", 18)
 	_weight.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -111,7 +114,7 @@ func _button(parent: Node, text: String, action: Callable) -> Button:
 func _picker(parent: Node, title: String, choices: Array, action: Callable) -> void:
 	_label(parent, title, 18)
 	var picker := OptionButton.new()
-	picker.name = "WeaponPicker" if title == "Оружие" else "ArmorPicker"
+	picker.name = {"Оружие": "WeaponPicker", "Верх": "TopPicker", "Низ": "BottomPicker"}[title]
 	picker.custom_minimum_size.y = 44
 	for choice: String in choices:
 		picker.add_item(choice)

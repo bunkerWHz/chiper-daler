@@ -12,15 +12,21 @@ const WEAPONS := {
 	"Лук (+20 стрел)": "TrainingBow", "Арбалет (+12 болтов)": "TrainingCrossbow",
 	"Жезл": "TrainingWand", "Посох": "TrainingStaff",
 }
-const ARMOR := {
-	"Кожа разведчика": ["ScoutLeatherArmor", "ScoutLeatherHood", "ScoutLeatherMantle", "ScoutLeatherGloves", "ScoutUtilityBelt", "ScoutLeatherPants", "ScoutLeatherBoots"],
-	"Латы рыцаря": ["KnightPlateArmor", "KnightPlateHelm", "KnightPlatePauldrons", "KnightPlateGauntlets", "KnightWarBelt", "KnightPlateLeggings", "KnightPlateGreaves"],
-	"Одежда учёного": ["ScholarRobe", "ScholarHood", "ScholarMantle", "ScholarHandwraps", "ScholarSash", "ScholarTrousers", "ScholarShoes"],
+const TOPS := {
+	"Кожаная броня разведчика": "ScoutLeatherArmor",
+	"Латный нагрудник рыцаря": "KnightPlateArmor",
+	"Мантия учёного": "ScholarRobe",
+}
+const BOTTOMS := {
+	"Кожаные штаны разведчика": "ScoutLeatherPants",
+	"Латные поножи рыцаря": "KnightPlateLeggings",
+	"Брюки учёного": "ScholarTrousers",
 }
 var character_name := ""
 var attributes: Dictionary = {}
 var weapon_index := 0
-var armor_index := 0
+var top_index := 0
+var bottom_index := 0
 
 func _init() -> void:
 	reset_attributes()
@@ -53,14 +59,14 @@ func validation_error() -> String:
 			return "Каждая характеристика должна быть не меньше 1."
 	if remaining_points() != 0:
 		return "Распределите все 10 очков характеристик."
-	if weapon_index < 0 or weapon_index >= WEAPONS.size() or armor_index < 0 or armor_index >= ARMOR.size():
+	if weapon_index < 0 or weapon_index >= WEAPONS.size() or top_index < 0 or top_index >= TOPS.size() or bottom_index < 0 or bottom_index >= BOTTOMS.size():
 		return "Выберите стартовое снаряжение."
 	return ""
 
 func selected_items() -> Array[ItemData]:
 	var result: Array[ItemData] = []
 	result.append(load("res://game/items/weapons/%s.tres" % WEAPONS.values()[weapon_index]))
-	for filename: String in ARMOR.values()[armor_index]:
+	for filename: String in [TOPS.values()[top_index], BOTTOMS.values()[bottom_index]]:
 		result.append(load("res://game/items/armor/%s.tres" % filename))
 	return result
 
