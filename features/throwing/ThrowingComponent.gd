@@ -108,7 +108,7 @@ func _release_throwable() -> void:
 	var direction := _aim.get_direction()
 	var origin := _aim.get_launch_position()
 	# Commit the phase before inventory signals can switch an exhausted quick slot.
-	_set_phase(Phase.ACTION, config.action_duration)
+	_set_phase(Phase.ACTION, config.action_duration, true)
 	if _inventory.remove_item(item.id, 1) != 1:
 		cancel_throw()
 		return
@@ -136,12 +136,12 @@ func _update_phase(delta: float) -> void:
 		_set_phase(Phase.NONE, 0.0)
 
 
-func _set_phase(value: Phase, duration: float) -> void:
+func _set_phase(value: Phase, duration: float, shot_fired: bool = false) -> void:
 	if value == _phase:
 		return
 	var previous := _phase
 	if value != Phase.AIM and _aim != null:
-		_aim.end_aim(self)
+		_aim.end_aim(self, shot_fired)
 	_phase = value
 	_phase_timer = duration
 	if value == Phase.NONE:

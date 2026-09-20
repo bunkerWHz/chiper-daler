@@ -179,7 +179,7 @@ func _cast_spell() -> void:
 			null,
 			config.projectile_gravity
 		)
-	_set_phase(Phase.CAST, config.cast_duration / get_cast_speed_multiplier())
+	_set_phase(Phase.CAST, config.cast_duration / get_cast_speed_multiplier(), true)
 
 
 func get_cast_speed_multiplier() -> float:
@@ -193,7 +193,7 @@ func _update_phase(delta: float) -> void:
 			_set_phase(Phase.RECOVERY if _phase == Phase.CAST else Phase.NONE, config.recovery_duration / get_cast_speed_multiplier() if _phase == Phase.CAST else 0.0)
 
 
-func _set_phase(value: Phase, duration: float) -> void:
+func _set_phase(value: Phase, duration: float, shot_fired: bool = false) -> void:
 	if value == _phase:
 		_timer = duration
 		return
@@ -204,7 +204,7 @@ func _set_phase(value: Phase, duration: float) -> void:
 			if not _aim.begin_aim(self):
 				return
 		else:
-			_aim.end_aim(self)
+			_aim.end_aim(self, shot_fired)
 	_phase = value
 	_timer = duration
 	phase_changed.emit(previous_phase, _phase)

@@ -49,6 +49,8 @@ func on_initialize() -> void:
 		or config.knockback < 0.0
 		or config.arrow_gravity < 0.0
 		or config.bolt_gravity < 0.0
+		or config.aim_default_angle_degrees < -90.0
+		or config.aim_default_angle_degrees > 90.0
 	):
 		push_error("RangedWeaponComponent has an invalid config")
 		disable()
@@ -258,10 +260,11 @@ func _set_phase(new_phase: Phase, duration: float) -> void:
 	var previous_phase := _phase
 	if _aim != null:
 		if new_phase == Phase.BOW_AIM or new_phase == Phase.CROSSBOW_AIM:
-			if not _aim.begin_aim(self):
+			if not _aim.begin_aim(self, config.aim_default_angle_degrees):
 				return
 		else:
-			_aim.end_aim(self)
+			var fired := new_phase == Phase.BOW_LOOSE or new_phase == Phase.CROSSBOW_FIRE
+			_aim.end_aim(self, fired)
 	_phase = new_phase
 	_phase_timer = duration
 	phase_changed.emit(previous_phase, _phase)

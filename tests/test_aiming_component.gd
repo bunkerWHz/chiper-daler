@@ -18,7 +18,9 @@ func test_tap_uses_default_angle_once_for_every_weapon() -> void:
 		assert_false(s.aim.is_aiming())
 		assert_eq(s.root.get_child_count(), 2)
 		var projectile := s.root.get_child(1) as ThrownProjectile
-		assert_true(projectile._velocity.normalized().is_equal_approx(Vector2.RIGHT.rotated(deg_to_rad(-5.0))))
+		# A tap fires flat from the bow and the crossbow; throws and spells lift by 5.
+		var lift := 0.0 if slot in [EquipmentComponent.Slot.BOW, EquipmentComponent.Slot.CROSSBOW] else 5.0
+		assert_true(projectile._velocity.normalized().is_equal_approx(Vector2.RIGHT.rotated(deg_to_rad(-lift))))
 		assert_true(projectile.global_position.is_equal_approx(s.aim.get_launch_position()))
 		ability._process(0.0)
 		assert_eq(s.root.get_child_count(), 2)
@@ -66,8 +68,10 @@ func test_downward_aim_fires_below_platform_for_every_weapon_and_facing() -> voi
 			_press(s, slot)
 			ability._process(0.0)
 			s.aim._process(s.aim.config.hold_delay)
-			# Lower from +5 to -45 using the same mouse input as gameplay.
-			s.input._aim_mouse_motion = 200.0
+			# Lower to -45 from whichever elevation this weapon starts at.
+			s.input._aim_mouse_motion = (
+				(s.aim._angle + 45.0) / s.aim.config.mouse_degrees_per_pixel
+			)
 			s.aim._process(0.0)
 			s.input._move_axis = facing
 			s.facing._physics_process(0.0)
@@ -80,7 +84,7 @@ func test_downward_aim_fires_below_platform_for_every_weapon_and_facing() -> voi
 			assert_true(projectile._velocity.y > 0.0)
 
 
-func test_hold_indicator_delay_and_new_session_reset() -> void:
+func test_hold_indicator_delay_and_cancelled_session_reset() -> void:
 	var s := _create_actor()
 	s.aim.begin_aim(s.throwing)
 	s.input._aim_mouse_motion = -200.0
@@ -96,6 +100,89 @@ func test_hold_indicator_delay_and_new_session_reset() -> void:
 	assert_false(s.aim.is_indicator_visible())
 	s.aim.begin_aim(s.throwing)
 	assert_true(is_equal_approx(s.aim._angle, 5.0))
+
+
+func test_next_aim_reuses_the_last_shot_angle_inside_the_window() -> void:
+	var s := _create_actor()
+	assert_true(is_equal_approx(_shoot_bow_at(s, -200.0), 50.0))
+	assert_true(s.aim.has_remembered_angle())
+	assert_true(is_equal_approx(s.aim.get_remembered_angle(), 50.0))
+	# The shot cooldown and half the memory window pass before the next aim.
+	s.ranged._process(1.0)
+	s.aim._process(1.0)
+	_press(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	assert_true(s.aim.is_aiming())
+	assert_true(is_equal_approx(s.aim._angle, 50.0))
+
+
+func test_remembered_angle_expires_after_the_window() -> void:
+	var s := _create_actor()
+	_shoot_bow_at(s, -200.0)
+	s.ranged._process(1.0)
+	s.aim._process(s.aim.config.angle_memory_duration)
+	assert_false(s.aim.has_remembered_angle())
+	_press(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	assert_true(s.aim.is_aiming())
+	# The bow starts flat again once the memory is gone.
+	assert_true(is_zero_approx(s.aim._angle))
+
+
+func test_movement_clears_the_remembered_angle() -> void:
+	var s := _create_actor()
+	_shoot_bow_at(s, -200.0)
+	s.ranged._process(1.0)
+	s.actor.global_position += Vector2(0.1, 0.0)
+	s.aim._process(0.0)
+	assert_true(s.aim.has_remembered_angle())
+	s.actor.global_position += Vector2(3.0, 0.0)
+	s.aim._process(0.0)
+	assert_false(s.aim.has_remembered_angle())
+	_press(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	assert_true(is_zero_approx(s.aim._angle))
+
+
+func test_cancelled_preparation_keeps_the_previous_shot_angle() -> void:
+	var s := _create_actor()
+	_shoot_bow_at(s, -200.0)
+	s.ranged._process(1.0)
+	_press(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	s.aim._process(s.aim.config.hold_delay)
+	s.input._aim_mouse_motion = -400.0
+	s.aim._process(0.0)
+	s.input._guard_just_pressed = true
+	s.ranged._process(0.0)
+	assert_false(s.aim.is_aiming())
+	assert_true(is_equal_approx(s.aim.get_remembered_angle(), 50.0))
+
+
+func test_remembered_angle_is_shared_by_every_aim_owner() -> void:
+	var s := _create_actor()
+	_shoot_bow_at(s, -200.0)
+	s.ranged._process(1.0)
+	preload("res://tests/AimingTestFactory.gd").select_weapon(s, EquipmentComponent.Slot.CROSSBOW)
+	_press(s, EquipmentComponent.Slot.CROSSBOW)
+	s.ranged._process(0.0)
+	assert_true(s.aim.is_aiming())
+	assert_true(is_equal_approx(s.aim._angle, 50.0))
+	s.input._guard_just_pressed = true
+	s.ranged._process(0.0)
+	# A throw shares the memory even though its own default is 5 degrees.
+	preload("res://tests/AimingTestFactory.gd").select_weapon(s, EquipmentComponent.Slot.THROWABLE)
+	_press(s, EquipmentComponent.Slot.THROWABLE)
+	s.throwing._process(0.0)
+	assert_true(s.aim.is_aiming())
+	assert_true(is_equal_approx(s.aim._angle, 50.0))
+
+
+func test_zero_duration_disables_the_angle_memory() -> void:
+	var s := _create_actor()
+	s.aim.config.angle_memory_duration = 0.0
+	assert_true(is_equal_approx(_shoot_bow_at(s, -200.0), 50.0))
+	assert_false(s.aim.has_remembered_angle())
 
 
 func test_held_launch_matches_indicator_for_every_weapon() -> void:
@@ -327,6 +414,19 @@ func _ability(s: Dictionary, slot: int) -> Component:
 	if slot == EquipmentComponent.Slot.MAGIC:
 		return s.magic
 	return s.ranged
+
+
+## Aims the bow, applies relative mouse motion, releases and returns the fired angle.
+func _shoot_bow_at(s: Dictionary, mouse_motion: float) -> float:
+	_press(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	s.aim._process(s.aim.config.hold_delay)
+	s.input._aim_mouse_motion = mouse_motion
+	s.aim._process(0.0)
+	var fired_angle: float = s.aim._angle
+	_release(s, EquipmentComponent.Slot.BOW)
+	s.ranged._process(0.0)
+	return fired_angle
 
 
 func _create_actor() -> Dictionary:
