@@ -1,3 +1,11 @@
+---
+title: Запуск игровых тестов
+type: guide
+created: 2026-09-05
+updated: 2026-09-18
+tags: [testing, workflow]
+---
+
 # Запуск игровых тестов
 
 ## Прицеливание

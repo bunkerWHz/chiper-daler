@@ -1,3 +1,11 @@
+---
+title: Development Sandbox
+type: reference
+created: 2026-08-30
+updated: 2026-08-30
+tags: [testing, levels, workflow]
+---
+
 # Development Sandbox
 
 `res://tests/MovementSandbox.tscn` is the project's main manual testing scene

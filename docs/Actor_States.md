@@ -1,3 +1,11 @@
+---
+title: Actor States
+type: architecture
+created: 2026-08-27
+updated: 2026-09-20
+tags: [actor, combat, architecture]
+---
+
 # Actor States
 
 ## Model

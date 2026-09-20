@@ -1,3 +1,11 @@
+---
+title: Периодический урон (DOT)
+type: guide
+created: 2026-09-14
+updated: 2026-09-19
+tags: [dot, status-effects, combat]
+---
+
 # Периодический урон (DOT)
 
 Горение, кровотечение, яд и любые новые названия используют один `StatusEffect`.

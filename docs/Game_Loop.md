@@ -1,3 +1,11 @@
+---
+title: Game Loop
+type: architecture
+created: 2026-08-28
+updated: 2026-09-01
+tags: [progression, saves, levels]
+---
+
 # Game Loop
 
 ## Checkpoint and respawn

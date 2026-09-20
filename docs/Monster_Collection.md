@@ -1,3 +1,11 @@
+---
+title: Коллекция монстров
+type: reference
+created: 2026-09-11
+updated: 2026-09-15
+tags: [enemies, animation]
+---
+
 # Коллекция монстров
 
 Готовые сцены находятся в `game/enemy/monsters`. Перетащите нужную `.tscn`

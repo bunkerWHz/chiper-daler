@@ -26,3 +26,10 @@ Sounds/.import/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Obsidian vault (docs/ is the vault root; see docs/AGENTS.md)
+# Shared vault config is committed; per-user UI state and caches are not.
+docs/.obsidian/workspace.json
+docs/.obsidian/workspace-mobile.json
+docs/.obsidian/cache
+docs/.trash/

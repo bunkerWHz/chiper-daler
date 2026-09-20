@@ -1,3 +1,11 @@
+---
+title: Система сохранений
+type: architecture
+created: 2026-09-16
+updated: 2026-09-16
+tags: [saves, progression]
+---
+
 # Система сохранений
 
 ## Правила игры

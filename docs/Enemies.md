@@ -1,3 +1,11 @@
+---
+title: Enemy authoring
+type: guide
+created: 2026-09-02
+updated: 2026-09-11
+tags: [enemies, animation, workflow]
+---
+
 # Enemy authoring
 
 Enemies are Actors assembled from independent combat, locomotion, targeting,

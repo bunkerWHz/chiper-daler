@@ -47,6 +47,19 @@ Name enemy asset folders after the monster: assets/Enemies/<MonsterName>/PNG Seq
 - Skeleton2D/Polygon2D are an exception to the sprite flip_h rule: reflect only
   the visual rig with its IK targets and attachments, never the physics root.
 
+# Documentation
+
+- `docs/` is the project's Obsidian vault and its compiled wiki layer. Start at
+  `docs/index.md`; how the vault is maintained — page types, frontmatter,
+  links and the ingest/query/lint operations — is defined in `docs/AGENTS.md`.
+- Raw sources are the project itself. Read the code, scenes and resources before
+  documenting a mechanic, and never rewrite them from the wiki.
+- After changing documentation, run `node docs/tools/wiki_lint.mjs`. It checks
+  frontmatter, link resolution inside and outside the vault, tag vocabulary and
+  index coverage.
+- Leave the repository's own README files where they are; `docs/sources.md`
+  points to them instead of copying their content.
+
 # Commit workflow
 
 - After completing and verifying a fix, always create a Git commit before

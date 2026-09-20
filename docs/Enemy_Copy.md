@@ -1,3 +1,11 @@
+---
+title: Создать самостоятельного врага
+type: guide
+created: 2026-09-06
+updated: 2026-09-11
+tags: [enemies, workflow]
+---
+
 # Создать самостоятельного врага
 
 1. Откройте `game/enemy/GroundDummy.tscn` для наземного врага или

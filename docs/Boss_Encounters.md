@@ -1,3 +1,11 @@
+---
+title: Встречи с боссами
+type: guide
+created: 2026-09-16
+updated: 2026-09-16
+tags: [bosses, ui, enemies]
+---
+
 # Встречи с боссами
 
 Общий механизм для всех боссов — `features/boss/BossEncounter.tscn`.

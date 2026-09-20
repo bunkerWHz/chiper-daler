@@ -1,3 +1,11 @@
+---
+title: Actor Animation Workflow
+type: guide
+created: 2026-09-03
+updated: 2026-09-18
+tags: [animation, actor, workflow]
+---
+
 # Actor Animation Workflow
 
 Actor animation uses Godot's standard scene resources:

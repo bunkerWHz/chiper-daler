@@ -1,3 +1,11 @@
+---
+title: Inventory System
+type: architecture
+created: 2026-08-28
+updated: 2026-09-18
+tags: [inventory, equipment, items]
+---
+
 # Inventory System
 
 The 2026-09-17 [item creation design](Item_Creation_Design.md) defines the target weapon/armor fields and defaults. Future attack formulas use character attributes and buffs; item base values remain fixed. Legacy per-item scaling coefficients are not being enabled by this decision.

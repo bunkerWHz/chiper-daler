@@ -1,3 +1,11 @@
+---
+title: Architecture Rules
+type: architecture
+created: 2026-08-06
+updated: 2026-09-18
+tags: [architecture, components, meta]
+---
+
 Architecture Rules
 
 Core Principles
