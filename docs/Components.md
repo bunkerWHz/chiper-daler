@@ -2,7 +2,7 @@
 title: Справочник компонентов
 type: reference
 created: 2026-09-13
-updated: 2026-09-18
+updated: 2026-09-20
 tags: [components, actor, architecture]
 ---
 
@@ -26,7 +26,7 @@ tags: [components, actor, architecture]
 | Добавить DOT и сопротивления ему | [StatusEffectComponent](#statuseffectcomponent), [инструкция по DOT](DOT.md) |
 | Добавить блок или защиту брони | [GuardComponent](#guardcomponent), [EquipmentDefenseComponent](#equipmentdefensecomponent) |
 | Сделать нового врага | [Компоненты врагов](#enemies), копия GroundDummy или FlyDummy |
-| Дать врагу опыт и лут | [ExperienceRewardComponent](#experiencerewardcomponent), [LootDropComponent](#lootdropcomponent) |
+| Дать врагу награду и лут | [ExperienceRewardComponent](#experiencerewardcomponent), [LootDropComponent](#lootdropcomponent) |
 | Добавить предметы и экипировку | [InventoryComponent](#inventorycomponent), [EquipmentComponent](#equipmentcomponent) |
 | Сделать использование зелий | [ItemUseComponent](#itemusecomponent), для фляг — [FlaskChargesComponent](#flaskchargescomponent) |
 | Показать инвентарь и быстрые слоты | [InventoryMenuComponent](#inventorymenucomponent), [QuickAccessHUDComponent](#quickaccesshudcomponent) |
@@ -450,8 +450,8 @@ Shape2D. После изменения масштаба проверяйте т�
 
 ### ItemUseComponent — Использование расходников
 
-- **Делает:** Ведёт действие, применяет лечение/ману/опыт/статус в конце и только тогда расходует предмет или заряд.
-- **Когда применять:** Для зелий, тоников и фляг из инвентаря/быстрого слота.
+- **Делает:** Ведёт действие, применяет лечение/ману/статус в конце и только тогда расходует предмет или заряд. Умеет и эффект `GRANT_EXPERIENCE`, но ни один предмет его не использует: опыт в игре даётся только янтарными осколками — см. [экономику](Amber_Economy.md).
+- **Когда применять:** Для зелий и фляг из инвентаря/быстрого слота.
 - **Что требуется:** InputComponent, CharacterBodyComponent, EquipmentComponent, HealthComponent, InventoryComponent, QuickAccessComponent, ItemUseConfig. По эффекту нужны Magic, Progression, StatusEffect или FlaskCharges.
 - **Настройки и ограничения:** Config задаёт время, результат берётся из ItemData. Старт на земле, движение ограничено; прерывание отменяет применение без расхода. Рисунок эффекта принадлежит визуальному компоненту.
 - **Файлы:** [Код](../features/items/ItemUseComponent.gd) · [Сцена](../features/items/ItemUseComponent.tscn) · [ItemUseConfig](../features/items/ItemUseConfig.gd).
@@ -565,19 +565,19 @@ Shape2D. После изменения масштаба проверяйте т�
 ### ProgressionComponent — Опыт и уровень
 
 - **Делает:** Начисляет опыт, повышает уровень, считает следующий порог и сообщает о повышении.
-- **Когда применять:** На персонаже, получающем опыт за врагов/предметы.
+- **Когда применять:** На персонаже, чей уровень покупается за янтарные осколки в убежище. За убийство врагов опыт не начисляется.
 - **Что требуется:** ProgressionConfig.
-- **Настройки и ограничения:** Config: начальный порог, рост требования, длительность состояния повышения. Сам не распределяет очки и не увеличивает базовые характеристики.
+- **Настройки и ограничения:** Config: начальный порог, рост требования, длительность состояния повышения. Сам не распределяет очки и не увеличивает базовые характеристики. Уровень продаёт `RestPoint` по курсу 1 осколок = 1 опыт — см. [янтарные осколки](Amber_Economy.md).
 - **Файлы:** [Код](../features/progression/ProgressionComponent.gd) · [Сцена](../features/progression/ProgressionComponent.tscn) · [ProgressionConfig](../features/progression/ProgressionConfig.gd).
 
 <a id="experiencerewardcomponent"></a>
 
-### ExperienceRewardComponent — Опыт за убийство
+### ExperienceRewardComponent — Осколки за убийство
 
-- **Делает:** При смертельном попадании один раз выдаёт опыт атакующему Actor.
-- **Когда применять:** На враге с наградой опытом.
-- **Что требуется:** HealthComponent, HurtboxComponent, ExperienceRewardConfig; у источника удара — ProgressionComponent.
-- **Настройки и ограничения:** Config задаёт награду. Без Actor-источника удара или его прогрессии опыт не выдаётся. Это отдельная награда от предметов в луте.
+- **Делает:** После смерти врага один раз создаёт кучку янтарных осколков в месте гибели.
+- **Когда применять:** На враге, дающем валюту. Имя компонента историческое и сохранено ради совместимости готовых сцен; опыт он не начисляет.
+- **Что требуется:** HealthComponent и ExperienceRewardConfig с наградой больше нуля.
+- **Настройки и ограничения:** `Config/Amount` задаёт количество осколков, по умолчанию 25. Источник удара не важен: награда привязана к смерти врага, включая смерть от окружения. Подбор выполняет [кучка осколков](../features/loot/AmberShardPickup.tscn) и кладёт валюту в `InventoryComponent`. Это отдельная награда от предметов в луте.
 - **Файлы:** [Код](../features/progression/ExperienceRewardComponent.gd) · [Сцена](../features/progression/ExperienceRewardComponent.tscn) · [ExperienceRewardConfig](../features/progression/ExperienceRewardConfig.gd).
 
 <a id="lootdropcomponent"></a>

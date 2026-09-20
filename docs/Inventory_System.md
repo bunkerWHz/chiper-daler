@@ -2,7 +2,7 @@
 title: Inventory System
 type: architecture
 created: 2026-08-28
-updated: 2026-09-18
+updated: 2026-09-20
 tags: [inventory, equipment, items]
 ---
 
@@ -136,11 +136,11 @@ and shoes. Chest resources are explicitly covered by slot tests alongside every
 other core armor piece.
 
 The starting inventory contains the complete training weapon/offhand catalog,
-the growing light/heavy/robe armor sets, training bow and crossbow,
-permanent health, mana, and rage flasks with three charges each, and two
-Experience Tonics. These are functional test items for equipment, quick-access,
-item-use, and visual-profile checks. Weapon set one starts with a katana and
-buckler; set two starts with the bow.
+the growing light/heavy/robe armor sets, training bow and crossbow, and
+permanent health, mana, and rage flasks with three charges each. These are
+functional test items for equipment, quick-access, item-use, and visual-profile
+checks. Weapon set one starts with a katana and buckler; set two starts with the
+bow.
 
 The training weapon catalog now covers sword, rapier, katana, dagger, axe,
 mace, greatsword, great hammer, spear, halberd, scythe, wand, staff, bow, and
@@ -234,8 +234,8 @@ use is disabled. Flasks cannot be stacked, removed, dropped, or transferred;
 sanctuary rest refills every owned flask. Their runtime charge state is saved
 independently from inventory ownership.
 Persistent flasks are also rejected by enemy loot tables and loot bags. The
-default test enemy drops an ordinary Experience Tonic instead, so every item in
-its bag can be collected normally.
+default test enemy keeps an empty loot table — its only reward is amber shards —
+so any loot bag an authored enemy does drop stays fully collectable.
 
 ## Implementation stages
 
