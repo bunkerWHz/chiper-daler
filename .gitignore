@@ -33,3 +33,5 @@ docs/.obsidian/workspace.json
 docs/.obsidian/workspace-mobile.json
 docs/.obsidian/cache
 docs/.trash/
+# A vault accidentally opened inside the config folder creates this nested copy.
+docs/.obsidian/.obsidian/
