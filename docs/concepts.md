@@ -57,6 +57,7 @@ tags: [meta, architecture]
 | ItemData | Ресурс предмета: идентификатор, иконка, категория, цена, вес, стопка и ссылки на профили | [[Item_Parameters]] | [[Item_Creation_Design]] | Работает |
 | Профиль предмета | Свойства по назначению: Equipment, Weapon, Offhand, Armor, Consumable, Flask, Projectile, Ammunition | [[Item_Creation_Design]] | [[Item_Parameters]] | Работает |
 | Базовое значение против итогового | Предмет хранит базовое значение, итог считают формулы атаки и защиты | [[Item_Creation_Design]] | [[Actor_Stats]] | План |
+| Мировой арт предмета | `equipped_texture` или `equipped_visual`: что видно в руке; без них предмет при экипировке скрыт | [[Item_Parameters]] | [[Inventory_System]], [[Item_Plan]] | Работает |
 | Слот экипировки и слот отображения | `display_slot` независим от слота экипировки; по умолчанию совпадает | [[Item_Parameters]] | [[Project_Guide]] | Работает |
 | Набор оружия | Два набора с переключением и полосой над головой | [[Inventory_System]] | [[Project_Guide]] | Работает |
 | Быстрый слот | Восемь фиксированных слотов для расходуемых и метательных предметов | [[Inventory_System]] | [[Aiming]] | Работает |
