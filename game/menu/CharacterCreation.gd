@@ -20,8 +20,12 @@ func _ready() -> void:
 	for side: String in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 32)
 	add_child(margin)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 14)
+	margin.add_child(layout)
 	var scroll := ScrollContainer.new()
-	margin.add_child(scroll)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(scroll)
 	var page := VBoxContainer.new()
 	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	page.add_theme_constant_override("separation", 14)
@@ -77,10 +81,13 @@ func _ready() -> void:
 	_weight.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var note := _label(right, "Во всех наборах: фляги здоровья и маны.\nОружие и броню можно сочетать свободно.\n\nEND уже влияет на здоровье и нагрузку,\nWIS — на ману. Остальные связи статов\nс боем будут добавлены позднее.", 17)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status = _label(page, "", 18)
+	# Keep validation and actions outside scrolling content: longer messages and
+	# equipment warnings must never push the buttons below the viewport.
+	_status = _label(layout, "", 18)
+	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 16)
-	page.add_child(actions)
+	layout.add_child(actions)
 	_button(actions, "Назад", _back)
 	_start_button = _button(actions, "Начать приключение", _start)
 	_refresh()

@@ -34,6 +34,21 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(current_scene._start_button.disabled, "Incomplete form blocks start")
+	# Empty-name validation and the longest equipment warning used to clip the footer.
+	var armor_picker := current_scene.find_child("ArmorPicker", true, false) as OptionButton
+	armor_picker.select(1)
+	armor_picker.item_selected.emit(1)
+	await process_frame
+	await process_frame
+	var action_bar: Control = current_scene._start_button.get_parent()
+	check(root.get_visible_rect().encloses(action_bar.get_global_rect()), "Actions fit with validation and overload warning")
+	var ancestor: Node = action_bar.get_parent()
+	while ancestor != null:
+		check(not ancestor is ScrollContainer, "Footer stays outside clipped scrolling content")
+		ancestor = ancestor.get_parent()
+	if "--capture" in OS.get_cmdline_user_args():
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png(OS.get_environment("TEMP").path_join("character-creation-footer.png"))
 	var name_input := current_scene.find_child("CharacterName", true, false) as LineEdit
 	name_input.text = draft.character_name
 	name_input.text_changed.emit(name_input.text)
