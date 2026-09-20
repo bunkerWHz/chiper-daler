@@ -540,6 +540,12 @@ func _add_equipment_slot_button(
 		_on_equipment_data_dropped.bind(slot, index, weapon_set)
 	)
 	if item != null:
+		if item.category == ItemData.Category.AMMUNITION:
+			var quantity := _inventory.get_quantity(item.id)
+			var quantity_label := button.get_node("Quantity") as Label
+			quantity_label.text = str(quantity)
+			quantity_label.show()
+			button.tooltip_text += " × %d" % quantity
 		button.context_requested.connect(_open_item_actions.bind(item.id))
 		button.drag_payload = {
 			"kind": InventoryDragButton.KIND_EQUIPPED_ITEM,

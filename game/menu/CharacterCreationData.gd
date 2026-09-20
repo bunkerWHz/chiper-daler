@@ -68,6 +68,11 @@ func equipment_weight() -> float:
 	var total := 0.0
 	for item: ItemData in selected_items():
 		total += item.weight
+	var weapon: ItemData = selected_items()[0]
+	if weapon.get_combat_mode() == ItemData.CombatMode.BOW:
+		total += preload("res://game/items/ammunition/TrainingArrows.tres").weight * 20
+	elif weapon.get_combat_mode() == ItemData.CombatMode.CROSSBOW:
+		total += preload("res://game/items/ammunition/TrainingBolts.tres").weight * 12
 	return total
 
 func player_state() -> Dictionary:
@@ -87,9 +92,11 @@ func player_state() -> Dictionary:
 		ItemData.CombatMode.BOW:
 			mode = EquipmentComponent.Slot.BOW
 			stacks.append({"item_id": "training_arrows", "quantity": 20})
+			equipped["%d:0:0" % ItemData.EquipSlot.OFF_HAND] = &"training_arrows"
 		ItemData.CombatMode.CROSSBOW:
 			mode = EquipmentComponent.Slot.CROSSBOW
 			stacks.append({"item_id": "training_bolts", "quantity": 12})
+			equipped["%d:0:0" % ItemData.EquipSlot.OFF_HAND] = &"training_bolts"
 		ItemData.CombatMode.MAGIC:
 			mode = EquipmentComponent.Slot.MAGIC
 	for path: String in ["HealthPotion", "ManaPotion"]:

@@ -260,6 +260,10 @@ func is_item_equipped(item_id: StringName) -> bool:
 func get_equipped_item_count(item_id: StringName) -> int:
 	if item_id.is_empty():
 		return 0
+	if _inventory_component != null and is_item_equipped(item_id):
+		var item := _inventory_component.get_item_data(item_id)
+		if item != null and item.category == ItemData.Category.AMMUNITION:
+			return _inventory_component.get_quantity(item_id)
 	return _count_equipped_item(item_id)
 
 
@@ -411,7 +415,7 @@ func get_total_equipped_weight() -> float:
 			StringName(equipped_id)
 		)
 		if item != null:
-			total += item.weight
+			total += item.weight * (_inventory_component.get_quantity(item.id) if item.category == ItemData.Category.AMMUNITION else 1)
 	return total
 
 
@@ -493,7 +497,7 @@ func restore_runtime_state(state: Variant) -> void:
 	if equipped_state is Dictionary:
 		candidate = equipped_state.duplicate()
 	_prune_unavailable_items(candidate)
-	_reconcile_hands(candidate, [0, 1])
+	_reconcile_hands(candidate, [0, 1], false)
 	var next_set := clampi(int(state.get("active_weapon_set", 0)), 0, WEAPON_SET_COUNT - 1)
 	var next_mode := int(state.get("action_slot", _current_slot))
 	if next_mode < 0 or next_mode >= Slot.size():
@@ -586,7 +590,9 @@ func _on_inventory_changed() -> void:
 	var candidate := _equipped_items.duplicate()
 	_prune_unavailable_items(candidate)
 	_reconcile_changed_hands(candidate)
-	_commit_loadout(candidate)
+	if not _commit_loadout(candidate):
+		# Ammo quantities can change without changing the selected item ID.
+		_emit_equipment_load_changed()
 
 
 func _count_equipped_item(item_id: StringName) -> int:
@@ -705,7 +711,8 @@ func _get_loadout_failure(loadout: Dictionary) -> String:
 		if not item.can_equip_in(slot):
 			return "%s does not fit this slot." % item.display_name
 		counts[item.id] = int(counts.get(item.id, 0)) + 1
-		if int(counts[item.id]) > _inventory_component.get_quantity(item.id):
+		var available := 1 if item.category == ItemData.Category.AMMUNITION else _inventory_component.get_quantity(item.id)
+		if int(counts[item.id]) > available:
 			return "All copies of %s are already equipped." % item.display_name
 		if slot == ItemData.EquipSlot.OFF_HAND:
 			var main := _loadout_item(loadout, _make_equipment_key(
@@ -736,7 +743,7 @@ func _offhand_fits(main: ItemData, offhand: ItemData) -> bool:
 
 ## Reconcile all changed hands before selecting ammunition, so a scarce stack
 ## released by one weapon set is available to the other set in the same swap.
-func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int]) -> void:
+func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int], select_ammunition: bool = true) -> void:
 	for weapon_set: int in weapon_sets:
 		var main := _loadout_item(loadout, _make_equipment_key(
 			ItemData.EquipSlot.MAIN_HAND, 0, weapon_set
@@ -744,7 +751,7 @@ func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int]) -> void:
 		var off_key := _make_equipment_key(ItemData.EquipSlot.OFF_HAND, 0, weapon_set)
 		if not _offhand_fits(main, _loadout_item(loadout, off_key)):
 			loadout.erase(off_key)
-	if _inventory_component == null:
+	if _inventory_component == null or not select_ammunition:
 		return
 	for weapon_set: int in weapon_sets:
 		var main := _loadout_item(loadout, _make_equipment_key(
@@ -759,7 +766,7 @@ func _reconcile_hands(loadout: Dictionary, weapon_sets: Array[int]) -> void:
 				ammo.category == ItemData.Category.AMMUNITION
 				and ammo.can_equip_in(ItemData.EquipSlot.OFF_HAND)
 				and _offhand_fits(main, ammo)
-				and loadout.values().count(ammo.id) < _inventory_component.get_quantity(ammo.id)
+				and not loadout.values().has(ammo.id)
 			):
 				loadout[off_key] = ammo.id
 				break
@@ -816,7 +823,7 @@ func _prune_unavailable_items(candidate: Dictionary) -> void:
 		if (
 			not _is_valid_address(slot, int(parts[1]), weapon_set)
 			or not item.can_equip_in(slot)
-			or int(counts.get(item.id, 0)) >= _inventory_component.get_quantity(item.id)
+			or int(counts.get(item.id, 0)) >= (1 if item.category == ItemData.Category.AMMUNITION else _inventory_component.get_quantity(item.id))
 		):
 			candidate.erase(key)
 			continue
