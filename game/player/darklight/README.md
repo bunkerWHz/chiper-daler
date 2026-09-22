@@ -25,6 +25,21 @@ play at authored speed; AttackComponent samples the next variant's duration befo
 starting the swing and owns its timer. Dodge follows the gameplay duration. Animation
 does not activate hitboxes, spend stamina or change FSM state.
 
+`dodge2` (0.4 s, `animations/dodge2.tres`) is an authored tucked forward roll:
+the pelvis turns one full revolution while all five IK/look-at targets orbit it,
+so the hero tumbles over head, back, hips and feet once and rises on the same
+pose it started from. Every key is placed so the lowest drawn pixel of the body
+rests on the floor line measured from `idle`, so the tumble rolls on the ground
+instead of through it; the pelvis therefore rises while the head sweeps past the
+ground. It is deliberately **not** mapped to a state yet: `DODGE` still plays
+`dodge`, and the gameplay duration is still 0.18 s. Regenerate the clip with
+`godot --script tests/dodge2_roll_author.gd` (a window is required — the header
+of that script explains why the pelvis height is measured from the renderer, and
+`-- sheet` writes a review contact sheet to `.godot/dodge2_preview_sheet.png`).
+Wiring it up later also means switching the cloak to a tucked pose: with its
+default `wind` clip the hem sweeps up to 316 native units below the floor during
+the recovery, and 240 with the `jump` pose.
+
 Melee clips cycle independently per family: `attack`, `heavy_attack`,
 `air_attack`, and `air_heavy_attack`. Add numbered clips to AnimationPlayer,
 for example `heavy_attack_2`, `heavy_attack_3`, or `attack_2`; they are picked up
@@ -271,12 +286,17 @@ complete transform directly; remaining body RemoteTransform2D attachments must
 transfer the complete bone transform to preserve correct reflection. Source art faces right.
 
 Skinned Polygon2D attachments are the exception: their RemoteTransform2D nodes
-must not copy rotation or scale, which are already supplied by skeletal skinning
-and the shared rig parent. Copying global scale without rotation can retain a
-negative local Y scale after repeated facing changes and make the thighs vanish.
-Keep the authored polygon basis unchanged; ordinary sprite attachments still
-copy the complete transform. `tests/darklight_facing_check.gd` exercises 48 turns
-across idle/run and checks every skinned polygon's basis each frame.
+must not copy position, rotation or scale, because skeletal skinning already
+supplies the whole transform. Copying the bone position on top of skinning moves
+the artwork about twice as far as its bones, which only shows up once the pelvis
+travels a long way (a roll) and stayed hidden in the short-strided clips.
+Copying global scale without rotation can retain a negative local Y scale after
+repeated facing changes and make the thighs vanish. Keep the authored polygon
+basis unchanged; ordinary sprite attachments still copy the complete transform.
+Skin weights must also sum to 1 per vertex: `tests/normalize_skin_weights.mjs`
+reports and repairs the four limb pieces (they were up to 2.0, so their art
+overshot the bones). `tests/darklight_facing_check.gd` exercises 48 turns across
+idle/run and checks every skinned polygon's basis each frame.
 
 ## Provenance and checks
 

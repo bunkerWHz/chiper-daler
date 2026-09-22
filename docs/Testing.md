@@ -2,7 +2,7 @@
 title: Запуск игровых тестов
 type: guide
 created: 2026-09-05
-updated: 2026-09-21
+updated: 2026-09-23
 tags: [testing, workflow]
 ---
 
@@ -120,9 +120,18 @@ godot --headless --path . --script tests/enemy_sandbox_spawn_check.gd
 ```sh
 godot --headless --path . --script tests/run_tests.gd -- darklight_visual animation_pipeline equipment_swap
 godot --headless --max-fps 60 --path . --script tests/darklight_runtime_check.gd
+node tests/normalize_skin_weights.mjs --check
 ```
 
 For visual QA run the second command without `--headless`. It writes
 `.godot/darklight_right.png`, `darklight_left.png`, and `darklight_bow.png`.
 Use `--max-fps 60` for runtime checks that wait physics frames while gameplay
 components also advance timers in `_process`.
+
+`darklight_visual` covers the authored `dodge2` roll as data: clip length, loop
+mode, track set, one full pelvis revolution, the standing pose at both ends and
+the tucked foot. The roll itself is regenerated and re-measured by
+`tests/dodge2_roll_author.gd`, which renders offscreen and needs a window;
+`node tests/normalize_skin_weights.mjs --check` reports the rig's per-vertex skin
+weight sums, which must be 1 for every skinned limb vertex.
+
