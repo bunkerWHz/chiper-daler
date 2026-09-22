@@ -436,7 +436,7 @@ func test_dodge2_is_an_authored_tucked_roll() -> void:
 	var player := rig.get_node("AnimationPlayer") as AnimationPlayer
 	assert_true(player.has_animation(&"dodge2"))
 	var clip := player.get_animation(&"dodge2")
-	assert_true(is_equal_approx(clip.length, 0.4))
+	assert_true(is_equal_approx(clip.length, 1.0))
 	assert_eq(clip.loop_mode, Animation.LOOP_NONE)
 	# Pelvis plus five IK/look-at targets, with the four offset targets on top.
 	assert_eq(clip.get_track_count(), 16)
@@ -448,6 +448,12 @@ func test_dodge2_is_an_authored_tucked_roll() -> void:
 	var hip := "CharacterContainer/Anim Targets/Hip"
 	var rotation_track := clip.find_track(NodePath(hip + ":rotation"), Animation.TYPE_VALUE)
 	var position_track := clip.find_track(NodePath(hip + ":position"), Animation.TYPE_VALUE)
+	var arm_track := clip.find_track(
+		NodePath("CharacterContainer/Anim Targets/FrontArmIK:position"), Animation.TYPE_VALUE
+	)
+	var leg_track := clip.find_track(
+		NodePath("CharacterContainer/Anim Targets/FrontLegIK:position"), Animation.TYPE_VALUE
+	)
 	assert_true(rotation_track >= 0)
 	assert_true(position_track >= 0)
 	var last := clip.track_get_key_count(rotation_track) - 1
@@ -462,10 +468,22 @@ func test_dodge2_is_an_authored_tucked_roll() -> void:
 	for index in clip.track_get_key_count(position_track):
 		highest = minf(highest, (clip.track_get_key_value(position_track, index) as Vector2).y)
 	assert_true(highest < -20.0)
-	# Every target folds towards the pelvis at the tightest point of the roll.
-	var leg_track := clip.find_track(
-		NodePath("CharacterContainer/Anim Targets/FrontLegIK:position"), Animation.TYPE_VALUE
+	# Key times are uniform, so the phase landmarks are plain indices.
+	var step := clip.length / float(clip.track_get_key_count(position_track) - 1)
+	var squat := clip.track_get_key_value(position_track, int(round(0.14 / step))) as Vector2
+	assert_true(squat.y > start.y + 60.0, "The clip must squat before it rolls")
+	var dive := clip.track_get_key_value(position_track, int(round(0.40 / step))) as Vector2
+	var dive_degrees := rad_to_deg(float(clip.track_get_key_value(rotation_track, int(round(0.40 / step)))))
+	assert_true(dive_degrees > 40.0 and dive_degrees < 90.0, "The body must tip to the dive diagonal")
+	assert_true(
+		(clip.track_get_key_value(arm_track, int(round(0.40 / step))) as Vector2).x - dive.x > 180.0,
+		"The hands must reach forward through the dive"
 	)
+	assert_true(
+		(clip.track_get_key_value(leg_track, int(round(0.40 / step))) as Vector2).x - dive.x < -180.0,
+		"The legs must trail behind through the dive"
+	)
+	# Every target folds towards the pelvis at the tightest point of the roll.
 	var closest := INF
 	for index in mini(clip.track_get_key_count(leg_track), clip.track_get_key_count(position_track)):
 		var leg := clip.track_get_key_value(leg_track, index) as Vector2

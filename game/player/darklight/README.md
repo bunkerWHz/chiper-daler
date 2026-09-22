@@ -25,20 +25,27 @@ play at authored speed; AttackComponent samples the next variant's duration befo
 starting the swing and owns its timer. Dodge follows the gameplay duration. Animation
 does not activate hitboxes, spend stamina or change FSM state.
 
-`dodge2` (0.4 s, `animations/dodge2.tres`) is an authored tucked forward roll:
-the pelvis turns one full revolution while all five IK/look-at targets orbit it,
-so the hero tumbles over head, back, hips and feet once and rises on the same
-pose it started from. Every key is placed so the lowest drawn pixel of the body
-rests on the floor line measured from `idle`, so the tumble rolls on the ground
-instead of through it; the pelvis therefore rises while the head sweeps past the
-ground. It is deliberately **not** mapped to a state yet: `DODGE` still plays
-`dodge`, and the gameplay duration is still 0.18 s. Regenerate the clip with
+`dodge2` (1.0 s, `animations/dodge2.tres`) is an authored dodge in four beats:
+a short squat, then the body stretches forward along a downward diagonal with
+both hands reaching, then it folds into a tuck and rolls one full revolution
+over head, back, hips and feet, rising on the pose it started from. The pelvis
+turns the whole revolution while all five IK/look-at targets orbit it. Authored
+timing: squat 0.00–0.14, dive 0.14–0.42, roll 0.42–0.86, rise 0.86–1.00; the
+clip is meant to be retimed, like the others, by playing it at
+`clip length / gameplay duration`.
+Every key is placed so the lowest drawn pixel of the body rests on the floor
+line measured from `idle`, so the tumble rolls on the ground instead of through
+it: the hands lead onto the floor at the end of the dive, and the pelvis rises
+while the head sweeps past the ground. The clip is deliberately **not** mapped
+to a state yet: `DODGE` still plays `dodge`, and the gameplay duration is still
+0.18 s. Regenerate the clip with
 `godot --script tests/dodge2_roll_author.gd` (a window is required — the header
 of that script explains why the pelvis height is measured from the renderer, and
-`-- sheet` writes a review contact sheet to `.godot/dodge2_preview_sheet.png`).
-Wiring it up later also means switching the cloak to a tucked pose: with its
-default `wind` clip the hem sweeps up to 316 native units below the floor during
-the recovery, and 240 with the `jump` pose.
+`-- sheet` writes a review contact sheet to `.godot/dodge2_preview_sheet.png`,
+while `-- joints` prints the phase geometry). Wiring it up later also means
+switching the cloak to a tucked pose: with its default `wind` clip the hem
+sweeps up to 311 native units below the floor during the landing, and 236 with
+the `jump` pose.
 
 Melee clips cycle independently per family: `attack`, `heavy_attack`,
 `air_attack`, and `air_heavy_attack`. Add numbered clips to AnimationPlayer,

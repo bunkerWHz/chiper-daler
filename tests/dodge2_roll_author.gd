@@ -40,19 +40,24 @@ const AT_PATHS := {
 }
 
 # --- clip shape ---------------------------------------------------------
-const LENGTH := 0.4
-const STEP := 0.01
-const TIP_END := 0.070
-const TIP_DEGREES := 42.0
-const ROLL_END := 0.330
+# Timeline: squat, dive forward-diagonal with both arms reaching, tuck and roll,
+# then rise on the pose the clip started from.
+const LENGTH := 1.0
+const STEP := 0.02
+const SQUAT_SETTLE := 0.14
+const SQUAT_RELEASE := 0.34
+const DIVE_END := 0.42
+const TUCK_SETTLED := 0.52
+const ROLL_END := 0.86
+const SQUAT_DEGREES := 5.0
+const DIVE_DEGREES := 56.0
 const ROLL_DEGREES := 318.0
-const TUCK_IN_END := 0.075
-const TUCK_OUT_START := 0.305
-const LEAN_PEAK := 46.0
+const LEAN_PEAK := 150.0
 
 # --- poses --------------------------------------------------------------
-# Pelvis-relative target offsets. The standing pose repeats the idle artwork,
-# the tuck folds every limb onto the torso so the silhouette becomes a ball.
+# Pelvis-relative target offsets. The standing pose repeats the idle artwork;
+# the squat shortens the legs; the dive stretches the body forward and down with
+# both hands reaching; the tuck folds every limb onto the torso into a ball.
 const STAND := {
 	"front_leg": Vector2(-190, 316),
 	"back_leg": Vector2(90, 305),
@@ -65,6 +70,33 @@ const STAND_AT := {
 	"back_leg": Vector2(111, 3),
 	"front_arm": Vector2(95, -13),
 	"back_arm": Vector2(9, 0),
+}
+const SQUAT := {
+	"front_leg": Vector2(-146, 202),
+	"back_leg": Vector2(58, 196),
+	"front_arm": Vector2(-176, -18),
+	"back_arm": Vector2(194, -48),
+	"head": Vector2(330, -262),
+}
+const SQUAT_AT := {
+	"front_leg": Vector2(184, 3),
+	"back_leg": Vector2(111, 3),
+	"front_arm": Vector2(95, -13),
+	"back_arm": Vector2(9, 0),
+}
+const DIVE := {
+	"front_leg": Vector2(-230, 290),
+	"back_leg": Vector2(-60, 300),
+	"front_arm": Vector2(150, -240),
+	"back_arm": Vector2(250, -205),
+	# Head bone (0,-269) plus 300 units along a forward-down gaze.
+	"head": Vector2(292, -337),
+}
+const DIVE_AT := {
+	"front_leg": Vector2(33, 94),
+	"back_leg": Vector2(33, 94),
+	"front_arm": Vector2(91, -41),
+	"back_arm": Vector2(91, -41),
 }
 const TUCK := {
 	"front_leg": Vector2(-58, 120),
@@ -122,6 +154,10 @@ func _run() -> void:
 		if saved != null:
 			_player.get_animation_library(&"").add_animation(&"dodge2", saved)
 		await _ascii_roll()
+		_quit()
+		return
+	if "joints" in _args:
+		await _report_joint_phases()
 		_quit()
 		return
 	if "measure" in _args:
@@ -292,49 +328,68 @@ func _lowest_lit_rig_y() -> float:
 # --- pose model ---------------------------------------------------------
 
 
-## Samples the roll's angle, tuck amount and pelvis lean over the clip.
+## Samples the roll's angle, pose blend and pelvis lean over the clip.
 func _roll_samples() -> Array[Dictionary]:
 	var samples: Array[Dictionary] = []
 	var count := int(round(LENGTH / STEP))
 	for index in count + 1:
 		var time := minf(index * STEP, LENGTH)
 		var angle := _roll_angle_degrees(time)
+		var weights := _pose_weights(time)
 		samples.append({
 			"time": time,
 			"angle": deg_to_rad(angle),
 			"degrees": angle,
-			"tuck": _tuck_amount(time),
+			"weights": weights,
+			"tuck": weights["tuck"],
 			"lean": _lean(time),
 		})
 	return samples
 
 
-## Tips forward, tumbles with the fastest turn mid-roll, then settles upright.
+## How much of squat, dive and tuck the pose holds at this moment.
+## An empty blend means the standing pose.
+func _pose_weights(time: float) -> Dictionary:
+	return {
+		"squat": _ramp(time, 0.0, SQUAT_SETTLE) * (1.0 - _ramp(time, SQUAT_SETTLE, SQUAT_RELEASE)),
+		"dive": _ramp(time, SQUAT_SETTLE - 0.04, SQUAT_RELEASE) * (1.0 - _ramp(time, DIVE_END, TUCK_SETTLED)),
+		"tuck": _ramp(time, DIVE_END, TUCK_SETTLED) * (1.0 - _ramp(time, ROLL_END, LENGTH)),
+	}
+
+
+func _ramp(time: float, start: float, end: float) -> float:
+	if end <= start:
+		return 1.0 if time >= end else 0.0
+	return _smooth((time - start) / (end - start))
+
+
+## Sinks into the squat, tips forward to the dive angle, tumbles one full turn
+## with the fastest rotation mid-roll, then settles upright.
 func _roll_angle_degrees(time: float) -> float:
-	if time <= TIP_END:
-		return TIP_DEGREES * pow(time / TIP_END, 1.7)
+	if time <= SQUAT_SETTLE:
+		return SQUAT_DEGREES * _smooth(time / SQUAT_SETTLE)
+	if time <= DIVE_END:
+		var dive := (time - SQUAT_SETTLE) / (DIVE_END - SQUAT_SETTLE)
+		return SQUAT_DEGREES + (DIVE_DEGREES - SQUAT_DEGREES) * _smooth(dive)
 	if time <= ROLL_END:
-		var progress := (time - TIP_END) / (ROLL_END - TIP_END)
-		return TIP_DEGREES + (ROLL_DEGREES - TIP_DEGREES) * _smooth(progress)
-	var progress := (time - ROLL_END) / (LENGTH - ROLL_END)
-	return ROLL_DEGREES + (360.0 - ROLL_DEGREES) * (1.0 - pow(1.0 - progress, 1.8))
+		var turn := (time - DIVE_END) / (ROLL_END - DIVE_END)
+		return DIVE_DEGREES + (ROLL_DEGREES - DIVE_DEGREES) * _smooth(turn)
+	var settle := (time - ROLL_END) / (LENGTH - ROLL_END)
+	return ROLL_DEGREES + (360.0 - ROLL_DEGREES) * (1.0 - pow(1.0 - settle, 1.8))
 
 
-func _tuck_amount(time: float) -> float:
-	if time <= TUCK_IN_END:
-		return _smooth(time / TUCK_IN_END)
-	if time <= TUCK_OUT_START:
-		return 1.0
-	return 1.0 - _smooth((time - TUCK_OUT_START) / (LENGTH - TUCK_OUT_START))
-
-
-## A short forward push while committing, unwinding as the hero rises.
+## A small shift while squatting, a long forward push through the dive, unwinding
+## as the hero rises.
 func _lean(time: float) -> float:
-	if time <= TUCK_IN_END:
-		return LEAN_PEAK * _smooth(time / TUCK_IN_END)
-	if time <= TUCK_OUT_START:
-		return LEAN_PEAK * (1.0 - 0.45 * _smooth((time - TUCK_IN_END) / (TUCK_OUT_START - TUCK_IN_END)))
-	return LEAN_PEAK * 0.55 * (1.0 - _smooth((time - TUCK_OUT_START) / (LENGTH - TUCK_OUT_START)))
+	if time <= SQUAT_SETTLE:
+		return 24.0 * _smooth(time / SQUAT_SETTLE)
+	if time <= DIVE_END:
+		var dive := (time - SQUAT_SETTLE) / (DIVE_END - SQUAT_SETTLE)
+		return 24.0 + (LEAN_PEAK - 24.0) * _smooth(dive)
+	if time <= ROLL_END:
+		var turn := (time - DIVE_END) / (ROLL_END - DIVE_END)
+		return LEAN_PEAK - (LEAN_PEAK - 40.0) * _smooth(turn)
+	return 40.0 * (1.0 - _smooth((time - ROLL_END) / (LENGTH - ROLL_END)))
 
 
 func _smooth(value: float) -> float:
@@ -342,12 +397,46 @@ func _smooth(value: float) -> float:
 	return clamped * clamped * (3.0 - 2.0 * clamped)
 
 
+func _pose_offsets(kind: String) -> Dictionary:
+	match kind:
+		"squat": return SQUAT
+		"dive": return DIVE
+		"tuck": return TUCK
+	return STAND
+
+
+func _pose_ats(kind: String) -> Dictionary:
+	match kind:
+		"squat": return SQUAT_AT
+		"dive": return DIVE_AT
+		"tuck": return TUCK_AT
+	return STAND_AT
+
+
+## Weighted average of the phase poses; falls back to standing when the blend is
+## empty, which is exactly the pose the clip starts and ends on.
+func _blend_pose(weights: Dictionary, name: String, ats: bool) -> Vector2:
+	var total := 0.0
+	var blended := Vector2.ZERO
+	for kind: String in ["squat", "dive", "tuck"]:
+		var weight := float(weights.get(kind, 0.0))
+		if weight <= 0.0:
+			continue
+		var table := _pose_ats(kind) if ats else _pose_offsets(kind)
+		total += weight
+		blended += (table[name] as Vector2) * weight
+	if total <= 0.0:
+		var stand := STAND_AT if ats else STAND
+		return stand[name] as Vector2
+	return blended / total
+
+
 func _target_position(sample: Dictionary, name: String) -> Vector2:
 	var offset: Vector2
 	if sample.has("offsets"):
 		offset = sample["offsets"][name]
 	else:
-		offset = (STAND[name] as Vector2).lerp(TUCK[name], sample["tuck"])
+		offset = _blend_pose(sample["weights"], name, false)
 	return (sample["hip"] as Vector2) + offset.rotated(sample["angle"])
 
 
@@ -356,7 +445,7 @@ func _at_position(sample: Dictionary, name: String) -> Vector2:
 	if sample.has("ats"):
 		offset = sample["ats"][name]
 	else:
-		offset = (STAND_AT[name] as Vector2).lerp(TUCK_AT[name], sample["tuck"])
+		offset = _blend_pose(sample["weights"], name, true)
 	return offset.rotated(sample["angle"])
 
 
@@ -428,12 +517,15 @@ func _find_track(path: String) -> int:
 
 ## Replays the written clip and reports the pelvis path and floor contact.
 func _report() -> void:
-	print("%8s %8s %7s %18s %10s %10s %10s %10s" % ["time", "angle", "tuck", "pelvis", "body", "cloak", "sprite", "top"])
+	print(
+		"%8s %8s %6s %6s %6s %18s %10s %10s %10s %10s"
+		% ["time", "angle", "squat", "dive", "tuck", "pelvis", "body", "cloak", "sprite", "top"]
+	)
 	var worst_body := -INF
 	var worst_cloak := -INF
 	var lowest_top := INF
 	var worst_sprite := -INF
-	var count := 21
+	var count := 41
 	for index in count:
 		var time := LENGTH * float(index) / float(count - 1)
 		_player.play(&"dodge2")
@@ -460,13 +552,16 @@ func _report() -> void:
 		lowest_top = minf(lowest_top, top)
 		var sprite := _sprite_silhouette().end.y - _ground
 		worst_sprite = maxf(worst_sprite, sprite)
-		print(
-			"%8.3f %8.1f %7.2f (%+8.1f,%+8.1f) %+10.1f %+10.1f %+10.1f %+10.1f"
-			% [
-				time, rad_to_deg((_rig.get_node(HIP_PATH) as Node2D).rotation),
-				_tuck_amount(time), hip.x, hip.y, body, cloak, sprite, top,
-			]
-		)
+		var weights := _pose_weights(time)
+		if index % 4 == 0 or index == count - 1:
+			print(
+				"%8.3f %8.1f %6.2f %6.2f %6.2f (%+8.1f,%+8.1f) %+10.1f %+10.1f %+10.1f %+10.1f"
+				% [
+					time, rad_to_deg((_rig.get_node(HIP_PATH) as Node2D).rotation),
+					weights["squat"], weights["dive"], weights["tuck"],
+					hip.x, hip.y, body, cloak, sprite, top,
+				]
+			)
 	print(
 		"summary: worst body dip %+.1f, with cloak %+.1f, sprites only %+.1f, highest point %+.1f%s"
 		% [worst_body, worst_cloak, worst_sprite, lowest_top, "" if _rendered else "  [no renderer]"]
@@ -533,15 +628,19 @@ func _render_sheet() -> void:
 ## Prints a strip of roll poses as text, so the tumble can be judged without an
 ## image viewer. '#' is artwork, 'G' the ground line.
 func _ascii_roll() -> void:
-	for time in [0.0, 0.08, 0.14, 0.20, 0.26, 0.32, 0.40]:
+	for time in [0.0, 0.14, 0.26, 0.38, 0.48, 0.60, 0.72, 0.86, 1.0]:
 		_player.play(&"dodge2")
 		_player.seek(time, true)
 		_player.pause()
 		await _settle()
 		var hip := (_rig.get_node(HIP_PATH) as Node2D).position
+		var weights := _pose_weights(time)
 		print(
-			"--- t=%.2f angle=%.0f pelvis=(%+.0f,%+.0f) ---"
-			% [time, rad_to_deg((_rig.get_node(HIP_PATH) as Node2D).rotation), hip.x, hip.y]
+			"--- t=%.2f angle=%.0f squat=%.1f dive=%.1f tuck=%.1f pelvis=(%+.0f,%+.0f) ---"
+			% [
+				time, rad_to_deg((_rig.get_node(HIP_PATH) as Node2D).rotation),
+				weights["squat"], weights["dive"], weights["tuck"], hip.x, hip.y,
+			]
 		)
 		await _ascii(40, 40)
 
@@ -572,6 +671,53 @@ func _ascii(columns := 96, rows := 40) -> void:
 			else:
 				line += "#" if lit else "."
 		print(line)
+
+
+## Prints where the pelvis, head, hands and feet land at the phase landmarks, so
+## the squat, the dive and the roll can be judged as geometry, not as pixels.
+func _report_joint_phases() -> void:
+	var probes := {
+		"stand": 0.0, "squat": 0.14, "squat+dive": 0.26, "dive": 0.38,
+		"dive+tuck": 0.48, "tuck": 0.60, "half roll": 0.70, "land": 0.82, "rise": 0.92,
+	}
+	for label: String in probes:
+		var time: float = probes[label]
+		_player.play(&"dodge2")
+		_player.seek(time, true)
+		_player.pause()
+		await _settle()
+		var pelvis := (_rig.get_node(HIP_PATH) as Node2D).position
+		var head := (_rig.get_node(CONTAINER + "Skeleton2D/Hip/Torso/Head") as Node2D).global_position \
+			- _rig.global_position
+		var front_hand := (_rig.get_node(TARGET_PATHS["front_arm"]) as Node2D).position
+		var back_hand := (_rig.get_node(TARGET_PATHS["back_arm"]) as Node2D).position
+		var front_foot := (_rig.get_node(TARGET_PATHS["front_leg"]) as Node2D).position
+		var back_foot := (_rig.get_node(TARGET_PATHS["back_leg"]) as Node2D).position
+		var bounds := await _rendered_bounds()
+		print(
+			"%-11s t=%.2f pelvis=(%+7.1f,%+7.1f) head=(%+7.1f,%+7.1f) hands=(%+7.1f,%+7.1f)/(%+7.1f,%+7.1f) feet=(%+7.1f,%+7.1f)/(%+7.1f,%+7.1f) body x=[%+7.0f..%+7.0f] y=[%+7.0f..%+7.0f]"
+			% [
+				label, time,
+				pelvis.x, pelvis.y,
+				head.x, head.y,
+				front_hand.x, front_hand.y,
+				back_hand.x, back_hand.y,
+				front_foot.x, front_foot.y,
+				back_foot.x, back_foot.y,
+				bounds.position.x, bounds.end.x, bounds.position.y, bounds.end.y,
+			]
+		)
+
+
+## Lit bounds of the current frame in rig space, measured by the renderer.
+func _rendered_bounds() -> Rect2:
+	if not _rendered:
+		return _sprite_silhouette()
+	await _lowest_lit_rig_y()
+	return Rect2(
+		Vector2(_lit_bounds.x, _lit_bounds.y),
+		Vector2(_lit_bounds.z - _lit_bounds.x, _lit_bounds.w - _lit_bounds.y)
+	)
 
 
 ## Renders a fixed set of poses from the shipped clips, so rig edits can be
