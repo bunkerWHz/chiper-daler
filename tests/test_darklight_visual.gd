@@ -483,6 +483,27 @@ func test_dodge2_is_an_authored_tucked_roll() -> void:
 		(clip.track_get_key_value(leg_track, int(round(0.40 / step))) as Vector2).x - dive.x < -180.0,
 		"The legs must trail behind through the dive"
 	)
+	# Through the dive the hands are held level with the ground, out in front,
+	# and only then fold into the tuck. -120,-245 is the front shoulder in
+	# pelvis space, so the arm can be compared with the horizon.
+	for probe: float in [0.25, 0.32, 0.40]:
+		var index := int(round(probe / step))
+		var pelvis := clip.track_get_key_value(position_track, index) as Vector2
+		var tilt := float(clip.track_get_key_value(rotation_track, index))
+		var shoulder := pelvis + Vector2(-120.0, -245.0).rotated(tilt)
+		var arm := (clip.track_get_key_value(arm_track, index) as Vector2) - shoulder
+		assert_true(absf(arm.y) < 12.0, "The hands must stay level with the ground through the dive")
+		assert_true(arm.x > 200.0, "The hands must stay out in front through the dive")
+	# The fold starts after that window, so the tuck key is still open at 0.40.
+	var tuck_key := int(round(0.60 / step))
+	var open_key := int(round(0.40 / step))
+	var open_foot := (clip.track_get_key_value(leg_track, open_key) as Vector2).distance_to(
+		clip.track_get_key_value(position_track, open_key) as Vector2
+	)
+	var tucked_foot := (clip.track_get_key_value(leg_track, tuck_key) as Vector2).distance_to(
+		clip.track_get_key_value(position_track, tuck_key) as Vector2
+	)
+	assert_true(open_foot > tucked_foot + 100.0, "The legs must fold only after the dive")
 	# Every target folds towards the pelvis at the tightest point of the roll.
 	var closest := INF
 	for index in mini(clip.track_get_key_count(leg_track), clip.track_get_key_count(position_track)):

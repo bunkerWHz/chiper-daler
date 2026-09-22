@@ -53,6 +53,21 @@ const SQUAT_DEGREES := 5.0
 const DIVE_DEGREES := 56.0
 const ROLL_DEGREES := 318.0
 const LEAN_PEAK := 150.0
+# Both hands are held level with the ground (world-horizontal) through the dive,
+# then released as the tuck closes.
+const REACH_IN_START := 0.18
+const REACH_IN_END := 0.24
+const REACH_OUT_START := 0.40
+const REACH_OUT_END := 0.47
+
+# --- poses --------------------------------------------------------------
+# Shoulder joints in pelvis space, and how far each arm can reach. The arms are
+# never perfectly straight: the two-bone chains are 275 and 236 units long, so
+# the reach stops just short of that.
+const FRONT_SHOULDER := Vector2(-120, -245)
+const BACK_SHOULDER := Vector2(96, -240)
+const FRONT_ARM_REACH := 270.0
+const BACK_ARM_REACH := 232.0
 
 # --- poses --------------------------------------------------------------
 # Pelvis-relative target offsets. The standing pose repeats the idle artwork;
@@ -154,6 +169,10 @@ func _run() -> void:
 		if saved != null:
 			_player.get_animation_library(&"").add_animation(&"dodge2", saved)
 		await _ascii_roll()
+		_quit()
+		return
+	if "arms" in _args:
+		await _report_arms()
 		_quit()
 		return
 	if "joints" in _args:
@@ -342,9 +361,26 @@ func _roll_samples() -> Array[Dictionary]:
 			"degrees": angle,
 			"weights": weights,
 			"tuck": weights["tuck"],
+			"reach": _reach_weight(time),
 			"lean": _lean(time),
 		})
 	return samples
+
+
+## How much the hands are held level with the ground instead of following the
+## authored pose. It opens before the dive is fully extended and closes when the
+## tuck starts folding the arms in.
+func _reach_weight(time: float) -> float:
+	return _ramp(time, REACH_IN_START, REACH_IN_END) * (1.0 - _ramp(time, REACH_OUT_START, REACH_OUT_END))
+
+
+## Pelvis-space offset that puts a hand straight out in front, parallel to the
+## ground, whatever the body's current tilt is. The world direction is +X, so the
+## pelvis-space direction has to be rotated back by the roll angle.
+func _level_arm_offset(name: String, angle: float) -> Vector2:
+	var shoulder := FRONT_SHOULDER if name == "front_arm" else BACK_SHOULDER
+	var reach := FRONT_ARM_REACH if name == "front_arm" else BACK_ARM_REACH
+	return shoulder + Vector2(reach, 0.0).rotated(-angle)
 
 
 ## How much of squat, dive and tuck the pose holds at this moment.
@@ -437,6 +473,10 @@ func _target_position(sample: Dictionary, name: String) -> Vector2:
 		offset = sample["offsets"][name]
 	else:
 		offset = _blend_pose(sample["weights"], name, false)
+		if name in ["front_arm", "back_arm"] and float(sample.get("reach", 0.0)) > 0.0:
+			# The hands are held out level with the ground, so the arm direction
+			# is computed from the current body tilt instead of the pose table.
+			offset = offset.lerp(_level_arm_offset(name, sample["angle"]), sample["reach"])
 	return (sample["hip"] as Vector2) + offset.rotated(sample["angle"])
 
 
@@ -446,6 +486,10 @@ func _at_position(sample: Dictionary, name: String) -> Vector2:
 		offset = sample["ats"][name]
 	else:
 		offset = _blend_pose(sample["weights"], name, true)
+		if name in ["front_arm", "back_arm"] and float(sample.get("reach", 0.0)) > 0.0:
+			# The hands also point along that level line, not down the wrist.
+			var level := Vector2(100.0, 0.0).rotated(-sample["angle"])
+			offset = offset.lerp(level, sample["reach"])
 	return offset.rotated(sample["angle"])
 
 
@@ -671,6 +715,35 @@ func _ascii(columns := 96, rows := 40) -> void:
 			else:
 				line += "#" if lit else "."
 		print(line)
+
+
+## Reports how level and how straight the arms are through the dive window.
+## A straight arm reads as an elbow angle of 180 degrees.
+func _report_arms() -> void:
+	print("%7s %9s %22s %22s %22s %8s %8s" % ["time", "tilt", "front shoulder", "front elbow", "front hand", "elbow", "level"])
+	for time in [0.14, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]:
+		_player.play(&"dodge2")
+		_player.seek(time, true)
+		_player.pause()
+		await _settle()
+		var pelvis := (_rig.get_node(HIP_PATH) as Node2D).position
+		var tilt := (_rig.get_node(HIP_PATH) as Node2D).rotation
+		var shoulder := (_rig.get_node(CONTAINER + "Skeleton2D/Hip/FrontArmTop") as Node2D).global_position \
+			- _rig.global_position
+		var elbow := (_rig.get_node(CONTAINER + "Skeleton2D/Hip/FrontArmTop/FrontArmMid") as Node2D).global_position \
+			- _rig.global_position
+		var hand := (_rig.get_node(CONTAINER + "Skeleton2D/Hip/FrontArmTop/FrontArmMid/FrontArmBot") as Node2D).global_position \
+			- _rig.global_position
+		var upper := elbow - shoulder
+		var fore := hand - elbow
+		var elbow_angle := 180.0 - absf(rad_to_deg(upper.angle_to(fore)))
+		print(
+			"%7.2f %8.1f%s (%+7.0f,%+6.0f) (%+7.0f,%+6.0f) (%+7.0f,%+6.0f) %7.0f %7.0f"
+			% [
+				time, rad_to_deg(tilt), " ", shoulder.x, shoulder.y, elbow.x, elbow.y,
+				hand.x, hand.y, elbow_angle, hand.y - shoulder.y,
+			]
+		)
 
 
 ## Prints where the pelvis, head, hands and feet land at the phase landmarks, so
