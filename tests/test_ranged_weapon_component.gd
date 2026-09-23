@@ -140,7 +140,7 @@ func test_item_settings_control_projectile_and_cooldown() -> void:
 		setup.ranged._process(0.0)
 		setup.input._attack_released = true
 		setup.ranged._process(0.0)
-		var projectile := setup.root.get_child(1) as ThrownProjectile
+		var projectile := setup.root.get_child(1) as Projectile
 		assert_true(is_equal_approx(projectile._velocity.length(), 975.0))
 		assert_eq(projectile._gravity, 125.0)
 		assert_eq(projectile._damage, 31.0 + setup.equipment.get_active_weapon_damage())

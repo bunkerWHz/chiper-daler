@@ -201,7 +201,7 @@ hand hierarchy changes or tool-script reloads, preserving fitting values.
 to the hero without running the game. **Show / hide projectile** toggles it; when
 Projectile Item is empty, the first hand item with a projectile profile is used.
 The sample uses `Projectile Profile.texture` and the same size calculation as
-ThrownProjectile, including its untextured fallback. Its label reports visible
+Projectile, including its untextured fallback. Its label reports visible
 width/height in world pixels. **Projectile Angle Degrees** rotates the sample
 for inspection; **Projectile Preview Position** moves it beside the hero.
 **Projectile Scale** changes flight size immediately; **Save projectile size to

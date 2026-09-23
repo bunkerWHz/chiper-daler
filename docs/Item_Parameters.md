@@ -2,7 +2,7 @@
 title: Какие параметры предметов работают
 type: reference
 created: 2026-09-05
-updated: 2026-09-20
+updated: 2026-09-24
 tags: [items, equipment, balance]
 ---
 
@@ -55,6 +55,7 @@ texture, speed, gravity, lifetime, damage и knockback работают при �
 | available_actions | Частично работает | Attack, Guard, RangedWeapon и Magic проверяют доступные действия; RELOAD пока не используется |
 | critical_damage_multiplier | Работает для ближнего боя | AttackComponent передаёт множитель в HitboxComponent |
 | ammunition_type | Работает | EquipmentComponent подбирает совместимые боеприпасы; RangedWeaponComponent расходует надетую в OFF_HAND стопку инвентаря |
+| ammunition_profile.projectile_scene | Работает | Сцена снаряда этой стопки: арт, коллизия, `sticks` и `pierce`. Пусто — способность собирает генерический снаряд кодом |
 | primary_damage_type | Запланировано | Разных расчётов для slash/pierce/strike/magic пока нет |
 | moveset_id | Запланировано | Выбор набора движений по идентификатору не реализован |
 | attack_speed_multiplier | Запланировано | Длительности берутся из конфигурации атаки |

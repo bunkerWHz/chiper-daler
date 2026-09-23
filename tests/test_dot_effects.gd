@@ -143,7 +143,7 @@ func test_throwable_profile_effects_reach_target_and_respect_damage_gate() -> vo
 		s.input._interact_released = true
 		s.throwing._process(0.0)
 		item.projectile_profile = original
-		var projectile := s.root.get_child(1) as ThrownProjectile
+		var projectile := s.root.get_child(1) as Projectile
 		# Editing the source list after launch must not change this projectile's effects.
 		profile.status_effects.clear()
 		var target := _target(5.0 if mode == "lethal" else 100.0)

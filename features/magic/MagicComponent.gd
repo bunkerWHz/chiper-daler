@@ -165,7 +165,7 @@ func _cast_spell() -> void:
 	_set_mana(_mana - config.cast_mana_cost)
 	var parent := actor.get_parent()
 	if parent != null:
-		var projectile := preload("res://features/throwing/ThrownProjectile.tscn").instantiate() as ThrownProjectile
+		var projectile := Projectile.create_generic()
 		projectile.is_magic = true
 		parent.add_child(projectile)
 		projectile.global_position = _aim.get_launch_position()

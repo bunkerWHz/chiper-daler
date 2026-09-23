@@ -7,7 +7,7 @@ signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal throwable_released(direction: Vector2, remaining_charges: int)
 signal charges_changed
 
-const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
+
 const BEHAVIOR_GATE := preload("res://features/state/ExclusiveBehaviorGate.gd")
 
 @export var config: ThrowingConfig
@@ -112,7 +112,7 @@ func _release_throwable() -> void:
 	if _inventory.remove_item(item.id, 1) != 1:
 		cancel_throw()
 		return
-	var projectile := PROJECTILE_SCENE.instantiate() as ThrownProjectile
+	var projectile := Projectile.create_generic()
 	projectile.fit_throwable(actor, profile.texture, profile.visual_scale)
 	actor.get_parent().add_child(projectile)
 	projectile.global_position = origin

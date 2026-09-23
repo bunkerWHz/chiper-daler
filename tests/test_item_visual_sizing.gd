@@ -67,7 +67,7 @@ func test_throwable_scales_with_actor_and_preserves_hit_radius() -> void:
 		var hero_scale := scenario.x
 		var flight_scale := scenario.y
 		player.scale = Vector2.ONE * hero_scale
-		var projectile := track(load("res://features/throwing/ThrownProjectile.tscn").instantiate()) as ThrownProjectile
+		var projectile := track(Projectile.create_generic()) as Projectile
 		projectile.fit_throwable(player, texture, flight_scale)
 		var expected: float = 970.0 * hero_scale * 0.3 * flight_scale
 		assert_true(is_equal_approx(projectile.scale.x * 1000.0, expected))

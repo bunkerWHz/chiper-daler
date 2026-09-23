@@ -13,8 +13,6 @@ signal phase_changed(previous_phase: Phase, current_phase: Phase)
 signal projectile_fired(phase: Phase, remaining_ammo: int)
 signal ammunition_changed
 
-const PROJECTILE_SCENE := preload("res://features/throwing/ThrownProjectile.tscn")
-const ARROW_TEXTURE := preload("res://assets/Test/Hero/Archer/Arrow.png")
 const BEHAVIOR_GATE := preload(
 	"res://features/state/ExclusiveBehaviorGate.gd"
 )
@@ -202,10 +200,19 @@ func _fire(bow: bool) -> void:
 	var launch_position := _aim.get_launch_position()
 	_set_phase(release_phase, settings.release_duration / get_attack_speed_multiplier())
 	_spawn_projectile(settings.projectile_speed, settings.projectile_damage,
-		ARROW_TEXTURE if bow else null, settings.projectile_gravity, settings, launch_position)
+		_projectile_scene(ammo), settings.projectile_gravity, settings, launch_position)
 	_inventory.remove_item(ammo.id, 1)
 	projectile_fired.emit(release_phase, _inventory.get_quantity(ammo.id))
 	_cooldown_timer = settings.shot_cooldown / get_attack_speed_multiplier()
+
+
+## Ammunition ships the scene it flies as; the generic projectile covers effects
+## that have none. Artwork, collision and impact behaviour live in that scene.
+func _projectile_scene(ammo: ItemData) -> PackedScene:
+	var profile := ammo.ammunition_profile
+	if profile != null and profile.projectile_scene != null:
+		return profile.projectile_scene
+	return null
 
 
 func get_attack_speed_multiplier() -> float:
@@ -225,7 +232,7 @@ func _update_release(delta: float) -> void:
 func _spawn_projectile(
 	speed: float,
 	damage: float,
-	visual_texture: Texture2D = null,
+	scene: PackedScene,
 	gravity: float = 0.0,
 	settings: ItemRangedProfile = null,
 	launch_position: Vector2 = Vector2.INF
@@ -235,12 +242,13 @@ func _spawn_projectile(
 	if parent == null:
 		return
 
-	var projectile := PROJECTILE_SCENE.instantiate() as ThrownProjectile
+	var projectile := scene.instantiate() as Projectile if scene != null else Projectile.create_generic()
 	parent.add_child(projectile)
 	projectile.global_position = _aim.get_launch_position() if launch_position == Vector2.INF else launch_position
 	var attributes := actor.get_component(CharacterAttributesComponent) as CharacterAttributesComponent
 	if attributes != null and attributes.is_enabled:
 		damage += attributes.get_physical_attack()
+	# No texture: the scene owns its artwork.
 	projectile.setup_direction(
 		actor,
 		_aim.get_direction(),
@@ -248,7 +256,7 @@ func _spawn_projectile(
 		damage + _equipment_component.get_active_weapon_damage(),
 		settings.knockback if settings != null else config.knockback,
 		settings.projectile_lifetime if settings != null else config.projectile_lifetime,
-		visual_texture,
+		null,
 		gravity
 	)
 

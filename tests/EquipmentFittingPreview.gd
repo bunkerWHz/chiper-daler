@@ -215,7 +215,7 @@ func _update_projectile_preview() -> void:
 		extent = bounds.size
 		visual.add_child(sprite)
 	else:
-		# Match ThrownProjectile's default artwork when no texture is assigned.
+		# Match Projectile's default artwork when no texture is assigned.
 		var fallback := Polygon2D.new()
 		fallback.polygon = PackedVector2Array([Vector2(-6, -3), Vector2(6, -3), Vector2(6, 3), Vector2(-6, 3)])
 		fallback.color = Color(0.85, 0.75, 0.35)

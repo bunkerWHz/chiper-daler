@@ -121,7 +121,7 @@ func _run() -> void:
 	var aim := player.get_component(AimingComponent) as AimingComponent
 	check(aim.begin_aim(mana), "Magic aim begins")
 	mana._cast_spell()
-	var spell := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+	var spell := world.get_child(world.get_child_count() - 1) as Projectile
 	check(spell != null and spell.is_magic, "Spell carries magic damage type")
 	near(spell._damage, 2 + equipment.get_active_weapon_damage(), "INT base attack plus magic weapon")
 	near(mana._timer, mana.config.cast_duration / 2, "Cast speed shortens cast phase")

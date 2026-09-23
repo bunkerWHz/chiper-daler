@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://b6v5pmedccnh4"]
+
+[ext_resource type="Script" uid="uid://bqx7m3n4p5rs" path="res://features/projectiles/Projectile.gd" id="1_projectile"]
+[ext_resource type="Texture2D" uid="uid://bboc4aw5c2pre" path="res://assets/Test/Hero/Archer/Arrow.png" id="2_arrow"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bolt"]
+radius = 6.0
+
+[node name="TrainingBolt" type="Area2D" unique_id=98892720]
+scale = Vector2(0.5, 0.5)
+collision_layer = 0
+collision_mask = 5
+script = ExtResource("1_projectile")
+sticks = true
+
+[node name="ProjectileSprite" type="Sprite2D" parent="." unique_id=971890866]
+modulate = Color(0.82, 0.88, 1, 1)
+texture = ExtResource("2_arrow")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2063881077]
+rotation = 1.5707963
+shape = SubResource("CapsuleShape2D_bolt")

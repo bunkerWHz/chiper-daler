@@ -151,7 +151,7 @@ func test_bow_shots_and_indicator_use_grip_before_pose_reset() -> void:
 			var inventory := player.get_component(InventoryComponent) as InventoryComponent
 			inventory.remove_item(&"training_arrows", inventory.get_quantity(&"training_arrows") - 1)
 			ranged._fire(true)
-			var projectile := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+			var projectile := world.get_child(world.get_child_count() - 1) as Projectile
 			assert_true(projectile != null)
 			assert_true(projectile.global_position.is_equal_approx(origin))
 			assert_false(aim.is_aiming())
@@ -279,7 +279,7 @@ func test_throw_aim_follows_angles_hides_both_hands_and_restores_equipment() -> 
 		if release:
 			input._interact_released = true
 			throwing._process(0.0)
-			var projectile := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+			var projectile := world.get_child(world.get_child_count() - 1) as Projectile
 			assert_true(projectile.global_position.is_equal_approx(origin))
 		else:
 			throwing.cancel_throw()

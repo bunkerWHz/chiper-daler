@@ -17,7 +17,7 @@ func test_tap_uses_default_angle_once_for_every_weapon() -> void:
 		ability._process(0.0)
 		assert_false(s.aim.is_aiming())
 		assert_eq(s.root.get_child_count(), 2)
-		var projectile := s.root.get_child(1) as ThrownProjectile
+		var projectile := s.root.get_child(1) as Projectile
 		# A tap fires flat from the bow and the crossbow; throws and spells lift by 5.
 		var lift := 0.0 if slot in [EquipmentComponent.Slot.BOW, EquipmentComponent.Slot.CROSSBOW] else 5.0
 		assert_true(projectile._velocity.normalized().is_equal_approx(Vector2.RIGHT.rotated(deg_to_rad(-lift))))
@@ -79,7 +79,7 @@ func test_downward_aim_fires_below_platform_for_every_weapon_and_facing() -> voi
 			assert_true(s.aim.get_direction().is_equal_approx(direction))
 			_release(s, slot)
 			ability._process(0.0)
-			var projectile := s.root.get_child(1) as ThrownProjectile
+			var projectile := s.root.get_child(1) as Projectile
 			assert_true(projectile._velocity.normalized().is_equal_approx(direction))
 			assert_true(projectile._velocity.y > 0.0)
 
@@ -201,7 +201,7 @@ func test_held_launch_matches_indicator_for_every_weapon() -> void:
 		var direction: Vector2 = s.aim.get_direction()
 		_release(s, slot)
 		ability._process(0.0)
-		var projectile := s.root.get_child(1) as ThrownProjectile
+		var projectile := s.root.get_child(1) as Projectile
 		assert_true(projectile._velocity.normalized().is_equal_approx(direction))
 		assert_false(s.aim.is_indicator_visible())
 
@@ -250,8 +250,8 @@ func test_cancel_and_equipment_change_clean_up_all_owners() -> void:
 
 func test_ballistic_and_straight_projectiles_use_same_launch_vector() -> void:
 	var s := _create_actor()
-	var ballistic := track(ThrownProjectile.new()) as ThrownProjectile
-	var straight := track(ThrownProjectile.new()) as ThrownProjectile
+	var ballistic := track(Projectile.new()) as Projectile
+	var straight := track(Projectile.new()) as Projectile
 	var direction := Vector2(1.0, -1.0).normalized()
 	ballistic.setup_direction(s.actor, direction, 100.0, 1.0, 0.0, 10.0, null, 100.0)
 	straight.setup_direction(s.actor, direction, 100.0, 1.0, 0.0, 10.0)
@@ -267,7 +267,7 @@ func test_projectile_spin_preserves_trajectory_and_zero_tracks_velocity() -> voi
 	assert_eq(profile.rotation_speed, 0.0)
 	var direction := Vector2.RIGHT.rotated(-0.3)
 	for spin: float in [0.0, 360.0, -360.0]:
-		var projectile := track(ThrownProjectile.new()) as ThrownProjectile
+		var projectile := track(Projectile.new()) as Projectile
 		projectile.setup_direction(null, direction, 100.0, 1.0, 0.0, 10.0, null, 100.0, spin)
 		projectile._physics_process(0.25)
 		projectile._physics_process(0.25)
@@ -287,7 +287,7 @@ func test_throw_passes_item_rotation_speed_to_projectile() -> void:
 	s.throwing._process(0.0)
 	item.projectile_profile = original
 	assert_eq(s.root.get_child_count(), 2)
-	var projectile := s.root.get_child(1) as ThrownProjectile
+	var projectile := s.root.get_child(1) as Projectile
 	var initial := projectile.rotation
 	projectile._physics_process(0.125)
 	assert_true(is_equal_approx(angle_difference(projectile.rotation, initial - PI / 2.0), 0.0))

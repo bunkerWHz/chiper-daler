@@ -209,14 +209,14 @@ func test_ranged_and_magic_projectiles_add_active_weapon_damage() -> void:
 	inventory.add_item(bow)
 	inventory.add_item(focus)
 	equipment.equip_inventory_item(bow.id, ItemData.EquipSlot.MAIN_HAND)
-	ranged._spawn_projectile(100.0, ranged.config.arrow_damage)
-	var arrow := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+	ranged._spawn_projectile(100.0, ranged.config.arrow_damage, null)
+	var arrow := world.get_child(world.get_child_count() - 1) as Projectile
 	assert_eq(arrow._damage, 27.0)
 
 	equipment.equip_inventory_item(focus.id, ItemData.EquipSlot.MAIN_HAND)
 	aim.begin_aim(magic)
 	magic._cast_spell()
-	var spell := world.get_child(world.get_child_count() - 1) as ThrownProjectile
+	var spell := world.get_child(world.get_child_count() - 1) as Projectile
 	assert_eq(spell._damage, 35.0)
 
 

@@ -92,7 +92,7 @@ Shape2D. После изменения масштаба проверяйте т�
 состояние для отображения; менять его вместо запуска способности не нужно.
 Подробности: [Actor_States.md](Actor_States.md) и [Architecture_Rules.md](Architecture_Rules.md).
 
-Обычный боевой удар проходит через Hitbox/ThrownProjectile → Hurtbox →
+Обычный боевой удар проходит через Hitbox/Projectile → Hurtbox →
 проверку неуязвимости и модификаторов → Health → реакции и события.
 Прямой вызов `HealthComponent.take_damage()` обходит защиту Hurtbox;
 он подходит, например, для гарантированной смерти от падения.
@@ -790,7 +790,7 @@ Shape2D. После изменения масштаба проверяйте т�
 | [RestPoint](../features/rest/RestPoint.tscn) | По взаимодействию запускает отдых персонажа и устанавливает точку возрождения | Spawn Offset; персонажу нужны RestComponent и PlayerRespawnComponent для обеих возможностей |
 | [LevelExit](../features/level/LevelExit.tscn) | По взаимодействию завершает уровень; может ждать смерти всех Actor группы `enemies` и переключить сцену | Require Enemy Clear, Next Scene; без Next Scene остаётся отметка завершения |
 | [ClimbableArea](../features/movement/ClimbableArea.tscn) | Зона лестницы: сообщает ClimbingComponent о входе/выходе физического тела | Форму Area2D и маски столкновений; не добавляйте её как Component |
-| [ThrownProjectile](../features/throwing/ThrownProjectile.tscn) | Общий снаряд для броска, стрелы и магии; движется, обрабатывает попадания и время жизни | Параметры передаются через `setup()` из способности; сам объект не выбирает оружие и не расходует боеприпасы |
+| [Projectile](../features/projectiles/Projectile.gd) | Общий снаряд для лука, арбалета, броска и магии; летит, обрабатывает попадания, застревание и пробитие | Сцена типа снаряда несёт арт, коллизию, `sticks` и `pierce`; боеприпасы выбирают её через `ItemAmmunitionProfile.projectile_scene`, остальные эффекты получают снаряд из `Projectile.create_generic()`. Полёт и урон приходят через `setup_direction()`; сам снаряд не выбирает оружие и не расходует боеприпасы |
 
 <a id="helpers"></a>
 
