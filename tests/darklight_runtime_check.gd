@@ -138,6 +138,8 @@ func _run() -> void:
 		await process_frame
 	var aiming := player.get_component(AimingComponent) as AimingComponent
 	_check(visual._bow_pose_active, "Holding attack with a bow must activate the aiming pose")
+	var head := rig.get_node("CharacterContainer/Skeleton2D/Hip/Torso/Head") as Bone2D
+	var head_rest := rad_to_deg(head.rotation)
 	for angle in [0.0, 45.0, 85.0, -45.0, -90.0]:
 		aiming._angle = angle
 		for frame in 3:
@@ -148,6 +150,11 @@ func _run() -> void:
 		var grip := arm.wrist_bone.get_node("OffHand") as Node2D
 		var grip_axis: Vector2 = (grip.global_position - arm.wrist_bone.global_position).normalized()
 		_check(grip_axis.dot(aiming.get_direction()) > 0.999, "Wrist-to-grip direction must follow aim")
+		var head_follow := rad_to_deg(head.rotation) - head_rest
+		_check(
+			absf(head_follow + angle * visual.bow_head_follow) <= 2.0,
+			"Head must follow the live aim: %s deg at %s" % [head_follow, angle]
+		)
 		await _capture("darklight_bow_aim_" + str(int(angle)))
 	# Submit release at the start of a frame, not after frame_post_draw.
 	await process_frame

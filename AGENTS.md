@@ -34,10 +34,14 @@ Name enemy asset folders after the monster: assets/Enemies/<MonsterName>/PNG Seq
 
 - Darklight is the canonical main hero. Use `game/player/Player.tscn` for gameplay
   and `game/player/darklight/DarklightRig.tscn` for rig and animation authoring.
-  Work on this repository's rig, not the external dark-sanctum source project.
-- Preserve Skeleton2D, SoupIK targets and bone attachments. Add future player
-  animations to this rig; do not build on TemporaryPlayerVisualComponent or the
-  legacy Warrior/Archer/Lancer art. Follow `game/player/darklight/README.md`.
+  `Player.tscn` instantiates the generated native-solver copy
+  `game/player/darklight/DarklightRig2.tscn`: rebuild it with
+  `node tests/regenerate_darklight_rig2.mjs` instead of editing it. Work on this
+  repository's rig, not the external dark-sanctum source project.
+- Preserve Skeleton2D, bone targets and bone attachments. Add future player
+  animations to the canonical rig; do not build on TemporaryPlayerVisualComponent
+  or the legacy Warrior/Archer/Lancer art. Follow
+  `game/player/darklight/README.md`.
 - DarklightVisualComponent presents ActorStateComponent behavior. Gameplay
   components retain ownership of action timing, damage and item consumption.
 - Equipment slots and visual hands are independent: ItemEquipmentProfile's

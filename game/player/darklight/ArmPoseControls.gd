@@ -27,6 +27,52 @@ func _update_solver_ownership() -> void:
 		arm_ik.enabled = mode == Mode.IK
 	if is_instance_valid(wrist_ik):
 		wrist_ik.enabled = mode == Mode.IK
+	_update_native_solver_ownership()
+
+
+## A rig that replaces SoupIK with Godot's own solvers (DarklightRig2) must follow
+## the same ownership rule: while this control poses the arm in FK, the native
+## two-bone IK and look-at that drive the same bones are switched off, so the pose
+## is the only writer instead of racing the solvers every frame.
+func _update_native_solver_ownership() -> void:
+	var skeleton := _find_skeleton()
+	if skeleton == null:
+		return
+	var stack: SkeletonModificationStack2D = skeleton.get_modification_stack()
+	if stack == null:
+		return
+	var owned := {}
+	for bone: Bone2D in [shoulder_bone, elbow_bone, wrist_bone]:
+		if is_instance_valid(bone):
+			owned[skeleton.get_path_to(bone)] = true
+	for index in stack.get_modification_count():
+		var modification := stack.get_modification(index)
+		if modification != null and _drives_owned_bone(modification, owned):
+			modification.enabled = mode == Mode.IK
+
+
+func _find_skeleton() -> Skeleton2D:
+	if not is_instance_valid(shoulder_bone):
+		return null
+	var current := shoulder_bone.get_parent()
+	while current != null:
+		if current is Skeleton2D:
+			return current as Skeleton2D
+		current = current.get_parent()
+	return null
+
+
+func _drives_owned_bone(modification: SkeletonModification2D, owned: Dictionary) -> bool:
+	var two_bone := modification as SkeletonModification2DTwoBoneIK
+	if two_bone != null:
+		return (
+			owned.has(two_bone.get_joint_one_bone2d_node())
+			or owned.has(two_bone.get_joint_two_bone2d_node())
+		)
+	var look := modification as SkeletonModification2DLookAt
+	if look != null:
+		return owned.has(look.get_bone2d_node())
+	return false
 
 
 func _process(_delta: float) -> void:

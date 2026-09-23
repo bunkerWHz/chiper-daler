@@ -34,6 +34,9 @@ var _pose_owner: Component
 var _bow_pose_active: bool = false
 var _bow_arm: Node2D
 var _head_ik: SoupLookAt
+var _head_bone: Bone2D
+var _native_head_frame: int = -1
+var _native_head_base: float = 0.0
 var _saved_fk_angles := Vector3.ZERO
 var _saved_head_rotation: float = 0.0
 var _saved_head_enabled: bool = true
@@ -85,7 +88,10 @@ func _ready() -> void:
 	_ranged = actor.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	_throwing = actor.get_component(ThrowingComponent) as ThrowingComponent
 	_bow_arm = _rig.get_node("CharacterContainer/Anim Targets/BackArmFK") as Node2D
-	_head_ik = _rig.get_node("CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT") as SoupLookAt
+	# A rig copy without SoupIK (DarklightRig2) carries no SoupGroup subtree.
+	_head_ik = _rig.get_node_or_null("CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT") as SoupLookAt
+	if _head_ik == null:
+		_resolve_native_head()
 	# Apply the dynamic pose after animation and SoupIK/FK evaluation.
 	process_priority = 2
 	_animation_player = _rig.get_node("AnimationPlayer") as AnimationPlayer
@@ -201,15 +207,23 @@ func _process(_delta: float) -> void:
 	var shoulder := _bow_arm.get_node("Shoulder") as Marker2D
 	var elbow := _bow_arm.get_node("Shoulder/Elbow") as Marker2D
 	var wrist := _bow_arm.get_node("Shoulder/Elbow/Wrist") as Marker2D
+	# A rig without SoupIK solvers keeps its native modifications authoritative and
+	# falls back to the authored aim clip: only the SoupIK-backed pose is adapted.
+	var soup_wrist: SoupLookAt = null
+	if is_instance_valid(_bow_arm.wrist_ik):
+		soup_wrist = _bow_arm.wrist_ik as SoupLookAt
 	if not _bow_pose_active:
 		_saved_fk_angles = Vector3(shoulder.rotation, elbow.rotation, wrist.rotation)
 		_saved_arm_mode = _bow_arm.mode
-		_saved_head_rotation = _head_ik.bone_node.rotation
-		_saved_head_enabled = _head_ik.enabled
-		_saved_wrist_target = _bow_arm.wrist_ik.target_node.transform
+		if is_instance_valid(_head_ik):
+			_saved_head_rotation = _head_ik.bone_node.rotation
+			_saved_head_enabled = _head_ik.enabled
+		if soup_wrist != null:
+			_saved_wrist_target = soup_wrist.target_node.transform
 		_bow_pose_active = true
 	_bow_arm.mode = 1
-	_head_ik.enabled = false
+	if is_instance_valid(_head_ik):
+		_head_ik.enabled = false
 	# Convert world aim to the right-facing rig's local angle; reflection handles left.
 	var direction := _aim.get_direction()
 	var aim_angle := atan2(direction.y, absf(direction.x))
@@ -234,20 +248,30 @@ func _process(_delta: float) -> void:
 	var aim_axis := Vector2.from_angle(
 		hip.rotation + shoulder.rotation + elbow.rotation + wrist.rotation + _bow_arm.wrist_bone.get_bone_angle()
 	)
-	var world_axis := _rig.global_transform.basis_xform(aim_axis)
-	_bow_arm.wrist_ik.target_node.global_position = (
-		_bow_arm.wrist_bone.global_position + world_axis * 100.0
-	)
-	_bow_arm.wrist_ik.enabled = true
-	_bow_arm.wrist_ik._process_loop(0.0)
-	var base_head_rotation := _saved_head_rotation
-	if _animation_player.current_animation in [&"bow_aim", &"throw_aim"]:
-		# Re-evaluate the authored head target before adding the directional look offset.
-		_head_ik.enabled = true
-		_head_ik._process_loop(0.0)
-		base_head_rotation = _head_ik.bone_node.rotation
-		_head_ik.enabled = false
-	_head_ik.bone_node.rotation = base_head_rotation + aim_angle * bow_head_follow
+	if soup_wrist != null:
+		var world_axis := _rig.global_transform.basis_xform(aim_axis)
+		soup_wrist.target_node.global_position = (
+			_bow_arm.wrist_bone.global_position + world_axis * 100.0
+		)
+		soup_wrist.enabled = true
+		soup_wrist._process_loop(0.0)
+	if is_instance_valid(_head_ik):
+		var base_head_rotation := _saved_head_rotation
+		if _animation_player.current_animation in [&"bow_aim", &"throw_aim"]:
+			# Re-evaluate the authored head target before adding the directional look offset.
+			_head_ik.enabled = true
+			_head_ik._process_loop(0.0)
+			base_head_rotation = _head_ik.bone_node.rotation
+			_head_ik.enabled = false
+		_head_ik.bone_node.rotation = base_head_rotation + aim_angle * bow_head_follow
+	elif _head_bone != null:
+		# The native look-at solves this bone earlier in the frame, so its fresh
+		# rotation is the base. Caching it per frame keeps the extra launch-origin
+		# sync call from adding the offset twice.
+		if _native_head_frame != Engine.get_process_frames():
+			_native_head_base = _head_bone.rotation
+			_native_head_frame = Engine.get_process_frames()
+		_head_bone.rotation = _native_head_base + aim_angle * bow_head_follow
 	_aim.set_launch_origin(_pose_owner, grip)
 
 
@@ -283,6 +307,13 @@ func _bow_clip_angle(control: String, fallback: float) -> float:
 	return float(clip.value_track_interpolate(track_index, _animation_player.current_animation_position))
 
 
+## A rig that replaces SoupIK with Godot's own solvers (DarklightRig2) aims the
+## head through a SkeletonModification2DLookAt on the same bone. The dynamic pose
+## reads that solver's result instead of the SoupIK node.
+func _resolve_native_head() -> void:
+	_head_bone = _rig.get_node_or_null("CharacterContainer/Skeleton2D/Hip/Torso/Head") as Bone2D
+
+
 func _sync_bow_launch_origin() -> void:
 	# A tap can fire before the visual's first process tick. Pose it before reading
 	# the origin; the equipped hand sprite is attached directly to the wrist bone.
@@ -303,11 +334,19 @@ func _end_bow_pose() -> void:
 	_bow_arm.get_node("Shoulder/Elbow").rotation = _saved_fk_angles.y
 	_bow_arm.get_node("Shoulder/Elbow/Wrist").rotation = _saved_fk_angles.z
 	_bow_arm.mode = _saved_arm_mode
-	_bow_arm.wrist_ik.target_node.transform = _saved_wrist_target
-	_head_ik.enabled = _saved_head_enabled
-	_head_ik.bone_node.rotation = _saved_head_rotation
-	_bow_arm.arm_ik._process_loop(0.0)
-	_bow_arm.wrist_ik._process_loop(0.0)
+	if is_instance_valid(_bow_arm.wrist_ik):
+		_bow_arm.wrist_ik.target_node.transform = _saved_wrist_target
+		_bow_arm.wrist_ik._process_loop(0.0)
+	if is_instance_valid(_head_ik):
+		_head_ik.enabled = _saved_head_enabled
+		_head_ik.bone_node.rotation = _saved_head_rotation
+	# A native look-at owns the head again on its next solve; until then the
+	# rotation captured while the pose ran is the closest authored value.
+	if _native_head_frame >= 0 and _head_bone != null:
+		_head_bone.rotation = _native_head_base
+	_native_head_frame = -1
+	if is_instance_valid(_bow_arm.arm_ik):
+		_bow_arm.arm_ik._process_loop(0.0)
 	if _saved_arm_mode == 1:
 		_bow_arm._process(0.0)
 

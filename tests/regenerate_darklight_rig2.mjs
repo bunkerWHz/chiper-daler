@@ -13,6 +13,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const SOURCE = "game/player/darklight/DarklightRig.tscn";
 const TARGET = "game/player/darklight/DarklightRig2.tscn";
+const SCALE_GUARD = "res://game/player/darklight/NativeSolverScaleGuard.gd";
 const CHECK_ONLY = process.argv.includes("--check");
 
 const FK_NODES = ["FrontArmFK", "BackArmFK"];
@@ -138,6 +139,20 @@ function generate(source) {
     if (kept.length !== lines.length - 2) throw new Error(`${name} did not drop both solver exports`);
     lines = kept;
   }
+
+  // The native solvers leave a residual scale on the bones they rotate and it
+  // compounds every frame; SoupIK does not. The guard restores the authored unit
+  // scale right after Skeleton2D has run the stack.
+  let lastExtResource = -1;
+  lines.forEach((line, at) => {
+    if (line.startsWith("[ext_resource")) lastExtResource = at;
+  });
+  if (lastExtResource < 0) throw new Error("No ext_resources to anchor the scale guard on");
+  lines.splice(lastExtResource + 1, 0, `[ext_resource type="Script" path="${SCALE_GUARD}" id="native_scale_guard"]`);
+  // Keep the property order Godot itself writes: built-ins first, then script.
+  const stackLine = lines.findIndex((line) => line.startsWith('modification_stack = SubResource("SkeletonModificationStack2D_darklight2")'));
+  if (stackLine < 0) throw new Error("No modification_stack line to anchor the scale guard on");
+  lines.splice(stackLine + 1, 0, 'script = ExtResource("native_scale_guard")');
 
   return lines.join("\n");
 }

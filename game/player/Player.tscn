@@ -53,7 +53,7 @@
 [ext_resource type="PackedScene" path="res://features/items/FlaskChargesComponent.tscn" id="47_flasks"]
 [ext_resource type="PackedScene" path="res://features/stamina/StaminaComponent.tscn" id="48_stamina"]
 [ext_resource type="PackedScene" path="res://features/player/ViewportFallDeathComponent.tscn" id="49_fall_death"]
-[ext_resource type="PackedScene" uid="uid://biwv0rejp7nuf" path="res://game/player/darklight/DarklightRig.tscn" id="51_animation_player"]
+[ext_resource type="PackedScene" path="res://game/player/darklight/DarklightRig2.tscn" id="51_animation_player"]
 [ext_resource type="PackedScene" path="res://features/aiming/AimingComponent.tscn" id="aiming"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]

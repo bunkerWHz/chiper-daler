@@ -323,12 +323,12 @@ idle/run and checks every skinned polygon's basis each frame.
 ## DarklightRig2 (no SoupIK)
 
 `DarklightRig2.tscn` is a copy of `DarklightRig.tscn` in which every SoupIK solver is
-replaced by Godot's own `SkeletonModification2D` nodes. No gameplay scene references
-it and `DarklightRig.tscn` stays the canonical rig; the copy exists to prove the
-replaceable layer is only the solvers. The bones were never addon-made — they are
-plain `Bone2D` nodes, and SoupIK only supplied the nodes that rotate them.
+replaced by Godot's own `SkeletonModification2D` nodes. `Player.tscn` instantiates this
+copy, so it is the rig gameplay runs; `DarklightRig.tscn` stays the canonical rig for
+authoring and for every tool that generates clips. The bones were never addon-made —
+they are plain `Bone2D` nodes, and SoupIK only supplied the nodes that rotate them.
 
-The copy differs from `DarklightRig.tscn` in four places:
+The copy differs from `DarklightRig.tscn` in five places:
 
 - the scene header carries no `uid` (Godot assigns a fresh one on the first save);
 - the `Skeleton2D` owns a `SkeletonModificationStack2D` (`resource_local_to_scene`)
@@ -343,8 +343,15 @@ The copy differs from `DarklightRig.tscn` in four places:
   solvers without edits;
 - `Anim Targets/FrontArmFK` and `Anim Targets/BackArmFK` no longer export
   `arm_ik`/`wrist_ik`, because `ArmPoseControls` would otherwise re-enable the SoupIK
-  solvers on `_ready`. Both arms are therefore IK-only in this copy; FK authoring
-  stays in `DarklightRig.tscn`.
+  solvers on `_ready`. Ownership moves to the native stack instead: in FK mode
+  `ArmPoseControls` disables the native two-bone IK and look-at that drive the same
+  bones, exactly as it disables the SoupIK solvers on the canonical rig;
+- the `Skeleton2D` carries `NativeSolverScaleGuard.gd`, because the native solvers
+  leave a residual scale on the bones they write and it compounds every frame
+  (~1e-7 per frame; a minute of play shrinks an attached sprite by 0.02% and the
+  residue never settles). SoupIK leaves no such residue. The guard restores the
+  authored unit scale after the stack has run and needs no counterpart on the
+  canonical rig.
 
 Verified in a running Godot 4.7.2 against `DarklightRig.tscn`, both rigs fed
 identical inputs and sampled after the same frames:
@@ -376,9 +383,19 @@ Three things to know before extending it:
   values follow this rig's bone order (0 `Hip`, 1–3 back leg, 4–6 front leg,
   7–9 front arm, 10–12 back arm, 13 `Torso`, 14 `Head`); re-check them if the
   skeleton hierarchy changes.
-- `DarklightVisualComponent` and `ArmPoseControls` are typed against `SoupLookAt` and
-  `SoupTwoBoneIK`. This copy cannot be driven by them as they stand: adopting it in
-  gameplay means adding an adapter rather than reusing those exports.
+- `Skeleton2D` exposes the stack through `get_modification_stack()`, not as a
+  property: `skeleton.modification_stack` is not a static member and a bare
+  `modification_stack` inside a script that extends `Skeleton2D` fails to parse.
+  `NativeSolverScaleGuard.gd` and `ArmPoseControls` use the method.
+
+`DarklightVisualComponent` and `ArmPoseControls` drive both rigs. The dynamic aim
+pose (bow aim and throwing aim; crossbow and magic keep their authored IK clips) is
+owned by the SoupIK solvers on the canonical rig and by the native ones in the copy:
+the arm and its hand follow the aim through the FK markers, which no solver
+overrides while FK mode is on, and the head follow reads whichever solver owns the
+head — the SoupIK look-at node or the native one.
+`tests/darklight_aim_rig_check.gd` drives both rigs through `Player.tscn` and fails
+when their arm, hand or head answer differs by more than 0.2°.
 
 The scene is **generated**, not hand-edited: `node tests/regenerate_darklight_rig2.mjs`
 rebuilds it from `DarklightRig.tscn` with exactly that change, and `--check` reports
@@ -386,12 +403,15 @@ when the copy has drifted. Regenerate it instead of editing it whenever the cano
 rig gains a clip, a bone or a renamed animation — the copy already fell behind once
 when `dodge_air` and `dodge_roll` were swapped, and it silently animated the wrong clip.
 
-Two checks cover the copy:
+Three checks cover the copy:
 
 - `godot --headless --script tests/darklight_rig2_pose_check.gd` drives every
   authored clip into both rigs at five times each plus the mirrored facing case and
   fails when any bone's position or rotation diverges (111 poses, worst deviation
-  0.005 units).
+  0.0007 units).
+- `godot --headless --script tests/darklight_aim_rig_check.gd` drives the shared aim
+  pose into both rigs over five aim angles and the throwing aim, and fails on any
+  divergence between them.
 - `godot --headless --script tests/run_tests.gd -- darklight_rig2_ik` checks the
   wiring: that the copy carries no soupik node, the stack order, the targets and
   bones, and that every serialized bone index still resolves against the live

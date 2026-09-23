@@ -2,7 +2,7 @@
 title: Кости и решатели рига
 type: guide
 created: 2026-09-23
-updated: 2026-09-23
+updated: 2026-09-24
 tags: [animation, player, workflow]
 ---
 
@@ -19,8 +19,9 @@ tags: [animation, player, workflow]
 
 ## Из чего состоит риг
 
-Оба рига живут в `game/player/darklight/`: `DarklightRig.tscn` — рабочий,
-`DarklightRig2.tscn` — копия без SoupIK (см. ниже). Слои одинаковые:
+Оба рига живут в `game/player/darklight/`: `DarklightRig.tscn` — канонический риг
+для авторской работы, `DarklightRig2.tscn` — копия без SoupIK (см. ниже), которую
+использует `Player.tscn`. Слои одинаковые:
 
 | Слой | Узлы | За что отвечает |
 | --- | --- | --- |
@@ -163,13 +164,29 @@ tags: [animation, player, workflow]
 | Риг | Решатели | Где лежат |
 | --- | --- | --- |
 | `DarklightRig.tscn` | SoupIK: `SoupTwoBoneIK`, `SoupLookAt` | `Skeleton2D/SoupGroup/**` — обычные узлы |
-| `DarklightRig2.tscn` | Нативные `SkeletonModification2DTwoBoneIK`, `SkeletonModification2DLookAt` | Один `SkeletonModificationStack2D` на `Skeleton2D` |
+| `DarklightRig2.tscn` | Нативные `SkeletonModification2DTwoBoneIK`, `SkeletonModification2DLookAt` | Один `SkeletonModificationStack2D` на `Skeleton2D`; сам `Skeleton2D` несёт `NativeSolverScaleGuard.gd` |
 
 Обе реализации дают одинаковую позу: на 22 авторских клипах, свипе по целям и
 зеркальном развороте расхождений нет. Копия не содержит нод SoupIK и не
 ссылается на `addons/soupik` вообще — решателям адресуются только цели
 `Anim Targets`. Подробности и таблица соответствия — в
 [README рига](../game/player/darklight/README.md).
+
+`Player.tscn` использует именно копию: в игре работает нативный стек, а
+`DarklightRig.tscn` остаётся каноническим ригом для авторской работы и для всех
+инструментов, которые генерируют клипы. Общая поза прицеливания (лук и метание)
+получается на обоих ригах: рука и кисть идут по FK-маркерам, которые не
+перебиваются решателями, пока включён режим FK, а наклон головы читает того
+решателя, который владеет головой, — узел SoupIK или нативную модификацию.
+Проверка `tests/darklight_aim_rig_check.gd` прогоняет оба рига через
+`Player.tscn` и падает при расхождении руки, кисти или головы больше 0.2°.
+
+Нативные `SkeletonModification2DTwoBoneIK` и `SkeletonModification2DLookAt`
+оставляют на костях, которые они пишут, остаточный масштаб (~1e-7 за кадр), и он
+накапливается: прикреплённые спрайты получают его через `RemoteTransform2D` и
+герой медленно уменьшается. SoupIK такого остатка не оставляет. Поэтому в копии
+на `Skeleton2D` висит `NativeSolverScaleGuard.gd`, который после работы стека
+возвращает авторский единичный масштаб; каноническому ригу он не нужен.
 
 Копия — производная сцена: её собирает `tests/regenerate_darklight_rig2.mjs` из
 `DarklightRig.tscn` (флаг `--check` показывает расхождение). Правьте исходный риг

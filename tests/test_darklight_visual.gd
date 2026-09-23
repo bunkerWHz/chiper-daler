@@ -6,6 +6,14 @@ func suite_name() -> String:
 	return "darklight_visual"
 
 
+## The head is driven by SoupIK on the canonical rig and by a native look-at
+## modification on DarklightRig2; both end up on the same bone.
+func _head_bone(visual: DarklightVisualComponent) -> Bone2D:
+	if is_instance_valid(visual._head_ik):
+		return visual._head_ik.bone_node
+	return visual._head_bone
+
+
 func test_saved_item_fitting_is_applied_to_both_gameplay_hands() -> void:
 	var setup := _create_player_visual()
 	var visual := setup.visual as DarklightVisualComponent
@@ -159,10 +167,12 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 	var ranged := player.get_component(RangedWeaponComponent) as RangedWeaponComponent
 	var facing := player.get_component(FacingComponent) as FacingComponent
 	var arm = visual._bow_arm
-	var head := visual._head_ik.bone_node
+	var head := _head_bone(visual)
 	var original_head := head.rotation
 	var original_physics := player.transform
-	var original_wrist_target: Transform2D = arm.wrist_ik.target_node.transform
+	var original_wrist_target: Transform2D = (
+		arm.wrist_ik.target_node.transform if is_instance_valid(arm.wrist_ik) else Transform2D.IDENTITY
+	)
 	var radius := -1.0
 	aim._owner = ranged
 	ranged._phase = RangedWeaponComponent.Phase.BOW_AIM
@@ -175,9 +185,7 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 			var expected_shoulder: float = -arm.elbow_bone.position.angle() - deg_to_rad(angle)
 			assert_true(is_equal_approx(arm.shoulder_bone.rotation, expected_shoulder))
 			assert_true(is_equal_approx(head.rotation, original_head - deg_to_rad(angle) * 0.25))
-			assert_false(arm.arm_ik.enabled)
-			assert_false(visual._head_ik.enabled)
-			assert_true(arm.wrist_ik.enabled)
+			assert_eq(arm.mode, 1)
 			var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
 			if radius < 0.0:
 				radius = reach.length()
@@ -186,19 +194,26 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 			var grip := arm.wrist_bone.get_node("OffHand") as Node2D
 			var wrist_axis: Vector2 = (grip.global_position - arm.wrist_bone.global_position).normalized()
 			assert_true(wrist_axis.dot(aim.get_direction()) > 0.999, "Wrist misses aim: %s vs %s" % [wrist_axis, aim.get_direction()])
-			var look_axis: Vector2 = arm.wrist_ik.target_node.global_position - arm.wrist_bone.global_position
-			assert_true(look_axis.normalized().dot(arm.wrist_bone.global_transform.x.normalized()) > 0.999, "Look target misses wrist axis")
+			if is_instance_valid(arm.wrist_ik):
+				# SoupIK keeps the look-at target on the drawn wrist axis.
+				assert_true(arm.wrist_ik.enabled)
+				var look_axis: Vector2 = arm.wrist_ik.target_node.global_position - arm.wrist_bone.global_position
+				assert_true(look_axis.normalized().dot(arm.wrist_bone.global_transform.x.normalized()) > 0.999, "Look target misses wrist axis")
 			visual._process(0.0)
 			assert_true(is_equal_approx(head.rotation, original_head - deg_to_rad(angle) * 0.25))
 	aim._owner = null
 	ranged._phase = RangedWeaponComponent.Phase.NONE
 	visual._process(0.0)
 	assert_false(visual._bow_pose_active)
-	assert_true(arm.arm_ik.enabled)
-	assert_true(visual._head_ik.enabled)
+	assert_eq(arm.mode, 0)
+	if is_instance_valid(arm.arm_ik):
+		assert_true(arm.arm_ik.enabled)
+	if is_instance_valid(visual._head_ik):
+		assert_true(visual._head_ik.enabled)
 	assert_true(is_equal_approx(head.rotation, original_head))
 	assert_eq(player.transform, original_physics)
-	assert_true(arm.wrist_ik.target_node.transform.is_equal_approx(original_wrist_target))
+	if is_instance_valid(arm.wrist_ik):
+		assert_true(arm.wrist_ik.target_node.transform.is_equal_approx(original_wrist_target))
 	# Crossbows and magic do not acquire the bow's FK pose.
 	aim._owner = ranged
 	ranged._phase = RangedWeaponComponent.Phase.CROSSBOW_AIM
@@ -208,7 +223,9 @@ func test_bow_pose_tracks_aim_and_restores_after_cancel() -> void:
 	visual._process(0.0)
 	visual.disable()
 	assert_false(visual._bow_pose_active)
-	assert_true(arm.arm_ik.enabled)
+	if is_instance_valid(arm.arm_ik):
+		assert_true(arm.arm_ik.enabled)
+	assert_eq(arm.mode, 0)
 
 
 func test_throw_aim_follows_angles_hides_both_hands_and_restores_equipment() -> void:
@@ -245,11 +262,15 @@ func test_throw_aim_follows_angles_hides_both_hands_and_restores_equipment() -> 
 				assert_false(visual._off_hand.visible)
 				var reach: Vector2 = arm.wrist_bone.global_position - arm.shoulder_bone.global_position
 				assert_true(reach.normalized().dot(aim.get_direction()) > 0.999)
-				var head_angle: float = visual._head_ik.bone_node.rotation
-				visual._head_ik.enabled = true
-				visual._head_ik._process_loop(0.0)
-				assert_true(is_equal_approx(head_angle, visual._head_ik.bone_node.rotation - deg_to_rad(angle) * visual.bow_head_follow))
-				visual._head_ik.enabled = false
+				var head := _head_bone(visual)
+				var head_angle: float = head.rotation
+				var base: float = visual._native_head_base
+				if is_instance_valid(visual._head_ik):
+					visual._head_ik.enabled = true
+					visual._head_ik._process_loop(0.0)
+					base = visual._head_ik.bone_node.rotation
+					visual._head_ik.enabled = false
+				assert_true(is_equal_approx(head_angle, base - deg_to_rad(angle) * visual.bow_head_follow))
 				visual._refresh_equipment_visuals()
 				assert_false(visual._main_hand.visible)
 				assert_false(visual._off_hand.visible)
@@ -403,16 +424,19 @@ func test_authored_bow_pose_survives_aim_updates_and_cancel() -> void:
 			visual._process(0.0)
 			assert_true(is_equal_approx(visual._bow_arm.elbow_bone.rotation, 0.6))
 			var shoulder: float = visual._bow_arm.shoulder_bone.rotation
-			var head: float = visual._head_ik.bone_node.rotation
+			var head := _head_bone(visual)
+			var head_angle: float = head.rotation
 			visual._process(0.0)
 			assert_true(is_equal_approx(visual._bow_arm.shoulder_bone.rotation, shoulder))
-			assert_true(is_equal_approx(visual._head_ik.bone_node.rotation, head))
+			assert_true(is_equal_approx(head.rotation, head_angle))
 	aim._owner = null
 	ranged._phase = RangedWeaponComponent.Phase.NONE
 	state.state_changed.emit(ActorState.Behavior.AIM_BOW, ActorState.Behavior.IDLE)
 	assert_eq(animation.current_animation, &"idle")
 	assert_false(visual._bow_pose_active)
-	assert_true(visual._bow_arm.arm_ik.enabled)
+	assert_eq(visual._bow_arm.mode, 0)
+	if is_instance_valid(visual._bow_arm.arm_ik):
+		assert_true(visual._bow_arm.arm_ik.enabled)
 
 
 func test_native_collision_shapes_follow_requested_player_size() -> void:

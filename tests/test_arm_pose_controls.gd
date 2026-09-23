@@ -92,3 +92,44 @@ func test_reset_returns_both_arms_to_ik() -> void:
 		assert_true(controls.arm_ik.enabled)
 		assert_true(controls.wrist_ik.enabled)
 		assert_eq(controls.get_node("Shoulder/Elbow").rotation, 0.0)
+
+
+## DarklightRig2 has no SoupIK, so the same FK ownership rule has to switch off
+## the native modifications that drive the arm's bones instead.
+func test_native_rig_switches_off_its_arm_solvers_in_fk() -> void:
+	var rig := track(load("res://game/player/darklight/DarklightRig2.tscn").instantiate()) as Node2D
+	(Engine.get_main_loop() as SceneTree).root.add_child(rig)
+	var skeleton := rig.get_node("CharacterContainer/Skeleton2D") as Skeleton2D
+	var stack: SkeletonModificationStack2D = skeleton.get_modification_stack()
+	assert_true(stack != null)
+	for side in ["Back", "Front"]:
+		var controls = rig.get_node("CharacterContainer/Anim Targets/" + side + "ArmFK")
+		var owned: Array = _arm_modifications(stack, skeleton, controls)
+		assert_eq(owned.size(), 2, side + " arm must be driven by a two-bone IK and a look-at")
+		for modification: SkeletonModification2D in owned:
+			assert_true(modification.enabled)
+		controls.mode = 1
+		for modification: SkeletonModification2D in owned:
+			assert_false(modification.enabled, side + " arm solvers must yield to the FK pose")
+		controls.mode = 0
+		for modification: SkeletonModification2D in owned:
+			assert_true(modification.enabled)
+
+
+func _arm_modifications(stack: SkeletonModificationStack2D, skeleton: Skeleton2D, controls: Node) -> Array:
+	var bones := {}
+	for bone: Bone2D in [controls.shoulder_bone, controls.elbow_bone, controls.wrist_bone]:
+		bones[skeleton.get_path_to(bone)] = true
+	var found: Array = []
+	for index in stack.get_modification_count():
+		var modification := stack.get_modification(index)
+		var two_bone := modification as SkeletonModification2DTwoBoneIK
+		if two_bone != null:
+			if (bones.has(two_bone.get_joint_one_bone2d_node())
+				or bones.has(two_bone.get_joint_two_bone2d_node())):
+				found.append(modification)
+			continue
+		var look := modification as SkeletonModification2DLookAt
+		if look != null and bones.has(look.get_bone2d_node()):
+			found.append(modification)
+	return found
