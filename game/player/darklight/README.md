@@ -310,51 +310,70 @@ reports and repairs the four limb pieces (they were up to 2.0, so their art
 overshot the bones). `tests/darklight_facing_check.gd` exercises 48 turns across
 idle/run and checks every skinned polygon's basis each frame.
 
-## DarklightRig2 (native IK prototype)
+## DarklightRig2 (no SoupIK)
 
-`DarklightRig2.tscn` is a copy of `DarklightRig.tscn` used to test whether Godot's
-own `SkeletonModification2D` solvers can replace the vendored SoupIK nodes. It is an
-experiment: no gameplay scene references it, and `DarklightRig.tscn` stays the
-canonical rig. The bones themselves were never addon-made — they are plain `Bone2D`
-nodes; SoupIK only supplied the solvers that rotate them.
+`DarklightRig2.tscn` is a copy of `DarklightRig.tscn` in which every SoupIK solver is
+replaced by Godot's own `SkeletonModification2D` nodes. No gameplay scene references
+it and `DarklightRig.tscn` stays the canonical rig; the copy exists to prove the
+replaceable layer is only the solvers. The bones were never addon-made — they are
+plain `Bone2D` nodes, and SoupIK only supplied the nodes that rotate them.
 
-The copy differs from `DarklightRig.tscn` in five places:
+The copy differs from `DarklightRig.tscn` in four places:
 
 - the scene header carries no `uid` (Godot assigns a fresh one on the first save);
 - the `Skeleton2D` owns a `SkeletonModificationStack2D` (`resource_local_to_scene`)
-  holding a `SkeletonModification2DTwoBoneIK` on `Hip/FrontArmTop` →
-  `Hip/FrontArmTop/FrontArmMid` and a `SkeletonModification2DLookAt` on
-  `Hip/FrontArmTop/FrontArmMid/FrontArmBot`;
-- both native modifications target the unchanged `Anim Targets/FrontArmIK` and
-  `Anim Targets/FrontArmIK/FrontArm_AT` nodes;
-- the soupik `SoupGroup/UpperBody/FrontArmIK` and `FrontArmAT` nodes are
-  `enabled = false`, kept in the tree only so every other node path is unchanged;
-- `Anim Targets/FrontArmFK` no longer exports `arm_ik`/`wrist_ik`, so that arm can
-  no longer be switched to FK in this copy.
+  whose nine modifications replace the nine SoupIK nodes, in the same order:
+  head look-at, front-arm two-bone IK, back-arm two-bone IK, front-wrist look-at,
+  back-wrist look-at, front-leg two-bone IK, front-ankle look-at, back-leg two-bone
+  IK, back-ankle look-at. Every target is the unchanged `Anim Targets/...` node the
+  SoupIK solver used;
+- all nine SoupIK solver nodes under `SoupGroup` are `enabled = false`, kept in the
+  tree only so every other node path is unchanged;
+- `Anim Targets/FrontArmFK` and `Anim Targets/BackArmFK` no longer export
+  `arm_ik`/`wrist_ik`, because `ArmPoseControls` would otherwise re-enable the SoupIK
+  solvers on `_ready`. Both arms are therefore IK-only in this copy; FK authoring
+  stays in `DarklightRig.tscn`.
 
 All 260 authored tracks still address `Anim Targets/...`, so every clip drives the
-native solver without edits.
+native solvers without edits.
 
-Measured in a running Godot 4.7.2 against `DarklightRig.tscn` (front arm, `idle`
-pinned, both rigs fed identical targets): the wrist joint reaches the target with
-the same error to 0.01 units over a 12-point sweep, including out-of-reach targets,
-where both clamp identically; the wrist look-at rotation matches to 0.01°; and
-mirrored facing (`CharacterContainer` with a negative-determinant transform)
-produces the same pose in both rigs, so the native solver mirrors correctly.
+Verified in a running Godot 4.7.2 against `DarklightRig.tscn`, both rigs fed
+identical inputs and sampled after the same frames:
 
-Two known differences:
+- all 22 authored clips (`RESET`, `idle`, `run`, `jump`, `jump_2`, `fall`,
+  `wall_jump`, `wall_sliding`, `block`, `dodge`, `dodge3`, `attack`,
+  `heavy_attack`, `heavy_attack_2`, `air_attack`, `air_heavy_attack`, `bow_aim`,
+  `throw_aim`, `crossbow_aim`, `magic_aim`, `drink`, `equipment_swap`) sampled at
+  five times each, comparing position and global rotation of all 15 bones:
+  0 differences, worst deviation 0.006 units;
+- a 10-step sweep moving all four IK targets and all four look-at targets: elbow and
+  knee positions, wrist and ankle rotations, and every reached target agree exactly;
+- mirrored facing (`CharacterContainer` with a negative-determinant transform)
+  produces the same pose in both rigs, so the native solvers mirror correctly.
 
-- Bone indices are serialized explicitly (`joint_one_bone_idx = 7`,
-  `joint_two_bone_idx = 8`, `bone_index = 9`). Without them a scene load prints
+Three things to know before extending it:
+
+- `flip_bend_direction` is **inverted** relative to SoupIK's export of the same name.
+  The arms need `flip_bend_direction = true` and the legs `false` to reproduce the
+  SoupIK bends; the opposite assignment swaps every elbow and knee to the other
+  branch while still landing the hand or foot on its target.
+- Bone indices are serialized explicitly (`joint_one_bone_idx`, `joint_two_bone_idx`,
+  `bone_index`). Without them a scene load prints
   `set_joint_one_bone_idx: Bone index is out of range` from
   `skeleton_modification_2d_twoboneik.cpp` before the skeleton is ready — the
   upstream behaviour tracked in
   [godot#73247](https://github.com/godotengine/godot/issues/73247) and
-  [godot#76850](https://github.com/godotengine/godot/issues/76850). These indices
-  follow this rig's bone order; re-check them if the skeleton hierarchy changes.
-- In near-degenerate poses (target closer than the two bone lengths differ by) the
-  native solver can pick the other elbow branch. The wrist still lands on the target
-  and the look-at still matches; only the elbow flips.
+  [godot#76850](https://github.com/godotengine/godot/issues/76850). The stored
+  values follow this rig's bone order (0 `Hip`, 1–3 back leg, 4–6 front leg,
+  7–9 front arm, 10–12 back arm, 13 `Torso`, 14 `Head`); re-check them if the
+  skeleton hierarchy changes.
+- `DarklightVisualComponent` and `ArmPoseControls` are typed against `SoupLookAt` and
+  `SoupTwoBoneIK`. This copy cannot be driven by them as they stand: adopting it in
+  gameplay means adding an adapter rather than reusing those exports.
+
+Run `godot --headless --script tests/run_tests.gd -- darklight_rig2_ik` to check the
+copy's wiring: which nodes stay disabled, the stack order, the targets and bones, and
+that every serialized bone index still resolves against the live skeleton.
 
 ## Provenance and checks
 

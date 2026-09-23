@@ -29,24 +29,74 @@
 [ext_resource type="Animation" path="res://game/player/darklight/animations/magic_aim.tres" id="magic_aim"]
 [ext_resource type="Animation" uid="uid://buham5evsye3p" path="res://game/player/darklight/animations/throw_aim.tres" id="throw_aim"]
 
+[sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_head"]
+bone2d_node = NodePath("Hip/Torso/Head")
+bone_index = 14
+target_nodepath = NodePath("../Anim Targets/Head_AT")
+
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_front_arm"]
 joint_one_bone2d_node = NodePath("Hip/FrontArmTop")
 joint_one_bone_idx = 7
 joint_two_bone2d_node = NodePath("Hip/FrontArmTop/FrontArmMid")
 joint_two_bone_idx = 8
 target_nodepath = NodePath("../Anim Targets/FrontArmIK")
+flip_bend_direction = true
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_back_arm"]
+joint_one_bone2d_node = NodePath("Hip/BackArmTop")
+joint_one_bone_idx = 10
+joint_two_bone2d_node = NodePath("Hip/BackArmTop/BackArmMid")
+joint_two_bone_idx = 11
+target_nodepath = NodePath("../Anim Targets/BackArmIK")
+flip_bend_direction = true
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_front_wrist"]
 bone2d_node = NodePath("Hip/FrontArmTop/FrontArmMid/FrontArmBot")
 bone_index = 9
 target_nodepath = NodePath("../Anim Targets/FrontArmIK/FrontArm_AT")
 
+[sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_back_wrist"]
+bone2d_node = NodePath("Hip/BackArmTop/BackArmMid/BackArmBot")
+bone_index = 12
+target_nodepath = NodePath("../Anim Targets/BackArmIK/BackArm_AT")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_front_leg"]
+joint_one_bone2d_node = NodePath("Hip/FrontLegTop")
+joint_one_bone_idx = 4
+joint_two_bone2d_node = NodePath("Hip/FrontLegTop/FrontLegMid")
+joint_two_bone_idx = 5
+target_nodepath = NodePath("../Anim Targets/FrontLegIK")
+
+[sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_front_ankle"]
+bone2d_node = NodePath("Hip/FrontLegTop/FrontLegMid/FrontLegBot")
+bone_index = 6
+target_nodepath = NodePath("../Anim Targets/FrontLegIK/FrontLeg_AT")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_back_leg"]
+joint_one_bone2d_node = NodePath("Hip/BackLegTop")
+joint_one_bone_idx = 1
+joint_two_bone2d_node = NodePath("Hip/BackLegTop/BackLegMid")
+joint_two_bone_idx = 2
+target_nodepath = NodePath("../Anim Targets/BackLegIK")
+
+[sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_back_ankle"]
+bone2d_node = NodePath("Hip/BackLegTop/BackLegMid/BackLegBot")
+bone_index = 3
+target_nodepath = NodePath("../Anim Targets/BackLegIK/BackLeg_AT")
+
 [sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_darklight2"]
 resource_local_to_scene = true
 enabled = true
-modification_count = 2
-modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_front_arm")
-modifications/1 = SubResource("SkeletonModification2DLookAt_front_wrist")
+modification_count = 9
+modifications/0 = SubResource("SkeletonModification2DLookAt_head")
+modifications/1 = SubResource("SkeletonModification2DTwoBoneIK_front_arm")
+modifications/2 = SubResource("SkeletonModification2DTwoBoneIK_back_arm")
+modifications/3 = SubResource("SkeletonModification2DLookAt_front_wrist")
+modifications/4 = SubResource("SkeletonModification2DLookAt_back_wrist")
+modifications/5 = SubResource("SkeletonModification2DTwoBoneIK_front_leg")
+modifications/6 = SubResource("SkeletonModification2DLookAt_front_ankle")
+modifications/7 = SubResource("SkeletonModification2DTwoBoneIK_back_leg")
+modifications/8 = SubResource("SkeletonModification2DLookAt_back_ankle")
 
 [sub_resource type="Animation" id="Animation_s2enn"]
 resource_name = "RESET"
@@ -4865,7 +4915,7 @@ script = ExtResource("35_q6tl8")
 [node name="Head_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/Head" unique_id=842566427 node_paths=PackedStringArray("target_node", "bone_node")]
 script = ExtResource("37_y72ng")
 target_node = NodePath("../../../../Anim Targets/Head_AT")
-enabled = true
+enabled = false
 bone_node = NodePath("../../../Hip/Torso/Head")
 
 [node name="UpperBody" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup" unique_id=1487321327]
@@ -4881,7 +4931,7 @@ joint_two_bone_node = NodePath("../../../Hip/FrontArmTop/FrontArmMid")
 [node name="BackArmIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=151493741 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
 script = ExtResource("36_x2t84")
 target_node = NodePath("../../../../Anim Targets/BackArmIK")
-enabled = true
+enabled = false
 joint_one_bone_node = NodePath("../../../Hip/BackArmTop")
 joint_two_bone_node = NodePath("../../../Hip/BackArmTop/BackArmMid")
 
@@ -4894,7 +4944,7 @@ bone_node = NodePath("../../../Hip/FrontArmTop/FrontArmMid/FrontArmBot")
 [node name="BackArmAt" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=712205334 node_paths=PackedStringArray("target_node", "bone_node")]
 script = ExtResource("37_y72ng")
 target_node = NodePath("../../../../Anim Targets/BackArmIK/BackArm_AT")
-enabled = true
+enabled = false
 bone_node = NodePath("../../../Hip/BackArmTop/BackArmMid/BackArmBot")
 
 [node name="LowerBody" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup" unique_id=1444123387]
@@ -4903,7 +4953,7 @@ script = ExtResource("35_q6tl8")
 [node name="FrontLegIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=49563365 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
 script = ExtResource("36_x2t84")
 target_node = NodePath("../../../../Anim Targets/FrontLegIK")
-enabled = true
+enabled = false
 flip_bend_direction = true
 joint_one_bone_node = NodePath("../../../Hip/FrontLegTop")
 joint_two_bone_node = NodePath("../../../Hip/FrontLegTop/FrontLegMid")
@@ -4911,13 +4961,13 @@ joint_two_bone_node = NodePath("../../../Hip/FrontLegTop/FrontLegMid")
 [node name="FrontLeg_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=491323054 node_paths=PackedStringArray("target_node", "bone_node")]
 script = ExtResource("37_y72ng")
 target_node = NodePath("../../../../Anim Targets/FrontLegIK/FrontLeg_AT")
-enabled = true
+enabled = false
 bone_node = NodePath("../../../Hip/FrontLegTop/FrontLegMid/FrontLegBot")
 
 [node name="BackLegIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=617090160 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
 script = ExtResource("36_x2t84")
 target_node = NodePath("../../../../Anim Targets/BackLegIK")
-enabled = true
+enabled = false
 flip_bend_direction = true
 joint_one_bone_node = NodePath("../../../Hip/BackLegTop")
 joint_two_bone_node = NodePath("../../../Hip/BackLegTop/BackLegMid")
@@ -4925,7 +4975,7 @@ joint_two_bone_node = NodePath("../../../Hip/BackLegTop/BackLegMid")
 [node name="BackLeg_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=1103460657 node_paths=PackedStringArray("target_node", "bone_node")]
 script = ExtResource("37_y72ng")
 target_node = NodePath("../../../../Anim Targets/BackLegIK/BackLeg_AT")
-enabled = true
+enabled = false
 bone_node = NodePath("../../../Hip/BackLegTop/BackLegMid/BackLegBot")
 
 [node name="Anim Targets" type="Node2D" parent="CharacterContainer" unique_id=1215329132]
@@ -4957,15 +5007,13 @@ position = Vector2(90, 441)
 [node name="BackLeg_AT" type="Node2D" parent="CharacterContainer/Anim Targets/BackLegIK" unique_id=1681992658]
 position = Vector2(111, 3)
 
-[node name="BackArmFK" type="Node2D" parent="CharacterContainer/Anim Targets" unique_id=1727834146 node_paths=PackedStringArray("shoulder_bone", "elbow_bone", "wrist_bone", "arm_ik", "wrist_ik")]
+[node name="BackArmFK" type="Node2D" parent="CharacterContainer/Anim Targets" unique_id=1727834146 node_paths=PackedStringArray("shoulder_bone", "elbow_bone", "wrist_bone")]
 process_priority = 1
 position = Vector2(0, 136)
 script = ExtResource("arm_pose_controls")
 shoulder_bone = NodePath("../../Skeleton2D/Hip/BackArmTop")
 elbow_bone = NodePath("../../Skeleton2D/Hip/BackArmTop/BackArmMid")
 wrist_bone = NodePath("../../Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot")
-arm_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/BackArmIK")
-wrist_ik = NodePath("../../Skeleton2D/SoupGroup/UpperBody/BackArmAt")
 
 [node name="Shoulder" type="Marker2D" parent="CharacterContainer/Anim Targets/BackArmFK" unique_id=5256368]
 position = Vector2(96, -240)
