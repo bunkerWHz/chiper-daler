@@ -2,7 +2,7 @@
 title: Actor States
 type: architecture
 created: 2026-08-27
-updated: 2026-09-20
+updated: 2026-09-23
 tags: [actor, combat, architecture]
 ---
 
@@ -52,10 +52,16 @@ death, losing floor contact and disabling the component also cancel it.
 Repeated requests do not restart the timer. The existing hit/stun/death state
 priority remains in force. This is an ability-owned timer, not a second FSM.
 
-The `equipment_swap` animation clip is an empty placeholder in
-CharacterAnimationPlayer. AnimationComponent selects it and fits its playback
-to the action duration. EquipmentSwapView shows progress and remaining seconds
-above the player and hides immediately on cancellation/completion.
+AnimationComponent selects `equipment_swap` and fits the clip's playback to the
+action duration. The clip is ping-pong looping, so its one visible cycle is a
+forward and a back pass and the rate is derived from
+`AnimationComponent.get_animation_cycle_length()`, not from the authored length.
+EquipmentSwapView shows progress and remaining seconds above the player and hides
+immediately on cancellation/completion.
+
+> Superseded 2026-09-23: `equipment_swap` used to be an empty placeholder in
+> CharacterAnimationPlayer, and the rate was the authored clip length divided by
+> the action duration.
 
 The inventory's set buttons request the same action, then close the menu to
 resume gameplay. Opening inventory during the action is blocked; other pauses

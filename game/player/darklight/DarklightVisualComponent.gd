@@ -147,7 +147,7 @@ func _play_animation(animation_name: StringName) -> void:
 	elif animation_name == &"equipment_swap":
 		var swap := actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 		if swap.is_swapping():
-			speed = _animation_player.get_animation(animation_name).length / swap.get_duration()
+			speed = get_animation_cycle_length(animation_name) / swap.get_duration()
 	_animation_player.play(animation_name, 0.0, speed)
 	_animation_player.advance(0.0)
 	_apply_hand_visibility_override()

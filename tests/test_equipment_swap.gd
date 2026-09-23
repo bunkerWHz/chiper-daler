@@ -221,6 +221,9 @@ func test_player_contains_swap_component_world_bar_and_authored_clip() -> void:
 	# The rig owns an authored swap clip; it is not an empty placeholder.
 	assert_true(clip.get_track_count() > 0)
 	assert_true(clip.length > 0.0)
+	# One swap is a forward pass and a back pass, so the retiming has to fit the
+	# clip's cycle, not its authored length, into the swap duration.
+	assert_eq(clip.loop_mode, Animation.LOOP_PINGPONG)
 	var arm_path := NodePath("CharacterContainer/Anim Targets/FrontArmIK:position")
 	assert_true(clip.find_track(arm_path, Animation.TYPE_VALUE) >= 0)
 

@@ -113,13 +113,24 @@ func _apply_facing(direction: FacingComponent.Direction) -> void:
 	_sprite.flip_h = direction == FacingComponent.Direction.LEFT
 
 
+## Wall-clock length of one visible cycle of a clip, which is what a retimed clip
+## has to fit into its gameplay duration. A ping-pong loop plays forward and then
+## back, so one of its cycles is twice the authored length.
+func get_animation_cycle_length(animation_name: StringName) -> float:
+	if _animation_player == null or not _animation_player.has_animation(animation_name):
+		return 0.0
+	var clip := _animation_player.get_animation(animation_name)
+	if clip == null:
+		return 0.0
+	return clip.length * (2.0 if clip.loop_mode == Animation.LOOP_PINGPONG else 1.0)
+
+
 func _play_animation(animation_name: StringName) -> void:
 	if _animation_player.has_animation(animation_name):
 		if animation_name == &"equipment_swap":
 			var swap := actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 			if swap != null and swap.is_swapping() and swap.get_duration() > 0.0:
-				var clip_duration := _animation_player.get_animation(animation_name).length
-				_animation_player.play(animation_name, -1.0, clip_duration / swap.get_duration())
+				_animation_player.play(animation_name, -1.0, get_animation_cycle_length(animation_name) / swap.get_duration())
 				return
 		_animation_player.play(animation_name)
 

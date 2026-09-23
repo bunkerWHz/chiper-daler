@@ -82,8 +82,12 @@ idle itself. The source has no dedicated release, climbing, hit or death animati
 states currently use the idle pose; death and respawn freeze it while the
 existing fade/respawn components handle the result.
 `equipment_swap` is an authored clip in the rig's own AnimationPlayer: 20 tracks
-on the arm, leg and hip IK targets, 1 second long. Playback rate is
-`clip.length / swap duration`, so the 2-second base swap plays it at 0.5x.
+on the arm, leg and hip IK targets, 1 second long and ping-pong looping, so one
+swap is a forward pass and a back pass. Playback rate is
+`AnimationComponent.get_animation_cycle_length() / swap duration`, which counts a
+ping-pong clip's cycle as twice its authored length; the 2-second base swap
+therefore plays it at 1.0x. Anchoring on the authored length instead would have
+stretched every swap to twice its duration.
 Add new authored clips and map them in `_get_animation_name()` to replace the
 remaining idle-pose fallbacks.
 

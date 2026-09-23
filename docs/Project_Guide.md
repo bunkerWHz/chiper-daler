@@ -70,7 +70,7 @@ godot --headless --path . --script tests/run_tests.gd
 | Общий размер героя | Корень Player → Scale, одинаковый по обеим осям; сейчас 0.1 |
 | Коллизии | Размеры ресурсов Shape2D и Position; локальный Scale узлов коллизий — 1 |
 | Полоска переодевания над головой | EquipmentSwapView → Position / Native Width; ширина следует размеру героя, высота и отступ сохраняются |
-| Клипы и заготовка equipment_swap | DarklightRig.tscn → AnimationPlayer (в Player: `_Visual/DarklightRig/AnimationPlayer`) |
+| Клип equipment_swap и его скорость | DarklightRig.tscn → AnimationPlayer (в Player: `_Visual/DarklightRig/AnimationPlayer`); клип зациклен туда-обратно, цикл учитывает `AnimationComponent.get_animation_cycle_length()` |
 | Ручная поза руки | В риге: Anim Targets → BackArmFK (рука с луком) или FrontArmFK → Mode = FK; вращайте Shoulder → Elbow → Wrist |
 | Кость, её rest-поза и длина | В риге: Skeleton2D → нужная Bone2D → Position / Rest / Length |
 | Решатель IK и его цель | В риге: Skeleton2D/SoupGroup (DarklightRig) или Skeleton2D → Modification Stack (DarklightRig2) |

@@ -360,6 +360,21 @@ func test_dodge_state_picks_the_air_clip_or_the_ground_roll() -> void:
 		state.state_changed.emit(ActorState.Behavior.DODGE, ActorState.Behavior.FALL)
 
 
+func test_animation_cycle_length_counts_a_ping_pong_pass_twice() -> void:
+	# Retimed clips fit one full cycle into their gameplay duration. Ping-pong
+	# clips play forward and back, so their cycle is twice the authored length.
+	var setup := _create_player_visual()
+	var visual := setup.visual as DarklightVisualComponent
+	var animation := visual.get_animation_player()
+	var swap_clip := animation.get_animation(&"equipment_swap")
+	var air_clip := animation.get_animation(&"dodge_air")
+	assert_eq(swap_clip.loop_mode, Animation.LOOP_PINGPONG)
+	assert_eq(air_clip.loop_mode, Animation.LOOP_LINEAR)
+	assert_true(is_equal_approx(visual.get_animation_cycle_length(&"equipment_swap"), 2.0 * swap_clip.length))
+	assert_true(is_equal_approx(visual.get_animation_cycle_length(&"dodge_air"), air_clip.length))
+	assert_eq(visual.get_animation_cycle_length(&"not_a_clip"), 0.0)
+
+
 func test_authored_bow_pose_survives_aim_updates_and_cancel() -> void:
 	var player := track(load("res://game/player/Player.tscn").instantiate()) as Actor
 	(Engine.get_main_loop() as SceneTree).root.add_child(player)

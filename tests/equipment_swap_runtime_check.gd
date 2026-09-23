@@ -85,7 +85,13 @@ func _run() -> void:
 	_check(not paused, "Inventory cannot interrupt the action with a pause")
 	await process_frame
 	await process_frame
-	_check(is_equal_approx(animation.get_playing_speed(), 2.0), "Placeholder clip must follow swap speed")
+	# The authored clip loops forward and back, so one swap is two passes of it.
+	var swap_clip := animation.get_animation(&"equipment_swap")
+	_check(swap_clip.loop_mode == Animation.LOOP_PINGPONG, "The authored swap clip must ping-pong")
+	_check(
+		is_equal_approx(animation.get_playing_speed(), 2.0 * swap_clip.length / swap.get_duration()),
+		"One forward-and-back cycle must fit exactly into the swap duration"
+	)
 	for frame in 160:
 		await physics_frame
 	_check(equipment.get_active_weapon_set() == 1, "Completed swap must change equipment")
