@@ -2,7 +2,7 @@
 title: Справочник компонентов
 type: reference
 created: 2026-09-13
-updated: 2026-09-21
+updated: 2026-09-23
 tags: [components, actor, architecture]
 ---
 
@@ -168,10 +168,10 @@ Shape2D. После изменения масштаба проверяйте т�
 
 ### DodgeComponent — Уклонение
 
-- **Делает:** Запускает уклонение, фиксирует направление, ведёт длительность и ограничивает повторный старт.
+- **Делает:** Запускает уклонение, фиксирует направление и вид уклонения (воздушное или кувырок на земле), ведёт длительность и ограничивает повторный старт.
 - **Когда применять:** Когда игроку нужен рывок/уклонение с отдельным действием.
 - **Что требуется:** InputComponent, CharacterBodyComponent, FacingComponent, DodgeConfig. MovementComponent вызывает применение скорости; InvulnerabilityComponent необязателен.
-- **Настройки и ограничения:** Config задаёт движение, задержки и неуязвимость. Без InvulnerabilityComponent нет его защиты. Расход выносливости пока не подключён.
+- **Настройки и ограничения:** Config задаёт движение, задержки и неуязвимость. `duration` — воздушное уклонение, `roll_duration` — кувырок на земле; вид выбирается в момент старта по `is_on_floor()` и читается через `is_air_dodge()`. Без InvulnerabilityComponent нет его защиты. Расход выносливости пока не подключён.
 - **Файлы:** [Код](../features/movement/DodgeComponent.gd) · [Сцена](../features/movement/DodgeComponent.tscn) · [DodgeConfig](../features/movement/DodgeConfig.gd).
 
 <a id="climbingcomponent"></a>

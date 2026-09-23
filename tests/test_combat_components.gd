@@ -294,8 +294,10 @@ func test_guard_is_grounded_and_locks_locomotion() -> void:
 
 	assert_true(dodge.try_start_dodge())
 	assert_true(dodge.is_dodging())
+	# A grounded body takes the roll, which owns its own duration.
+	assert_false(dodge.is_air_dodge())
 	assert_false(guard.start_guard())
-	dodge._physics_process(dodge.config.duration)
+	dodge._physics_process(dodge.config.roll_duration)
 	assert_false(dodge.is_dodging())
 	dodge._cooldown_timer = 0.0
 	assert_true(guard.start_guard())

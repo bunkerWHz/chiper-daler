@@ -128,10 +128,12 @@ For visual QA run the second command without `--headless`. It writes
 Use `--max-fps 60` for runtime checks that wait physics frames while gameplay
 components also advance timers in `_process`.
 
-`darklight_visual` covers the authored `dodge2` roll as data: clip length, loop
+`darklight_visual` covers the authored `dodge_roll` as data: clip length, loop
 mode, track set, one full pelvis revolution, the standing pose at both ends and
-the tucked foot. The roll itself is regenerated and re-measured by
-`tests/dodge2_roll_author.gd`, which renders offscreen and needs a window;
+the tucked foot. It also checks that the `Dodge` state selects `dodge_air` or
+`dodge_roll` from `DodgeComponent.is_air_dodge()` and retimes each against its own
+configured duration. The roll itself is regenerated and re-measured by
+`tests/dodge_roll_author.gd`, which renders offscreen and needs a window;
 `node tests/normalize_skin_weights.mjs --check` reports the rig's per-vertex skin
 weight sums, which must be 1 for every skinned limb vertex.
 

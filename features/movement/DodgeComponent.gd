@@ -26,6 +26,7 @@ var _active_timer: float = 0.0
 var _cooldown_timer: float = 0.0
 var _direction: float = 1.0
 var _air_dodge_available: bool = true
+var _is_air_dodge: bool = false
 
 
 func on_initialize() -> void:
@@ -37,6 +38,7 @@ func on_initialize() -> void:
 	if (
 		config.speed <= 0.0
 		or config.duration <= 0.0
+		or config.roll_duration <= 0.0
 		or config.cooldown < 0.0
 		or config.invulnerability_duration < 0.0
 	):
@@ -115,13 +117,14 @@ func try_start_dodge() -> bool:
 		return false
 
 	var is_air_dodge := not _body_component.is_on_floor()
+	_is_air_dodge = is_air_dodge
 	var input_direction := _input_component.get_move_axis()
 	_direction = (
 		signf(input_direction)
 		if not is_zero_approx(input_direction)
 		else float(_facing_component.get_direction())
 	)
-	_active_timer = config.duration
+	_active_timer = config.get_duration(is_air_dodge)
 	_cooldown_timer = config.cooldown
 	# Claim the action before cancellation signals release the equipment swap.
 	if _equipment_swap != null:
@@ -177,6 +180,12 @@ func apply_velocity() -> void:
 
 func is_dodging() -> bool:
 	return _active_timer > 0.0
+
+
+func is_air_dodge() -> bool:
+	## Which clip and duration the current dodge uses: true for the airborne
+	## dodge, false for the ground roll. Meaningful while is_dodging() is true.
+	return _is_air_dodge
 
 
 func is_exclusive_behavior_active() -> bool:

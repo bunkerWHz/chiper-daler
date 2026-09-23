@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dl55ijy3i6m6s" path="res://framework/components/CharacterBodyComponent.tscn" id="3_e8u23"]
 [ext_resource type="PackedScene" path="res://game/player/darklight/DarklightVisualComponent.tscn" id="6_lg056"]
 [ext_resource type="PackedScene" uid="uid://bw1a5wx3lqx60" path="res://framework/components/CameraComponent.tscn" id="7_b72hb"]
+[ext_resource type="Script" uid="uid://cq5aqpy2cpikx" path="res://features/movement/DodgeConfig.gd" id="8_4dtle"]
 [ext_resource type="Script" uid="uid://dp21630edm43i" path="res://framework/components/InteractionComponent.gd" id="8_wcm5h"]
 [ext_resource type="Script" uid="uid://bcwnhbaqj47sg" path="res://framework/components/InteractionPromptComponent.gd" id="9_o7uqf"]
 [ext_resource type="Script" uid="uid://cuofhl2p3ogcx" path="res://framework/components/InputComponent.gd" id="9_ohvm5"]
@@ -40,7 +41,7 @@
 [ext_resource type="PackedScene" path="res://features/rest/RestComponent.tscn" id="37_rest"]
 [ext_resource type="PackedScene" path="res://features/progression/ProgressionComponent.tscn" id="38_progression"]
 [ext_resource type="PackedScene" path="res://features/status/StatusEffectComponent.tscn" id="39_status"]
-[ext_resource type="PackedScene" path="res://features/inventory/InventoryComponent.tscn" id="40_inventory"]
+[ext_resource type="PackedScene" uid="uid://bhtxboeslhi10" path="res://features/inventory/InventoryComponent.tscn" id="40_inventory"]
 [ext_resource type="PackedScene" path="res://features/inventory/QuickAccessComponent.tscn" id="41_quick_access"]
 [ext_resource type="PackedScene" uid="uid://c5e1m0b5hndrn" path="res://features/inventory/InventoryMenuComponent.tscn" id="42_inventory_menu"]
 [ext_resource type="PackedScene" path="res://features/inventory/InventoryDropComponent.tscn" id="43_inventory_drop"]
@@ -57,9 +58,9 @@
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentInputComponent.tscn" id="equipment_input"]
 [ext_resource type="PackedScene" path="res://features/equipment/EquipmentSwapComponent.tscn" id="equipment_swap"]
 [ext_resource type="PackedScene" path="res://features/equipment/ui/EquipmentSwapView.tscn" id="equipment_swap_view"]
-[ext_resource type="Script" path="res://features/stats/RegenerationComponent.gd" id="regeneration"]
+[ext_resource type="Script" uid="uid://csl25teltdnxb" path="res://features/stats/RegenerationComponent.gd" id="regeneration"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_y3r3g"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k60nk"]
 resource_local_to_scene = true
 size = Vector2(412, 970)
 
@@ -67,16 +68,24 @@ size = Vector2(412, 970)
 script = ExtResource("3_38lxl")
 metadata/_custom_type_script = "uid://b8d0ic1ruenbv"
 
+[sub_resource type="Resource" id="Resource_tt30g"]
+script = ExtResource("8_4dtle")
+speed = 300.0
+duration = 0.5
+roll_duration = 0.45
+cooldown = 0.5
+invulnerability_duration = 0.5
+
 [sub_resource type="Resource" id="DeathConfig_player"]
 script = ExtResource("17_death_config")
 duration = 0.4
 remove_actor_on_finish = false
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_f76ou"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jp8ge"]
 resource_local_to_scene = true
 size = Vector2(412, 970)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4dtle"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wwqa4"]
 resource_local_to_scene = true
 size = Vector2(500, 500)
 
@@ -86,7 +95,7 @@ position_smoothing_speed = 3.0
 zoom = Vector2(2, 2)
 metadata/_custom_type_script = "uid://k8gi8p2l8mqi"
 
-[sub_resource type="Resource" id="Resource_k60nk"]
+[sub_resource type="Resource" id="Resource_xjstw"]
 resource_local_to_scene = true
 script = ExtResource("45_4dtle")
 
@@ -106,12 +115,13 @@ collision_layer = 8
 
 [node name="CollisionShape2D" parent="_Components/CharacterBodyComponent/CharacterBody2D" parent_id_path=PackedInt32Array(945165399, 902119216) index="0" unique_id=850418791]
 position = Vector2(0, -250)
-shape = SubResource("RectangleShape2D_y3r3g")
+shape = SubResource("RectangleShape2D_k60nk")
 
 [node name="MovementComponent" parent="_Components" unique_id=1807668747 instance=ExtResource("2_r5dqo")]
 config = SubResource("Resource_lg056")
 
 [node name="DodgeComponent" parent="_Components" unique_id=1527168314 instance=ExtResource("30_dodge")]
+config = SubResource("Resource_tt30g")
 
 [node name="ClimbingComponent" parent="_Components" unique_id=2126546747 instance=ExtResource("31_climbing")]
 
@@ -136,13 +146,13 @@ config = SubResource("DeathConfig_player")
 
 [node name="CollisionShape2D" parent="_Components/HurtboxComponent/Area2D" index="0"]
 position = Vector2(0, -250)
-shape = SubResource("RectangleShape2D_f76ou")
+shape = SubResource("RectangleShape2D_jp8ge")
 
 [node name="HitboxComponent" parent="_Components" unique_id=2003695411 instance=ExtResource("13_hitbox")]
 position = Vector2(500, -250)
 
 [node name="CollisionShape2D" parent="_Components/HitboxComponent/Area2D" index="0"]
-shape = SubResource("RectangleShape2D_4dtle")
+shape = SubResource("RectangleShape2D_wwqa4")
 
 [node name="FacingComponent" type="Node" parent="_Components" unique_id=505748100]
 script = ExtResource("10_facing")
@@ -192,7 +202,7 @@ metadata/_custom_type_script = "uid://cuofhl2p3ogcx"
 
 [node name="StaminaComponent" parent="_Components" unique_id=972858078 instance=ExtResource("48_stamina")]
 
-[node name="RegenerationComponent" type="Node" parent="_Components"]
+[node name="RegenerationComponent" type="Node" parent="_Components" unique_id=1396561639]
 script = ExtResource("regeneration")
 
 [node name="RestComponent" parent="_Components" unique_id=1183638924 instance=ExtResource("37_rest")]
@@ -200,7 +210,7 @@ script = ExtResource("regeneration")
 [node name="ProgressionComponent" parent="_Components" unique_id=1962424301 instance=ExtResource("38_progression")]
 
 [node name="StatusEffectComponent" parent="_Components" unique_id=571521567 instance=ExtResource("39_status")]
-dot_resistances = SubResource("Resource_k60nk")
+dot_resistances = SubResource("Resource_xjstw")
 
 [node name="InventoryComponent" parent="_Components" unique_id=1806457266 instance=ExtResource("40_inventory")]
 

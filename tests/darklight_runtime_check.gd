@@ -88,6 +88,42 @@ func _run() -> void:
 			saw_falling_cloak = true
 	_check(saw_falling_cloak, "Descending must inflate the cloak")
 	_check(cloth.current_animation == &"wind", "Landing must restore wind")
+	var dodge := player.get_component(DodgeComponent) as DodgeComponent
+	var animation := visual.get_animation_player()
+	# The ground dodge is the authored tucked roll and owns its own duration.
+	_check(body.is_on_floor(), "The ground dodge check needs floor contact")
+	Input.action_press(&"dodge")
+	for frame in 3:
+		await physics_frame
+	Input.action_release(&"dodge")
+	_check(dodge.is_dodging() and not dodge.is_air_dodge(), "Dodging on the floor must be the ground roll")
+	_check(state.get_state() == ActorState.Behavior.DODGE, "The FSM must resolve the ground dodge: " + ActorState.get_behavior_name(state.get_state()))
+	_check(animation.current_animation == &"dodge_roll", "The grounded dodge must play dodge_roll")
+	_check(
+		is_equal_approx(animation.get_playing_speed(), animation.get_animation(&"dodge_roll").length / dodge.config.roll_duration),
+		"The roll must be retimed against roll_duration"
+	)
+	await _capture("darklight_dodge_roll")
+	for frame in 45:
+		await physics_frame
+	_check(not dodge.is_dodging() and body.is_on_floor(), "The ground roll must finish on the floor")
+	# The same action in the air is the short source clip.
+	Input.action_press(&"jump")
+	for frame in 5:
+		await physics_frame
+	Input.action_release(&"jump")
+	for frame in 4:
+		await physics_frame
+	_check(not body.is_on_floor(), "The air dodge check needs the player off the floor")
+	Input.action_press(&"dodge")
+	for frame in 3:
+		await physics_frame
+	Input.action_release(&"dodge")
+	_check(dodge.is_dodging() and dodge.is_air_dodge(), "Dodging in the air must be the air dodge")
+	_check(animation.current_animation == &"dodge_air", "The airborne dodge must play dodge_air")
+	for frame in 90:
+		await physics_frame
+	_check(body.is_on_floor(), "The player must land after the air dodge")
 	var equipment := player.get_component(EquipmentComponent) as EquipmentComponent
 	_check(equipment.switch_weapon_set(1), "Existing inventory must switch to the bow")
 	var hand := rig.get_node("CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid/BackArmBot/OffHand") as Sprite2D

@@ -25,14 +25,22 @@ play at authored speed; AttackComponent samples the next variant's duration befo
 starting the swing and owns its timer. Dodge follows the gameplay duration. Animation
 does not activate hitboxes, spend stamina or change FSM state.
 
-`dodge2` (1.0 s, `animations/dodge2.tres`) is an authored dodge in four beats:
+Dodge has two clips, chosen by `DodgeComponent` at the moment the dodge starts:
+`dodge_air` (the short source clip, `DodgeConfig.duration`) while the body is
+airborne, and `dodge_roll` (the authored tucked roll, `DodgeConfig.roll_duration`)
+while it is on the floor. The visual only reads `DodgeComponent.is_air_dodge()`;
+it never samples the floor itself, so the clip cannot disagree with the duration
+the component actually applied.
+
+`dodge_roll` (1.0 s, `animations/dodge_roll.tres`) is an authored dodge in four beats:
 a short squat, then the body stretches forward along a downward diagonal while
 both hands are held level with the ground, then it folds into a tuck and rolls
 one full revolution over head, back, hips and feet, rising on the pose it
 started from. The pelvis turns the whole revolution while all five IK/look-at
 targets orbit it. Authored timing: squat 0.00–0.14, dive 0.14–0.42, roll
-0.42–0.86, rise 0.86–1.00; the clip is meant to be retimed, like the others, by
-playing it at `clip length / gameplay duration`.
+0.42–0.86, rise 0.86–1.00; the clip is retimed, like the others, by playing it at
+`clip length / gameplay duration` — the roll's own `roll_duration` (0.45 s on the
+player, so about 2.2x), not the air dodge's `duration`.
 From 0.24 to 0.40 the arms are held out in front parallel to the ground rather
 than following the authored pose: the generator solves each hand from the body's
 current tilt, so the shoulder and the hand stay at the same height (measured 0
@@ -41,16 +49,14 @@ The fold only starts at 0.40, which is why the tuck reads after the dive.
 Every key is placed so the lowest drawn pixel of the body rests on the floor
 line measured from `idle`, so the tumble rolls on the ground instead of through
 it: the hands lead onto the floor at the end of the dive, and the pelvis rises
-while the head sweeps past the ground. The clip is deliberately **not** mapped
-to a state yet: `DODGE` still plays `dodge`, and the gameplay duration is still
-0.18 s. Regenerate the clip with
-`godot --script tests/dodge2_roll_author.gd` (a window is required — the header
+while the head sweeps past the ground. Regenerate the clip with
+`godot --script tests/dodge_roll_author.gd` (a window is required — the header
 of that script explains why the pelvis height is measured from the renderer, and
-`-- sheet` writes a review contact sheet to `.godot/dodge2_preview_sheet.png`,
+`-- sheet` writes a review contact sheet to `.godot/dodge_roll_preview_sheet.png`,
 while `-- joints` and `-- arms` print the phase geometry and the elbow angle).
-Wiring it up later also means switching the cloak to a tucked pose: with its
-default `wind` clip the hem sweeps up to 316 native units below the floor during
-the landing, and 236 with the `jump` pose.
+The cloak still runs its `wind` clip through the roll: with that clip its hem
+sweeps up to 316 native units below the floor during the landing, and 236 with
+the `jump` pose, so the roll wants a tucked cloak pose of its own.
 
 Melee clips cycle independently per family: `attack`, `heavy_attack`,
 `air_attack`, and `air_heavy_attack`. Add numbered clips to AnimationPlayer,
@@ -340,7 +346,7 @@ Verified in a running Godot 4.7.2 against `DarklightRig.tscn`, both rigs fed
 identical inputs and sampled after the same frames:
 
 - all 22 authored clips (`RESET`, `idle`, `run`, `jump`, `jump_2`, `fall`,
-  `wall_jump`, `wall_sliding`, `block`, `dodge`, `dodge3`, `attack`,
+  `wall_jump`, `wall_sliding`, `block`, `dodge_air`, `dodge_roll`, `attack`,
   `heavy_attack`, `heavy_attack_2`, `air_attack`, `air_heavy_attack`, `bow_aim`,
   `throw_aim`, `crossbow_aim`, `magic_aim`, `drink`, `equipment_swap`) sampled at
   five times each, comparing position and global rotation of all 15 bones:
@@ -374,7 +380,7 @@ The scene is **generated**, not hand-edited: `node tests/regenerate_darklight_ri
 rebuilds it from `DarklightRig.tscn` with exactly that change, and `--check` reports
 when the copy has drifted. Regenerate it instead of editing it whenever the canonical
 rig gains a clip, a bone or a renamed animation — the copy already fell behind once
-when `dodge` and `dodge2` were swapped, and it silently animated the wrong clip.
+when `dodge_air` and `dodge_roll` were swapped, and it silently animated the wrong clip.
 
 Two checks cover the copy:
 

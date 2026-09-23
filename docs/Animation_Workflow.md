@@ -76,10 +76,10 @@ resources have been removed; their history remains in Git.
 ### Generated clips
 
 Most player clips are keyed by hand in `AnimationPlayer`. A clip whose whole
-point is a rigid rotation of the body — the `dodge2` tucked roll — is generated
+point is a rigid rotation of the body — the `dodge_roll` tucked roll — is generated
 instead, because every target has to orbit the pelvis by the same angle and by
-the same amount that keeps the artwork on the floor. `tests/dodge2_roll_author.gd`
-owns that maths and writes `animations/dodge2.tres`; open the `.tres` in
+the same amount that keeps the artwork on the floor. `tests/dodge_roll_author.gd`
+owns that maths and writes `animations/dodge_roll.tres`; open the `.tres` in
 `AnimationPlayer` for hand edits afterwards, and regenerate from the script when
 the roll's timing or tuck has to change.
 
@@ -91,17 +91,23 @@ the rig's skin weights and polygon followers had to be repaired for that
 measurement to be meaningful at all (see the Darklight notes).
 
 ```sh
-godot --script tests/dodge2_roll_author.gd            # write the clip, verify floor contact
-godot --script tests/dodge2_roll_author.gd -- sheet   # plus a review contact sheet
-godot --headless --script tests/dodge2_roll_author.gd -- sweep   # rank tuck candidates
+godot --script tests/dodge_roll_author.gd            # write the clip, verify floor contact
+godot --script tests/dodge_roll_author.gd -- sheet   # plus a review contact sheet
+godot --headless --script tests/dodge_roll_author.gd -- sweep   # rank tuck candidates
 ```
 
 `-- frames` prints the roll as text and `-- measure` compares the shipped clips
 before and after a rig edit. `-- probe` reports how far the drawn silhouette
 moves when the pelvis moves, which is how the skinning defects above were found.
-`dodge2` is not mapped to a state yet: `ActorStateComponent` behavior `Dodge`
-still selects the older `dodge` clip, and switching that also means giving the
-cloak a tucked pose.
+`dodge_roll` is the ground dodge: `ActorStateComponent` behavior `Dodge` selects
+it whenever the body is on the floor, and `dodge_air` otherwise. The role of each
+clip belongs to `DodgeComponent.is_air_dodge()`; the visual never samples the
+floor itself. The roll still runs the cloak's `wind` pose, which sweeps below the
+floor during the landing — a tucked cloak pose is still missing.
+
+> Superseded 2026-09-23: the roll used to be unmapped — `Dodge` played the short
+> `dodge` clip on the ground and in the air alike, and the clip was renamed
+> `dodge2` → `dodge_roll` in the same change.
 
 ## Stone Golem asset setup
 

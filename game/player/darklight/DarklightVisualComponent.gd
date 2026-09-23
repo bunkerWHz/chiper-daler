@@ -140,9 +140,10 @@ func _play_animation(animation_name: StringName) -> void:
 			speed = _animation_player.get_animation(animation_name).length / attack.get_attack_duration(attack.is_heavy_attacking())
 	elif animation_name == &"drink":
 		speed = _animation_player.get_animation(animation_name).length / _item_use.config.use_duration
-	elif animation_name == &"dodge":
+	elif animation_name in [&"dodge_air", &"dodge_roll"]:
 		var dodge := actor.get_component(DodgeComponent) as DodgeComponent
-		speed = _animation_player.get_animation(animation_name).length / dodge.config.duration
+		if dodge != null and dodge.config != null:
+			speed = _animation_player.get_animation(animation_name).length / dodge.config.get_duration(animation_name == &"dodge_air")
 	elif animation_name == &"equipment_swap":
 		var swap := actor.get_component(EquipmentSwapComponent) as EquipmentSwapComponent
 		if swap.is_swapping():
@@ -324,13 +325,20 @@ func get_buff_effect_sprite() -> AnimatedSprite2D:
 	return _buff_effect_sprite
 
 
+func _dodge_animation_name() -> StringName:
+	# DodgeComponent decides the mode when it starts the dodge: the ground dodge
+	# is the authored tucked roll, the airborne one the short source clip.
+	var dodge := actor.get_component(DodgeComponent) as DodgeComponent
+	return &"dodge_air" if dodge != null and dodge.is_air_dodge() else &"dodge_roll"
+
+
 func _get_animation_name(state: ActorState.Behavior) -> StringName:
 	match state:
 		ActorState.Behavior.RUN: return &"run"
 		ActorState.Behavior.JUMP, ActorState.Behavior.DOUBLE_JUMP: return &"jump"
 		ActorState.Behavior.WALL_JUMP: return &"wall_jump"
 		ActorState.Behavior.FALL: return &"fall"
-		ActorState.Behavior.DODGE: return &"dodge"
+		ActorState.Behavior.DODGE: return _dodge_animation_name()
 		ActorState.Behavior.GROUND_LIGHT_ATTACK, ActorState.Behavior.CRITICAL_ATTACK: return &"attack"
 		ActorState.Behavior.GROUND_HEAVY_ATTACK: return &"heavy_attack"
 		ActorState.Behavior.AIR_LIGHT_ATTACK: return &"air_attack"

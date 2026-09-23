@@ -38,7 +38,7 @@ func test_player_uses_serialized_skeleton_and_ik_animations() -> void:
 	assert_true(is_equal_approx(off.rotation, 0.7690259))
 	assert_false(rig.has_node("CharacterContainer/VisualDetails/MainHand"))
 	assert_false(rig.has_node("CharacterContainer/VisualDetails/OffHand"))
-	for clip: StringName in [&"idle", &"run", &"jump", &"fall", &"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack", &"dodge", &"block"]:
+	for clip: StringName in [&"idle", &"run", &"jump", &"fall", &"attack", &"heavy_attack", &"air_attack", &"air_heavy_attack", &"dodge_air", &"dodge_roll", &"block"]:
 		assert_true(animation_player.has_animation(clip))
 	for clip: StringName in animation_player.get_animation_list():
 		var animation := animation_player.get_animation(clip)

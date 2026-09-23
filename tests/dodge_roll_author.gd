@@ -1,12 +1,12 @@
 extends SceneTree
-## Authoring and verification tool for Darklight's `dodge2` tucked forward roll.
+## Authoring and verification tool for Darklight's `dodge_roll` tucked forward roll.
 ##
 ## Run from the project root (a window is needed: the headless display server
 ## has no renderer):
-##   godot --script tests/dodge2_roll_author.gd              # write the clip, verify it
-##   godot --script tests/dodge2_roll_author.gd -- sheet      # also render a review sheet
-##   godot --script tests/dodge2_roll_author.gd -- sweep      # compare tuck candidates
-##   godot --headless --script tests/dodge2_roll_author.gd -- sweep
+##   godot --script tests/dodge_roll_author.gd              # write the clip, verify it
+##   godot --script tests/dodge_roll_author.gd -- sheet      # also render a review sheet
+##   godot --script tests/dodge_roll_author.gd -- sweep      # compare tuck candidates
+##   godot --headless --script tests/dodge_roll_author.gd -- sweep
 ##
 ## Why the roll is generated: the rig only exposes the pelvis
 ## (`Anim Targets/Hip`) plus IK and look-at targets, so a tumble means rotating
@@ -20,8 +20,8 @@ extends SceneTree
 ## pixel touches the ground line measured from the idle pose.
 
 const RIG_PATH := "res://game/player/darklight/DarklightRig.tscn"
-const CLIP_PATH := "res://game/player/darklight/animations/dodge2.tres"
-const SHEET_PATH := "res://.godot/dodge2_preview_sheet.png"
+const CLIP_PATH := "res://game/player/darklight/animations/dodge_roll.tres"
+const SHEET_PATH := "res://.godot/dodge_roll_preview_sheet.png"
 
 const CONTAINER := "CharacterContainer/"
 const HIP_PATH := CONTAINER + "Anim Targets/Hip"
@@ -167,7 +167,7 @@ func _run() -> void:
 	if "frames" in _args:
 		var saved := load(CLIP_PATH) as Animation
 		if saved != null:
-			_player.get_animation_library(&"").add_animation(&"dodge2", saved)
+			_player.get_animation_library(&"").add_animation(&"dodge_roll", saved)
 		await _ascii_roll()
 		_quit()
 		return
@@ -192,9 +192,9 @@ func _run() -> void:
 		sample["hip"] = await _place_pelvis(sample)
 	_build_clip(samples)
 	var library := _player.get_animation_library(&"")
-	if library.has_animation(&"dodge2"):
-		library.remove_animation(&"dodge2")
-	library.add_animation(&"dodge2", _animation)
+	if library.has_animation(&"dodge_roll"):
+		library.remove_animation(&"dodge_roll")
+	library.add_animation(&"dodge_roll", _animation)
 	if "report" not in _args:
 		var error := ResourceSaver.save(_animation, CLIP_PATH)
 		print("saved %s -> %s" % [CLIP_PATH, error_string(error)])
@@ -511,7 +511,7 @@ func _apply_pose(sample: Dictionary) -> void:
 
 
 func _build_clip(samples: Array[Dictionary]) -> void:
-	_animation.resource_name = "dodge2"
+	_animation.resource_name = "dodge_roll"
 	_animation.length = LENGTH
 	_animation.loop_mode = Animation.LOOP_NONE
 	for name: String in TARGET_PATHS:
@@ -572,7 +572,7 @@ func _report() -> void:
 	var count := 41
 	for index in count:
 		var time := LENGTH * float(index) / float(count - 1)
-		_player.play(&"dodge2")
+		_player.play(&"dodge_roll")
 		_player.seek(time, true)
 		_player.pause()
 		await _settle()
@@ -630,7 +630,7 @@ func _report_tucked_cloak() -> void:
 		cloth.pause()
 		var worst := -INF
 		for index in 21:
-			_player.play(&"dodge2")
+			_player.play(&"dodge_roll")
 			_player.seek(LENGTH * float(index) / 20.0, true)
 			_player.pause()
 			await _settle()
@@ -648,7 +648,7 @@ func _render_sheet() -> void:
 	)
 	sheet.fill(Color(0.08, 0.09, 0.12))
 	for index in frames:
-		_player.play(&"dodge2")
+		_player.play(&"dodge_roll")
 		_player.seek(LENGTH * float(index) / float(frames - 1), true)
 		_player.pause()
 		await _settle()
@@ -673,7 +673,7 @@ func _render_sheet() -> void:
 ## image viewer. '#' is artwork, 'G' the ground line.
 func _ascii_roll() -> void:
 	for time in [0.0, 0.14, 0.26, 0.38, 0.48, 0.60, 0.72, 0.86, 1.0]:
-		_player.play(&"dodge2")
+		_player.play(&"dodge_roll")
 		_player.seek(time, true)
 		_player.pause()
 		await _settle()
@@ -722,7 +722,7 @@ func _ascii(columns := 96, rows := 40) -> void:
 func _report_arms() -> void:
 	print("%7s %9s %22s %22s %22s %8s %8s" % ["time", "tilt", "front shoulder", "front elbow", "front hand", "elbow", "level"])
 	for time in [0.14, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]:
-		_player.play(&"dodge2")
+		_player.play(&"dodge_roll")
 		_player.seek(time, true)
 		_player.pause()
 		await _settle()
@@ -755,7 +755,7 @@ func _report_joint_phases() -> void:
 	}
 	for label: String in probes:
 		var time: float = probes[label]
-		_player.play(&"dodge2")
+		_player.play(&"dodge_roll")
 		_player.seek(time, true)
 		_player.pause()
 		await _settle()
