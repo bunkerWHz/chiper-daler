@@ -166,9 +166,15 @@ tags: [animation, player, workflow]
 | `DarklightRig2.tscn` | Нативные `SkeletonModification2DTwoBoneIK`, `SkeletonModification2DLookAt` | Один `SkeletonModificationStack2D` на `Skeleton2D` |
 
 Обе реализации дают одинаковую позу: на 22 авторских клипах, свипе по целям и
-зеркальном развороте расхождений нет. SoupIK-узлы в копии остались в дереве, но
-выключены (`enabled = false`) — так сохранены все пути узлов. Подробности и
-таблица соответствия — в [README рига](../game/player/darklight/README.md).
+зеркальном развороте расхождений нет. Копия не содержит нод SoupIK и не
+ссылается на `addons/soupik` вообще — решателям адресуются только цели
+`Anim Targets`. Подробности и таблица соответствия — в
+[README рига](../game/player/darklight/README.md).
+
+Копия — производная сцена: её собирает `tests/regenerate_darklight_rig2.mjs` из
+`DarklightRig.tscn` (флаг `--check` показывает расхождение). Правьте исходный риг
+и пересобирайте копию, а не наоборот: копия уже один раз отстала, когда в
+каноническом риге переименовали клипы.
 
 ### Правила Two-bone IK
 
@@ -192,20 +198,26 @@ tags: [animation, player, workflow]
 
 ### Добавить решатель (нативный стек)
 
-1. Откройте `DarklightRig2.tscn`, выберите `CharacterContainer/Skeleton2D`.
-2. Убедитесь, что у него есть `SkeletonModificationStack2D` в `modification_stack`.
-3. В инспекторе стека увеличьте `Modification Count` и выберите тип новой
-   модификации.
+Нативный стек живёт только в `DarklightRig2.tscn`, а эта сцена генерируется,
+поэтому решатель добавляют в генератор, а не в сцену:
+
+1. Откройте `tests/regenerate_darklight_rig2.mjs` и допишите блок модификации в
+   константу `MODIFICATIONS` — порядок блоков и есть порядок исполнения.
+2. Пересоберите копию: `node tests/regenerate_darklight_rig2.mjs`.
+3. Проверьте: `DarklightRig2.tscn` → `CharacterContainer/Skeleton2D` →
+   `modification_stack` должен содержать новую модификацию.
 4. Задайте `joint_one_bone2d_node`, `joint_two_bone2d_node` (или `bone2d_node`) и
    `target_nodepath`. Пути костей считаются **от `Skeleton2D`**, например
    `Hip/FrontArmTop`; путь цели — тоже от `Skeleton2D`, например
    `../Anim Targets/FrontArmIK`.
 5. Выставьте `flip_bend_direction` по правилу выше.
-6. Сохраните сцену и перезапустите запуск игры: индексы подставляются при
-   загрузке, а не в открытом редакторе.
+6. Прогоните `godot --headless --script tests/darklight_rig2_pose_check.gd`, затем
+   запустите игру: индексы костей подставляются при загрузке сцены, а не в
+   открытом редакторе.
 
 У каждой модификации есть `enabled`: так временно отключают один решатель, не
-удаляя его.
+удаляя его. Для разовой пробы можно править стек прямо в открытой сцене, но
+следующая пересборка копии это затрёт.
 
 ## Разворот героя
 
@@ -234,10 +246,16 @@ _rig.transform = Transform2D(Vector2(float(direction), 0), Vector2.DOWN, Vector2
 | Что проверяем | Команда |
 | --- | --- |
 | Сумма весов скиннинга | `node tests/normalize_skin_weights.mjs --check` |
+| Копия рига не отстала от исходного | `node tests/regenerate_darklight_rig2.mjs --check` |
 | Разворот, кисти, скиннированные куски | `godot --headless --script tests/darklight_facing_check.gd` |
 | Кости плаща, веса, петля ветра | `godot --script tests/darklight_cloak_check.gd` |
+| Поза копии против исходного рига | `godot --headless --script tests/darklight_rig2_pose_check.gd` |
 | Проводка нативного стека | `godot --headless --script tests/run_tests.gd -- darklight_rig2_ik` |
 | Поза рига и FK-руки | `godot --headless --script tests/run_tests.gd -- arm_pose_controls darklight_visual` |
+
+Проверка поз важнее проверки попадания в цель: перепутанная сторона изгиба
+переставляет локоть на другую ветвь, а кисть и стопа всё равно оказываются в
+цели. Сравнивать надо все кости, а не только концы цепочек.
 
 Тесты из `tests/run_tests.gd` запускайте в отдельном процессе. Редактор держит
 загруженную копию сцены: после правки `.tscn` через MCP `test_run` может
