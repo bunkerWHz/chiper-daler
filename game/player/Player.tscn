@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://features/combat/HurtboxComponent.tscn" id="12_hurtbox"]
 [ext_resource type="PackedScene" path="res://features/combat/HitboxComponent.tscn" id="13_hitbox"]
 [ext_resource type="PackedScene" path="res://framework/debug/DebugOverlayComponent.tscn" id="14_debug"]
+[ext_resource type="PackedScene" path="res://framework/debug/DebugCombatLogComponent.tscn" id="52_combat_log"]
 [ext_resource type="PackedScene" path="res://features/combat/AttackComponent.tscn" id="15_attack"]
 [ext_resource type="PackedScene" path="res://features/health/DeathComponent.tscn" id="16_death"]
 [ext_resource type="Script" uid="uid://dnnbfjy6bbcdk" path="res://features/health/DeathConfig.gd" id="17_death_config"]
@@ -229,6 +230,8 @@ dot_resistances = SubResource("Resource_xjstw")
 [node name="ActorStateComponent" parent="_Components" unique_id=928634338 instance=ExtResource("29_actor_state")]
 
 [node name="DebugOverlayComponent" parent="_Components" unique_id=13741111 instance=ExtResource("14_debug")]
+
+[node name="DebugCombatLogComponent" parent="_Components" unique_id=2049273178 instance=ExtResource("52_combat_log")]
 
 [node name="EquipmentSwapView" parent="." unique_id=819791121 instance=ExtResource("equipment_swap_view")]
 position = Vector2(0, -750)

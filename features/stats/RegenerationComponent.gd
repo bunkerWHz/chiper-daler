@@ -1,6 +1,9 @@
 extends Component
 class_name RegenerationComponent
 
+## Restored amounts of one tick: health, mana, stamina (zeros when capped or absent).
+signal regenerated(health: float, mana: float, stamina: float)
+
 ## All resource regeneration shares one real-time tick. Pausing freezes it.
 @export_range(0.1, 10.0, 0.1) var tick_interval: float = 1.0
 @export_range(0.0, 60.0, 0.5) var combat_timeout: float = 5.0
@@ -42,6 +45,10 @@ func enter_combat() -> void:
 func is_in_combat() -> bool:
 	return _combat_remaining > 0.0
 
+## Seconds left before the character leaves combat. Zero outside combat.
+func get_combat_remaining() -> float:
+	return _combat_remaining
+
 func get_regeneration_multiplier() -> float:
 	return 1.0 if is_in_combat() else out_of_combat_multiplier
 
@@ -73,8 +80,23 @@ func _bonus(property: StringName) -> float:
 
 func _tick() -> void:
 	var multiplier := get_regeneration_multiplier()
-	_health.heal((_attributes.get_health_regeneration() + _bonus(&"health_regeneration")) * multiplier)
+	var restored_health := _health.heal(
+		(_attributes.get_health_regeneration() + _bonus(&"health_regeneration"))
+		* multiplier
+	)
+	var restored_mana := 0.0
 	if _mana != null and _mana.is_enabled:
-		_mana.restore_mana((_attributes.get_mana_regeneration() + _bonus(&"mana_regeneration")) * multiplier)
+		restored_mana = _mana.restore_mana(
+			(_attributes.get_mana_regeneration() + _bonus(&"mana_regeneration"))
+			* multiplier
+		)
+	var restored_stamina := 0.0
 	if _stamina != null and _stamina.is_enabled:
-		_stamina.restore((_attributes.get_stamina_regeneration() + _bonus(&"stamina_regeneration")) * multiplier)
+		restored_stamina = _stamina.restore(
+			(
+				_attributes.get_stamina_regeneration()
+				+ _bonus(&"stamina_regeneration")
+			)
+			* multiplier
+		)
+	regenerated.emit(restored_health, restored_mana, restored_stamina)

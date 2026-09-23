@@ -2,7 +2,7 @@
 title: Справочник компонентов
 type: reference
 created: 2026-09-13
-updated: 2026-09-23
+updated: 2026-09-24
 tags: [components, actor, architecture]
 ---
 
@@ -776,6 +776,16 @@ Shape2D. После изменения масштаба проверяйте т�
 - **Что требуется:** Panel и Label готовой сцены; читает присутствующие игровые компоненты.
 - **Настройки и ограничения:** Visible On Start, Update Interval. Можно убрать из обычной игровой сборки; к правилам боя/инвентаря отношения не имеет.
 - **Файлы:** [Код](../framework/debug/DebugOverlayComponent.gd) · [Сцена](../framework/debug/DebugOverlayComponent.tscn).
+
+<a id="debugcombatlogcomponent"></a>
+
+### DebugCombatLogComponent — Отладочный журнал боя
+
+- **Делает:** Пишет в левом нижнем углу нанесённый и полученный урон, регенерацию HP, маны и стамины, а также текущее состояние боя со счётчиком секунд до выхода из него.
+- **Когда применять:** Временно, чтобы увидеть работу таймера боя и регенерации. Добавлен в `Player.tscn`; из обычной сборки убирается без последствий.
+- **Что требуется:** Enabled HealthComponent и RegenerationComponent владельца плюс узлы `Panel`, `State` и `Log` готовой сцены. Подписывается на Hurtbox чужих Actor, чтобы отличать свой урон от чужого.
+- **Настройки и ограничения:** Visible On Start, Opacity (по умолчанию 0.3) и Max Lines. Цвета: свой урон белый, урон по себе красный, регенерация зелёная, состояние боя оранжевое в бою и зелёное вне боя. Компонент ничего не наносит и не меняет: правила боя остаются у RegenerationComponent.
+- **Файлы:** [Код](../framework/debug/DebugCombatLogComponent.gd) · [Сцена](../framework/debug/DebugCombatLogComponent.tscn).
 
 <a id="world-objects"></a>
 
