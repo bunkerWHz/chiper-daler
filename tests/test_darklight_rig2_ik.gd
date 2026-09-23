@@ -4,15 +4,18 @@ extends McpTestSuite
 ## Structural contract of the SoupIK-free rig copy.
 ##
 ## DarklightRig2.tscn replaces all nine SoupIK solvers with native
-## SkeletonModification2D nodes. Behavioural equivalence with DarklightRig.tscn
-## is established by pose comparison; these tests guard the wiring that makes it
-## possible: every solver stays in the tree but disabled, the native stack
-## replaces them one for one in the same order, and the serialized bone indices
-## still match the skeleton they were authored against.
+## SkeletonModification2D nodes and carries no SoupGroup subtree at all.
+## Behavioural equivalence with DarklightRig.tscn is established by pose
+## comparison; these tests guard the wiring that makes it possible: the soupik
+## nodes are gone, the native stack covers every one of them in the same order,
+## and the serialized bone indices still match the skeleton they were authored
+## against.
 
 const RIG2_PATH := "res://game/player/darklight/DarklightRig2.tscn"
 
-const SOUPIK_SOLVERS: Array[String] = [
+## Solver layout of the canonical DarklightRig.tscn; the copy must not have it.
+const SOUPIK_SOLVER_PATHS: Array[String] = [
+	"CharacterContainer/Skeleton2D/SoupGroup",
 	"CharacterContainer/Skeleton2D/SoupGroup/Head/Head_AT",
 	"CharacterContainer/Skeleton2D/SoupGroup/UpperBody/FrontArmIK",
 	"CharacterContainer/Skeleton2D/SoupGroup/UpperBody/BackArmIK",
@@ -48,14 +51,10 @@ func _open_rig() -> Node2D:
 	return rig
 
 
-func test_soupik_solvers_are_present_but_disabled() -> void:
+func test_the_copy_carries_no_soupik_nodes() -> void:
 	var rig := _open_rig()
-	for path: String in SOUPIK_SOLVERS:
-		var solver := rig.get_node_or_null(path)
-		assert_true(solver != null, "DarklightRig2 lost the soupik node " + path)
-		if solver == null:
-			continue
-		assert_false(solver.enabled, "soupik solver still drives the rig: " + path)
+	for path: String in SOUPIK_SOLVER_PATHS:
+		assert_true(rig.get_node_or_null(path) == null, "DarklightRig2 still carries the soupik node " + path)
 
 
 func test_arm_pose_controls_no_longer_own_the_soupik_solvers() -> void:

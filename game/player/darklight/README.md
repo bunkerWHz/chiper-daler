@@ -327,15 +327,14 @@ The copy differs from `DarklightRig.tscn` in four places:
   back-wrist look-at, front-leg two-bone IK, front-ankle look-at, back-leg two-bone
   IK, back-ankle look-at. Every target is the unchanged `Anim Targets/...` node the
   SoupIK solver used;
-- all nine SoupIK solver nodes under `SoupGroup` are `enabled = false`, kept in the
-  tree only so every other node path is unchanged;
+- the whole `SoupGroup` subtree is gone: the copy carries no SoupIK node and no
+  reference to `addons/soupik` at all. Nothing addressed those nodes — all 260
+  authored tracks target `Anim Targets/...`, so every clip drives the native
+  solvers without edits;
 - `Anim Targets/FrontArmFK` and `Anim Targets/BackArmFK` no longer export
   `arm_ik`/`wrist_ik`, because `ArmPoseControls` would otherwise re-enable the SoupIK
   solvers on `_ready`. Both arms are therefore IK-only in this copy; FK authoring
   stays in `DarklightRig.tscn`.
-
-All 260 authored tracks still address `Anim Targets/...`, so every clip drives the
-native solvers without edits.
 
 Verified in a running Godot 4.7.2 against `DarklightRig.tscn`, both rigs fed
 identical inputs and sampled after the same frames:
@@ -371,9 +370,22 @@ Three things to know before extending it:
   `SoupTwoBoneIK`. This copy cannot be driven by them as they stand: adopting it in
   gameplay means adding an adapter rather than reusing those exports.
 
-Run `godot --headless --script tests/run_tests.gd -- darklight_rig2_ik` to check the
-copy's wiring: which nodes stay disabled, the stack order, the targets and bones, and
-that every serialized bone index still resolves against the live skeleton.
+The scene is **generated**, not hand-edited: `node tests/regenerate_darklight_rig2.mjs`
+rebuilds it from `DarklightRig.tscn` with exactly that change, and `--check` reports
+when the copy has drifted. Regenerate it instead of editing it whenever the canonical
+rig gains a clip, a bone or a renamed animation — the copy already fell behind once
+when `dodge` and `dodge2` were swapped, and it silently animated the wrong clip.
+
+Two checks cover the copy:
+
+- `godot --headless --script tests/darklight_rig2_pose_check.gd` drives every
+  authored clip into both rigs at five times each plus the mirrored facing case and
+  fails when any bone's position or rotation diverges (111 poses, worst deviation
+  0.005 units).
+- `godot --headless --script tests/run_tests.gd -- darklight_rig2_ik` checks the
+  wiring: that the copy carries no soupik node, the stack order, the targets and
+  bones, and that every serialized bone index still resolves against the live
+  skeleton.
 
 ## Provenance and checks
 

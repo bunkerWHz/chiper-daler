@@ -6,9 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://crus8rojqdktw" path="res://assets/Characters/Darklight/front_arm_top.png" id="30_7635k"]
 [ext_resource type="Texture2D" uid="uid://ckmgl3pd75bef" path="res://assets/Characters/Darklight/front_leg_top.png" id="31_xl4ms"]
 [ext_resource type="Texture2D" uid="uid://dtwsbsdane16o" path="res://assets/Characters/Darklight/back_leg_top.png" id="32_fpu4p"]
-[ext_resource type="Script" uid="uid://bwg2w3yeojjwc" path="res://addons/soupik/modifications/soup_group.gd" id="35_q6tl8"]
-[ext_resource type="Script" uid="uid://3677cp1n6ky" path="res://addons/soupik/modifications/soup_two_bone_ik.gd" id="36_x2t84"]
-[ext_resource type="Script" uid="uid://dwfox8iknj704" path="res://addons/soupik/modifications/soup_look_at.gd" id="37_y72ng"]
 [ext_resource type="Texture2D" uid="uid://xqgb2vfdwi6p" path="res://assets/Characters/Darklight/arrows.png" id="50_gv142"]
 [ext_resource type="PackedScene" path="res://game/player/darklight/Cloak.tscn" id="51_owtu8"]
 [ext_resource type="Texture2D" uid="uid://bsu4kbxpoqudd" path="res://assets/Characters/Darklight/back_arm_mid.png" id="53_xopmn"]
@@ -24,7 +21,7 @@
 [ext_resource type="Script" uid="uid://bvgrbs67llb85" path="res://game/player/darklight/ArmPoseControls.gd" id="arm_pose_controls"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/bow_aim.tres" id="bow_aim"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/crossbow_aim.tres" id="crossbow_aim"]
-[ext_resource type="Animation" path="res://game/player/darklight/animations/dodge2.tres" id="dodge2"]
+[ext_resource type="Animation" uid="uid://dutggrpqft6qb" path="res://game/player/darklight/animations/dodge2.tres" id="dodge2"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/drink.tres" id="drink"]
 [ext_resource type="Animation" path="res://game/player/darklight/animations/magic_aim.tres" id="magic_aim"]
 [ext_resource type="Animation" uid="uid://buham5evsye3p" path="res://game/player/darklight/animations/throw_aim.tres" id="throw_aim"]
@@ -2115,7 +2112,7 @@ tracks/11/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_5nq02"]
-resource_name = "dodge3"
+resource_name = "dodge"
 length = 0.1
 loop_mode = 1
 tracks/0/type = "value"
@@ -4575,8 +4572,8 @@ _data = {
 &"block": SubResource("Animation_gv142"),
 &"bow_aim": ExtResource("bow_aim"),
 &"crossbow_aim": ExtResource("crossbow_aim"),
-&"dodge": ExtResource("dodge2"),
-&"dodge3": SubResource("Animation_5nq02"),
+&"dodge": SubResource("Animation_5nq02"),
+&"dodge2": ExtResource("dodge2"),
 &"drink": ExtResource("drink"),
 &"equipment_swap": SubResource("Animation_wqtcv"),
 &"fall": SubResource("Animation_m05of"),
@@ -4658,7 +4655,7 @@ position = Vector2(0, 136)
 
 [node name="BackArmMid" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1099915142]
 position = Vector2(104, 24)
-scale = Vector2(0.99999964, 0.99999964)
+scale = Vector2(0.9999996, 0.9999996)
 texture = ExtResource("53_xopmn")
 offset = Vector2(48, 48)
 
@@ -4673,7 +4670,7 @@ offset = Vector2(2, 101)
 z_index = 5
 position = Vector2(-92.104, 271.944)
 rotation = -0.000575776
-scale = Vector2(0.9999992, 0.9999992)
+scale = Vector2(0.99999917, 0.99999917)
 texture = ExtResource("57_ijlh8")
 offset = Vector2(-42, 111)
 
@@ -4687,14 +4684,14 @@ offset = Vector2(0, 43)
 z_index = 4
 position = Vector2(-183.074, 67.3339)
 rotation = -0.21631
-scale = Vector2(0.9999985, 0.9999985)
+scale = Vector2(0.99999833, 0.99999833)
 texture = ExtResource("58_8rwu8")
 offset = Vector2(-4, 51)
 
 [node name="BackArmBot" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=1968465089]
 z_index = -3
 position = Vector2(184, 96)
-scale = Vector2(0.99999946, 0.99999946)
+scale = Vector2(0.9999994, 0.9999994)
 texture = ExtResource("59_e5rdh")
 offset = Vector2(37, 33)
 
@@ -4702,7 +4699,7 @@ offset = Vector2(37, 33)
 z_index = 5
 position = Vector2(-172, 155)
 rotation = -0.135997
-scale = Vector2(0.9999977, 0.9999977)
+scale = Vector2(0.99999744, 0.99999744)
 texture = ExtResource("58_e5rdh")
 offset = Vector2(7, 39)
 
@@ -4710,7 +4707,7 @@ offset = Vector2(7, 39)
 z_index = 5
 position = Vector2(125.775, 462.92)
 rotation = 0.0270201
-scale = Vector2(0.9999981, 0.9999981)
+scale = Vector2(0.99999785, 0.99999785)
 texture = ExtResource("60_xopmn")
 offset = Vector2(-17, -8)
 
@@ -4718,7 +4715,7 @@ offset = Vector2(-17, -8)
 z_index = 5
 position = Vector2(-134.511, 462.995)
 rotation = 0.0163031
-scale = Vector2(0.9999982, 0.9999982)
+scale = Vector2(0.9999981, 0.9999981)
 texture = ExtResource("61_xopmn")
 
 [node name="Head" type="Sprite2D" parent="CharacterContainer/VisualDetails" unique_id=426140055]
@@ -4733,7 +4730,7 @@ offset = Vector2(0, -121)
 modification_stack = SubResource("SkeletonModificationStack2D_darklight2")
 
 [node name="Hip" type="Bone2D" parent="CharacterContainer/Skeleton2D" unique_id=2124082830]
-position = Vector2(0, 137.77777)
+position = Vector2(0, 136)
 rest = Transform2D(1, 0, 0, 1, 0, 136)
 
 [node name="CloakRemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip" unique_id=1872292985]
@@ -4764,7 +4761,7 @@ remote_path = NodePath("../../../../../VisualDetails/BackLegMid")
 [node name="BackLegBot" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/BackLegTop/BackLegMid" unique_id=1932519056]
 position = Vector2(10, 161)
 rotation = 0.0270429
-scale = Vector2(0.99999803, 0.99999803)
+scale = Vector2(0.9999979, 0.9999979)
 rest = Transform2D(1, 0, 0, 1, 10, 161)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -4789,7 +4786,7 @@ update_scale = false
 [node name="FrontLegMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/FrontLegTop" unique_id=1044183745]
 position = Vector2(-5.08614, 135.905)
 rotation = 0.0654811
-scale = Vector2(0.99999964, 0.99999964)
+scale = Vector2(0.9999996, 0.9999996)
 rest = Transform2D(1, 0, 0, 1, -5.08614, 135.905)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontLegTop/FrontLegMid" unique_id=1575266557]
@@ -4798,7 +4795,7 @@ remote_path = NodePath("../../../../../VisualDetails/FrontLegMid")
 [node name="FrontLegBot" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/FrontLegTop/FrontLegMid" unique_id=675454669]
 position = Vector2(-98, 180)
 rotation = 0.0168789
-scale = Vector2(0.9999989, 0.9999989)
+scale = Vector2(0.99999887, 0.99999887)
 rest = Transform2D(1, 0, 0, 1, -98, 180)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -4823,7 +4820,7 @@ update_scale = false
 [node name="FrontArmMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop" unique_id=53136572]
 position = Vector2(-64, 176)
 rotation = -0.211053
-scale = Vector2(0.9999995, 0.9999995)
+scale = Vector2(0.99999934, 0.99999934)
 rest = Transform2D(1, 0, 0, 1, -64, 176)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/FrontArmTop/FrontArmMid" unique_id=559480250]
@@ -4851,7 +4848,7 @@ offset = Vector2(-90, -93)
 
 [node name="BackArmTop" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip" unique_id=929842416]
 position = Vector2(96, -240)
-scale = Vector2(0.99999994, 0.99999994)
+scale = Vector2(0.9999999, 0.9999999)
 rest = Transform2D(1, 0, 0, 1, 96, -240)
 
 [node name="TopRemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop" unique_id=1918929786]
@@ -4862,7 +4859,7 @@ update_scale = false
 
 [node name="BackArmMid" type="Bone2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop" unique_id=651175087]
 position = Vector2(8, 128)
-scale = Vector2(0.9999997, 0.9999997)
+scale = Vector2(0.99999964, 0.99999964)
 rest = Transform2D(1, 0, 0, 1, 8, 128)
 
 [node name="MidRemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/BackArmTop/BackArmMid" unique_id=210765024]
@@ -4905,78 +4902,6 @@ bone_angle = 0.0
 
 [node name="HeadRemoteTransform2D" type="RemoteTransform2D" parent="CharacterContainer/Skeleton2D/Hip/Torso/Head" unique_id=1822074937]
 remote_path = NodePath("../../../../../VisualDetails/Head")
-
-[node name="SoupGroup" type="Node" parent="CharacterContainer/Skeleton2D" unique_id=1562608948]
-script = ExtResource("35_q6tl8")
-
-[node name="Head" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup" unique_id=695222502]
-script = ExtResource("35_q6tl8")
-
-[node name="Head_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/Head" unique_id=842566427 node_paths=PackedStringArray("target_node", "bone_node")]
-script = ExtResource("37_y72ng")
-target_node = NodePath("../../../../Anim Targets/Head_AT")
-enabled = false
-bone_node = NodePath("../../../Hip/Torso/Head")
-
-[node name="UpperBody" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup" unique_id=1487321327]
-script = ExtResource("35_q6tl8")
-
-[node name="FrontArmIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=1816034562 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
-script = ExtResource("36_x2t84")
-target_node = NodePath("../../../../Anim Targets/FrontArmIK")
-enabled = false
-joint_one_bone_node = NodePath("../../../Hip/FrontArmTop")
-joint_two_bone_node = NodePath("../../../Hip/FrontArmTop/FrontArmMid")
-
-[node name="BackArmIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=151493741 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
-script = ExtResource("36_x2t84")
-target_node = NodePath("../../../../Anim Targets/BackArmIK")
-enabled = false
-joint_one_bone_node = NodePath("../../../Hip/BackArmTop")
-joint_two_bone_node = NodePath("../../../Hip/BackArmTop/BackArmMid")
-
-[node name="FrontArmAT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=1661081345 node_paths=PackedStringArray("target_node", "bone_node")]
-script = ExtResource("37_y72ng")
-target_node = NodePath("../../../../Anim Targets/FrontArmIK/FrontArm_AT")
-enabled = false
-bone_node = NodePath("../../../Hip/FrontArmTop/FrontArmMid/FrontArmBot")
-
-[node name="BackArmAt" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/UpperBody" unique_id=712205334 node_paths=PackedStringArray("target_node", "bone_node")]
-script = ExtResource("37_y72ng")
-target_node = NodePath("../../../../Anim Targets/BackArmIK/BackArm_AT")
-enabled = false
-bone_node = NodePath("../../../Hip/BackArmTop/BackArmMid/BackArmBot")
-
-[node name="LowerBody" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup" unique_id=1444123387]
-script = ExtResource("35_q6tl8")
-
-[node name="FrontLegIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=49563365 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
-script = ExtResource("36_x2t84")
-target_node = NodePath("../../../../Anim Targets/FrontLegIK")
-enabled = false
-flip_bend_direction = true
-joint_one_bone_node = NodePath("../../../Hip/FrontLegTop")
-joint_two_bone_node = NodePath("../../../Hip/FrontLegTop/FrontLegMid")
-
-[node name="FrontLeg_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=491323054 node_paths=PackedStringArray("target_node", "bone_node")]
-script = ExtResource("37_y72ng")
-target_node = NodePath("../../../../Anim Targets/FrontLegIK/FrontLeg_AT")
-enabled = false
-bone_node = NodePath("../../../Hip/FrontLegTop/FrontLegMid/FrontLegBot")
-
-[node name="BackLegIK" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=617090160 node_paths=PackedStringArray("target_node", "joint_one_bone_node", "joint_two_bone_node")]
-script = ExtResource("36_x2t84")
-target_node = NodePath("../../../../Anim Targets/BackLegIK")
-enabled = false
-flip_bend_direction = true
-joint_one_bone_node = NodePath("../../../Hip/BackLegTop")
-joint_two_bone_node = NodePath("../../../Hip/BackLegTop/BackLegMid")
-
-[node name="BackLeg_AT" type="Node" parent="CharacterContainer/Skeleton2D/SoupGroup/LowerBody" unique_id=1103460657 node_paths=PackedStringArray("target_node", "bone_node")]
-script = ExtResource("37_y72ng")
-target_node = NodePath("../../../../Anim Targets/BackLegIK/BackLeg_AT")
-enabled = false
-bone_node = NodePath("../../../Hip/BackLegTop/BackLegMid/BackLegBot")
 
 [node name="Anim Targets" type="Node2D" parent="CharacterContainer" unique_id=1215329132]
 
