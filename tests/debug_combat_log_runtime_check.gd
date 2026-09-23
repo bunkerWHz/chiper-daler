@@ -85,10 +85,10 @@ func _run() -> void:
 	regen._process(1.0)
 	var regen_line := _find_line(log_component, "реген")
 	check(regen_line.contains("[color=#6bff6b]"), "Regeneration is green")
-	check(regen_line.contains("+10 HP"), "Health regeneration is printed: " + regen_line)
-	check(regen_line.contains("+10 MP"), "Mana regeneration is printed: " + regen_line)
+	check(regen_line.contains("+1 HP"), "Health regeneration is printed: " + regen_line)
+	check(regen_line.contains("+1 MP"), "Mana regeneration is printed: " + regen_line)
 	check(
-		regen_line.contains("+10 SP"),
+		regen_line.contains("+1 SP"),
 		"Stamina regeneration is printed: " + regen_line
 	)
 
@@ -100,6 +100,9 @@ func _run() -> void:
 	check(dealt_line.contains("[color=#ffffff]"), "Dealt damage is white")
 	check(dealt_line.contains("Dummy: 42"), "Dealt damage names the target")
 	check(dealt_line.contains("КРИТ"), "Critical hits are marked")
+	var shown := log_view.get_parsed_text()
+	check(not shown.contains("[color="), "BBCode is parsed, not shown raw")
+	check(shown.contains("мой урон"), "Dealt damage line is rendered")
 
 	var before := log_component.get_lines().size()
 	dummy.hurtbox.receive_hit(HitData.new(42.0, dummy.actor))
@@ -136,9 +139,10 @@ func _run() -> void:
 
 	var lines := log_component.get_lines()
 	check(lines.size() <= log_component.max_lines, "Log keeps only the last lines")
-	var shown := log_view.get_parsed_text()
-	check(not shown.contains("[color="), "BBCode is parsed, not shown raw")
-	check(shown.contains("мой урон") and shown.contains("реген"), "Log text is rendered")
+	check(
+		log_view.get_parsed_text().contains("реген"),
+		"Log text is still rendered after rotation"
+	)
 	check(
 		log_view.get_content_height() <= log_view.size.y + 1.0,
 		"Full log fits the panel without clipping: %.1f in %.1f" % [

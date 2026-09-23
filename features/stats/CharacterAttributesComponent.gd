@@ -52,15 +52,15 @@ func get_magic_defense() -> float:
 
 
 func get_health_regeneration() -> float:
-	return 10.0 + maxi(endurance - 1, 0)
+	return 1.0 + maxi(endurance - 1, 0)
 
 
 func get_mana_regeneration() -> float:
-	return 10.0 + maxi(wisdom - 1, 0)
+	return 1.0 + maxi(wisdom - 1, 0)
 
 
 func get_stamina_regeneration() -> float:
-	return 10.0 + maxi(dexterity - 1, 0)
+	return 1.0 + maxi(dexterity - 1, 0)
 
 
 func get_endurance_health_bonus() -> float:
