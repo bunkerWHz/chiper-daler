@@ -68,7 +68,7 @@ func test_arm_pose_controls_no_longer_own_the_soupik_solvers() -> void:
 func test_native_stack_replaces_every_solver_in_order() -> void:
 	var rig := _open_rig()
 	var skeleton := rig.get_node("CharacterContainer/Skeleton2D") as Skeleton2D
-	var stack: SkeletonModificationStack2D = skeleton.modification_stack
+	var stack: SkeletonModificationStack2D = skeleton.get_modification_stack()
 	assert_true(stack != null, "DarklightRig2 has no modification stack")
 	if stack == null:
 		return
@@ -100,7 +100,7 @@ func test_native_stack_replaces_every_solver_in_order() -> void:
 func test_every_modification_resolves_against_the_live_skeleton() -> void:
 	var rig := _open_rig()
 	var skeleton := rig.get_node("CharacterContainer/Skeleton2D") as Skeleton2D
-	var stack: SkeletonModificationStack2D = skeleton.modification_stack
+	var stack: SkeletonModificationStack2D = skeleton.get_modification_stack()
 	assert_true(stack != null, "DarklightRig2 has no modification stack")
 	if stack == null:
 		return
