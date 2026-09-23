@@ -310,6 +310,52 @@ reports and repairs the four limb pieces (they were up to 2.0, so their art
 overshot the bones). `tests/darklight_facing_check.gd` exercises 48 turns across
 idle/run and checks every skinned polygon's basis each frame.
 
+## DarklightRig2 (native IK prototype)
+
+`DarklightRig2.tscn` is a copy of `DarklightRig.tscn` used to test whether Godot's
+own `SkeletonModification2D` solvers can replace the vendored SoupIK nodes. It is an
+experiment: no gameplay scene references it, and `DarklightRig.tscn` stays the
+canonical rig. The bones themselves were never addon-made — they are plain `Bone2D`
+nodes; SoupIK only supplied the solvers that rotate them.
+
+The copy differs from `DarklightRig.tscn` in five places:
+
+- the scene header carries no `uid` (Godot assigns a fresh one on the first save);
+- the `Skeleton2D` owns a `SkeletonModificationStack2D` (`resource_local_to_scene`)
+  holding a `SkeletonModification2DTwoBoneIK` on `Hip/FrontArmTop` →
+  `Hip/FrontArmTop/FrontArmMid` and a `SkeletonModification2DLookAt` on
+  `Hip/FrontArmTop/FrontArmMid/FrontArmBot`;
+- both native modifications target the unchanged `Anim Targets/FrontArmIK` and
+  `Anim Targets/FrontArmIK/FrontArm_AT` nodes;
+- the soupik `SoupGroup/UpperBody/FrontArmIK` and `FrontArmAT` nodes are
+  `enabled = false`, kept in the tree only so every other node path is unchanged;
+- `Anim Targets/FrontArmFK` no longer exports `arm_ik`/`wrist_ik`, so that arm can
+  no longer be switched to FK in this copy.
+
+All 260 authored tracks still address `Anim Targets/...`, so every clip drives the
+native solver without edits.
+
+Measured in a running Godot 4.7.2 against `DarklightRig.tscn` (front arm, `idle`
+pinned, both rigs fed identical targets): the wrist joint reaches the target with
+the same error to 0.01 units over a 12-point sweep, including out-of-reach targets,
+where both clamp identically; the wrist look-at rotation matches to 0.01°; and
+mirrored facing (`CharacterContainer` with a negative-determinant transform)
+produces the same pose in both rigs, so the native solver mirrors correctly.
+
+Two known differences:
+
+- Bone indices are serialized explicitly (`joint_one_bone_idx = 7`,
+  `joint_two_bone_idx = 8`, `bone_index = 9`). Without them a scene load prints
+  `set_joint_one_bone_idx: Bone index is out of range` from
+  `skeleton_modification_2d_twoboneik.cpp` before the skeleton is ready — the
+  upstream behaviour tracked in
+  [godot#73247](https://github.com/godotengine/godot/issues/73247) and
+  [godot#76850](https://github.com/godotengine/godot/issues/76850). These indices
+  follow this rig's bone order; re-check them if the skeleton hierarchy changes.
+- In near-degenerate poses (target closer than the two bone lengths differ by) the
+  native solver can pick the other elbow branch. The wrist still lands on the target
+  and the look-at still matches; only the elbow flips.
+
 ## Provenance and checks
 
 Imported from the user's `dark-sanctum/Scenes/Characters/dark_light.tscn`, its
