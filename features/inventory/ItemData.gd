@@ -101,7 +101,8 @@ enum UseVisualEffect {
 @export_range(1, 999, 1) var max_stack_size: int = 1
 ## Weight of one unit. New items start at 1; flasks weigh nothing and stay at 0.
 @export_range(0.0, 1000.0, 0.01) var weight: float = 1.0
-## Base sale value of one unit. New items start at 1; flasks are never sold and stay at 0.
+## Base sale value of one unit. New items start at 1; flasks and ammunition are
+## never sold and stay at 0.
 @export_range(0, 1000000, 1) var sell_price: int = 1
 @export_group("Usage")
 @export var is_key_item: bool = false
@@ -220,6 +221,12 @@ func get_status_effect() -> StatusEffect:
 
 func is_flask() -> bool:
 	return consumable_profile is ItemFlaskProfile
+
+
+## A zero price means the item never reaches a shop: flasks are drunk and
+## ammunition is spent by firing. Everything else must be worth at least 1.
+func is_sellable() -> bool:
+	return sell_price > 0
 
 
 func get_flask_max_charges() -> int:

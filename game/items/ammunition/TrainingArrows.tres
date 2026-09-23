@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://brcbjvcylktf5" path="res://features/inventory/ItemData.gd" id="1_item"]
 [ext_resource type="Script" uid="uid://bessurx1o3nta" path="res://features/inventory/profiles/ItemEquipmentProfile.gd" id="2_equipment"]
 [ext_resource type="Script" uid="uid://v04akmqocn7b" path="res://features/inventory/profiles/ItemAmmunitionProfile.gd" id="3_ammunition"]
-[ext_resource type="PackedScene" path="res://game/items/ammunition/TrainingArrows.tscn" id="4_projectile"]
+[ext_resource type="PackedScene" uid="uid://cxr5ne3xjqrsr" path="res://game/items/ammunition/TrainingArrows.tscn" id="4_projectile"]
 
 [sub_resource type="Resource" id="ItemAmmunitionProfile_arrows"]
 script = ExtResource("3_ammunition")
@@ -23,6 +23,6 @@ category = 7
 stackable = true
 max_stack_size = 999
 weight = 0.05
-sell_price = 1
+sell_price = 0
 equipment_profile = SubResource("ItemEquipmentProfile_arrows")
 ammunition_profile = SubResource("ItemAmmunitionProfile_arrows")

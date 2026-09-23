@@ -2,7 +2,7 @@
 title: Inventory System
 type: architecture
 created: 2026-08-28
-updated: 2026-09-20
+updated: 2026-09-24
 tags: [inventory, equipment, items]
 ---
 
@@ -232,8 +232,11 @@ inventory stacks. `FlaskChargesComponent` owns current charges for each Actor.
 At zero charges the item and hotbar binding remain visible and selectable, but
 use is disabled. Flasks cannot be stacked, removed, dropped, or transferred,
 they weigh nothing, and they are never sold: their `weight` and `sell_price`
-stay at 0. Sanctuary rest refills every owned flask. Their runtime charge state
-is saved independently from inventory ownership.
+stay at 0. Ammunition is never sold either — it is spent by firing — so arrows
+and bolts carry `sell_price = 0` with their normal weight; `ItemData.is_sellable()`
+reads that rule and the item card hides the price when it is false. Sanctuary rest
+refills every owned flask. Their runtime charge state is saved independently from
+inventory ownership.
 Persistent flasks are also rejected by enemy loot tables and loot bags. The
 default test enemy keeps an empty loot table — its only reward is amber shards —
 so any loot bag an authored enemy does drop stays fully collectable.

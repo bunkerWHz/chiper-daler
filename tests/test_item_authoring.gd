@@ -92,8 +92,9 @@ func test_new_items_start_with_weight_and_sell_price() -> void:
 	assert_eq(copy.sell_price, 1, "A template copy must inherit the starting sell price")
 
 
-func test_catalog_items_have_weight_and_price_except_flasks() -> void:
+func test_catalog_items_have_weight_and_are_sold_except_flasks_and_ammunition() -> void:
 	var flasks := 0
+	var ammunition := 0
 	for folder: String in DirAccess.get_directories_at("res://game/items"):
 		if folder == "templates":
 			continue
@@ -106,11 +107,17 @@ func test_catalog_items_have_weight_and_price_except_flasks() -> void:
 			if item.is_flask():
 				flasks += 1
 				assert_true(is_zero_approx(item.weight), "Flask must weigh nothing: %s" % item.id)
-				assert_eq(item.sell_price, 0, "Flask must not be sold: %s" % item.id)
+			else:
+				assert_true(item.weight > 0.0, "Item without weight: %s" % item.id)
+			if item.is_flask() or item.ammunition_profile != null:
+				if item.ammunition_profile != null:
+					ammunition += 1
+				assert_false(item.is_sellable(), "Item must not be sold: %s" % item.id)
+				assert_eq(item.sell_price, 0, "Item must not be sold: %s" % item.id)
 				continue
-			assert_true(item.weight > 0.0, "Item without weight: %s" % item.id)
-			assert_true(item.sell_price > 0, "Item without sell price: %s" % item.id)
+			assert_true(item.is_sellable(), "Item without sell price: %s" % item.id)
 	assert_true(flasks > 0, "Expected at least one flask in the catalog")
+	assert_true(ammunition > 0, "Expected ammunition in the catalog")
 
 
 func test_display_slot_defaults_to_inventory_slot_and_serializes_independently() -> void:

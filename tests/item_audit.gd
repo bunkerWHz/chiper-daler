@@ -127,13 +127,15 @@ func _add_findings(findings: Array, item: Dictionary) -> void:
 	if item["is_flask"]:
 		if not is_zero_approx(item["weight"]):
 			findings.append(_finding("error", folder, file, "flask weighs %s, expected 0" % item["weight"]))
+	elif float(item["weight"]) <= 0.0:
+		findings.append(_finding("error", folder, file, "no weight"))
+
+	# Flasks are drunk and ammunition is spent by firing: neither is ever sold.
+	if item["is_flask"] or item["has_ammunition_profile"]:
 		if int(item["sell_price"]) != 0:
-			findings.append(_finding("error", folder, file, "flask is sellable for %s, expected 0" % item["sell_price"]))
-	else:
-		if float(item["weight"]) <= 0.0:
-			findings.append(_finding("error", folder, file, "no weight"))
-		if int(item["sell_price"]) <= 0:
-			findings.append(_finding("error", folder, file, "no sell price"))
+			findings.append(_finding("error", folder, file, "%s must not be sold, price is %s" % [item["category"], item["sell_price"]]))
+	elif int(item["sell_price"]) <= 0:
+		findings.append(_finding("error", folder, file, "no sell price"))
 
 	match item["icon_state"]:
 		"none":

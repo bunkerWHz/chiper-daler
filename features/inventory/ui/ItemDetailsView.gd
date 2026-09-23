@@ -50,10 +50,11 @@ func get_item_text(item: ItemData) -> String:
 		])
 	else:
 		detail_lines.append("Qty: %d" % owned_quantity)
-	detail_lines.append("Weight: %d  Sell: %d" % [
-		ceili(item.weight),
-		item.sell_price,
-	])
+	# Items that never reach a shop show no price at all.
+	var bulk := "Weight: %d" % ceili(item.weight)
+	if item.is_sellable():
+		bulk += "  Sell: %d" % item.sell_price
+	detail_lines.append(bulk)
 	_append_weapon_profile(detail_lines, item.weapon_profile)
 	_append_offhand_profile(detail_lines, item.offhand_profile)
 	_append_armor_profile(detail_lines, item.armor_profile)
