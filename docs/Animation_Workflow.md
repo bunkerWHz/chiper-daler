@@ -51,6 +51,11 @@ Open `game/player/darklight/DarklightRig.tscn`, select `AnimationPlayer`, and
 animate `CharacterContainer/Anim Targets`. The original rig includes skinned
 polygons, bone attachments and SoupIK controls.
 
+The rig's internals — the bone hierarchy and rest poses, skin weights,
+`RemoteTransform2D` attachments, the IK solvers that turn those targets into bone
+rotations, and the mirrored facing rule — are documented in
+[Bones and rig solvers](Rig_Bones.md).
+
 `DarklightVisualComponent` maps the existing `ActorStateComponent` behavior to
 clips. Gameplay components remain the authority for action durations and damage.
 The rig's `MainHand` and `OffHand` Sprite2D nodes follow the hand bones. Assign

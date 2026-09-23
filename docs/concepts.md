@@ -2,7 +2,7 @@
 title: Матрица понятий
 type: concept-table
 created: 2026-09-20
-updated: 2026-09-21
+updated: 2026-09-23
 tags: [meta, architecture]
 ---
 
@@ -92,6 +92,10 @@ tags: [meta, architecture]
 | Понятие | Что означает | Ведущая страница | Связанные | Состояние |
 | --- | --- | --- | --- | --- |
 | Darklight | Канонический герой проекта, риг на Skeleton2D и SoupIK | [[Animation_Workflow]] | [[Project_Guide]] | Работает |
+| Кость рига | `Bone2D`: rest-поза отдельно от текущей позы, `length` и `bone_angle` читают решатели; порядок костей задаёт их индексы | [[Rig_Bones]] | [[Animation_Workflow]] | Работает |
+| Цели анимации | `CharacterContainer/Anim Targets`: клипы ключуют эти контроллеры, а позу костей считают решатели | [[Rig_Bones]] | [[Animation_Workflow]] | Работает |
+| Решатель IK | Two-bone IK и look-at: SoupIK в `DarklightRig.tscn` или нативные `SkeletonModification2D` в `DarklightRig2.tscn`, поведение совпадает | [[Rig_Bones]] | [[Animation_Workflow]] | Работает |
+| Скиннинг `Polygon2D` | Куски тела деформируются костями; веса вершины обязаны давать ровно 1.0 | [[Rig_Bones]] | [[Animation_Workflow]] | Работает |
 | GroundDummy и FlyDummy | Шаблоны независимых сцен наземного и летающего врага, без наследования | [[Enemies]] | [[Enemy_Copy]] | Работает |
 | EnemyAuthoringChecks | Предупреждения в редакторе и кнопка **Create independent copy** | [[Enemy_Copy]] | [[Enemies]] | Работает |
 | MovementSandbox | Главная ручная площадка проекта; тесты не зависят от её раскладки | [[Development_Sandbox]] | [[Testing]] | Работает |

@@ -2,7 +2,7 @@
 title: Где что менять
 type: index
 created: 2026-09-06
-updated: 2026-09-18
+updated: 2026-09-23
 tags: [meta, workflow]
 ---
 
@@ -51,6 +51,9 @@ godot --headless --path . --script tests/run_tests.gd
 `CharacterContainer/Anim Targets`. [Работа с ригом](../game/player/darklight/README.md)
 описывает крепления, масштаб и пока отсутствующие клипы.
 
+Сам скелет — кости, rest-позы, веса скиннинга, крепления и решатели IK — описан
+в [Костях и решателях рига](Rig_Bones.md).
+
 | Что изменить | Где в Inspector |
 | --- | --- |
 | Скорость, прыжки, разгон | MovementComponent → Config: Ground movement, Jumping, Acceleration |
@@ -69,6 +72,8 @@ godot --headless --path . --script tests/run_tests.gd
 | Полоска переодевания над головой | EquipmentSwapView → Position / Native Width; ширина следует размеру героя, высота и отступ сохраняются |
 | Клипы и заготовка equipment_swap | DarklightRig.tscn → AnimationPlayer (в Player: `_Visual/DarklightRig/AnimationPlayer`) |
 | Ручная поза руки | В риге: Anim Targets → BackArmFK (рука с луком) или FrontArmFK → Mode = FK; вращайте Shoulder → Elbow → Wrist |
+| Кость, её rest-поза и длина | В риге: Skeleton2D → нужная Bone2D → Position / Rest / Length |
+| Решатель IK и его цель | В риге: Skeleton2D/SoupGroup (DarklightRig) или Skeleton2D → Modification Stack (DarklightRig2) |
 | Поворот и положение таза | В риге: Anim Targets → Hip → Rotation / Position; ключи записывайте на этот контроллер |
 | Предмет в руке | ItemData → Equipped Texture или Equipped Visual; крепления MainHand / OffHand в риге |
 | Рука для отображения | Equipment Profile → Display Slot; по умолчанию совпадает со слотом экипировки |
