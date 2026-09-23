@@ -562,6 +562,27 @@ func test_view_and_edit_second_set_keeps_pause_and_active_weapon() -> void:
 	tree.root.remove_child(player)
 	tree.paused = was_paused
 
+func test_item_card_hides_the_price_of_items_that_are_never_sold() -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var player := track(preload("res://game/player/Player.tscn").instantiate()) as Actor
+	tree.root.add_child(player)
+	var menu := player.get_component(InventoryMenuComponent) as InventoryMenuComponent
+	var arrows := load("res://game/items/ammunition/TrainingArrows.tres") as ItemData
+	assert_false(arrows.is_sellable(), "Ammunition must not be sold")
+	var arrow_card := menu._detail_popup.get_item_text(arrows)
+	assert_true(arrow_card.contains("Weight:"), "Ammunition still reports its weight")
+	assert_false(arrow_card.contains("Sell:"), "Ammunition must not show a price: " + arrow_card)
+	var flask := load("res://game/items/consumables/HealthPotion.tres") as ItemData
+	assert_true(flask.is_flask(), "Expected the health flask in the catalog")
+	assert_false(menu._detail_popup.get_item_text(flask).contains("Sell:"), "A flask must not show a price")
+	var sword := load("res://game/items/weapons/TrainingSword.tres") as ItemData
+	assert_true(sword.is_sellable(), "A weapon is still sold")
+	assert_true(
+		menu._detail_popup.get_item_text(sword).contains("Sell: %d" % sword.sell_price),
+		"A sold item keeps its price line"
+	)
+
+
 func test_right_click_replaces_pinned_details_with_item_actions() -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	var was_paused := tree.paused
