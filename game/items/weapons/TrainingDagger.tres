@@ -35,7 +35,6 @@ id = &"training_dagger"
 display_name = "Training Dagger"
 description = "A short, quick blade with strong critical damage."
 category = 0
-weight = 1.0
 sell_price = 18
 equipment_profile = SubResource("ItemEquipmentProfile_dagger")
 weapon_profile = SubResource("ItemWeaponProfile_dagger")
